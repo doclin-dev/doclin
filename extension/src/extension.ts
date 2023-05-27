@@ -31,6 +31,9 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
 
+      vscode.commands.executeCommand('workbench.view.extension.vstodo-sidebar-view');
+
+
       const text = activeTextEditor.document.getText(
         activeTextEditor.selection
       );
