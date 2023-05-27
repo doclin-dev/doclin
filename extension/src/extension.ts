@@ -15,28 +15,41 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.StatusBarAlignment.Right
   );
   item.text = "$(beaker) Add Todo";
-  item.command = "vstodo.addTodo";
+  item.command = "doclin.addTodo";
   item.show();
 
   context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider("vstodo-sidebar", sidebarProvider)
+    vscode.window.registerWebviewViewProvider("doclin-sidebar", sidebarProvider)
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("vstodo.addTodo", () => {
+    vscode.commands.registerCommand("doclin.addTodo", async () => {
+      console.log("add todo is pressed");
+
       const { activeTextEditor } = vscode.window;
+
+      const view = vscode.window
 
       if (!activeTextEditor) {
         vscode.window.showInformationMessage("No active text editor");
         return;
       }
 
-      vscode.commands.executeCommand('workbench.view.extension.vstodo-sidebar-view');
-
+      vscode.commands.executeCommand('workbench.view.extension.doclin-sidebar-view');
 
       const text = activeTextEditor.document.getText(
         activeTextEditor.selection
       );
+
+      const pauseExecution = () => {
+        return new Promise((resolve) => {
+          setTimeout(resolve, 500); // Resolves the promise after 2 seconds
+        });
+      }
+
+      await pauseExecution(); 
+      // Bug: not the most ideal way to fix this!!
+      // Need to check when the sidebar is loaded and then add the textSelection to sidebar
 
       sidebarProvider._view?.webview.postMessage({
         type: "new-todo",
@@ -46,7 +59,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("vstodo.helloWorld", () => {
+    vscode.commands.registerCommand("doclin.helloWorld", () => {
       vscode.window.showInformationMessage(
         "token value is: " + TokenManager.getToken()
       );
@@ -55,7 +68,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("vstodo.authenticate", () => {
+    vscode.commands.registerCommand("doclin.authenticate", () => {
       try {
         authenticate();
       } catch (err) {
@@ -65,12 +78,12 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("vstodo.refresh", async () => {
+    vscode.commands.registerCommand("doclin.refresh", async () => {
       // HelloWorldPanel.kill();
       // HelloWorldPanel.createOrShow(context.extensionUri);
       await vscode.commands.executeCommand("workbench.action.closeSidebar");
       await vscode.commands.executeCommand(
-        "workbench.view.extension.vstodo-sidebar-view"
+        "workbench.view.extension.doclin-sidebar-view"
       );
       // setTimeout(() => {
       //   vscode.commands.executeCommand(
@@ -81,7 +94,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("vstodo.askQuestion", async () => {
+    vscode.commands.registerCommand("doclin.askQuestion", async () => {
       const answer = await vscode.window.showInformationMessage(
         "How was your day?",
         "good",

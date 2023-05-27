@@ -1,6 +1,6 @@
 {
-  "name": "vstodo",
-  "displayName": "VSTodo",
+  "name": "doclin",
+  "displayName": "doclin",
   "description": "Keeping track of stuff",
   "version": "0.0.1",
   "engines": {
@@ -10,12 +10,12 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:vstodo.helloWorld",
-    "onCommand:vstodo.askQuestion",
-    "onCommand:vstodo.refresh",
-    "onCommand:vstodo.addTodo",
-    "onCommand:vstodo.authenticate",
-    "onView:vstodo-sidebar",
+    "onCommand:doclin.helloWorld",
+    "onCommand:doclin.askQuestion",
+    "onCommand:doclin.refresh",
+    "onCommand:doclin.addTodo",
+    "onCommand:doclin.authenticate",
+    "onView:doclin-sidebar",
     "onStartupFinished"
   ],
   "main": "./dist/extension.js",
@@ -23,46 +23,46 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "vstodo-sidebar-view",
-          "title": "VSTodo",
+          "id": "doclin-sidebar-view",
+          "title": "doclin",
           "icon": "media/checklist.svg"
         }
       ]
     },
     "views": {
-      "vstodo-sidebar-view": [
+      "doclin-sidebar-view": [
         {
           "type": "webview",
-          "id": "vstodo-sidebar",
-          "name": "VSTodo",
+          "id": "doclin-sidebar",
+          "name": "doclin",
           "icon": "media/checklist.svg",
-          "contextualTitle": "VSTodo"
+          "contextualTitle": "doclin"
         }
       ]
     },
     "commands": [
       {
-        "command": "vstodo.helloWorld",
+        "command": "doclin.helloWorld",
         "title": "Hello World"
       },
       {
-        "command": "vstodo.askQuestion",
-        "category": "VSTodo",
+        "command": "doclin.askQuestion",
+        "category": "doclin",
         "title": "Ask Question"
       },
       {
-        "command": "vstodo.refresh",
-        "category": "VSTodo",
+        "command": "doclin.refresh",
+        "category": "doclin",
         "title": "Refresh"
       },
       {
-        "command": "vstodo.addTodo",
-        "category": "VSTodo",
+        "command": "doclin.addTodo",
+        "category": "doclin",
         "title": "Add Todo From Selection"
       },
       {
-        "command": "vstodo.authenticate",
-        "category": "VSTodo",
+        "command": "doclin.authenticate",
+        "category": "doclin",
         "title": "Authenticate"
       }
     ]

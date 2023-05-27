@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-const KEY = "vstodotoken";
+const KEY = "doclintoken";
 
 export class TokenManager {
   static globalState: vscode.Memento;

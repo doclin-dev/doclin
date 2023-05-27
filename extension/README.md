@@ -1,6 +1,6 @@
-# vstodo README
+# doclin README
 
-This is the README for your extension "vstodo". After writing up a brief description, we recommend including the following sections.
+This is the README for your extension "doclin". After writing up a brief description, we recommend including the following sections.
 
 ## Features
 

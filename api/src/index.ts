@@ -15,7 +15,7 @@ import { isAuth } from "./isAuth";
 const main = async () => {
   await createConnection({
     type: "postgres",
-    database: "vstodo",
+    database: "doclin",
     entities: [join(__dirname, "./entities/*.*")],
     logging: !__prod__,
     synchronize: !__prod__,
