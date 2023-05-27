@@ -15,7 +15,8 @@
     "onCommand:vstodo.refresh",
     "onCommand:vstodo.addTodo",
     "onCommand:vstodo.authenticate",
-    "onView:vstodo-sidebar"
+    "onView:vstodo-sidebar",
+    "onStartupFinished"
   ],
   "main": "./dist/extension.js",
   "contributes": {

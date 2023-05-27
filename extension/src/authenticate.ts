@@ -3,7 +3,7 @@ import { apiBaseUrl } from "./constants";
 import * as polka from "polka";
 import { TokenManager } from "./TokenManager";
 
-export const authenticate = (fn: () => void) => {
+export const authenticate = (fn?: () => void) => {
   const app = polka();
 
   app.get(`/auth/:token`, async (req, res) => {
@@ -14,7 +14,9 @@ export const authenticate = (fn: () => void) => {
     }
 
     await TokenManager.setToken(token);
-    fn();
+    if (fn) {
+      fn();
+    }
 
     res.end(`<h1>auth was successful, you can close this now</h1>`);
 
