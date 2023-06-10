@@ -24,8 +24,6 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand("doclin.addTodo", async () => {
-      console.log("add todo is pressed");
-
       const { activeTextEditor } = vscode.window;
 
       const view = vscode.window

@@ -14,6 +14,5 @@ Tutorial: https://www.youtube.com/watch?v=a5DX5pQ9p5M&t
 
 ## To run extension 
 
-1. npm run watch
-2. go to RUN > Debug. Or simply hit F5
+1. go to RUN > Debug. Or simply hit F5
 
