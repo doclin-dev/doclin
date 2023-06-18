@@ -526,7 +526,7 @@ var app = (function () {
     			t1 = space();
     			attr_dev(li, "class", "svelte-1o37f97");
     			toggle_class(li, "complete", /*todo*/ ctx[12].completed);
-    			add_location(li, file, 86, 8, 3158);
+    			add_location(li, file, 86, 8, 3173);
     			this.first = li;
     		},
     		m: function mount(target, anchor) {
@@ -614,7 +614,7 @@ var app = (function () {
     			add_location(textarea, file, 80, 4, 2955);
     			add_location(button, file, 81, 4, 3045);
     			add_location(form, file, 78, 0, 2893);
-    			add_location(ul, file, 84, 0, 3109);
+    			add_location(ul, file, 84, 0, 3124);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -640,7 +640,7 @@ var app = (function () {
     				dispose = [
     					listen_dev(textarea, "input", /*textarea_input_handler*/ ctx[6]),
     					listen_dev(textarea, "input", /*handleThreadMessageUpdate*/ ctx[4], false, false, false),
-    					listen_dev(button, "click", /*submitThreadMessage*/ ctx[5], false, false, false),
+    					listen_dev(button, "click", prevent_default(/*submitThreadMessage*/ ctx[5]), false, true, false),
     					listen_dev(form, "submit", prevent_default(/*submitThreadMessage*/ ctx[5]), false, true, false)
     				];
 

@@ -73,7 +73,7 @@
 <form
     on:submit|preventDefault={submitThreadMessage}>
     <textarea bind:value={threadMessage} on:input={handleThreadMessageUpdate}></textarea>
-    <button on:click={submitThreadMessage}>Submit</button>
+    <button on:click|preventDefault={submitThreadMessage}>Submit</button>
 </form>
 
 <ul>
