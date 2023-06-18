@@ -50,7 +50,7 @@ export function activate(context: vscode.ExtensionContext) {
       // Need to check when the sidebar is loaded and then add the textSelection to sidebar
 
       sidebarProvider._view?.webview.postMessage({
-        type: "new-todo",
+        type: "populate-thread-message",
         value: text,
       });
     })

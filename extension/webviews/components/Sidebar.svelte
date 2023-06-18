@@ -9,7 +9,7 @@
     let page: "todos" | "contact" = tsvscode.getState()?.page || "todos";
 
     $: {
-        tsvscode.setState({ page });
+        tsvscode.setState({ ...tsvscode.getState(), page });
     }
 
     onMount(async () => {

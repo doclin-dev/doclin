@@ -4,7 +4,8 @@
 
     export let user: User;
     export let accessToken: string;
-    let text = "";
+
+    let threadMessage = tsvscode.getState()?.threadMessage || "";
     let todos: Array<{ text: string; completed: boolean; id: number }> = [];
 
     async function addTodo(t: string) {
@@ -22,12 +23,23 @@
         todos = [todo, ...todos];
     }
 
+    async function populateThreadMessageField(message: string) {
+        threadMessage += message;
+        tsvscode.setState({...tsvscode.getState(), threadMessage});
+    }
+
+    function handleThreadMessageUpdate() {
+        tsvscode.setState({...tsvscode.getState(), threadMessage});
+        console.log(tsvscode.getState());
+    }
+
     onMount(async () => {
         window.addEventListener("message", async (event) => {
             const message = event.data;
             switch (message.type) {
-                case "new-todo":
-                    addTodo(message.value);
+                case "populate-thread-message":
+                    console.log(message.value);
+                    populateThreadMessageField(message.value);
                     break;
             }
         });
@@ -39,6 +51,8 @@
         });
         const payload = await response.json();
         todos = payload.todos;
+
+        console.log(tsvscode.getState());
     });
 </script>
 
@@ -52,10 +66,10 @@
 
 <form
     on:submit|preventDefault={async () => {
-        addTodo(text);
-        text = '';
+        addTodo(threadMessage);
+        threadMessage = "";
     }}>
-    <input bind:value={text} />
+    <textarea bind:value={threadMessage} on:input={handleThreadMessageUpdate}></textarea>
 </form>
 
 <ul>
