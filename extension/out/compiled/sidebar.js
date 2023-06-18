@@ -504,7 +504,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (81:4) {#each todos as todo (todo.id)}
+    // (86:4) {#each todos as todo (todo.id)}
     function create_each_block(key_1, ctx) {
     	let li;
     	let t0_value = /*todo*/ ctx[12].text + "";
@@ -514,7 +514,7 @@ var app = (function () {
     	let dispose;
 
     	function click_handler() {
-    		return /*click_handler*/ ctx[8](/*todo*/ ctx[12], /*each_value*/ ctx[13], /*todo_index*/ ctx[14]);
+    		return /*click_handler*/ ctx[7](/*todo*/ ctx[12], /*each_value*/ ctx[13], /*todo_index*/ ctx[14]);
     	}
 
     	const block = {
@@ -526,7 +526,7 @@ var app = (function () {
     			t1 = space();
     			attr_dev(li, "class", "svelte-1o37f97");
     			toggle_class(li, "complete", /*todo*/ ctx[12].completed);
-    			add_location(li, file, 81, 8, 2897);
+    			add_location(li, file, 86, 8, 3158);
     			this.first = li;
     		},
     		m: function mount(target, anchor) {
@@ -558,7 +558,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(81:4) {#each todos as todo (todo.id)}",
+    		source: "(86:4) {#each todos as todo (todo.id)}",
     		ctx
     	});
 
@@ -574,6 +574,8 @@ var app = (function () {
     	let form;
     	let textarea;
     	let t3;
+    	let button;
+    	let t5;
     	let ul;
     	let each_blocks = [];
     	let each_1_lookup = new Map();
@@ -599,16 +601,20 @@ var app = (function () {
     			form = element("form");
     			textarea = element("textarea");
     			t3 = space();
+    			button = element("button");
+    			button.textContent = "Submit";
+    			t5 = space();
     			ul = element("ul");
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].c();
     			}
 
-    			add_location(div, file, 69, 0, 2600);
-    			add_location(textarea, file, 76, 4, 2753);
-    			add_location(form, file, 71, 0, 2631);
-    			add_location(ul, file, 79, 0, 2848);
+    			add_location(div, file, 76, 0, 2862);
+    			add_location(textarea, file, 80, 4, 2955);
+    			add_location(button, file, 81, 4, 3045);
+    			add_location(form, file, 78, 0, 2893);
+    			add_location(ul, file, 84, 0, 3109);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -621,7 +627,9 @@ var app = (function () {
     			insert_dev(target, form, anchor);
     			append_dev(form, textarea);
     			set_input_value(textarea, /*threadMessage*/ ctx[2]);
-    			insert_dev(target, t3, anchor);
+    			append_dev(form, t3);
+    			append_dev(form, button);
+    			insert_dev(target, t5, anchor);
     			insert_dev(target, ul, anchor);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
@@ -631,8 +639,9 @@ var app = (function () {
     			if (!mounted) {
     				dispose = [
     					listen_dev(textarea, "input", /*textarea_input_handler*/ ctx[6]),
-    					listen_dev(textarea, "input", /*handleThreadMessageUpdate*/ ctx[5], false, false, false),
-    					listen_dev(form, "submit", prevent_default(/*submit_handler*/ ctx[7]), false, true, false)
+    					listen_dev(textarea, "input", /*handleThreadMessageUpdate*/ ctx[4], false, false, false),
+    					listen_dev(button, "click", /*submitThreadMessage*/ ctx[5], false, false, false),
+    					listen_dev(form, "submit", prevent_default(/*submitThreadMessage*/ ctx[5]), false, true, false)
     				];
 
     				mounted = true;
@@ -658,7 +667,7 @@ var app = (function () {
     			if (detaching) detach_dev(div);
     			if (detaching) detach_dev(t2);
     			if (detaching) detach_dev(form);
-    			if (detaching) detach_dev(t3);
+    			if (detaching) detach_dev(t5);
     			if (detaching) detach_dev(ul);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
@@ -760,6 +769,14 @@ var app = (function () {
     		console.log(tsvscode.getState());
     	}
 
+    	function submitThreadMessage() {
+    		return __awaiter(this, void 0, void 0, function* () {
+    			addTodo(threadMessage);
+    			$$invalidate(2, threadMessage = "");
+    			tsvscode.setState(Object.assign(Object.assign({}, tsvscode.getState()), { threadMessage }));
+    		});
+    	}
+
     	onMount(() => __awaiter(void 0, void 0, void 0, function* () {
     		window.addEventListener("message", event => __awaiter(void 0, void 0, void 0, function* () {
     			const message = event.data;
@@ -792,11 +809,6 @@ var app = (function () {
     		$$invalidate(2, threadMessage);
     	}
 
-    	const submit_handler = async () => {
-    		addTodo(threadMessage);
-    		$$invalidate(2, threadMessage = "");
-    	};
-
     	const click_handler = async (todo, each_value, todo_index) => {
     		$$invalidate(3, each_value[todo_index].completed = !todo.completed, todos);
 
@@ -827,7 +839,8 @@ var app = (function () {
     		todos,
     		addTodo,
     		populateThreadMessageField,
-    		handleThreadMessageUpdate
+    		handleThreadMessageUpdate,
+    		submitThreadMessage
     	});
 
     	$$self.$inject_state = $$props => {
@@ -848,10 +861,9 @@ var app = (function () {
     		accessToken,
     		threadMessage,
     		todos,
-    		addTodo,
     		handleThreadMessageUpdate,
+    		submitThreadMessage,
     		textarea_input_handler,
-    		submit_handler,
     		click_handler
     	];
     }

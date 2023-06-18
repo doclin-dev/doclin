@@ -33,6 +33,12 @@
         console.log(tsvscode.getState());
     }
 
+    async function submitThreadMessage() {
+        addTodo(threadMessage);
+        threadMessage = "";
+        tsvscode.setState({...tsvscode.getState(), threadMessage});
+    }
+
     onMount(async () => {
         window.addEventListener("message", async (event) => {
             const message = event.data;
@@ -65,11 +71,9 @@
 <div>Hello: {user.name}</div>
 
 <form
-    on:submit|preventDefault={async () => {
-        addTodo(threadMessage);
-        threadMessage = "";
-    }}>
+    on:submit|preventDefault={submitThreadMessage}>
     <textarea bind:value={threadMessage} on:input={handleThreadMessageUpdate}></textarea>
+    <button on:click={submitThreadMessage}>Submit</button>
 </form>
 
 <ul>
