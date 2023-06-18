@@ -10,6 +10,7 @@ import passport from "passport";
 import jwt from "jsonwebtoken";
 import cors from "cors";
 const router = require("./routes/router");
+const bodyParser = require("body-parser");
 
 const main = async () => {
   await createConnection({
@@ -29,6 +30,13 @@ const main = async () => {
   app.use(cors({ origin: "*" }));
   app.use(passport.initialize());
   app.use(express.json());
+
+  app.use(bodyParser.json());
+  app.use(
+    bodyParser.urlencoded({
+      extended: true,
+    })
+  );
 
   passport.use(
     new GitHubStrategy(

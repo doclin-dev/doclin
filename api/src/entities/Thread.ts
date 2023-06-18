@@ -19,14 +19,14 @@ export class Thread extends BaseEntity {
   @Column("text", { unique: true })
   message: string;
 
-  @Column()
+  @Column({ nullable: true})
   userId: number;
 
   @ManyToOne(() => User, (u) => u.threads)
   @JoinColumn({ name: "userId" })
   user: Promise<User>;
 
-  @Column()
+  @Column({ nullable: true})
   projectId: number;
 
   @ManyToOne(() => Project, (p) => p.threads)

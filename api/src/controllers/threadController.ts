@@ -5,6 +5,6 @@ export const post = async (req: any, res: any) => {
         message: req.body.message,
         userId: req.userId,
     }).save();
-    
+
     res.send({ thread });
 }
