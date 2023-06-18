@@ -2,6 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const threadController = require("../controllers/threadController");
+const projectController = require("../controllers/projectController");
 
 import { Todo } from "../entities/Todo";
 import { User } from "../entities/User";
@@ -87,6 +88,10 @@ router.get("/", (_req: any, res: any) => {
     res.send("hello");
 });
 
-router.post("/threads", threadController.post)
+router.post("/threads", threadController.post);
+router.get("/project/:projectId", projectController.get);
+router.post("/project", projectController.post);
+router.get("/threads", threadController.get);
+router.post("/threads/:id/comment", threadController.postComment);
 
 module.exports = router;
