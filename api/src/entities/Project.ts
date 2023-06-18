@@ -22,7 +22,7 @@ export class Project extends BaseEntity {
   @Column("text")
   url: string;
 
-  @Column()
+  @Column({ nullable: true})
   userId: number;
 
   @ManyToOne(() => User, (u) => u.todos)

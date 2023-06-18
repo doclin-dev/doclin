@@ -15,20 +15,17 @@ export class Comment extends BaseEntity {
   id: number;
 
   @Column("text")
-  name: string;
+  message: string;
 
-  @Column("text")
-  url: string;
+  @Column({nullable: true})
+  userId: number;
 
   @Column()
-  userId: number;
+  threadId: number;
 
   @ManyToOne(() => User, (u) => u.comments)
   @JoinColumn({ name: "userId" })
   user: Promise<User>;
-
-  @Column()
-  threadId: number;
 
   @ManyToOne(() => Thread, (t) => t.comments)
   @JoinColumn({ name: "threadId" })

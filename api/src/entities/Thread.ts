@@ -16,7 +16,7 @@ export class Thread extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column("text", { unique: true })
+  @Column("text")
   message: string;
 
   @Column({ nullable: true})
@@ -28,6 +28,10 @@ export class Thread extends BaseEntity {
 
   @Column({ nullable: true})
   projectId: number;
+
+  @Column("text", { nullable: true})
+  filePath: string;
+
 
   @ManyToOne(() => Project, (p) => p.threads)
   @JoinColumn({ name: "projectId" })
