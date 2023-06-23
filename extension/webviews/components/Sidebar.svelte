@@ -1,12 +1,12 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import type { User } from "../types";
-    import Todos from "./Todos.svelte";
+    import Threads from "./Threads.svelte";
 
     let accessToken = "";
     let loading = true;
     let user: User | null = null;
-    let page: "todos" | "contact" = tsvscode.getState()?.page || "todos";
+    let page: "threads" | "contact" = tsvscode.getState()?.page || "todos";
 
     $: {
         tsvscode.setState({ ...tsvscode.getState(), page });
@@ -36,8 +36,8 @@
 {#if loading}
     <div>loading...</div>
 {:else if user}
-    {#if page === 'todos'}
-        <Todos {user} {accessToken} />
+    {#if page === 'threads'}
+        <Threads {user} {accessToken} />
         <button
             on:click={() => {
                 page = 'contact';
@@ -46,7 +46,7 @@
         <div>Contact me here: adlkfjjqioefeqio</div>
         <button
             on:click={() => {
-                page = 'todos';
+                page = 'threads';
             }}>go back</button>
     {/if}
     <button

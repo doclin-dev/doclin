@@ -13,14 +13,19 @@ export const post = async (req: any, res: any) => {
 
 export const get = async (req: any, res: any) => {
     const filepath = req.query.filePath;
+    let threads;
 
-    const threads = await Thread.find({filePath:filepath});
+    if (filepath == null) {
+        threads = await Thread.find();
+    } else {
+        threads = await Thread.find({filePath:filepath});
+    }
+
     if (!threads) {
         res.send({ threads : null });
         return;
     };
 
-    // const threads = await Thread.find({});
     res.send ({threads});
 }
 

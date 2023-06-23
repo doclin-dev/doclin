@@ -6,21 +6,21 @@
     export let accessToken: string;
 
     let threadMessage = tsvscode.getState()?.threadMessage || "";
-    let todos: Array<{ text: string; completed: boolean; id: number }> = [];
+    let threads: Array<{ message: string; id: number }> = [];
 
-    async function addTodo(t: string) {
-        const response = await fetch(`${apiBaseUrl}/todo`, {
+    async function postThreadMessage(t: string) {
+    const response = await fetch(`${apiBaseUrl}/threads`, {
             method: "POST",
             body: JSON.stringify({
-                text: t,
+                message: t,
             }),
             headers: {
                 "content-type": "application/json",
                 authorization: `Bearer ${accessToken}`,
             },
         });
-        const { todo } = await response.json();
-        todos = [todo, ...todos];
+        const { thread } = await response.json();
+        threads = [thread, ...threads];
     }
 
     async function populateThreadMessageField(message: string) {
@@ -34,7 +34,7 @@
     }
 
     async function submitThreadMessage() {
-        addTodo(threadMessage);
+        postThreadMessage(threadMessage);
         threadMessage = "";
         tsvscode.setState({...tsvscode.getState(), threadMessage});
     }
@@ -50,15 +50,15 @@
             }
         });
 
-        const response = await fetch(`${apiBaseUrl}/todo`, {
+        const response = await fetch(`${apiBaseUrl}/threads`, {
             headers: {
                 authorization: `Bearer ${accessToken}`,
             },
         });
         const payload = await response.json();
-        todos = payload.todos;
+        threads = payload.threads;
 
-        console.log(tsvscode.getState());
+        console.log(payload);
     });
 </script>
 
@@ -77,24 +77,9 @@
 </form>
 
 <ul>
-    {#each todos as todo (todo.id)}
-        <li
-            class:complete={todo.completed}
-            on:click={async () => {
-                todo.completed = !todo.completed;
-                const response = await fetch(`${apiBaseUrl}/todo`, {
-                    method: 'PUT',
-                    body: JSON.stringify({
-                        id: todo.id,
-                    }),
-                    headers: {
-                        'content-type': 'application/json',
-                        authorization: `Bearer ${accessToken}`,
-                    },
-                });
-                console.log(await response.json());
-            }}>
-            {todo.text}
+    {#each threads as thread (thread.id)}
+        <li>
+            {thread.message}
         </li>
     {/each}
 </ul>
