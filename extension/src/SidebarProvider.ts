@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { authenticate } from "./authenticate";
+import { authenticate } from "./controllers/authenticationController";
 import { apiBaseUrl } from "./constants";
 import { getNonce } from "./getNonce";
 import { TokenManager } from "./TokenManager";

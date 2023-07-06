@@ -1,10 +1,11 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import { authenticate } from "./authenticate";
+import { authenticate } from "./controllers/authenticationController";
 import { HelloWorldPanel } from "./HelloWorldPanel";
 import { SidebarProvider } from "./SidebarProvider";
 import { TokenManager } from "./TokenManager";
+import { addCodeSnippet } from "./controllers/threadController";
 
 export function activate(context: vscode.ExtensionContext) {
   TokenManager.globalState = context.globalState;
@@ -14,7 +15,7 @@ export function activate(context: vscode.ExtensionContext) {
   const item = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right
   );
-  item.text = "$(beaker) Add Todo";
+  item.text = "$(beaker) Add Doc";
   item.command = "doclin.addTodo";
   item.show();
 
@@ -23,36 +24,8 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("doclin.addTodo", async () => {
-      const { activeTextEditor } = vscode.window;
-
-      const view = vscode.window
-
-      if (!activeTextEditor) {
-        vscode.window.showInformationMessage("No active text editor");
-        return;
-      }
-
-      vscode.commands.executeCommand('workbench.view.extension.doclin-sidebar-view');
-
-      const text = activeTextEditor.document.getText(
-        activeTextEditor.selection
-      );
-
-      const pauseExecution = () => {
-        return new Promise((resolve) => {
-          setTimeout(resolve, 500); // Resolves the promise after 2 seconds
-        });
-      }
-
-      await pauseExecution(); 
-      // Bug: not the most ideal way to fix this!!
-      // Need to check when the sidebar is loaded and then add the textSelection to sidebar
-
-      sidebarProvider._view?.webview.postMessage({
-        type: "populate-thread-message",
-        value: text,
-      });
+    vscode.commands.registerCommand("doclin.addTodo", () => {
+      addCodeSnippet(sidebarProvider);
     })
   );
 
@@ -70,7 +43,7 @@ export function activate(context: vscode.ExtensionContext) {
       try {
         authenticate();
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     })
   );

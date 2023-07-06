@@ -30,7 +30,6 @@
 
     function handleThreadMessageUpdate() {
         tsvscode.setState({...tsvscode.getState(), threadMessage});
-        console.log(tsvscode.getState());
     }
 
     async function submitThreadMessage() {
@@ -44,7 +43,6 @@
             const message = event.data;
             switch (message.type) {
                 case "populate-thread-message":
-                    console.log(message.value);
                     populateThreadMessageField(message.value);
                     break;
             }
@@ -57,8 +55,6 @@
         });
         const payload = await response.json();
         threads = payload.threads;
-
-        console.log(payload);
     });
 </script>
 
