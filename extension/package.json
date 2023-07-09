@@ -107,6 +107,7 @@
     "webpack-cli": "^4.2.0"
   },
   "dependencies": {
-    "polka": "^0.5.2"
+    "polka": "^0.5.2",
+    "tinymce": "^6.5.1"
   }
 }
