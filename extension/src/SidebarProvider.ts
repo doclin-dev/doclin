@@ -88,6 +88,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     const tinymceScriptUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, 'node_modules', 'tinymce', 'tinymce.min.js')
     );
+
+    const quillStylesheetUri = webview.asWebviewUri(
+      vscode.Uri.parse("https://cdn.quilljs.com/1.3.6/quill.snow.css")
+    );
+    const quillScriptUri = webview.asWebviewUri(
+      vscode.Uri.parse("https://cdn.quilljs.com/1.3.6/quill.js")
+    );
     
 
     // Use a nonce to only allow a specific script to be run.
@@ -107,16 +114,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				<link href="${styleVSCodeUri}" rel="stylesheet">
         <link href="${styleMainUri}" rel="stylesheet">
         <link rel="stylesheet" href="${tinymceStylesheetUri}">
+        <link href="${quillStylesheetUri}" rel="stylesheet">
         <script nonce="${nonce}">
           const tsvscode = acquireVsCodeApi();
           const apiBaseUrl = ${JSON.stringify(apiBaseUrl)}
         </script>
 			</head>
       <body>
-      
         <script nonce="${nonce}" src="${scriptUri}"></script>
+        <script src="${quillScriptUri}"></script>
         <script src="${tinymceScriptUri}"></script>
-        
     </body>
 			</html>`;
   }

@@ -611,19 +611,7 @@ var app = (function () {
 
     				mounted = true;
     			}
-				// this.initTinyMCE();
-				tinymce.init({
-					selector: 'textarea',
-					// ...other TinyMCE options...
-				});
     		},
-
-			// initTinyMCE: function() {
-			// 	tinymce.init({
-			// 		selector: 'textarea',
-			// 		// ...other TinyMCE options...
-			// 	});
-			// },
 
     		p: function update(ctx, [dirty]) {
     			if (dirty & /*user*/ 1 && t1_value !== (t1_value = /*user*/ ctx[0].name + "")) set_data_dev(t1, t1_value);
@@ -737,9 +725,6 @@ var app = (function () {
 
     	function populateThreadMessageField(message) {
     		return __awaiter(this, void 0, void 0, function* () {
-				const currentContent = tinymce.activeEditor.getContent();
-				const newContent = currentContent + message;
-				tinymce.activeEditor.setContent(newContent);
     			$$invalidate(1, threadMessage += message);
     			tsvscode.setState(Object.assign(Object.assign({}, tsvscode.getState()), { threadMessage }));
     		});
@@ -751,10 +736,8 @@ var app = (function () {
 
     	function submitThreadMessage() {
     		return __awaiter(this, void 0, void 0, function* () {
-				const content = tinymce.activeEditor.getContent({ format: 'text' });
-    			postThreadMessage(content);
+    			postThreadMessage(threadMessage);
     			$$invalidate(1, threadMessage = "");
-				tinymce.activeEditor.setContent(threadMessage);
     			tsvscode.setState(Object.assign(Object.assign({}, tsvscode.getState()), { threadMessage }));
     		});
     	}

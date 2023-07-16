@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Quill from "quill";
     import { onMount } from "svelte";
     import type { User } from "../types";
 
@@ -9,16 +10,16 @@
     let threads: Array<{ message: string; id: number }> = [];
 
     async function postThreadMessage(t: string) {
-    const response = await fetch(`${apiBaseUrl}/threads`, {
-            method: "POST",
-            body: JSON.stringify({
-                message: t,
-            }),
-            headers: {
-                "content-type": "application/json",
-                authorization: `Bearer ${accessToken}`,
-            },
-        });
+        const response = await fetch(`${apiBaseUrl}/threads`, {
+                method: "POST",
+                body: JSON.stringify({
+                    message: t,
+                }),
+                headers: {
+                    "content-type": "application/json",
+                    authorization: `Bearer ${accessToken}`,
+                },
+            });
         const { thread } = await response.json();
         threads = [thread, ...threads];
     }
@@ -46,7 +47,13 @@
                     populateThreadMessageField(message.value);
                     break;
             }
-        });
+        })
+
+        tinymce.init({
+					selector: '#textEditor',
+					// ...other TinyMCE options...
+		});
+
 
         const response = await fetch(`${apiBaseUrl}/threads`, {
             headers: {
@@ -68,7 +75,7 @@
 
 <form
     on:submit|preventDefault={submitThreadMessage}>
-    <textarea bind:value={threadMessage} on:input={handleThreadMessageUpdate}></textarea>
+    <textarea id="textEditor" bind:value={threadMessage} on:input={handleThreadMessageUpdate}></textarea>
     <button on:click|preventDefault={submitThreadMessage}>Submit</button>
 </form>
 
