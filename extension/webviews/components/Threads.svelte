@@ -2,13 +2,15 @@
     import Quill from "quill";
     import { onMount } from "svelte";
     import type { User } from "../types";
+    import tinymce from "tinymce";
 
     export let user: User;
     export let accessToken: string;
 
     let threadMessage = tsvscode.getState()?.threadMessage || "";
     let threads: Array<{ message: string; id: number }> = [];
-
+    console.log(tinymce);
+    console.log('threads');
     async function postThreadMessage(t: string) {
         const response = await fetch(`${apiBaseUrl}/threads`, {
                 method: "POST",
@@ -49,10 +51,10 @@
             }
         })
 
-        tinymce.init({
-					selector: '#textEditor',
-					// ...other TinyMCE options...
-		});
+        // tinymce.init({
+		// 			selector: '#textEditor',
+		// 			// ...other TinyMCE options...
+		// });
 
 
         const response = await fetch(`${apiBaseUrl}/threads`, {
