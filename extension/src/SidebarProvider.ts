@@ -81,16 +81,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       vscode.Uri.joinPath(this._extensionUri, "out", "compiled/sidebar.css")
     );
 
-    const tinymceStylesheetUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, 'node_modules', 'tinymce', 'skins', 'content', 'dark', 'content.min.css')
-    );
-
-    const tinymceScriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, 'node_modules', 'tinymce/tinymce.min.js')
-    );
-
-    console.log('t',tinymceScriptUri);
-
     const quillStylesheetUri = webview.asWebviewUri(
       vscode.Uri.parse("https://cdn.quilljs.com/1.3.6/quill.snow.css")
     );
@@ -115,7 +105,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				<link href="${styleResetUri}" rel="stylesheet">
 				<link href="${styleVSCodeUri}" rel="stylesheet">
         <link href="${styleMainUri}" rel="stylesheet">
-        <link rel="stylesheet" href="${tinymceStylesheetUri}">
         <link href="${quillStylesheetUri}" rel="stylesheet">
         <script nonce="${nonce}">
           const tsvscode = acquireVsCodeApi();
@@ -123,13 +112,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         </script>
 			</head>
       <body>
+        <script nonce="${nonce}" src="${quillScriptUri}"></script>
         <script nonce="${nonce}" src="${scriptUri}"></script>
-        <script nonce="${nonce}" src="${tinymceScriptUri}">
-          tinymce.init({
-            selector: '#textEditor',
-            // ...other TinyMCE options...
-            });
-        </script>
     </body>
 			</html>`;
   }

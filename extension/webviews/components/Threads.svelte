@@ -1,16 +1,14 @@
 <script lang="ts">
-    import Quill from "quill";
     import { onMount } from "svelte";
     import type { User } from "../types";
-    import tinymce from "tinymce";
 
     export let user: User;
     export let accessToken: string;
-
+    
+    let quillEditor;
     let threadMessage = tsvscode.getState()?.threadMessage || "";
     let threads: Array<{ message: string; id: number }> = [];
-    console.log(tinymce);
-    console.log('threads');
+
     async function postThreadMessage(t: string) {
         const response = await fetch(`${apiBaseUrl}/threads`, {
                 method: "POST",
@@ -27,17 +25,26 @@
     }
 
     async function populateThreadMessageField(message: string) {
+        // const editorContent = quill.root.innerHTML;
+        
         threadMessage += message;
+        quillEditor.setText(threadMessage);
+        quillEditor.formatLine(0, threadMessage.length, 'code-block', true);
+        threadMessage="";
         tsvscode.setState({...tsvscode.getState(), threadMessage});
     }
 
     function handleThreadMessageUpdate() {
+        // threadMessage = quill.get;
         tsvscode.setState({...tsvscode.getState(), threadMessage});
     }
 
     async function submitThreadMessage() {
+        threadMessage = quillEditor.root.innerHTML;
+        console.log(threadMessage);
         postThreadMessage(threadMessage);
         threadMessage = "";
+        quillEditor.setText(threadMessage);
         tsvscode.setState({...tsvscode.getState(), threadMessage});
     }
 
@@ -51,11 +58,20 @@
             }
         })
 
-        // tinymce.init({
-		// 			selector: '#textEditor',
-		// 			// ...other TinyMCE options...
-		// });
-
+        quillEditor = new Quill('#textEditor', {
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline', 'strike'],
+                    ['link', 'blockquote', 'code-block', 'image'],
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    [{ color: [] }, { background: [] }]
+                ]
+            },
+            theme: 'snow'
+        });   
+        
+        quillEditor.theme.modules.toolbar.container.style.background = '#f1f1f1';
+        quillEditor.theme.modules.toolbar.container.style.border = 'none';
 
         const response = await fetch(`${apiBaseUrl}/threads`, {
             headers: {
@@ -68,8 +84,31 @@
 </script>
 
 <style>
-    .complete {
-        text-decoration: line-through;
+    #textEditor{
+        width: 100%;
+        height: 150px;
+        resize: both; 
+        overflow: auto;
+    }
+
+    .threadContainer{
+        background-color: rgb(46, 48, 48);
+        padding: 0.5rem;
+        gap: 0.25;
+        border-radius: 5px;
+        border: 2px;
+        margin-bottom: 0.5rem;
+    }
+    .editContainer {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #editButton {
+        width: 30px;
+        
     }
 </style>
 
@@ -77,14 +116,20 @@
 
 <form
     on:submit|preventDefault={submitThreadMessage}>
-    <textarea id="textEditor" bind:value={threadMessage} on:input={handleThreadMessageUpdate}></textarea>
+    <div id="textEditor"></div>
     <button on:click|preventDefault={submitThreadMessage}>Submit</button>
 </form>
 
-<ul>
+<div id='viewer'>
     {#each threads as thread (thread.id)}
-        <li>
-            {thread.message}
-        </li>
+    <div class='threadContainer'>
+        <div class='editContainer'>
+            {user.name}
+            <button id='editButton'>Edit</button>
+        </div>
+        <div>
+            {@html thread.message}
+        </div> 
+    </div>
     {/each}
-</ul>
+</div>
