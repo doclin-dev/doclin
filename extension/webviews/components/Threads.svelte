@@ -25,11 +25,24 @@
     }
 
     async function populateThreadMessageField(message: string) {
-        // const editorContent = quill.root.innerHTML;
-        
-        threadMessage += message;
-        quillEditor.setText(threadMessage);
-        quillEditor.formatLine(0, threadMessage.length, 'code-block', true);
+        const selection = quillEditor.getSelection();
+        const cursorPosition = selection ? selection.index : quillEditor.getLength();
+
+        // Insert a line break to move the cursor to the next line
+        quillEditor.insertText(cursorPosition, "\n");
+
+        // Move the cursor to the end of the new line
+        quillEditor.setSelection(cursorPosition + 1);
+
+        // Apply code-block formatting to the incoming message
+        const range = quillEditor.getSelection(true);
+        quillEditor.formatLine(range.index, message.length + 1, "code-block", true);
+
+        // Insert the new message at the cursor position
+        quillEditor.insertText(cursorPosition + 1, message);
+
+        // Move the cursor to the end of the new message
+        quillEditor.setSelection(cursorPosition + 1 + message.length);
         threadMessage="";
         tsvscode.setState({...tsvscode.getState(), threadMessage});
     }
