@@ -1,17 +1,28 @@
 import { Project } from "../entities/Project";
 
-export const get = async (req:any, res: any) => {
-    const projectId = req.params.projectId;
-    const project = await Project.findOne(projectId);
+export const getRelevantProjects = async (req: any, res: any) => {
+    console.log(req.user);
+}
+
+export const getCurrentProject = async (req:any, res: any) => {
+    const currentProjectId = req.session.currentProjectId; // Get session variable
+    console.log('Session variable value: ' + currentProjectId);
+
+    let project;
+    
+    if (currentProjectId) {
+        project = await Project.findOne(currentProjectId);
+    }
+    
     if (!project) {
-        res.send({ proejct : null });
+        res.send({ project : null });
         return;
     }
 
     return res.send(project);
 };
 
-export const post = async (req:any, res:any) => {
+export const createProject = async (req:any, res:any) => {
     const project = await Project.create({
         name: req.body.name,
         url: req.body.url,

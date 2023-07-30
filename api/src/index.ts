@@ -9,8 +9,10 @@ import { Strategy as GitHubStrategy } from "passport-github";
 import passport from "passport";
 import jwt from "jsonwebtoken";
 import cors from "cors";
+
 const router = require("./routes/router");
 const bodyParser = require("body-parser");
+const session = require('express-session');
 
 const main = async () => {
   await createConnection({
@@ -37,6 +39,11 @@ const main = async () => {
       extended: true,
     })
   );
+  app.use(session({
+    secret: process.env.ACCESS_TOKEN_SECRET,
+    resave: false,
+    saveUninitialized: true
+  }));
 
   passport.use(
     new GitHubStrategy(

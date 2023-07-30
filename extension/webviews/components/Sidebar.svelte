@@ -2,17 +2,19 @@
     import { onMount } from "svelte";
     import type { User } from "../types";
     import Threads from "./Threads.svelte";
+    import InitializeProject from "./InitializeProject.svelte";
 
     let accessToken = "";
     let loading = true;
     let user: User | null = null;
-    let page: "threads" | "contact" = tsvscode.getState()?.page || "todos";
+    let page: "initializeProject" | "threads" | "contact" = tsvscode.getState()?.page;
 
     $: {
         tsvscode.setState({ ...tsvscode.getState(), page });
     }
 
     onMount(async () => {
+        page = "threads";
         window.addEventListener("message", async (event) => {
             const message = event.data;
             switch (message.type) {
@@ -29,6 +31,14 @@
             }
         });
 
+        const currentProject = await fetch(`${apiBaseUrl}/currentProject`, {
+            headers: {
+                authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        console.log(await currentProject.json());
+
         tsvscode.postMessage({ type: "get-token", value: undefined });
     });
 </script>
@@ -36,14 +46,16 @@
 {#if loading}
     <div>loading...</div>
 {:else if user}
-    {#if page === 'threads'}
+    {#if page === 'initializeProject'}
+        <InitializeProject {user} {accessToken}/>
+    {:else if page === 'threads'}
         <Threads {user} {accessToken} />
         <button
             on:click={() => {
                 page = 'contact';
             }}>go to contact</button>
-    {:else}
-        <div>Contact me here: adlkfjjqioefeqio</div>
+    {:else if page === 'contact'}
+        <div>Contact me here:</div>
         <button
             on:click={() => {
                 page = 'threads';
