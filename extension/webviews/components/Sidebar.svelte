@@ -37,8 +37,6 @@
             },
         });
 
-        console.log(await currentProject.json());
-
         tsvscode.postMessage({ type: "get-token", value: undefined });
     });
 </script>

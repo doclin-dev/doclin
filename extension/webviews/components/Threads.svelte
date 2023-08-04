@@ -41,7 +41,6 @@
 
     async function submitThreadMessage() {
         threadMessage = quillEditor.root.innerHTML;
-        console.log(threadMessage);
         postThreadMessage(threadMessage);
         threadMessage = "";
         quillEditor.setText(threadMessage);

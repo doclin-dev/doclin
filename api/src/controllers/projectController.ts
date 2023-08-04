@@ -1,13 +1,17 @@
 import { Project } from "../entities/Project";
+const { ILike } = require('typeorm');
 
 export const getExistingProjects = async (req: any, res: any) => {
+    const githubUrl: string = req.query.githubUrl;
+
     let projects = await Project.find({
         where: {
-            userId: req.userId
+            userId: req.userId,
+            url: ILike(`%${githubUrl}%`)
         }
     });
 
-    return res.send(projects);
+    return res.send({projects});
 }
 
 export const getCurrentProject = async (req:any, res: any) => {

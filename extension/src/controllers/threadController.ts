@@ -25,6 +25,19 @@ async function sh(cmd: string): Promise<ShellOutput> {
     });
   }
 
+export const getGithubUrl = async() : Promise<string> => {
+  if (vscode.workspace.workspaceFolders) {
+    const openedFolderUri: any = vscode.workspace.workspaceFolders[0]?.uri;
+    const openedFolderPath: string = openedFolderUri.fsPath;
+    
+    if (openedFolderPath) {
+      let { stdout }: {stdout: string} = await sh(`cd ${openedFolderPath} && git config --get remote.origin.url`);
+      return stdout;
+    }
+  }
+  return "";
+}
+
 export const addCodeSnippet = async (sidebarProvider: any) => {
     const { activeTextEditor } = vscode.window;
 

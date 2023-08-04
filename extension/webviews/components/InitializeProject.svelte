@@ -6,7 +6,7 @@
 
     let createProjectName: string = "";
     let githubUrl: string = "";
-    let existingProjects: Project[];
+    let existingProjects: Project[] = [];
 
     async function createNewProject() {
         const response = await fetch(`${apiBaseUrl}/project`, {
@@ -20,19 +20,33 @@
                 authorization: `Bearer ${accessToken}`,
             },
         });
-
-        console.log(await response.json());
     }
 
-    onMount(async () => {
-        const response = await fetch(`${apiBaseUrl}/existingProjects`, {
+    const fetchExistingProjects = async () => {
+        const response = await fetch(`${apiBaseUrl}/existingProjects?githubUrl=${githubUrl}`, {
             headers: {
                 authorization: `Bearer ${accessToken}`,
             },
         });
 
-        existingProjects = await response.json();
+        const json = await response.json();
+
+        existingProjects = json.projects;
         console.log(existingProjects);
+    }
+
+    onMount(async () => {
+        tsvscode.postMessage({ type: 'getGithubUrl', value: undefined });
+
+        window.addEventListener("message", async (event) => {
+            const message = event.data;
+            switch (message.type) {
+                case "getGithubUrl":
+                    githubUrl = message.value;
+                    fetchExistingProjects();
+                    break;
+            }
+        });        
     });
 </script>
 
@@ -43,14 +57,16 @@
 
     <form>
         <input placeholder="Enter project name" bind:value={createProjectName} />
-        <input placeholder="Github repo url" bind:value={githubUrl} />
+        <input placeholder="Github repo url" value={githubUrl} disabled/>
         <button on:click|preventDefault={createNewProject}>Submit</button>
     </form>
 
     <p>or select existing projects:</p>
 
     <ul>
-        <li><a href="#">Existing project 1</a></li>
+        {#each existingProjects as project (project.id)}
+            <li><a href="#">{project.name}</a></li>
+        {/each}
     </ul>
     
 </div>
