@@ -3,3 +3,9 @@ export type User = {
   name: string;
   githubId: string;
 };
+
+export type Project = {
+  name: string;
+  url: string;
+  userId: number;
+}

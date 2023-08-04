@@ -4,6 +4,7 @@ const router = express.Router();
 const threadController = require("../controllers/threadController");
 const projectController = require("../controllers/projectController");
 const userController = require("../controllers/userController");
+import { isAuth } from "../isAuth";
 
 import passport from "passport";
 
@@ -23,11 +24,12 @@ router.get("/", (_req: any, res: any) => {
     res.send("hello");
 });
 
-router.post("/threads", threadController.post);
-router.get("/threads", threadController.get);
-router.post("/threads/:id/comment", threadController.postComment);
+router.post("/threads", isAuth, threadController.post);
+router.get("/threads", isAuth, threadController.get);
+router.post("/threads/:id/comment", isAuth, threadController.postComment);
 
-router.get("/currentProject/", projectController.getCurrentProject);
-router.post("/project", projectController.createProject);
+router.get("/currentProject/", isAuth, projectController.getCurrentProject);
+router.get("/existingProjects/", isAuth, projectController.getExistingProjects);
+router.post("/project", isAuth, projectController.createProject);
 
 module.exports = router;

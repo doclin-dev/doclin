@@ -1,7 +1,13 @@
 import { Project } from "../entities/Project";
 
-export const getRelevantProjects = async (req: any, res: any) => {
-    console.log(req.user);
+export const getExistingProjects = async (req: any, res: any) => {
+    let projects = await Project.find({
+        where: {
+            userId: req.userId
+        }
+    });
+
+    return res.send(projects);
 }
 
 export const getCurrentProject = async (req:any, res: any) => {

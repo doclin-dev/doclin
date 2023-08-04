@@ -14,7 +14,7 @@
     }
 
     onMount(async () => {
-        page = "threads";
+        page = "initializeProject";
         window.addEventListener("message", async (event) => {
             const message = event.data;
             switch (message.type) {
