@@ -16,6 +16,7 @@
                 method: "POST",
                 body: JSON.stringify({
                     message: t,
+                    projectId: currentProject.id
                 }),
                 headers: {
                     "content-type": "application/json",
@@ -86,8 +87,10 @@
         
         quillEditor.theme.modules.toolbar.container.style.background = '#f1f1f1';
         quillEditor.theme.modules.toolbar.container.style.border = 'none';
+        
+        currentProject = tsvscode.getState()?.currentProject;
 
-        const response = await fetch(`${apiBaseUrl}/threads`, {
+        const response = await fetch(`${apiBaseUrl}/threads?projectId=${currentProject.id}`, {
             headers: {
                 authorization: `Bearer ${accessToken}`,
             },
@@ -95,7 +98,7 @@
         const payload = await response.json();
         threads = payload.threads;
 
-        currentProject = tsvscode.getState()?.currentProject;
+        
     });
 </script>
 

@@ -6,6 +6,7 @@ export const post = async (req: any, res: any) => {
         message: req.body.message,
         userId: req.userId,
         filePath: req.body.filePath,
+        projectId: req.body.projectId
     }).save();
 
     res.send({ thread });
@@ -14,12 +15,15 @@ export const post = async (req: any, res: any) => {
 export const get = async (req: any, res: any) => {
     const filepath = req.query.filePath;
     let threads;
-
-    if (filepath == null) {
-        threads = await Thread.find();
-    } else {
-        threads = await Thread.find({filePath:filepath});
+    let options: any = {
+        projectId: req.query.projectId
     }
+
+    if (filepath != null) {
+        options = {...options, filepath};
+    }
+
+    threads = await Thread.find(options);
 
     if (!threads) {
         res.send({ threads : null });
