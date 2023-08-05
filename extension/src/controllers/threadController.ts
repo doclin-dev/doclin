@@ -61,18 +61,6 @@ export const addCodeSnippet = async (sidebarProvider: any) => {
       activeTextEditor.selection
     );
 
-    // Provdies the line numbers of selected text in active editor. 
-    // const selection = activeTextEditor.selection;
-    // console.log(selection);
-    // if (!selection.isEmpty) {
-    //   const startLine = selection.start.line + 1; // Line numbers are zero-based, so add 1
-    //   const endLine = selection.end.line + 1;
-  
-    //   console.log(`Selected text lines: ${startLine}-${endLine}`);
-    // } else {
-    //     console.log('No text selected');
-    // }
-
     const threadMessage = `${gitRelativeFilePath} \`\`\`javascript
     ${message} \`\`\` `;
 
@@ -83,7 +71,7 @@ export const addCodeSnippet = async (sidebarProvider: any) => {
     }
 
     await pauseExecution(); 
-    // Bug: not the most ideal way to fix this!!
+    // TODO: bug - not the most ideal way to fix this!!
     // Need to check when the sidebar is loaded and then add the textSelection to sidebar
 
     sidebarProvider._view?.webview.postMessage({

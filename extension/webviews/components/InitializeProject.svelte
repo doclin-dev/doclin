@@ -1,16 +1,24 @@
 <script lang="ts">
     import type { User, Project } from "../types";
     import { onMount } from "svelte";
+    import { Page } from "../enums";
     export let user: User;
     export let accessToken: string;
+    export let page: Page;
 
     let createProjectName: string = "";
     let githubUrl: string = "";
     let existingProjects: Project[] = [];
 
-    async function createNewProject() {
-        const response = await fetch(`${apiBaseUrl}/project`, {
+    const setCurrentProject = (currentProject: Project) => {
+        tsvscode.setState({...tsvscode.getState(), currentProject});
+        page = Page.Threads;
+    }
+
+    const createNewProject = async () => {
+        const createProjectResponse = await fetch(`${apiBaseUrl}/project`, {
             method: "POST",
+            credentials: 'include',
             body: JSON.stringify({
                 name: createProjectName,
                 url: githubUrl
@@ -20,6 +28,10 @@
                 authorization: `Bearer ${accessToken}`,
             },
         });
+
+        const currentProject = await createProjectResponse.json();
+
+        setCurrentProject(currentProject?.project);
     }
 
     const fetchExistingProjects = async () => {
@@ -32,7 +44,6 @@
         const json = await response.json();
 
         existingProjects = json.projects;
-        console.log(existingProjects);
     }
 
     onMount(async () => {
@@ -65,8 +76,12 @@
 
     <ul>
         {#each existingProjects as project (project.id)}
-            <li><a href="#">{project.name}</a></li>
+            <li >
+                <a href="0" on:click|preventDefault={() => {
+                    console.log(project);
+                    setCurrentProject(project)
+                }}> {project.name} </a>
+            </li>
         {/each}
     </ul>
-    
 </div>

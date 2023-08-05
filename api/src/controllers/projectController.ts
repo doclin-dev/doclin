@@ -39,5 +39,8 @@ export const createProject = async (req:any, res:any) => {
         userId: req.userId,
     }).save();
 
-    res.send({project});
+    req.session.currentProjectId = project.id;
+    req.session.save();
+
+    return res.send({project});
 }

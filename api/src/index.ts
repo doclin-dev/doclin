@@ -29,7 +29,11 @@ const main = async () => {
   passport.serializeUser((user: any, done) => {
     done(null, user.accessToken);
   });
-  app.use(cors({ origin: "*" }));
+  app.use(cors({ 
+    origin: true, 
+    optionsSuccessStatus: 200,
+    credentials: true
+  }));
   app.use(passport.initialize());
   app.use(express.json());
 
@@ -39,6 +43,7 @@ const main = async () => {
       extended: true,
     })
   );
+  
   app.use(session({
     secret: process.env.ACCESS_TOKEN_SECRET,
     resave: false,
