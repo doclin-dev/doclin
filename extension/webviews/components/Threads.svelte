@@ -1,11 +1,12 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import type { Project, User } from "../types";
+    import Quill from "quill";
 
     export let user: User;
     export let accessToken: string;
     
-    let quillEditor;
+    let quillEditor: any;
     let threadMessage = tsvscode.getState()?.threadMessage || "";
     let threads: Array<{ message: string; id: number }> = [];
     let currentProject: Project;
@@ -27,7 +28,7 @@
 
     async function populateThreadMessageField(message: string) {
         const selection = quillEditor.getSelection();
-        const cursorPosition = selection ? selection.index : quillEditor.getLength();
+        const cursorPosition: number = selection ? selection.index : quillEditor.getLength();
 
         // Insert a line break to move the cursor to the next line
         quillEditor.insertText(cursorPosition, "\n");

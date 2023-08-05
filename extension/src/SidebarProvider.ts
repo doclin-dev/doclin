@@ -92,10 +92,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     const quillStylesheetUri = webview.asWebviewUri(
       vscode.Uri.parse("https://cdn.quilljs.com/1.3.6/quill.snow.css")
     );
-    const quillScriptUri = webview.asWebviewUri(
-      vscode.Uri.parse("https://cdn.quilljs.com/1.3.6/quill.js")
-    );
-    
 
     // Use a nonce to only allow a specific script to be run.
     const nonce = getNonce();
@@ -120,7 +116,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         </script>
 			</head>
       <body>
-        <script nonce="${nonce}" src="${quillScriptUri}"></script>
         <script nonce="${nonce}" src="${scriptUri}"></script>
     </body>
 			</html>`;
