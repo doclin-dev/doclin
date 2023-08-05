@@ -1,8 +1,7 @@
 <script lang="ts">
-    import type { User, Project } from "../types";
+    import type { Project } from "../types";
     import { onMount } from "svelte";
     import { Page } from "../enums";
-    export let user: User;
     export let accessToken: string;
     export let page: Page;
 

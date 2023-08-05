@@ -14,6 +14,16 @@
         tsvscode.setState({ ...tsvscode.getState(), page });
     }
 
+    const authenticate = () => {
+        tsvscode.postMessage({ type: 'authenticate', value: undefined });
+    }
+
+    const logout = () => {
+        accessToken = '';
+        user = null;
+        tsvscode.postMessage({ type: 'logout', value: undefined });
+    }
+
     onMount(async () => {
         page = Page.InitializeProject;
 
@@ -46,7 +56,7 @@
     <div>loading...</div>
 {:else if user}
     {#if page === Page.InitializeProject}
-        <InitializeProject {user} {accessToken} bind:page={page}/>
+        <InitializeProject {accessToken} bind:page={page}/>
     {:else if page === Page.Threads}
         <Threads {user} {accessToken} />
         <button
@@ -65,14 +75,8 @@
             page = Page.Contact;
         }}>go to contact</button>
     <button
-        on:click={() => {
-            accessToken = '';
-            user = null;
-            tsvscode.postMessage({ type: 'logout', value: undefined });
-        }}>logout</button>
+        on:click={logout}>logout</button>
 {:else}
     <button
-        on:click={() => {
-            tsvscode.postMessage({ type: 'authenticate', value: undefined });
-        }}>login with GitHub</button>
+        on:click={authenticate}>login with GitHub</button>
 {/if}
