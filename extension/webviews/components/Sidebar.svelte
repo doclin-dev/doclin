@@ -1,18 +1,22 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import type { User } from "../types";
+    import type { Project, User } from "../types";
+    import { Page } from "../enums";
     import Threads from "./Threads.svelte";
+    import InitializeProject from "./InitializeProject.svelte";
 
     let accessToken = "";
     let loading = true;
     let user: User | null = null;
-    let page: "threads" | "contact" = tsvscode.getState()?.page || "todos";
-
+    let page: Page = tsvscode.getState()?.page;
+    
     $: {
         tsvscode.setState({ ...tsvscode.getState(), page });
     }
 
     onMount(async () => {
+        page = Page.InitializeProject;
+
         window.addEventListener("message", async (event) => {
             const message = event.data;
             switch (message.type) {
@@ -30,25 +34,36 @@
         });
 
         tsvscode.postMessage({ type: "get-token", value: undefined });
+
+        const currentProject: Project = tsvscode.getState()?.currentProject;
+        if (currentProject) {
+            page = Page.Threads;
+        }
     });
 </script>
 
 {#if loading}
     <div>loading...</div>
 {:else if user}
-    {#if page === 'threads'}
+    {#if page === Page.InitializeProject}
+        <InitializeProject {user} {accessToken} bind:page={page}/>
+    {:else if page === Page.Threads}
         <Threads {user} {accessToken} />
         <button
             on:click={() => {
-                page = 'contact';
-            }}>go to contact</button>
-    {:else}
-        <div>Contact me here: adlkfjjqioefeqio</div>
+                page = Page.InitializeProject;
+            }}>Choose another project</button>
+    {:else if page === Page.Contact}
+        <div>Contact me here:</div>
         <button
             on:click={() => {
-                page = 'threads';
+                page = Page.Threads;
             }}>go back</button>
     {/if}
+    <button
+        on:click={() => {
+            page = Page.Contact;
+        }}>go to contact</button>
     <button
         on:click={() => {
             accessToken = '';

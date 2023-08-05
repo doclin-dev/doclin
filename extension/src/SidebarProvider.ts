@@ -3,6 +3,7 @@ import { authenticate } from "./controllers/authenticationController";
 import { apiBaseUrl } from "./constants";
 import { getNonce } from "./getNonce";
 import { TokenManager } from "./TokenManager";
+import { getGithubUrl } from "./controllers/threadController";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -56,6 +57,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             return;
           }
           vscode.window.showErrorMessage(data.value);
+          break;
+        }
+        case "getGithubUrl": {
+          webviewView.webview.postMessage({
+            type: "getGithubUrl",
+            value: await getGithubUrl(),
+          });
           break;
         }
       }

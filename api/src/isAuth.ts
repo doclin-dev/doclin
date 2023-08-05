@@ -4,12 +4,14 @@ import jwt from "jsonwebtoken";
 export const isAuth: RequestHandler<{}, any, any, {}> = (req, _, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
-    throw new Error("not authenticated");
+    next();
+    return;
   }
 
   const token = authHeader.split(" ")[1];
   if (!token) {
-    throw new Error("not authenticated");
+    next();
+    return;
   }
 
   try {
@@ -19,5 +21,6 @@ export const isAuth: RequestHandler<{}, any, any, {}> = (req, _, next) => {
     return;
   } catch {}
 
-  throw new Error("not authenticated");
+  next();
+  return;
 };

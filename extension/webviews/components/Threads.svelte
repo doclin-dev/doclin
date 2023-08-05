@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import type { User } from "../types";
+    import type { Project, User } from "../types";
 
     export let user: User;
     export let accessToken: string;
@@ -8,6 +8,7 @@
     let quillEditor;
     let threadMessage = tsvscode.getState()?.threadMessage || "";
     let threads: Array<{ message: string; id: number }> = [];
+    let currentProject: Project;
 
     async function postThreadMessage(t: string) {
         const response = await fetch(`${apiBaseUrl}/threads`, {
@@ -54,7 +55,6 @@
 
     async function submitThreadMessage() {
         threadMessage = quillEditor.root.innerHTML;
-        console.log(threadMessage);
         postThreadMessage(threadMessage);
         threadMessage = "";
         quillEditor.setText(threadMessage);
@@ -93,6 +93,8 @@
         });
         const payload = await response.json();
         threads = payload.threads;
+
+        currentProject = tsvscode.getState()?.currentProject;
     });
 </script>
 
@@ -126,6 +128,7 @@
 </style>
 
 <div>Hello: {user.name}</div>
+<div>Project: {currentProject?.name}</div>
 
 <form
     on:submit|preventDefault={submitThreadMessage}>
