@@ -7,7 +7,7 @@
     export let accessToken: string;
     
     let quillEditor: any;
-    let threadMessage = tsvscode.getState()?.threadMessage || "";
+    let threadMessage: string;
     let threads: Array<{ message: string; id: number }> = [];
     let currentProject: Project;
 
@@ -46,12 +46,7 @@
 
         // Move the cursor to the end of the new message
         quillEditor.setSelection(cursorPosition + 1 + message.length);
-        threadMessage="";
-        tsvscode.setState({...tsvscode.getState(), threadMessage});
-    }
-
-    function handleThreadMessageUpdate() {
-        // threadMessage = quill.get;
+        threadMessage = quillEditor.root.innerHTML;
         tsvscode.setState({...tsvscode.getState(), threadMessage});
     }
 
@@ -63,16 +58,7 @@
         tsvscode.setState({...tsvscode.getState(), threadMessage});
     }
 
-    onMount(async () => {
-        window.addEventListener("message", async (event) => {
-            const message = event.data;
-            switch (message.type) {
-                case "populate-thread-message":
-                    populateThreadMessageField(message.value);
-                    break;
-            }
-        })
-
+    async function initializeQuillEditor() {
         quillEditor = new Quill('#textEditor', {
             modules: {
                 toolbar: [
@@ -87,9 +73,16 @@
         
         quillEditor.theme.modules.toolbar.container.style.background = '#f1f1f1';
         quillEditor.theme.modules.toolbar.container.style.border = 'none';
-        
-        currentProject = tsvscode.getState()?.currentProject;
 
+        quillEditor.on('text-change', () => {
+            threadMessage = quillEditor.getText();
+            tsvscode.setState({...tsvscode.getState(), threadMessage});
+        });
+        
+        quillEditor.root.innerHTML = threadMessage;
+    }
+
+    async function loadThreads() {
         const response = await fetch(`${apiBaseUrl}/threads?projectId=${currentProject.id}`, {
             headers: {
                 authorization: `Bearer ${accessToken}`,
@@ -97,8 +90,23 @@
         });
         const payload = await response.json();
         threads = payload.threads;
+    }
 
-        
+    onMount(async () => {
+        threadMessage = tsvscode.getState()?.threadMessage || "";
+        currentProject = tsvscode.getState()?.currentProject;
+
+        window.addEventListener("message", async (event) => {
+            const message = event.data;
+            switch (message.type) {
+                case "populate-thread-message":
+                    populateThreadMessageField(message.value);
+                    break;
+            }
+        });
+
+        initializeQuillEditor();
+        loadThreads();
     });
 </script>
 
