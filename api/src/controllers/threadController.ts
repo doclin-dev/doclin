@@ -5,7 +5,6 @@ export const post = async (req: any, res: any) => {
     const thread = await Thread.create({
         message: req.body.message,
         userId: req.userId,
-        filePath: req.body.filePath,
         projectId: req.body.projectId
     }).save();
 

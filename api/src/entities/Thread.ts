@@ -10,6 +10,7 @@ import {
 import { User } from "./User";
 import { Project } from "./Project";
 import { Comment } from "./Comment";
+import { ThreadFile } from "./ThreadFile";
 
 @Entity()
 export class Thread extends BaseEntity {
@@ -29,9 +30,8 @@ export class Thread extends BaseEntity {
   @Column({ nullable: true})
   projectId: number;
 
-  @Column("text", { nullable: true})
-  filePath: string;
-
+  @OneToMany(() => ThreadFile, (tf) => tf.threadId)
+  files: Promise<Comment[]>;
 
   @ManyToOne(() => Project, (p) => p.threads)
   @JoinColumn({ name: "projectId" })
