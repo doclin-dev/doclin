@@ -1,5 +1,5 @@
 export enum Page {
   InitializeProject,
-  Threads,
+  Viewer,
   Contact
 }
