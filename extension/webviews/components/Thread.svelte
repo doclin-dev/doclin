@@ -17,7 +17,6 @@
         } else {
             threadEditMode = true;
             editedThreadId.set(thread.id);
-            console.log('Edit button clicked');
             await tick();
             quillThreadEditor = new Quill('#thread-editor', {
                 modules: {
@@ -88,7 +87,6 @@
     </div>
     {#if threadEditMode}
     <div id="thread-editor">{@html thread.message}</div> 
-    <!-- <Editor {options} data={thread.message}/> -->
     <div class='thread-editor-footer'>
         <Button onClick={onCancel} title="Cancel"/>
         <Button onClick={handleOnSubmit} title="Submit"/>
