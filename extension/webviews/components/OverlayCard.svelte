@@ -3,6 +3,7 @@
     import Button from './Button.svelte';
     import Icon from './Icon.svelte';
 
+    export let isEditable = true;
     export let handleEdit;
     export let handleDelete;
   
@@ -38,8 +39,10 @@
       <Icon name="context-menu" height={18}/>
     </button>
     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+      {#if isEditable}
       <Button title="Edit" onClick={handleEdit}/>
       <div class="divider"></div>
+      {/if}
       <Button title="Delete" variant="danger" onClick={handleDelete}/>
     </ul>
   </div>

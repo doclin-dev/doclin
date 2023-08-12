@@ -3,12 +3,13 @@
     import Button from './Button.svelte'
     import Quill from 'quill';
     import { tick } from 'svelte';
-    import { editedThreadId } from './store.js';
+    import { editedThreadId, selectedThread } from './store.js';
 
     export let thread;
     export let username;
-    let quillThreadEditor;
+    // export let onReplyClick;
 
+    let quillThreadEditor;
     let threadEditMode = false;
 
     const handleEditButtonClick = async () => {
@@ -53,6 +54,11 @@
     const handleDeleteButtonClick = () => {
         console.log('Delete Button clicked!');
     }
+
+    const handleReplyButtonClick = () => {
+        selectedThread.set(thread);
+        console.log($selectedThread);
+    }
 </script>
 
 <style>
@@ -62,6 +68,12 @@
         justify-content: space-between;
         align-items: center;
         padding: 0.25rem;
+    }
+
+    .button-container{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
     }
     .thread-card {
         display: flex;
@@ -83,7 +95,10 @@
 <div class='thread-card'>
     <div class="thread-header">
         <div> {username}</div>
-        <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
+        <div class='button-container'>
+            <Button onClick={handleReplyButtonClick} title="Reply"/>
+            <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
+        </div>
     </div>
     {#if threadEditMode}
     <div id="thread-editor">{@html thread.message}</div> 
