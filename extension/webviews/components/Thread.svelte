@@ -8,7 +8,7 @@
     }
 
     const handleDeleteButtonClick = () => {
-        console.log('Delet Button clicked!')
+        console.log('Delet Button clicked!');
     }
 </script>
 

@@ -38,7 +38,6 @@
 
         // Move the cursor to the end of the new line
         quillEditor.setSelection(cursorPosition + 1);
-        console.log(message);
 
         // Apply code-block formatting to the incoming message
         const range = quillEditor.getSelection(true);

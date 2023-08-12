@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
     import type { Project, User } from "../types";
     import { Page } from "../enums";
-    import Viewer from "./Viewer.svelte";
+    import ThreadsViewer from "./ThreadsViewer.svelte";
     import InitializeProject from "./InitializeProject.svelte";
 
     let accessToken = "";
@@ -47,7 +47,7 @@
 
         const currentProject: Project = tsvscode.getState()?.currentProject;
         if (currentProject) {
-            page = Page.Viewer;
+            page = Page.ThreadsViewer;
         }
     });
 </script>
@@ -57,8 +57,8 @@
 {:else if user}
     {#if page === Page.InitializeProject}
         <InitializeProject {accessToken} bind:page={page}/>
-    {:else if page === Page.Viewer}
-        <Viewer {user} {accessToken} />
+    {:else if page === Page.ThreadsViewer}
+        <ThreadsViewer {user} {accessToken} />
         <button
             on:click={() => {
                 page = Page.InitializeProject;
