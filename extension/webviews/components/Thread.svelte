@@ -1,14 +1,58 @@
 <script>
-    import OverlayCard from './OverlayCard.svelte'
+    import OverlayCard from './OverlayCard.svelte';
+    import Button from './Button.svelte'
+    import Quill from 'quill';
+    import { tick } from 'svelte';
+    import { editedThreadId } from './store.js';
+
     export let thread;
     export let username;
+    let quillThreadEditor;
 
-    const handleEditButtonClick = () => {
-        console.log('Edit button clicked');
+    let threadEditMode = false;
+
+    const handleEditButtonClick = async () => {
+        if($editedThreadId !== null && $editedThreadId !== thread.id) {
+            console.log('Fuck off!');
+        } else {
+            threadEditMode = true;
+            editedThreadId.set(thread.id);
+            console.log('Edit button clicked');
+            await tick();
+            quillThreadEditor = new Quill('#thread-editor', {
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline', 'strike'],
+                        ['link', 'blockquote', 'code-block', 'image'],
+                        [{ list: 'ordered' }, { list: 'bullet' }],
+                        [{ color: [] }, { background: [] }]
+                    ]
+                },
+                theme: 'snow'
+            });
+
+            quillThreadEditor.theme.modules.toolbar.container.style.background = '#f1f1f1';
+            quillThreadEditor.theme.modules.toolbar.container.style.border = 'none';
+        }
+    }
+
+    const handleOnSubmit = async () => {
+        threadEditMode= false;
+        await tick();
+        thread.message = quillThreadEditor.root.innerHTML;
+        quillThreadEditor.theme.modules.toolbar.container.style.display = 'none';
+        quillThreadEditor = null;
+        editedThreadId.set(null);
+    }
+    const onCancel = () => {
+        threadEditMode = false;
+        quillThreadEditor.theme.modules.toolbar.container.style.display = 'none';
+        quillThreadEditor = null;
+        editedThreadId.set(null);
     }
 
     const handleDeleteButtonClick = () => {
-        console.log('Delet Button clicked!');
+        console.log('Delete Button clicked!');
     }
 </script>
 
@@ -30,6 +74,11 @@
         border: 2px;
         margin-bottom: 0.5rem;
     }
+    .thread-editor-footer {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+    }
 </style>
 
 <div class='thread-card'>
@@ -37,5 +86,15 @@
         <div> {username}</div>
         <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
     </div>
-    <div> {@html thread.message}</div>
+    {#if threadEditMode}
+    <div id="thread-editor">{@html thread.message}</div> 
+    <!-- <Editor {options} data={thread.message}/> -->
+    <div class='thread-editor-footer'>
+        <Button onClick={onCancel} title="Cancel"/>
+        <Button onClick={handleOnSubmit} title="Submit"/>
+    </div>
+    {:else}
+    <div>{@html thread.message}</div>
+    {/if}
+
 </div>
