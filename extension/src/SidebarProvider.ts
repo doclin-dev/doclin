@@ -93,6 +93,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       vscode.Uri.parse("https://cdn.quilljs.com/1.3.6/quill.snow.css")
     );
 
+    const bootstrapStylesheetUri = webview.asWebviewUri(
+      vscode.Uri.parse("https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css")
+    )
+
     // Use a nonce to only allow a specific script to be run.
     const nonce = getNonce();
 
@@ -106,6 +110,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         -->
         
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="${bootstrapStylesheetUri}" rel="stylesheet">
 				<link href="${styleResetUri}" rel="stylesheet">
 				<link href="${styleVSCodeUri}" rel="stylesheet">
         <link href="${styleMainUri}" rel="stylesheet">
