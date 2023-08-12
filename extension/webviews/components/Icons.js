@@ -31,4 +31,11 @@ export const doclinIcons = {
             </svg>
         `,
     },
+    'back-icon': {
+        src: `
+            <svg width="31" height="22" viewBox="0 0 31 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 10.1228H31M1 10.1228L13.1348 1M1 10.1228L13.1348 21" stroke="white"/>
+            </svg>
+        `,
+    }
 };
