@@ -67,7 +67,7 @@
         <div>Contact me here:</div>
         <button
             on:click={() => {
-                page = Page.Viewer;
+                page = Page.ThreadsViewer;
             }}>go back</button>
     {/if}
     <button
