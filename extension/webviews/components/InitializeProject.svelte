@@ -11,7 +11,7 @@
 
     const setCurrentProject = (currentProject: Project) => {
         tsvscode.setState({...tsvscode.getState(), currentProject});
-        page = Page.Threads;
+        page = Page.ThreadsViewer;
     }
 
     const createNewProject = async () => {
