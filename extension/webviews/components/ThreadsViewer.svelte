@@ -92,10 +92,8 @@
                 authorization: `Bearer ${accessToken}`,
             },
         });
+
         const payload = await response.json();
-
-        console.log(payload);
-
         threads = payload.threads;
     }
 

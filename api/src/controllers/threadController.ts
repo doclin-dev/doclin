@@ -9,7 +9,7 @@ export const postThread = async (req: any, res: any) => {
         projectId: req.body.projectId
     }).save();
 
-    const threadFile = await ThreadFile.create({
+    await ThreadFile.create({
         threadId: thread.id,
         filePath: req.body.filePath,
     }).save();
@@ -19,26 +19,17 @@ export const postThread = async (req: any, res: any) => {
 
 export const getThreads = async (req: any, res: any) => {
     const filePath = req.query.filePath;
-    let options: any = {
-        projectId: req.query.projectId
-    }
+    const projectId = req.query.projectId;
 
-    if (filePath != null) {
-        options = {...options, filePath};
-    }
+    let threads = await Thread.createQueryBuilder('thread')
+                              .leftJoinAndSelect('thread.threadFiles', 'threadFile')
+                              .leftJoinAndSelect('thread.user', 'user')
+                              .where('threadFile.filePath = :filePath', { filePath })
+                              .andWhere('thread.projectId = :projectId', { projectId })
+                              .orderBy('thread.id', 'DESC')
+                              .getMany();
 
-    let threadFiles = await Thread.createQueryBuilder('thread')
-                                      .leftJoinAndSelect('thread.threadFiles', 'threadFile')
-                                      .leftJoinAndSelect('thread.user', 'user')
-                                      .where('threadFile.filePath = :filePath', { filePath: filePath })
-                                      .orderBy('thread.id', 'DESC')
-                                      .getMany();
-
-    res.send({
-        test: "Hello",
-        threads: threadFiles,
-        filePath: filePath?filePath:"not defined"
-    });
+    res.send({threads});
 }
 
 export const postComment = async (req: any, res: any) => {

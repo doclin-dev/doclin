@@ -9,10 +9,6 @@
     let loading = true;
     let user: User | null = null;
     let page: Page = tsvscode.getState()?.page;
-    
-    $: {
-        tsvscode.setState({ ...tsvscode.getState(), page });
-    }
 
     const authenticate = () => {
         tsvscode.postMessage({ type: 'authenticate', value: undefined });

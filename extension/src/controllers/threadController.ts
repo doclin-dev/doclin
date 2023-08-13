@@ -63,7 +63,7 @@ export const addCodeSnippet = async (sidebarProvider: any) => {
       return;
     }
 
-    const gitRelativeFilePath = getGitRelativePath();
+    const gitRelativeFilePath = await getGitRelativePath();
 
     vscode.commands.executeCommand('workbench.view.extension.doclin-sidebar-view');
 
@@ -83,8 +83,7 @@ export const addCodeSnippet = async (sidebarProvider: any) => {
     //     console.log('No text selected');
     // }
 
-    const threadMessage = `${gitRelativeFilePath} \`\`\`javascript
-    ${message} \`\`\` `;
+    const threadMessage = `${gitRelativeFilePath}\n${message}`;
 
     const pauseExecution = () => {
       return new Promise((resolve) => {
