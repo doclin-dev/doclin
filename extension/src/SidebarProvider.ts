@@ -3,7 +3,7 @@ import { authenticate } from "./controllers/authenticationController";
 import { apiBaseUrl } from "./constants";
 import { getNonce } from "./getNonce";
 import { TokenManager } from "./TokenManager";
-import { getGithubUrl } from "./controllers/threadController";
+import { getGithubUrl, getGitRelativePath } from "./controllers/threadController";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -15,9 +15,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     this._view = webviewView;
 
     webviewView.webview.options = {
-      // Allow scripts in the webview
       enableScripts: true,
-
       localResourceRoots: [this._extensionUri],
     };
 
@@ -66,6 +64,22 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           });
           break;
         }
+        case "getCurrentFilePath": {
+          webviewView.webview.postMessage({
+            type: "getCurrentFilePath",
+            value: await getGitRelativePath()
+          });
+          break;
+        }
+      }
+    });
+
+    vscode.window.onDidChangeActiveTextEditor(async (editor) => {
+      if (editor) {
+        webviewView.webview.postMessage({
+          type: "getCurrentFilePath",
+          value: await getGitRelativePath()
+        });
       }
     });
   }

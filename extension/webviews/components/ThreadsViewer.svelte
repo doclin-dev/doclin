@@ -14,13 +14,15 @@
     let threadMessage: string;
     let threads: Array<{ message: string; id: number }> = [];
     let currentProject: Project;
+    let currentFilePath: string;
 
     async function postThreadMessage(t: string) {
         const response = await fetch(`${apiBaseUrl}/threads`, {
                 method: "POST",
                 body: JSON.stringify({
                     message: t,
-                    projectId: currentProject.id
+                    projectId: currentProject.id,
+                    filePath: currentFilePath
                 }),
                 headers: {
                     "content-type": "application/json",
@@ -50,8 +52,6 @@
 
         // Move the cursor to the end of the new message
         quillEditor.setSelection(cursorPosition + 1 + message.length);
-        threadMessage = quillEditor.root.innerHTML;
-        tsvscode.setState({...tsvscode.getState(), threadMessage});
     }
 
     async function submitThreadMessage() {
@@ -87,12 +87,15 @@
     }
 
     async function loadThreads() {
-        const response = await fetch(`${apiBaseUrl}/threads?projectId=${currentProject.id}`, {
+        const response = await fetch(`${apiBaseUrl}/threads?projectId=${currentProject.id}&filePath=${currentFilePath}`, {
             headers: {
                 authorization: `Bearer ${accessToken}`,
             },
         });
         const payload = await response.json();
+
+        console.log(payload);
+
         threads = payload.threads;
     }
 
@@ -112,11 +115,16 @@
                 case "populate-thread-message":
                     populateThreadMessageField(message.value);
                     break;
+                case "getCurrentFilePath":
+                    currentFilePath = message.value;
+                    loadThreads();
+                    break;
             }
         });
 
+        tsvscode.postMessage({ type: 'getCurrentFilePath', value: undefined });
+
         initializeQuillEditor();
-        loadThreads();
     });
 </script>
 

@@ -38,6 +38,21 @@ export const getGithubUrl = async() : Promise<string> => {
   return "";
 }
 
+export const getGitRelativePath = async () : Promise<string> => {
+  const { activeTextEditor } = vscode.window;
+
+  if (!activeTextEditor) {
+    return "";
+  }
+
+  const activeFilePath: string = activeTextEditor.document.uri.fsPath;
+  const activeDirectory: string = path.dirname(activeFilePath);
+  const activeFileName = path.basename(activeFilePath);
+
+  let { stdout }: {stdout: string} = await sh(`cd ${activeDirectory} && git rev-parse --show-prefix ${activeFileName}`);
+  return stdout.split('\n')[0] + activeFileName;
+}
+
 export const addCodeSnippet = async (sidebarProvider: any) => {
     const { activeTextEditor } = vscode.window;
 
@@ -48,12 +63,7 @@ export const addCodeSnippet = async (sidebarProvider: any) => {
       return;
     }
 
-    const activeFilePath: string = activeTextEditor.document.uri.fsPath;
-    const activeDirectory: string = path.dirname(activeFilePath);
-    const activeFileName = path.basename(activeFilePath);
-
-    let { stdout }: {stdout: string} = await sh(`cd ${activeDirectory} && git rev-parse --show-prefix ${activeFileName}`);
-    const gitRelativeFilePath = stdout.split('\n')[0] + activeFileName;
+    const gitRelativeFilePath = getGitRelativePath();
 
     vscode.commands.executeCommand('workbench.view.extension.doclin-sidebar-view');
 
