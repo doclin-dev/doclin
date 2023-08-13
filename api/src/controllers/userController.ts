@@ -2,7 +2,6 @@ import { User } from "../entities/User";
 import jwt from "jsonwebtoken";
 
 export const getCurrentUser = async (req: any, res: any) => {
-    // Bearer 120jdklowqjed021901
     const authHeader = req.headers.authorization;
     if (!authHeader) {
         res.send({ user: null });
@@ -15,7 +14,7 @@ export const getCurrentUser = async (req: any, res: any) => {
         return;
     }
 
-    let userId = "";
+    let userId;
 
     try {
         const payload: any = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);

@@ -89,3 +89,13 @@ input::placeholder,
 textarea::placeholder {
   color: var(--vscode-input-placeholderForeground);
 }
+
+pre.ql-syntax {
+  color: var(--vscode-foreground);
+  background-color: var(--vscode-editor-background);
+  padding: 5px;
+}
+
+#textEditor {
+  background-color: var(--vscode-input-background);
+}
