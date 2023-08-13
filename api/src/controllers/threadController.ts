@@ -1,35 +1,35 @@
 import { Thread } from "../entities/Thread";
 import { Comment } from "../entities/Comment";
+import { ThreadFile } from "../entities/ThreadFile";
 
-export const post = async (req: any, res: any) => {
+export const postThread = async (req: any, res: any) => {
     const thread = await Thread.create({
         message: req.body.message,
         userId: req.userId,
         projectId: req.body.projectId
     }).save();
 
+    await ThreadFile.create({
+        threadId: thread.id,
+        filePath: req.body.filePath,
+    }).save();
+
     res.send({ thread });
 }
 
-export const get = async (req: any, res: any) => {
-    const filepath = req.query.filePath;
-    let threads;
-    let options: any = {
-        projectId: req.query.projectId
-    }
+export const getThreads = async (req: any, res: any) => {
+    const filePath = req.query.filePath;
+    const projectId = req.query.projectId;
 
-    if (filepath != null) {
-        options = {...options, filepath};
-    }
+    let threads = await Thread.createQueryBuilder('thread')
+                              .leftJoinAndSelect('thread.threadFiles', 'threadFile')
+                              .leftJoinAndSelect('thread.user', 'user')
+                              .where('threadFile.filePath = :filePath', { filePath })
+                              .andWhere('thread.projectId = :projectId', { projectId })
+                              .orderBy('thread.id', 'DESC')
+                              .getMany();
 
-    threads = await Thread.find(options);
-
-    if (!threads) {
-        res.send({ threads : null });
-        return;
-    };
-
-    res.send ({threads});
+    res.send({threads});
 }
 
 export const postComment = async (req: any, res: any) => {

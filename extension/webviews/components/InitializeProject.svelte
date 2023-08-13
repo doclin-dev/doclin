@@ -11,7 +11,7 @@
 
     const setCurrentProject = (currentProject: Project) => {
         tsvscode.setState({...tsvscode.getState(), currentProject});
-        page = Page.Threads;
+        page = Page.ThreadsViewer;
     }
 
     const createNewProject = async () => {
@@ -77,7 +77,6 @@
         {#each existingProjects as project (project.id)}
             <li >
                 <a href="0" on:click|preventDefault={() => {
-                    console.log(project);
                     setCurrentProject(project)
                 }}> {project.name} </a>
             </li>
