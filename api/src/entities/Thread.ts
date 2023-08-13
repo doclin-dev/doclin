@@ -30,13 +30,13 @@ export class Thread extends BaseEntity {
   @Column({ nullable: true})
   projectId: number;
 
-  @OneToMany(() => ThreadFile, (tf) => tf.threadId)
-  files: Promise<Comment[]>;
+  @OneToMany(() => ThreadFile, (tf) => tf.thread)
+  threadFiles: Promise<ThreadFile[]>;
 
   @ManyToOne(() => Project, (p) => p.threads)
   @JoinColumn({ name: "projectId" })
   project: Promise<Project>;
 
-  @OneToMany(() => Comment, (c) => c.threadId)
+  @OneToMany(() => Comment, (c) => c.thread)
   comments: Promise<Comment[]>;
 }

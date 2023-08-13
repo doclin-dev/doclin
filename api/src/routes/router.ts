@@ -24,8 +24,8 @@ router.get("/", (_req: any, res: any) => {
     res.send("hello");
 });
 
-router.post("/threads", isAuth, threadController.post);
-router.get("/threads", isAuth, threadController.get);
+router.post("/threads", isAuth, threadController.postThread);
+router.get("/threads", isAuth, threadController.getThreads);
 router.post("/threads/:id/comment", isAuth, threadController.postComment);
 
 router.get("/currentProject/", isAuth, projectController.getCurrentProject);

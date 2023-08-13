@@ -14,7 +14,7 @@ export class ThreadFile extends BaseEntity {
   id: number;
 
   @Column()
-  filepath: string;
+  filePath: string;
 
   @Column()
   threadId: number;
@@ -22,7 +22,7 @@ export class ThreadFile extends BaseEntity {
   @Column({nullable: true})
   type: string; // snippet or movedfile
 
-  @ManyToOne(() => Thread, (t) => t.files)
+  @ManyToOne(() => Thread, (t) => t.threadFiles)
   @JoinColumn({ name: "threadId" })
   thread: Promise<Thread>;
 }
