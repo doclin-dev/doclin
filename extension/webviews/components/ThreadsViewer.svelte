@@ -4,11 +4,11 @@
     import Quill from "quill";
     import Thread from './Thread.svelte';
     import ViewerTopBar from "./ViewerTopBar.svelte";
-    import ReplyViewer from "./ReplyViewer.svelte";
-    import {selectedThread} from './store';
+    import type { Page } from "../enums";
 
     export let user: User;
     export let accessToken: string;
+    export let page: Page;
     
     let quillEditor: any;
     let threadMessage: string;
@@ -97,12 +97,6 @@
         threads = payload.threads;
     }
 
-    // const handleReplyClick = (thread: any) =>{
-    //     console.log('t',{ selectedThread, thread});
-    //     selectedThread=thread;
-    //     console.log({selectedThread, thread});
-    // }
-
     onMount(async () => {
         threadMessage = tsvscode.getState()?.threadMessage || "";
         currentProject = tsvscode.getState()?.currentProject;
@@ -140,19 +134,14 @@
 
 <ViewerTopBar username={user.name} projectName={currentProject?.name}/>
 
-{#if $selectedThread !== null}
-    <ReplyViewer thread={$selectedThread} username={user.name} projectName={currentProject?.name}/>
-{:else}
+<form
+    on:submit|preventDefault={submitThreadMessage}>
+    <div id="textEditor"></div>
+    <button on:click|preventDefault={submitThreadMessage}>Submit</button>
+</form>
 
-    <form
-        on:submit|preventDefault={submitThreadMessage}>
-        <div id="textEditor"></div>
-        <button on:click|preventDefault={submitThreadMessage}>Submit</button>
-    </form>
-
-    <div id='viewer'>
-        {#each threads as thread (thread.id)}
-            <Thread thread={thread} username={user.name}/>
-        {/each}
-    </div>
-{/if}
+<div id='viewer'>
+    {#each threads as thread (thread.id)}
+        <Thread thread={thread} username={user.name} bind:page={page}/>
+    {/each}
+</div>

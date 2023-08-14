@@ -4,10 +4,11 @@
     import Quill from 'quill';
     import { tick } from 'svelte';
     import { editedThreadId, selectedThread } from './store.js';
+    import { Page } from '../enums';
 
     export let thread;
     export let username;
-    // export let onReplyClick;
+    export let page;
 
     let quillThreadEditor;
     let threadEditMode = false;
@@ -56,8 +57,9 @@
     }
 
     const handleReplyButtonClick = () => {
+        page = Page.ReplyViewer;
         selectedThread.set(thread);
-        console.log($selectedThread);
+        tsvscode.setState({ ...tsvscode.getState(), page });
     }
 </script>
 
@@ -74,6 +76,7 @@
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        align-items: center;
     }
     .thread-card {
         display: flex;
@@ -87,8 +90,10 @@
     }
     .thread-editor-footer {
         display: flex;
+        padding-top: 0.5rem;
         flex-direction: row;
         justify-content: flex-end;
+        gap: 0.25rem;
     }
 </style>
 
@@ -96,15 +101,15 @@
     <div class="thread-header">
         <div> {username}</div>
         <div class='button-container'>
-            <Button onClick={handleReplyButtonClick} title="Reply"/>
+            <Button icon='reply' onClick={handleReplyButtonClick} type='text'/>
             <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
         </div>
     </div>
     {#if threadEditMode}
     <div id="thread-editor">{@html thread.message}</div> 
     <div class='thread-editor-footer'>
-        <Button onClick={onCancel} title="Cancel"/>
-        <Button onClick={handleOnSubmit} title="Submit"/>
+        <Button variant='secondary' onClick={onCancel} title="Cancel"/>
+        <Button variant='secondary' onClick={handleOnSubmit} title="Submit"/>
     </div>
     {:else}
     <div>{@html thread.message}</div>

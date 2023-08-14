@@ -3,23 +3,22 @@
     export let icon = "";
     export let title = "";
     export let onClick;
+    export let iconWidth = 20;
+    export let iconHeight = 20;
     export let size = 'sm';
-    export let type = 'submit'; // text without border and 
-    export let variant = 'defualt'; // danger for delete button
+    export let type = 'submit'; // [text, ]
+    export let variant = 'primary'; // [secondary, danger]
 
     $: if (!['sm', 'md'].includes(size)) {
-        console.warn("Invalid size prop provided. Use either 'sm' or 'md'. Defaulting to 'md'.");
         size = 'sm';
     }
 
     $: if (!['text', 'submit'].includes(type)) {
-        console.warn("Invalid size prop provided. Use either 'sm' or 'md'. Defaulting to 'md'.");
         type = 'sm';
     }
 
-    $: if (!['default', 'danger'].includes(variant)) {
-        console.warn("Invalid size prop provided. Use either 'sm' or 'md'. Defaulting to 'md'.");
-        variant = 'default';
+    $: if (!['primary', 'secondary','danger'].includes(variant)) {
+        variant = 'primary';
     }
 
   </script>
@@ -30,7 +29,7 @@
     on:click={onClick}
   >
     {#if icon}
-      <span class="icon"><Icon name={icon}/></span>
+      <span class="icon"><Icon width={iconWidth} height={iconHeight} name={icon}/></span>
     {/if}
     <span>{title}</span>
   </div>
@@ -52,11 +51,11 @@
     }
 
     .button.md {
-        padding: 10px;
+        padding: 0.5rem;
     }
 
     .button.sm {
-        padding: 5px;
+        padding: 0.25rem;
     }
 
     .button.text {
@@ -64,7 +63,7 @@
         align-items: center;
         justify-content: center;
         border: none;
-        padding: 5px;
+        /* padding: 5px; */
         cursor: pointer;
     }
     .button.submit {
@@ -87,6 +86,16 @@
         background-color: rgb(246, 68, 68);
         color: white;
         border-radius: 0;
+    }
+    .button.secondary {
+        border: 1px solid #908f8f;
+        border-radius: 5px;
+    }
+
+    .button.secondary:hover {
+        background-color: rgb(7, 104, 239);
+        color: white;
+        border-radius: 5px;
     }
 
 </style>

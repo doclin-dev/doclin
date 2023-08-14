@@ -4,11 +4,14 @@
     import { Page } from "../enums";
     import ThreadsViewer from "./ThreadsViewer.svelte";
     import InitializeProject from "./InitializeProject.svelte";
+    import ReplyViewer from "./ReplyViewer.svelte";
+    import {selectedThread} from './store';
 
     let accessToken = "";
     let loading = true;
     let user: User | null = null;
-    let page: Page = tsvscode.getState()?.page;
+    let page: Page = tsvscode.getState()?.page ?? Page.InitializeProject;
+    let currentProject: Project;
 
     const authenticate = () => {
         tsvscode.postMessage({ type: 'authenticate', value: undefined });
@@ -21,7 +24,6 @@
     }
 
     onMount(async () => {
-        page = Page.InitializeProject;
 
         window.addEventListener("message", async (event) => {
             const message = event.data;
@@ -49,11 +51,13 @@
     {#if page === Page.InitializeProject}
         <InitializeProject {accessToken} bind:page={page}/>
     {:else if page === Page.ThreadsViewer}
-        <ThreadsViewer {user} {accessToken} />
+        <ThreadsViewer {user} {accessToken} bind:page={page} />
         <button
             on:click={() => {
                 page = Page.InitializeProject;
             }}>Choose another project</button>
+    {:else if page === Page.ReplyViewer}
+        <ReplyViewer thread={$selectedThread} username={user.name} projectName={currentProject?.name} bind:page={page}/>
     {:else if page === Page.Contact}
         <div>Contact me here:</div>
         <button
