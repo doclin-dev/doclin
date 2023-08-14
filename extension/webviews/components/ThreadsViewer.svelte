@@ -4,7 +4,7 @@
     import Quill from "quill";
     import Thread from './Thread.svelte';
     import ViewerTopBar from "./ViewerTopBar.svelte";
-    import type { Page } from "../enums";
+    import { Page } from "../enums";
 
     export let user: User;
     export let accessToken: string;
@@ -13,15 +13,15 @@
     let quillEditor: any;
     let threadMessage: string;
     let threads: Array<{ message: string; id: number }> = [];
-    let currentProject: Project;
-    let currentFilePath: string;
+    let currentProject: Project | null;
+    let currentFilePath: string | null;
 
     async function postThreadMessage(t: string) {
         const response = await fetch(`${apiBaseUrl}/threads`, {
                 method: "POST",
                 body: JSON.stringify({
                     message: t,
-                    projectId: currentProject.id,
+                    projectId: currentProject?.id,
                     filePath: currentFilePath
                 }),
                 headers: {
@@ -56,7 +56,9 @@
 
     async function submitThreadMessage() {
         threadMessage = quillEditor.root.innerHTML;
-        postThreadMessage(threadMessage);
+        if (threadMessage) {
+            postThreadMessage(threadMessage);
+        }
         threadMessage = "";
         quillEditor.setText(threadMessage);
         tsvscode.setState({...tsvscode.getState(), threadMessage});
@@ -87,14 +89,21 @@
     }
 
     async function loadThreads() {
-        const response = await fetch(`${apiBaseUrl}/threads?projectId=${currentProject.id}&filePath=${currentFilePath}`, {
-            headers: {
-                authorization: `Bearer ${accessToken}`,
-            },
-        });
+        if (currentProject) {
+            const response = await fetch(`${apiBaseUrl}/threads?projectId=${currentProject.id}&filePath=${currentFilePath}`, {
+                headers: {
+                    authorization: `Bearer ${accessToken}`,
+                },
+            });
 
-        const payload = await response.json();
-        threads = payload.threads;
+            const payload = await response.json();
+            threads = payload.threads;
+        }
+    }
+
+    function chooseAnotherProject() {
+        tsvscode.setState({...tsvscode.getState(), currentProject: null});
+        page = Page.InitializeProject;
     }
 
     onMount(async () => {
@@ -145,3 +154,5 @@
         <Thread thread={thread} username={user.name} bind:page={page}/>
     {/each}
 </div>
+
+<button on:click={() => {chooseAnotherProject()}}>Choose another project</button>

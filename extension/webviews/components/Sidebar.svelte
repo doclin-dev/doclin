@@ -52,10 +52,6 @@
         <InitializeProject {accessToken} bind:page={page}/>
     {:else if page === Page.ThreadsViewer}
         <ThreadsViewer {user} {accessToken} bind:page={page} />
-        <button
-            on:click={() => {
-                page = Page.InitializeProject;
-            }}>Choose another project</button>
     {:else if page === Page.ReplyViewer}
         <ReplyViewer thread={$selectedThread} username={user.name} projectName={currentProject?.name} bind:page={page}/>
     {:else if page === Page.Contact}

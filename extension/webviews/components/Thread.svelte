@@ -1,4 +1,4 @@
-<script>
+<script type="ts">
     import OverlayCard from './OverlayCard.svelte';
     import Button from './Button.svelte'
     import Quill from 'quill';
@@ -6,11 +6,11 @@
     import { editedThreadId, selectedThread } from './store.js';
     import { Page } from '../enums';
 
-    export let thread;
-    export let username;
-    export let page;
+    export let thread: any;
+    export let username: string;
+    export let page: Page;
 
-    let quillThreadEditor;
+    let quillThreadEditor: any;
     let threadEditMode = false;
 
     const handleEditButtonClick = async () => {

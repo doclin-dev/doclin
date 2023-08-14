@@ -1,4 +1,4 @@
-<script>
+<script type="ts">
     import OverlayCard from "./OverlayCard.svelte";
     import ViewerTopBar from "./ViewerTopBar.svelte";
     import Button from "./Button.svelte";
@@ -8,13 +8,12 @@
     import Thread from "./Thread.svelte";
     import { onMount } from "svelte";
 
-    export let thread;
-    export let projectName;
-    export let username;
-    export let page;
+    export let thread: any;
+    export let projectName: string;
+    export let username: string;
+    export let page: Page;
 
-
-    let quillReplyEditor;
+    let quillReplyEditor: any;
 
     async function initializeQuillEditor() {
         quillReplyEditor = new Quill('#replyEditor', {
@@ -77,7 +76,7 @@
         <OverlayCard isEditable={false} handleDelete={handleDeleteButtonClick}/>
     </div>
     <div style="padding-bottom: 0.5rem">
-        <Thread thread={thread}/>
+        <Thread thread={thread} username={username} page={page}/>
     </div>
     <form>
         <div id="replyEditor"></div>
