@@ -40,11 +40,6 @@
         });
 
         tsvscode.postMessage({ type: "get-token", value: undefined });
-
-        const currentProject: Project = tsvscode.getState()?.currentProject;
-        if (currentProject) {
-            page = Page.ThreadsViewer;
-        }
     });
 </script>
 
