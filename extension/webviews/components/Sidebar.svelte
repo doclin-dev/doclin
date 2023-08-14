@@ -24,7 +24,6 @@
     }
 
     onMount(async () => {
-
         window.addEventListener("message", async (event) => {
             const message = event.data;
             switch (message.type) {
@@ -64,10 +63,10 @@
     <button
         on:click={() => {
             page = Page.Contact;
-        }}>go to contact</button>
+        }}>Feedback</button>
     <button
-        on:click={logout}>logout</button>
+        on:click={logout}>Logout</button>
 {:else}
     <button
-        on:click={authenticate}>login with GitHub</button>
+        on:click={authenticate}>Login with GitHub</button>
 {/if}

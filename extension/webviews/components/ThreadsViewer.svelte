@@ -39,19 +39,23 @@
 
         // Insert a line break to move the cursor to the next line
         quillEditor.insertText(cursorPosition, "\n");
-
-        // Move the cursor to the end of the new line
         quillEditor.setSelection(cursorPosition + 1);
 
-        // Apply code-block formatting to the incoming message
         const range = quillEditor.getSelection(true);
-        quillEditor.formatLine(range.index, message.length + 1, "code-block", true);
+        quillEditor.formatText(range.index, message.length + 1, "code-block", true);
 
         // Insert the new message at the cursor position
         quillEditor.insertText(cursorPosition + 1, message);
 
+        // remove codeblock from filepath (1st line)
+        quillEditor.formatLine(range.index, 1, "code-block", false);
+
+        // Add new line
+        quillEditor.insertText(cursorPosition + 2 + message.length, "\n");
+
         // Move the cursor to the end of the new message
-        quillEditor.setSelection(cursorPosition + 1 + message.length);
+        quillEditor.setSelection(cursorPosition + 2 + message.length);
+
     }
 
     async function submitThreadMessage() {
@@ -81,11 +85,12 @@
         quillEditor.theme.modules.toolbar.container.style.border = 'none';
 
         quillEditor.on('text-change', () => {
-            threadMessage = quillEditor.getText();
+            threadMessage = quillEditor.root.innerHTML;
             tsvscode.setState({...tsvscode.getState(), threadMessage});
         });
         
         quillEditor.root.innerHTML = threadMessage;
+        console.log(threadMessage);
     }
 
     async function loadThreads() {
@@ -141,7 +146,7 @@
 </style>
 
 
-<ViewerTopBar username={user.name} projectName={currentProject?.name}/>
+<ViewerTopBar username={user.name}/>
 
 <form
     on:submit|preventDefault={submitThreadMessage}>
@@ -155,4 +160,4 @@
     {/each}
 </div>
 
-<button on:click={() => {chooseAnotherProject()}}>Choose another project</button>
+<button on:click={() => {chooseAnotherProject()}}>Project: {currentProject?.name}</button>

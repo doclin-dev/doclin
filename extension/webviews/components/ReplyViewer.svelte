@@ -68,7 +68,7 @@
     }
 </style>
 
-<ViewerTopBar username={username} projectName={projectName}/>
+<ViewerTopBar username={username}/>
 
 <div class='reply-viewer'>
     <div class='topbar'>
