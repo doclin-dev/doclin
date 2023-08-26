@@ -1,17 +1,34 @@
-<script>
+<script lang="ts">
     import OverlayCard from './OverlayCard.svelte';
     import Button from './Button.svelte'
     import Quill from 'quill';
     import { tick } from 'svelte';
     import { editedThreadId, selectedThread } from './store.js';
-    import { Page } from '../enums';
+    import { Page } from '../enums'; 
 
-    export let thread;
-    export let username;
-    export let page;
+    export let thread: any;
+    export let username: string;
+    export let page: Page;
+    export let accessToken: string;
+    export let reloadThreads: () => void = () => {};
 
-    let quillThreadEditor;
-    let threadEditMode = false;
+    let quillThreadEditor: any;
+    let threadEditMode: boolean = false;
+    let threadMessage: string;
+
+    async function updateThreadMessage(message: string) {
+        await fetch(`${apiBaseUrl}/threads/${thread.id}`, {
+                method: "PUT",
+                body: JSON.stringify({
+                    message: message
+                }),
+                headers: {
+                    "content-type": "application/json",
+                    authorization: `Bearer ${accessToken}`,
+                },
+            });
+    }
+        
 
     const handleEditButtonClick = async () => {
         if($editedThreadId !== null && $editedThreadId !== thread.id) {
@@ -40,7 +57,9 @@
     const handleOnSubmit = async () => {
         threadEditMode= false;
         await tick();
-        thread.message = quillThreadEditor.root.innerHTML;
+        threadMessage = quillThreadEditor.root.innerHTML;
+        updateThreadMessage(threadMessage);
+        thread.message = threadMessage;
         quillThreadEditor.theme.modules.toolbar.container.style.display = 'none';
         quillThreadEditor = null;
         editedThreadId.set(null);
@@ -52,8 +71,22 @@
         editedThreadId.set(null);
     }
 
-    const handleDeleteButtonClick = () => {
-        console.log('Delete Button clicked!');
+    const handleDeleteButtonClick = async () => {
+        try {
+            console.log(thread.id);
+            await fetch(`${apiBaseUrl}/threads/delete/${thread.id}`, {
+                method: "DELETE",
+                headers: {
+                    "content-type": "application/json",
+                    authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            reloadThreads();
+
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     const handleReplyButtonClick = () => {
