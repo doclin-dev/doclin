@@ -10,7 +10,7 @@ import {
 import { User } from "./User";
 import { Project } from "./Project";
 import { Reply } from "./Reply";
-import { ThreadFile } from "./ThreadFile";
+import { Snippet } from "./Snippet";
 
 @Entity()
 export class Thread extends BaseEntity {
@@ -30,8 +30,8 @@ export class Thread extends BaseEntity {
   @Column({ nullable: true})
   projectId: number;
 
-  @OneToMany(() => ThreadFile, (threadFile) => threadFile.thread)
-  threadFiles: Promise<ThreadFile[]>;
+  @OneToMany(() => Snippet, (s) => s.thread)
+  snippets: Promise<Snippet[]>;
 
   @ManyToOne(() => Project, (project) => project.threads)
   @JoinColumn({ name: "projectId" })

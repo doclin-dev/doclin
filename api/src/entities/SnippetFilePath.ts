@@ -6,10 +6,10 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Thread } from "./Thread";
+import { Snippet } from "./Snippet";
 
 @Entity()
-export class ThreadFile extends BaseEntity {
+export class SnippetFilePath extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -20,9 +20,9 @@ export class ThreadFile extends BaseEntity {
   threadId: number;
 
   @Column({nullable: true})
-  type: string; // snippet or movedfile
+  type: string; // "snippet" or "movedfile"
 
-  @ManyToOne(() => Thread, (t) => t.threadFiles, { cascade: true })
-  @JoinColumn({ name: "threadId" })
-  thread: Promise<Thread>;
+  @ManyToOne(() => Snippet, (s) => s.snippetFilePaths)
+  @JoinColumn({ name: "snippetId" })
+  snippet: Promise<Snippet>;
 }
