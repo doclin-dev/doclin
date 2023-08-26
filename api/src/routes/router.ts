@@ -2,6 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const threadController = require("../controllers/threadController");
+const replyController = require("../controllers/replyController");
 const projectController = require("../controllers/projectController");
 const userController = require("../controllers/userController");
 import { isAuth } from "../isAuth";
@@ -27,8 +28,10 @@ router.get("/", (_req: any, res: any) => {
 router.post("/threads", isAuth, threadController.postThread);
 router.get("/threads", isAuth, threadController.getThreads);
 router.put("/threads/:id", isAuth, threadController.updateThreadMessage);
-router.post("/threads/:id/comment", isAuth, threadController.postComment);
 router.delete("/threads/delete/:id", isAuth, threadController.deleteThread);
+
+router.post("/replies/:threadId", isAuth, replyController.postReply);
+router.get("/replies/:threadId", isAuth, replyController.getReplies);
 
 router.get("/currentProject/", isAuth, projectController.getCurrentProject);
 router.get("/existingProjects/", isAuth, projectController.getExistingProjects);

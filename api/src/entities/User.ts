@@ -8,7 +8,7 @@ import {
 import { Todo } from "./Todo";
 import { Project } from "./Project";
 import { Thread } from "./Thread";
-import { Comment } from "./Comment";
+import { Reply } from "./Reply";
 
 @Entity()
 export class User extends BaseEntity {
@@ -30,6 +30,6 @@ export class User extends BaseEntity {
   @OneToMany(() => Thread, (t) => t.userId)
   threads: Promise<Thread[]>;
 
-  @OneToMany(() => Comment, (t) => t.userId)
-  comments: Promise<Comment[]>;
+  @OneToMany(() => Reply, (t) => t.userId)
+  replies: Promise<Reply[]>;
 }

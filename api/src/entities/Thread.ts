@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 import { User } from "./User";
 import { Project } from "./Project";
-import { Comment } from "./Comment";
+import { Reply } from "./Reply";
 import { ThreadFile } from "./ThreadFile";
 
 @Entity()
@@ -23,20 +23,20 @@ export class Thread extends BaseEntity {
   @Column({ nullable: true})
   userId: number;
 
-  @ManyToOne(() => User, (u) => u.threads)
+  @ManyToOne(() => User, (user) => user.threads)
   @JoinColumn({ name: "userId" })
   user: Promise<User>;
 
   @Column({ nullable: true})
   projectId: number;
 
-  @OneToMany(() => ThreadFile, (tf) => tf.thread)
+  @OneToMany(() => ThreadFile, (threadFile) => threadFile.thread)
   threadFiles: Promise<ThreadFile[]>;
 
-  @ManyToOne(() => Project, (p) => p.threads)
+  @ManyToOne(() => Project, (project) => project.threads)
   @JoinColumn({ name: "projectId" })
   project: Promise<Project>;
 
-  @OneToMany(() => Comment, (c) => c.thread)
-  comments: Promise<Comment[]>;
+  @OneToMany(() => Reply, (reply) => reply.thread)
+  replies: Promise<Reply[]>;
 }

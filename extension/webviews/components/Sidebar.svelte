@@ -62,7 +62,7 @@
                 page = Page.InitializeProject;
             }}>Choose another project</button>
     {:else if page === Page.ReplyViewer}
-        <ReplyViewer thread={$selectedThread} username={user.name} projectName={currentProject?.name} bind:page={page}/>
+        <ReplyViewer thread={$selectedThread} username={user.name} projectName={currentProject?.name} bind:page={page} accessToken={accessToken}/>
     {:else if page === Page.Contact}
         <div>Contact me here:</div>
         <button

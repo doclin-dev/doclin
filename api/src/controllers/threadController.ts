@@ -1,5 +1,4 @@
 import { Thread } from "../entities/Thread";
-import { Comment } from "../entities/Comment";
 import { ThreadFile } from "../entities/ThreadFile";
 
 export const postThread = async (req: any, res: any) => {
@@ -67,20 +66,3 @@ export const deleteThread = async (req: any, res: any) => {
 
     res.send("thread sucessfully deleted");
 }
-
-export const postComment = async (req: any, res: any) => {
-    const threadId = req.params.id;
-    const thread = await Thread.findOne(threadId);
-    if(!thread) {
-        res.send({thread: null});
-        return;
-    }
-    
-    const comment = await Comment.create({
-        threadId: threadId,
-        message: thread.message,
-        userId: req.userId,
-    }).save();
-
-    res.send({comment});
-};
