@@ -6,7 +6,7 @@
     import InitializeProject from "./InitializeProject.svelte";
     import ReplyViewer from "./ReplyViewer.svelte";
     import {selectedThread} from './store';
-//    jsut testing. 
+
     let accessToken = "";
     let loading = true;
     let user: User | null = null;
