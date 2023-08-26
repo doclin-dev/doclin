@@ -2,11 +2,11 @@
 // Import the module and reference it with the alias vscode in your code below
 
 import * as vscode from "vscode";
-import { authenticate } from "./controllers/authenticationController";
+import { authenticate } from "./providerHelpers/authenticationProviderHelper";
 import { HelloWorldPanel } from "./HelloWorldPanel";
 import { SidebarProvider } from "./SidebarProvider";
 import { TokenManager } from "./TokenManager";
-import { addCodeSnippet } from "./controllers/threadController";
+import { addCodeSnippet } from "./providerHelpers/threadProviderHelper";
 
 export function activate(context: vscode.ExtensionContext) {
   TokenManager.globalState = context.globalState;

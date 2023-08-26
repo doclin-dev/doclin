@@ -50,12 +50,8 @@
         // remove codeblock from filepath (1st line)
         quillEditor.formatLine(range.index, 1, "code-block", false);
 
-        // Add new line
-        quillEditor.insertText(cursorPosition + 2 + message.length, "\n");
-
         // Move the cursor to the end of the new message
-        quillEditor.setSelection(cursorPosition + 2 + message.length);
-
+        quillEditor.setSelection(cursorPosition + 1 + message.length);
     }
 
     async function submitThreadMessage() {
@@ -133,8 +129,6 @@
         initializeQuillEditor();
     });
 </script>
-
-
 
 <style>
     #textEditor{

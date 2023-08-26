@@ -1,9 +1,9 @@
 import * as vscode from "vscode";
-import { authenticate } from "./controllers/authenticationController";
+import { authenticate } from "./providerHelpers/authenticationProviderHelper";
 import { apiBaseUrl } from "./constants";
 import { getNonce } from "./getNonce";
 import { TokenManager } from "./TokenManager";
-import { getGithubUrl, getGitRelativePath } from "./controllers/threadController";
+import { getGithubUrl, getGitRelativePath } from "./providerHelpers/threadProviderHelper";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
