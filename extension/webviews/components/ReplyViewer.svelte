@@ -7,13 +7,16 @@
     import { selectedThread } from './store.js';
     import Thread from "./Thread.svelte";
     import { onMount } from "svelte";
+    import Reply from "./Reply.svelte";
 
     export let thread: any;
     export let projectName: string;
     export let username: string;
     export let page: Page;
+    export let accessToken: any;
 
     let quillReplyEditor: any;
+    let replies: any = [];
 
     async function initializeQuillEditor() {
         quillReplyEditor = new Quill('#replyEditor', {
@@ -32,6 +35,32 @@
         quillReplyEditor.theme.modules.toolbar.container.style.border = 'none';
     }
 
+    async function postReplyMessage(message) {
+        const response = await fetch(`${apiBaseUrl}/replies/${thread.id}`, {
+                method: "POST",
+                body: JSON.stringify({
+                    message: message,
+                }),
+                headers: {
+                    "content-type": "application/json",
+                    authorization: `Bearer ${accessToken}`,
+                },
+            });
+        const { reply } = await response.json();
+        replies = [reply, ...replies];
+    }
+
+    async function loadReplies () {
+        const response = await fetch(`${apiBaseUrl}/replies/${thread.id}`, {
+            headers: {
+                authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        const payload = await response.json();
+        replies = payload.replies;
+    }
+
     const handleDeleteButtonClick = () => {
         console.log('Delete button clicked!');
     }
@@ -48,6 +77,7 @@
 
     onMount(async () => {
         initializeQuillEditor();
+        loadReplies();
     });
 
 </script>
@@ -82,4 +112,9 @@
         <div id="replyEditor"></div>
         <button on:click|preventDefault={onSubmit}>Submit</button>
     </form>
+    <div>
+        {#each replies as reply (reply.id)}
+            <Reply reply={reply} username={username}/>
+        {/each}
+    </div>
 </div>

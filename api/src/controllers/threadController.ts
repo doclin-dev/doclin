@@ -1,5 +1,4 @@
 import { Thread } from "../entities/Thread";
-import { Comment } from "../entities/Comment";
 import { ThreadFile } from "../entities/ThreadFile";
 
 export const postThread = async (req: any, res: any) => {
@@ -32,19 +31,38 @@ export const getThreads = async (req: any, res: any) => {
     res.send({threads});
 }
 
-export const postComment = async (req: any, res: any) => {
+export const updateThreadMessage = async (req: any, res: any) => {
     const threadId = req.params.id;
+
     const thread = await Thread.findOne(threadId);
     if(!thread) {
         res.send({thread: null});
         return;
     }
-    
-    const comment = await Comment.create({
-        threadId: threadId,
-        message: thread.message,
-        userId: req.userId,
-    }).save();
 
-    res.send({comment});
-};
+    const threadMessage = req.body.message;
+
+    thread.message = threadMessage;
+    await thread.save();
+
+    res.send({thread});
+}
+
+export const deleteThread = async (req: any, res: any) => {
+    const threadId = req.params.id;
+
+    const thread = await Thread.findOne(threadId);
+    if(!thread) {
+        res.send({thread: null});
+        return;
+    }
+
+    const threadFiles = await thread.threadFiles;
+    for (let threadFile of threadFiles) {
+        await threadFile.remove();
+    }
+
+    await thread.remove();
+
+    res.send("thread sucessfully deleted");
+}

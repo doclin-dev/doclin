@@ -150,7 +150,7 @@
 
 <div id='viewer'>
     {#each threads as thread (thread.id)}
-        <Thread thread={thread} username={user.name} bind:page={page}/>
+        <Thread thread={thread} username={user.name} bind:page={page} accessToken={accessToken} reloadThreads={loadThreads}/>
     {/each}
 </div>
 
