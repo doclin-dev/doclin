@@ -1,90 +1,89 @@
 <script lang="ts">
     import OverlayCard from './OverlayCard.svelte';
     import Button from './Button.svelte'
-    // import Quill from 'quill';
-    // import { tick } from 'svelte';
-    // import { editedThreadId, selectedThread } from './store.js';
+    import Quill from 'quill';
+    import { tick } from 'svelte';
+    import { editedReplyId } from './store.js';
 
     export let reply: any;
     export let username: string;
-    // export let accessToken: string;
-    // export let reloadReplies: () => void = () => {};
+    export let accessToken: string;
+    export let reloadReplies: () => void = () => {};
 
-    // let quillThreadEditor: any;
+    let quillReplyCardEditor: any;
     let replyCardEditMode: boolean = false;
-    // let threadMessage: string;
+    let replyCardMessage: string;
 
-    // async function updateThreadMessage(message: string) {
-    //     await fetch(`${apiBaseUrl}/replies/${thread.id}`, {
-    //             method: "PUT",
-    //             body: JSON.stringify({
-    //                 message: message
-    //             }),
-    //             headers: {
-    //                 "content-type": "application/json",
-    //                 authorization: `Bearer ${accessToken}`,
-    //             },
-    //         });
-    // }
+    async function updateReplyMessage(message: string) {
+        await fetch(`${apiBaseUrl}/replies/${reply.id}`, {
+                method: "PUT",
+                body: JSON.stringify({
+                    message: message
+                }),
+                headers: {
+                    "content-type": "application/json",
+                    authorization: `Bearer ${accessToken}`,
+                },
+            });
+    }
         
 
     const handleEditButtonClick = async () => {
-        // if($editedThreadId !== null && $editedThreadId !== thread.id) {
-        //     console.log('Fuck off!');
-        // } else {
-        //     threadEditMode = true;
-        //     editedThreadId.set(thread.id);
-        //     await tick();
-        //     quillThreadEditor = new Quill('#thread-editor', {
-        //         modules: {
-        //             toolbar: [
-        //                 ['bold', 'italic', 'underline', 'strike'],
-        //                 ['link', 'blockquote', 'code-block', 'image'],
-        //                 [{ list: 'ordered' }, { list: 'bullet' }],
-        //                 [{ color: [] }, { background: [] }]
-        //             ]
-        //         },
-        //         theme: 'snow'
-        //     });
+        if($editedReplyId !== null && $editedReplyId !== reply.id) {
+            console.log('Fuck off!');
+        } else {
+            replyCardEditMode = true;
+            editedReplyId.set(reply.id);
+            await tick();
+            quillReplyCardEditor = new Quill('#reply-card-editor', {
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline', 'strike'],
+                        ['link', 'blockquote', 'code-block', 'image'],
+                        [{ list: 'ordered' }, { list: 'bullet' }],
+                        [{ color: [] }, { background: [] }]
+                    ]
+                },
+                theme: 'snow'
+            });
 
-        //     quillThreadEditor.theme.modules.toolbar.container.style.background = '#f1f1f1';
-        //     quillThreadEditor.theme.modules.toolbar.container.style.border = 'none';
-        // }
+            quillReplyCardEditor.theme.modules.toolbar.container.style.background = '#f1f1f1';
+            quillReplyCardEditor.theme.modules.toolbar.container.style.border = 'none';
+        }
     }
 
     const handleOnSubmit = async () => {
-        // threadEditMode= false;
-        // await tick();
-        // threadMessage = quillThreadEditor.root.innerHTML;
-        // updateThreadMessage(threadMessage);
-        // thread.message = threadMessage;
-        // quillThreadEditor.theme.modules.toolbar.container.style.display = 'none';
-        // quillThreadEditor = null;
-        // editedThreadId.set(null);
+        replyCardEditMode= false;
+        await tick();
+        replyCardMessage = quillReplyCardEditor.root.innerHTML;
+        updateReplyMessage(replyCardMessage);
+        reply.message = replyCardMessage;
+        quillReplyCardEditor.theme.modules.toolbar.container.style.display = 'none';
+        quillReplyCardEditor = null;
+        editedReplyId.set(null);
     }
     const onCancel = () => {
-        // threadEditMode = false;
-        // quillThreadEditor.theme.modules.toolbar.container.style.display = 'none';
-        // quillThreadEditor = null;
-        // editedThreadId.set(null);
+        replyCardEditMode = false;
+        quillReplyCardEditor.theme.modules.toolbar.container.style.display = 'none';
+        quillReplyCardEditor = null;
+        editedReplyId.set(null);
     }
 
     const handleDeleteButtonClick = async () => {
-        // try {
-        //     console.log(thread.id);
-        //     await fetch(`${apiBaseUrl}/threads/delete/${thread.id}`, {
-        //         method: "DELETE",
-        //         headers: {
-        //             "content-type": "application/json",
-        //             authorization: `Bearer ${accessToken}`,
-        //         },
-        //     });
+        try {
+            await fetch(`${apiBaseUrl}/replies/delete/${reply.id}`, {
+                method: "DELETE",
+                headers: {
+                    "content-type": "application/json",
+                    authorization: `Bearer ${accessToken}`,
+                },
+            });
 
-        //     reloadReplies();
+            reloadReplies();
 
-        // } catch (err) {
-        //     console.log(err);
-        // }
+        } catch (err) {
+            console.log(err);
+        }
     }
 
 </script>
