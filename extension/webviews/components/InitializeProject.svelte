@@ -45,6 +45,18 @@
         existingProjects = json.projects;
     }
 
+    const handleGetGithubUrl = async(url: string) => {
+        githubUrl = url;
+        const currentProject: Project = tsvscode.getState()?.currentProject;
+
+        if (githubUrl && currentProject) {
+            page = Page.ThreadsViewer;
+            return;
+        }
+        
+        fetchExistingProjects();
+    }
+
     onMount(async () => {
         tsvscode.postMessage({ type: 'getGithubUrl', value: undefined });
 
@@ -52,34 +64,41 @@
             const message = event.data;
             switch (message.type) {
                 case "getGithubUrl":
-                    githubUrl = message.value;
-                    fetchExistingProjects();
+                    handleGetGithubUrl(message.value);
                     break;
             }
-        });        
+        });
     });
 </script>
 
 <h1>Get Started!</h1>
 
-<div>
-    Create a project:
+{#if githubUrl}
+    <div>
+        Create a project:
 
-    <form>
-        <input placeholder="Enter project name" bind:value={createProjectName} />
-        <input placeholder="Github repo url" value={githubUrl} disabled/>
-        <button on:click|preventDefault={createNewProject}>Submit</button>
-    </form>
+        <form>
+            <input placeholder="Enter project name" bind:value={createProjectName} />
+            <input placeholder="Github repo url" value={githubUrl} disabled/>
+            <button on:click|preventDefault={createNewProject}>Submit</button>
+        </form>
 
-    <p>or select existing projects:</p>
+        {#if existingProjects.length > 0}
+            <p>Or select an existing project:</p>
 
-    <ul>
-        {#each existingProjects as project (project.id)}
-            <li >
-                <a href="0" on:click|preventDefault={() => {
-                    setCurrentProject(project)
-                }}> {project.name} </a>
-            </li>
-        {/each}
-    </ul>
-</div>
+            <ul>
+                {#each existingProjects as project (project.id)}
+                    <li >
+                        <a href="0" on:click|preventDefault={() => {
+                            setCurrentProject(project)
+                        }}> {project.name} </a>
+                    </li>
+                {/each}
+            </ul>
+        {/if}
+    </div>
+{:else}
+    <div>
+        Workspace folder is not a github repository.
+    </div>
+{/if}

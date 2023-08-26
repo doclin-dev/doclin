@@ -1,8 +1,8 @@
-<script>
+<script type="ts">
     import Icon from './Icon.svelte';
     export let icon = "";
     export let title = "";
-    export let onClick;
+    export let onClick: () => void;
     export let iconWidth = 20;
     export let iconHeight = 20;
     export let size = 'sm';

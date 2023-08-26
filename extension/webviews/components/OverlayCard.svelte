@@ -1,11 +1,11 @@
-<script>
+<script type="ts">
     import 'bootstrap';
     import Button from './Button.svelte';
     import Icon from './Icon.svelte';
 
-    export let isEditable = true;
-    export let handleEdit;
-    export let handleDelete;
+    export let isEditable: boolean = true;
+    export let handleEdit: () => void = () => {};
+    export let handleDelete: () => void = () => {};
   
   </script>
   

@@ -24,7 +24,6 @@
     }
 
     onMount(async () => {
-
         window.addEventListener("message", async (event) => {
             const message = event.data;
             switch (message.type) {
@@ -42,11 +41,6 @@
         });
 
         tsvscode.postMessage({ type: "get-token", value: undefined });
-
-        currentProject = tsvscode.getState()?.currentProject;
-        if (currentProject) {
-            page = Page.ThreadsViewer;
-        }
     });
 </script>
 
@@ -57,10 +51,6 @@
         <InitializeProject {accessToken} bind:page={page}/>
     {:else if page === Page.ThreadsViewer}
         <ThreadsViewer {user} {accessToken} bind:page={page} />
-        <button
-            on:click={() => {
-                page = Page.InitializeProject;
-            }}>Choose another project</button>
     {:else if page === Page.ReplyViewer}
         <ReplyViewer thread={$selectedThread} username={user.name} projectName={currentProject?.name} bind:page={page} accessToken={accessToken}/>
     {:else if page === Page.Contact}
@@ -73,10 +63,10 @@
     <button
         on:click={() => {
             page = Page.Contact;
-        }}>go to contact</button>
+        }}>Feedback</button>
     <button
-        on:click={logout}>logout</button>
+        on:click={logout}>Logout</button>
 {:else}
     <button
-        on:click={authenticate}>login with GitHub</button>
+        on:click={authenticate}>Login with GitHub</button>
 {/if}

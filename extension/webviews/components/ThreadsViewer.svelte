@@ -4,7 +4,7 @@
     import Quill from "quill";
     import Thread from './Thread.svelte';
     import ViewerTopBar from "./ViewerTopBar.svelte";
-    import type { Page } from "../enums";
+    import { Page } from "../enums";
 
     export let user: User;
     export let accessToken: string;
@@ -13,15 +13,15 @@
     let quillEditor: any;
     let threadMessage: string;
     let threads: Array<{ message: string; id: number }> = [];
-    let currentProject: Project;
-    let currentFilePath: string;
+    let currentProject: Project | null;
+    let currentFilePath: string | null;
 
     async function postThreadMessage(t: string) {
         const response = await fetch(`${apiBaseUrl}/threads`, {
                 method: "POST",
                 body: JSON.stringify({
                     message: t,
-                    projectId: currentProject.id,
+                    projectId: currentProject?.id,
                     filePath: currentFilePath
                 }),
                 headers: {
@@ -39,16 +39,16 @@
 
         // Insert a line break to move the cursor to the next line
         quillEditor.insertText(cursorPosition, "\n");
-
-        // Move the cursor to the end of the new line
         quillEditor.setSelection(cursorPosition + 1);
 
-        // Apply code-block formatting to the incoming message
         const range = quillEditor.getSelection(true);
-        quillEditor.formatLine(range.index, message.length + 1, "code-block", true);
+        quillEditor.formatText(range.index, message.length + 1, "code-block", true);
 
         // Insert the new message at the cursor position
         quillEditor.insertText(cursorPosition + 1, message);
+
+        // remove codeblock from filepath (1st line)
+        quillEditor.formatLine(range.index, 1, "code-block", false);
 
         // Move the cursor to the end of the new message
         quillEditor.setSelection(cursorPosition + 1 + message.length);
@@ -56,7 +56,9 @@
 
     async function submitThreadMessage() {
         threadMessage = quillEditor.root.innerHTML;
-        postThreadMessage(threadMessage);
+        if (threadMessage) {
+            postThreadMessage(threadMessage);
+        }
         threadMessage = "";
         quillEditor.setText(threadMessage);
         tsvscode.setState({...tsvscode.getState(), threadMessage});
@@ -79,22 +81,30 @@
         quillEditor.theme.modules.toolbar.container.style.border = 'none';
 
         quillEditor.on('text-change', () => {
-            threadMessage = quillEditor.getText();
+            threadMessage = quillEditor.root.innerHTML;
             tsvscode.setState({...tsvscode.getState(), threadMessage});
         });
         
         quillEditor.root.innerHTML = threadMessage;
+        console.log(threadMessage);
     }
 
     async function loadThreads() {
-        const response = await fetch(`${apiBaseUrl}/threads?projectId=${currentProject.id}&filePath=${currentFilePath}`, {
-            headers: {
-                authorization: `Bearer ${accessToken}`,
-            },
-        });
+        if (currentProject) {
+            const response = await fetch(`${apiBaseUrl}/threads?projectId=${currentProject.id}&filePath=${currentFilePath}`, {
+                headers: {
+                    authorization: `Bearer ${accessToken}`,
+                },
+            });
 
-        const payload = await response.json();
-        threads = payload.threads;
+            const payload = await response.json();
+            threads = payload.threads;
+        }
+    }
+
+    function chooseAnotherProject() {
+        tsvscode.setState({...tsvscode.getState(), currentProject: null});
+        page = Page.InitializeProject;
     }
 
     onMount(async () => {
@@ -120,8 +130,6 @@
     });
 </script>
 
-
-
 <style>
     #textEditor{
         width: 100%;
@@ -132,7 +140,7 @@
 </style>
 
 
-<ViewerTopBar username={user.name} projectName={currentProject?.name}/>
+<ViewerTopBar username={user.name}/>
 
 <form
     on:submit|preventDefault={submitThreadMessage}>
@@ -145,3 +153,5 @@
         <Thread thread={thread} username={user.name} bind:page={page} accessToken={accessToken} reloadThreads={loadThreads}/>
     {/each}
 </div>
+
+<button on:click={() => {chooseAnotherProject()}}>Project: {currentProject?.name}</button>
