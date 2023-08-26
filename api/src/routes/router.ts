@@ -26,7 +26,9 @@ router.get("/", (_req: any, res: any) => {
 
 router.post("/threads", isAuth, threadController.postThread);
 router.get("/threads", isAuth, threadController.getThreads);
+router.put("/threads/:id", isAuth, threadController.updateThreadMessage);
 router.post("/threads/:id/comment", isAuth, threadController.postComment);
+router.delete("/threads/delete/:id", isAuth, threadController.deleteThread);
 
 router.get("/currentProject/", isAuth, projectController.getCurrentProject);
 router.get("/existingProjects/", isAuth, projectController.getExistingProjects);
