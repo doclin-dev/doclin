@@ -7,14 +7,17 @@
     import { selectedThread } from './store.js';
     import Thread from "./Thread.svelte";
     import { onMount } from "svelte";
+    import Reply from "./Reply.svelte";
 
     export let thread;
     export let projectName;
     export let username;
     export let page;
+    export let accessToken;
 
 
     let quillReplyEditor;
+    let replies = [];
 
     async function initializeQuillEditor() {
         quillReplyEditor = new Quill('#replyEditor', {
@@ -33,6 +36,32 @@
         quillReplyEditor.theme.modules.toolbar.container.style.border = 'none';
     }
 
+    async function postReplyMessage(message) {
+        const response = await fetch(`${apiBaseUrl}/replies/${thread.id}`, {
+                method: "POST",
+                body: JSON.stringify({
+                    message: message,
+                }),
+                headers: {
+                    "content-type": "application/json",
+                    authorization: `Bearer ${accessToken}`,
+                },
+            });
+        const { reply } = await response.json();
+        replies = [reply, ...replies];
+    }
+
+    async function loadReplies () {
+        const response = await fetch(`${apiBaseUrl}/replies/${thread.id}`, {
+            headers: {
+                authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        const payload = await response.json();
+        replies = payload.replies;
+    }
+
     const handleDeleteButtonClick = () => {
         console.log('Delete button clicked!');
     }
@@ -49,6 +78,7 @@
 
     onMount(async () => {
         initializeQuillEditor();
+        loadReplies();
     });
 
 </script>
@@ -77,10 +107,15 @@
         <OverlayCard isEditable={false} handleDelete={handleDeleteButtonClick}/>
     </div>
     <div style="padding-bottom: 0.5rem">
-        <Thread thread={thread}/>
+        <Thread thread={thread} username={username}/>
     </div>
     <form>
         <div id="replyEditor"></div>
         <button on:click|preventDefault={onSubmit}>Submit</button>
     </form>
+    <div>
+        {#each replies as reply (reply.id)}
+            <Reply reply={reply} username={username}/>
+        {/each}
+    </div>
 </div>

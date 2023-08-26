@@ -10,7 +10,7 @@ import { User } from "./User";
 import { Thread } from "./Thread";
 
 @Entity()
-export class Comment extends BaseEntity {
+export class Reply extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -23,11 +23,11 @@ export class Comment extends BaseEntity {
   @Column()
   threadId: number;
 
-  @ManyToOne(() => User, (u) => u.comments)
+  @ManyToOne(() => User, (user) => user.replies)
   @JoinColumn({ name: "userId" })
   user: Promise<User>;
 
-  @ManyToOne(() => Thread, (t) => t.comments)
+  @ManyToOne(() => Thread, (thread) => thread.replies)
   @JoinColumn({ name: "threadId" })
   thread: Promise<Thread>;
 }
