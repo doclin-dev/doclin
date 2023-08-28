@@ -73,7 +73,6 @@
 
     const handleDeleteButtonClick = async () => {
         try {
-            console.log(thread.id);
             await fetch(`${apiBaseUrl}/threads/delete/${thread.id}`, {
                 method: "DELETE",
                 headers: {

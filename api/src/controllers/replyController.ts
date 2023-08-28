@@ -34,3 +34,34 @@ export const getReplies = async (req: any, res: any) => {
     
     res.send({replies});
 }
+
+export const updateReplyMessage = async (req: any, res: any) => {
+    const replyId = req.params.id;
+
+    const reply = await Reply.findOne(replyId);
+    if(!reply) {
+        res.send({reply: null});
+        return;
+    }
+
+    const replyMessage = req.body.message;
+
+    reply.message = replyMessage;
+    await reply.save();
+
+    res.send({reply});
+}
+
+export const deleteReply = async (req: any, res: any) => {
+    const replyId = req.params.id;
+
+    const reply = await Reply.findOne(replyId);
+    if(!reply) {
+        res.send({reply: null});
+        return;
+    }
+
+    await reply.remove();
+
+    res.send("Reply sucessfully deleted");
+}
