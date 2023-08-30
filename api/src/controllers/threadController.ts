@@ -15,6 +15,7 @@ export const postThread = async (req: any, res: any) => {
 
     let updatedThreadMessage: string = threadMessage.replace(snippetsMatcher, (match: string, content: string) => {
         const codeBlockLines: string[] = content.split("\n");
+        
         if (codeBlockLines.length > 0) {
             let filePath: string;
             const filePathPrefix = "File Path: ";
@@ -60,6 +61,13 @@ export const postThread = async (req: any, res: any) => {
 
     thread.message = updatedThreadMessage;
     await thread.save();
+
+    (await thread.snippets).fill;
+
+    for (const snippet of await thread.snippets) {
+        (await snippet.snippetFilePaths).fill;
+    }
+
 
     res.send({ thread });
 }

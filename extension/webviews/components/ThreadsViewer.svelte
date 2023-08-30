@@ -12,7 +12,7 @@
     
     let quillEditor: any;
     let threadMessage: string;
-    let threads: Array<{ message: string; id: number }> = [];
+    let threads: Array<Thread> = [];
     let currentProject: Project | null;
     let currentFilePath: string | null;
 
@@ -22,14 +22,16 @@
                 body: JSON.stringify({
                     message: t,
                     projectId: currentProject?.id,
-                    filePath: currentFilePath
+                    activeEditorFilePath: currentFilePath
                 }),
                 headers: {
                     "content-type": "application/json",
                     authorization: `Bearer ${accessToken}`,
                 },
             });
-        const { thread } = await response.json();
+        let { thread }: {thread: Thread} = await response.json();
+        console.log(thread);
+        thread = loadSnippetInsideThread(thread);
         threads = [thread, ...threads];
     }
 
@@ -90,7 +92,27 @@
 
             const payload = await response.json();
             threads = payload.threads;
+
+            for (let thread of threads) {
+                thread = loadSnippetInsideThread(thread);
+            };
         }
+    }
+
+    function loadSnippetInsideThread(thread: Thread): Thread {
+        const snippets = thread.__snippets__;
+        
+        for (const snippet of snippets) {
+            const firstSnippetFilePath = snippet.__snippetFilePaths__[0];
+            const codeBlock = `<pre class="ql-syntax" spellcheck="false">File Path: ${firstSnippetFilePath.filePath}<hr>${snippet.text}</pre>`;
+            thread.message = thread.message.replace(getSnippetTag(snippet.id), codeBlock);
+        }
+
+        return thread;
+    }
+
+    function getSnippetTag (snippetId: number) {
+        return `[snippet_${snippetId}]`;
     }
 
     function chooseAnotherProject() {
