@@ -56,18 +56,16 @@ export const getGitRelativePath = async () : Promise<string> => {
 export const addCodeSnippet = async (sidebarProvider: any) => {
   const { activeTextEditor } = vscode.window;
 
-  const view = vscode.window
-
   if (!activeTextEditor) {
     vscode.window.showInformationMessage("No active text editor");
     return;
   }
 
-  const gitRelativeFilePath = await getGitRelativePath();
-
   vscode.commands.executeCommand('workbench.view.extension.doclin-sidebar-view');
 
-  const message = activeTextEditor.document.getText(
+  const filePath = await getGitRelativePath();
+
+  const threadMessage = activeTextEditor.document.getText(
     activeTextEditor.selection
   );
 
@@ -83,8 +81,6 @@ export const addCodeSnippet = async (sidebarProvider: any) => {
   //     console.log('No text selected');
   // }
 
-  const threadMessage = `${gitRelativeFilePath}\n${message}`;
-
   const pauseExecution = () => {
     return new Promise((resolve) => {
       setTimeout(resolve, 500); // Resolves the promise after 2 seconds
@@ -97,6 +93,6 @@ export const addCodeSnippet = async (sidebarProvider: any) => {
 
   sidebarProvider._view?.webview.postMessage({
     type: "populate-thread-message",
-    value: threadMessage,
+    value: {filePath, threadMessage},
   });
 }

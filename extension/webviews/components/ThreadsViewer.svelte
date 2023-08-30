@@ -33,25 +33,16 @@
         threads = [thread, ...threads];
     }
 
-    async function populateThreadMessageField(message: string) {
-        const selection = quillEditor.getSelection();
+    async function populateThreadMessageField({filePath, threadMessage}: {filePath: string, threadMessage: string}) {
+        const selection = quillEditor.getSelection(true);
         const cursorPosition: number = selection ? selection.index : quillEditor.getLength();
+        const textToInsert = `File Path: ${filePath}\n${threadMessage}\n`;
 
-        // Insert a line break to move the cursor to the next line
         quillEditor.insertText(cursorPosition, "\n");
-        quillEditor.setSelection(cursorPosition + 1);
-
-        const range = quillEditor.getSelection(true);
-        quillEditor.formatText(range.index, message.length + 1, "code-block", true);
-
-        // Insert the new message at the cursor position
-        quillEditor.insertText(cursorPosition + 1, message);
-
-        // remove codeblock from filepath (1st line)
-        quillEditor.formatLine(range.index, 1, "code-block", false);
-
-        // Move the cursor to the end of the new message
-        quillEditor.setSelection(cursorPosition + 1 + message.length);
+        quillEditor.insertText(cursorPosition + 1, textToInsert);
+        quillEditor.formatText(cursorPosition + 1, textToInsert.length, "code-block", true);
+        quillEditor.insertText(cursorPosition + 1 + textToInsert.length, "\n");
+        quillEditor.setSelection(cursorPosition + 1 + textToInsert.length);
     }
 
     async function submitThreadMessage() {

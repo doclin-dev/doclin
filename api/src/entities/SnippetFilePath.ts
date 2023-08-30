@@ -17,7 +17,7 @@ export class SnippetFilePath extends BaseEntity {
   filePath: string;
 
   @Column()
-  threadId: number;
+  snippetId: number;
 
   @Column({nullable: true})
   type: string; // "snippet" or "movedfile"
