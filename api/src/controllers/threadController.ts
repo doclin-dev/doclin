@@ -13,7 +13,7 @@ export const postThread = async (req: any, res: any) => {
     const snippets: string[] = [];
     let count = -1;
 
-    let updatedThreadMessage: string = threadMessage.replace(snippetsMatcher, (match: string, content: string) => {
+    let updatedThreadMessage: string = threadMessage.replace(snippetsMatcher, (_match: string, content: string) => {
         const codeBlockLines: string[] = content.split("\n");
         
         if (codeBlockLines.length > 0) {
