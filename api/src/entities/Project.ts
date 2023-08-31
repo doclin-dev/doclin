@@ -6,6 +6,7 @@ import {
   OneToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
+  CreateDateColumn
 } from "typeorm";
 import { User } from "./User";
 import { Thread } from "./Thread";
@@ -16,6 +17,9 @@ export class Project extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @CreateDateColumn()
+  createdAt: Date;
+
   @Column("text")
   name: string;
 
@@ -25,7 +29,7 @@ export class Project extends BaseEntity {
   @Column({ nullable: true})
   userId: number;
 
-  @ManyToOne(() => User, (u) => u.todos)
+  @ManyToOne(() => User, (u) => u.projects)
   @JoinColumn({ name: "userId" })
   creator: Promise<User>;
 

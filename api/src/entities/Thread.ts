@@ -6,6 +6,7 @@ import {
   OneToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
+  CreateDateColumn
 } from "typeorm";
 import { User } from "./User";
 import { Project } from "./Project";
@@ -16,6 +17,9 @@ import { Snippet } from "./Snippet";
 export class Thread extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @CreateDateColumn()
+  createdAt: Date;
 
   @Column("text")
   message: string;
@@ -30,7 +34,7 @@ export class Thread extends BaseEntity {
   @Column({ nullable: true})
   projectId: number;
 
-  @OneToMany(() => Snippet, (s) => s.thread)
+  @OneToMany(() => Snippet, (s) => s.thread, { cascade: true })
   snippets: Promise<Snippet[]>;
 
   @ManyToOne(() => Project, (project) => project.threads)

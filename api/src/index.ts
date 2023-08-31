@@ -23,21 +23,24 @@ const main = async () => {
     synchronize: !__prod__,
   });
 
-  // const user = await User.create({ name: "bob" }).save();
-
   const app = express();
+
   passport.serializeUser((user: any, done) => {
     done(null, user.accessToken);
   });
+
   app.use(cors({ 
     origin: true, 
     optionsSuccessStatus: 200,
     credentials: true
   }));
-  app.use(passport.initialize());
-  app.use(express.json());
 
+  app.use(passport.initialize());
+
+  app.use(express.json());
+  
   app.use(bodyParser.json());
+
   app.use(
     bodyParser.urlencoded({
       extended: true,

@@ -4,8 +4,8 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  CreateDateColumn
 } from "typeorm";
-import { Todo } from "./Todo";
 import { Project } from "./Project";
 import { Thread } from "./Thread";
 import { Reply } from "./Reply";
@@ -15,16 +15,16 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @CreateDateColumn()
+  createdAt: Date;
+
   @Column("text", { nullable: true })
   name: string;
 
   @Column("text", { unique: true })
   githubId: string;
 
-  @OneToMany(() => Todo, (t) => t.creator)
-  todos: Promise<Todo[]>;
-
-  @OneToMany(() => Project, (t) => t.userId)
+  @OneToMany(() => Project, (p) => p.userId)
   projects: Promise<Project[]>;
 
   @OneToMany(() => Thread, (t) => t.userId)

@@ -68,7 +68,6 @@ export const postThread = async (req: any, res: any) => {
         (await snippet.snippetFilePaths).fill;
     }
 
-
     res.send({ thread });
 }
 
@@ -117,18 +116,6 @@ export const deleteThread = async (req: any, res: any) => {
     if(!thread) {
         res.send({thread: null});
         return;
-    }
-
-    const snippets = await thread.snippets;
-
-    for (let snippet of snippets) {
-        const snippetFilePaths = await snippet.snippetFilePaths;
-
-        for (let snippetFilePath of snippetFilePaths) {
-            await snippetFilePath.remove();
-        }
-
-        await snippet.remove();
     }
 
     await thread.remove();
