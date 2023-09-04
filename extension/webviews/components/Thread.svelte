@@ -9,7 +9,6 @@
     export let thread: any;
     export let username: string;
     export let page: Page;
-    export let accessToken: string;
     export let reloadThreads: () => void = () => {};
 
     let quillThreadEditor: any;
@@ -24,7 +23,6 @@
                 }),
                 headers: {
                     "content-type": "application/json",
-                    authorization: `Bearer ${accessToken}`,
                 },
             });
     }
@@ -78,7 +76,6 @@
                 method: "DELETE",
                 headers: {
                     "content-type": "application/json",
-                    authorization: `Bearer ${accessToken}`,
                 },
             });
 

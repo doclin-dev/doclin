@@ -2,8 +2,10 @@ import * as vscode from "vscode";
 import { authenticate } from "./providerHelpers/authenticationProviderHelper";
 import { apiBaseUrl } from "./constants";
 import { getNonce } from "./providerHelpers/getNonce";
-import { StateManager } from "./StateManager";
-import { getGithubUrl, getActiveEditorFilePath, getThreadsByActiveFilePath } from "./providerHelpers/threadProviderHelper";
+import { GlobalStateManager } from "./GlobalStateManager";
+import { getActiveEditorFilePath, getThreadsByActiveFilePath } from "./providerHelpers/threadProviderHelper";
+import { getGithubUrl } from "./providerHelpers/projectProviderHelper";
+import { getExistingProjects, createProject } from "./providerHelpers/projectProviderHelper";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -24,14 +26,14 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     webviewView.webview.onDidReceiveMessage(async (data: { type: any, value: any }) => {
       switch (data.type) {
         case "logout": {
-          StateManager.setState(StateManager.type.AUTH_TOKEN, "");
+          GlobalStateManager.setState(GlobalStateManager.type.AUTH_TOKEN, "");
           break;
         }
         case "authenticate": {
           authenticate(() => {
             webviewView.webview.postMessage({
               type: "token",
-              value: StateManager.getState(StateManager.type.AUTH_TOKEN),
+              value: GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN),
             });
           });
           break;
@@ -39,7 +41,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         case "get-token": {
           webviewView.webview.postMessage({
             type: "token",
-            value: StateManager.getState(StateManager.type.AUTH_TOKEN),
+            value: GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN),
           });
           break;
         }
@@ -64,13 +66,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           });
           break;
         }
-        case "getCurrentFilePath": {
-          webviewView.webview.postMessage({
-            type: "getCurrentFilePath",
-            value: await getActiveEditorFilePath()
-          });
-          break;
-        }
         case "getThreadsByActiveFilePath": {
           webviewView.webview.postMessage({
             type: "getThreadsByActiveFilePath",
@@ -80,6 +75,20 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         }
         case "selectAThread": {
           
+          break;
+        }
+        case "getExistingProjects": {
+          webviewView.webview.postMessage({
+            type: "getExistingProjects",
+            value: await getExistingProjects()
+          });
+          break;
+        }
+        case "createProject": {
+          webviewView.webview.postMessage({
+            type: "createProject",
+            value: await createProject(data.value)
+          });
           break;
         }
       }

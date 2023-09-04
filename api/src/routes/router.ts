@@ -33,8 +33,7 @@ router.delete("/threads/delete/:id", isAuth, threadController.deleteThread);
 router.post("/replies/:threadId", isAuth, replyController.postReply);
 router.get("/replies/:threadId", isAuth, replyController.getReplies);
 
-router.get("/currentProject/", isAuth, projectController.getCurrentProject);
-router.get("/existingProjects/", isAuth, projectController.getExistingProjects);
-router.post("/project", isAuth, projectController.createProject);
+router.post("/projects", isAuth, projectController.createProject);
+router.get("/projects/existing", isAuth, projectController.getExistingProjects);
 
 module.exports = router;

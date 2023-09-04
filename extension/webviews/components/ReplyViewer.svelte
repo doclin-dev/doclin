@@ -8,12 +8,12 @@
     import Thread from "./Thread.svelte";
     import { onMount } from "svelte";
     import Reply from "./Reply.svelte";
+  import { WebviewStateManager } from "../WebviewStateManager";
 
     export let thread: any;
     export let projectName: string;
     export let username: string;
     export let page: Page;
-    export let accessToken: any;
 
     let quillReplyEditor: any;
     let replies: any = [];
@@ -35,7 +35,7 @@
         quillReplyEditor.theme.modules.toolbar.container.style.border = 'none';
     }
 
-    async function postReplyMessage(message) {
+    async function postReplyMessage(message: string) {
         const response = await fetch(`${apiBaseUrl}/replies/${thread.id}`, {
                 method: "POST",
                 body: JSON.stringify({
@@ -43,7 +43,6 @@
                 }),
                 headers: {
                     "content-type": "application/json",
-                    authorization: `Bearer ${accessToken}`,
                 },
             });
         const { reply } = await response.json();
@@ -53,7 +52,6 @@
     async function loadReplies () {
         const response = await fetch(`${apiBaseUrl}/replies/${thread.id}`, {
             headers: {
-                authorization: `Bearer ${accessToken}`,
             },
         });
 
@@ -68,7 +66,7 @@
     const handleBackClick = () => {
         selectedThread.set(null);
         page = Page.ThreadsViewer;
-        tsvscode.setState({ ...tsvscode.getState(), page});
+        WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
     }
 
     const onSubmit= () => {

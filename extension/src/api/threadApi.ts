@@ -1,4 +1,4 @@
-import { StateManager } from "../StateManager";
+import { GlobalStateManager } from "../GlobalStateManager";
 import { createAxiosInstance } from "./apiService";
 
 const baseThreadUrl = `/threads`;
@@ -9,7 +9,7 @@ const getThreads = async (projectId: number, filePath: string) => {
         filePath: filePath
     };
 
-    const apiService = createAxiosInstance(StateManager.getState(StateManager.type.AUTH_TOKEN));
+    const apiService = createAxiosInstance(GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN));
     const response = await apiService.get(baseThreadUrl, { params });
 
     return response;
@@ -26,7 +26,7 @@ const postThread = async (
         filePath: activeEditorFilePath
     };
 
-    const apiService = createAxiosInstance(StateManager.getState(StateManager.type.AUTH_TOKEN));
+    const apiService = createAxiosInstance(GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN));
     const response = await apiService.post(baseThreadUrl, data);
 
     return response;

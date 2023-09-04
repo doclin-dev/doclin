@@ -1,6 +1,6 @@
 export enum Page {
-  InitializeProject,
-  ThreadsViewer,
-  ReplyViewer,
-  Contact
+  InitializeProject = "initializeProject",
+  ThreadsViewer = "threadViewer",
+  ReplyViewer = "replyViewer",
+  Contact = "contact"
 }

@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import { apiBaseUrl } from '../constants';
-import { StateManager } from '../StateManager';
+import { GlobalStateManager } from '../GlobalStateManager';
 
 export const createAxiosInstance = (token: string | null) => {
     const instance: AxiosInstance = axios.create({

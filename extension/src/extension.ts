@@ -4,11 +4,11 @@
 import * as vscode from "vscode";
 import { authenticate } from "./providerHelpers/authenticationProviderHelper";
 import { SidebarProvider } from "./SidebarProvider";
-import { StateManager } from "./StateManager";
+import { GlobalStateManager } from "./GlobalStateManager";
 import { addCodeSnippet } from "./providerHelpers/threadProviderHelper";
 
 export function activate(context: vscode.ExtensionContext) {
-  StateManager.globalState = context.globalState;
+  GlobalStateManager.globalState = context.globalState;
 
   const sidebarProvider = new SidebarProvider(context.extensionUri);
 
@@ -32,7 +32,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("doclin.helloWorld", () => {
       vscode.window.showInformationMessage(
-        "token value is: " + StateManager.getState(StateManager.type.AUTH_TOKEN)
+        "token value is: " + GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN)
       );
       // HelloWorldPanel.createOrShow(context.extensionUri);
     })

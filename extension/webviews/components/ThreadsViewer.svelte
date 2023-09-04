@@ -5,9 +5,9 @@
     import Thread from './Thread.svelte';
     import ViewerTopBar from "./ViewerTopBar.svelte";
     import { Page } from "../enums";
+  import { WebviewStateManager } from "../WebviewStateManager";
 
     export let user: User;
-    export let accessToken: string;
     export let page: Page;
     
     let quillEditor: any;
@@ -26,7 +26,6 @@
                 }),
                 headers: {
                     "content-type": "application/json",
-                    authorization: `Bearer ${accessToken}`,
                 },
             });
         let { thread }: {thread: Thread} = await response.json();
@@ -53,7 +52,7 @@
         }
         threadMessage = "";
         quillEditor.setText(threadMessage);
-        tsvscode.setState({...tsvscode.getState(), threadMessage});
+        WebviewStateManager.setState(WebviewStateManager.type.THREAD_MESSAGE, threadMessage);
     }
 
     async function initializeQuillEditor() {
@@ -74,7 +73,7 @@
 
         quillEditor.on('text-change', () => {
             threadMessage = quillEditor.root.innerHTML;
-            tsvscode.setState({...tsvscode.getState(), threadMessage});
+            WebviewStateManager.setState(WebviewStateManager.type.THREAD_MESSAGE, threadMessage);
         });
         
         quillEditor.root.innerHTML = threadMessage;
@@ -86,13 +85,13 @@
     }
 
     function chooseAnotherProject() {
-        tsvscode.setState({...tsvscode.getState(), currentProject: null});
+        WebviewStateManager.setState(WebviewStateManager.type.CURRENT_PROJECT, null);
         page = Page.InitializeProject;
     }
 
     onMount(async () => {
-        threadMessage = tsvscode.getState()?.threadMessage || "";
-        currentProject = tsvscode.getState()?.currentProject;
+        threadMessage = WebviewStateManager.getState(WebviewStateManager.type.THREAD_MESSAGE) || "";
+        currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
 
         window.addEventListener("message", async (event) => {
             const message = event.data;
@@ -133,7 +132,7 @@
 
 <div id='viewer'>
     {#each threads as thread (thread.id)}
-        <Thread thread={thread} username={user.name} bind:page={page} accessToken={accessToken} reloadThreads={loadThreads}/>
+        <Thread thread={thread} username={user.name} bind:page={page} reloadThreads={loadThreads}/>
     {/each}
 </div>
 

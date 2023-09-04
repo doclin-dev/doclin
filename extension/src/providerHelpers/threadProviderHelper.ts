@@ -1,51 +1,14 @@
 import * as vscode from "vscode";
-import { SidebarProvider } from "../SidebarProvider";
 import * as path from "path";
-import { exec } from 'child_process';
 import threadApi from "../api/threadApi";
+import { executeShellCommand } from "./providerHelperUtils";
 
-interface ShellOutput {
-    stdout: string;
-    stderr: string;
-}
-
-/**
- * Execute simple shell command (async wrapper).
- * @param {String} cmd
- * @return {Object} { stdout: String, stderr: String }
- */
-async function sh(cmd: string): Promise<ShellOutput> {
-  return new Promise(function (resolve, reject) {
-    exec(cmd, (err, stdout, stderr) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve({ stdout, stderr });
-      }
-    });
-  });
-}
-
-export const getGithubUrl = async() : Promise<string> => {
-  if (vscode.workspace.workspaceFolders) {
-    const openedFolderUri: any = vscode.workspace.workspaceFolders[0]?.uri;
-    const openedFolderPath: string = openedFolderUri.fsPath;
-    
-    if (openedFolderPath) {
-      let { stdout }: {stdout: string} = await sh(`cd ${openedFolderPath} && git config --get remote.origin.url`);
-      return stdout;
-    }
-  }
-  return "";
-}
 
 export const getThreadsByActiveFilePath = async (): Promise<any> => {
   const activeFilePath: string = await getActiveEditorFilePath();
   const response = await threadApi.getThreads(5, activeFilePath);
   const payload = response?.data;
   const threads = payload?.threads;
-
-  console.log(payload);
 
   return threads;
 }
@@ -65,7 +28,7 @@ export const getActiveEditorFilePath = async () : Promise<string> => {
   const activeDirectory: string = path.dirname(activeFilePath);
   const activeFileName = path.basename(activeFilePath);
 
-  let { stdout }: {stdout: string} = await sh(`cd ${activeDirectory} && git rev-parse --show-prefix ${activeFileName}`);
+  let { stdout }: {stdout: string} = await executeShellCommand(`cd ${activeDirectory} && git rev-parse --show-prefix ${activeFileName}`);
   return stdout.split('\n')[0] + activeFileName;
 }
 

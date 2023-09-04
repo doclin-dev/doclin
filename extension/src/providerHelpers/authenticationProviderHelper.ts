@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { apiBaseUrl } from "../constants";
 import * as polka from "polka";
-import { StateManager } from "../StateManager";
+import { GlobalStateManager } from "../GlobalStateManager";
 
 export const authenticate = (fn?: () => void) => {
   const app = polka();
@@ -13,7 +13,7 @@ export const authenticate = (fn?: () => void) => {
       return;
     }
 
-    await StateManager.setState(StateManager.type.AUTH_TOKEN, token);
+    await GlobalStateManager.setState(GlobalStateManager.type.AUTH_TOKEN, token);
     if (fn) {
       fn();
     }

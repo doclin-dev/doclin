@@ -2,14 +2,13 @@ import * as vscode from "vscode";
 
 enum StateType {
   AUTH_TOKEN = "authToken",
-  CURRENT_PROJECT = "currentProject"
 }
 
-export class StateManager {
+export class GlobalStateManager {
   static globalState: vscode.Memento;
   static type = StateType;
 
-  static setState(key: StateType, value: string) {
+  static setState(key: StateType, value: any) {
     return this.globalState.update(key, value);
   }
 

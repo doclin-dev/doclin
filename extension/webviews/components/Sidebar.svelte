@@ -6,11 +6,12 @@
     import InitializeProject from "./InitializeProject.svelte";
     import ReplyViewer from "./ReplyViewer.svelte";
     import {selectedThread} from './store';
+    import { WebviewStateManager } from "../WebviewStateManager";
 
     let accessToken = "";
     let loading = true;
     let user: User | null = null;
-    let page: Page = tsvscode.getState()?.page ?? Page.InitializeProject;
+    let page: Page = WebviewStateManager.getState(WebviewStateManager.type.PAGE) ?? Page.InitializeProject;
     let currentProject: Project;
 
     const authenticate = () => {
@@ -48,11 +49,11 @@
     <div>loading...</div>
 {:else if user}
     {#if page === Page.InitializeProject}
-        <InitializeProject {accessToken} bind:page={page}/>
+        <InitializeProject bind:page={page}/>
     {:else if page === Page.ThreadsViewer}
-        <ThreadsViewer {user} {accessToken} bind:page={page} />
+        <ThreadsViewer {user} bind:page={page} />
     {:else if page === Page.ReplyViewer}
-        <ReplyViewer thread={$selectedThread} username={user.name} projectName={currentProject?.name} bind:page={page} accessToken={accessToken}/>
+        <ReplyViewer thread={$selectedThread} username={user.name} projectName={currentProject?.name} bind:page={page}/>
     {:else if page === Page.Contact}
         <div>Contact me here:</div>
         <button
