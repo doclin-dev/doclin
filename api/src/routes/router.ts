@@ -32,6 +32,8 @@ router.delete("/threads/delete/:id", isAuth, threadController.deleteThread);
 
 router.post("/replies/:threadId", isAuth, replyController.postReply);
 router.get("/replies/:threadId", isAuth, replyController.getReplies);
+router.put("/replies/:id", isAuth, replyController.updateReplyMessage);
+router.delete("/replies/delete/:id", isAuth, replyController.deleteReply);
 
 router.post("/projects", isAuth, projectController.createProject);
 router.get("/projects/existing", isAuth, projectController.getExistingProjects);

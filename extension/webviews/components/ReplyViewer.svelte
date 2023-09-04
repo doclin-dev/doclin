@@ -15,11 +15,12 @@
     export let username: string;
     export let page: Page;
 
-    let quillReplyEditor: any;
-    let replies: any = [];
+    let quillReplyViewer: any;
+    let replies : Array<{message: string, id: number}> = [];
+    let replyMessage: string;
 
     async function initializeQuillEditor() {
-        quillReplyEditor = new Quill('#replyEditor', {
+        quillReplyViewer = new Quill('#replyViewerEditor', {
             modules: {
                 toolbar: [
                     ['bold', 'italic', 'underline', 'strike'],
@@ -31,11 +32,11 @@
             theme: 'snow'
         });   
         
-        quillReplyEditor.theme.modules.toolbar.container.style.background = '#f1f1f1';
-        quillReplyEditor.theme.modules.toolbar.container.style.border = 'none';
+        quillReplyViewer.theme.modules.toolbar.container.style.background = '#f1f1f1';
+        quillReplyViewer.theme.modules.toolbar.container.style.border = 'none';
     }
 
-    async function postReplyMessage(message: string) {
+    async function postReplyMessage(message: string: string) {
         const response = await fetch(`${apiBaseUrl}/replies/${thread.id}`, {
                 method: "POST",
                 body: JSON.stringify({
@@ -70,7 +71,11 @@
     }
 
     const onSubmit= () => {
-        console.log("Submitted!");
+        replyMessage = quillReplyViewer.root.innerHTML;
+        postReplyMessage(replyMessage);
+        replyMessage = "";
+        quillReplyViewer.setText(replyMessage);
+        tsvscode.setState({...tsvscode.getState(), replyMessage});
     }
 
     onMount(async () => {
@@ -88,7 +93,7 @@
         padding-bottom: 0.5rem;
         align-items: center;
     }
-    #replyEditor{
+    #replyViewerEditor{
         width: 100%;
         height: 100px;
         resize: both; 
@@ -96,7 +101,7 @@
     }
 </style>
 
-<ViewerTopBar username={username}/>
+<ViewerTopBar username={username} projectName={projectName}/>
 
 <div class='reply-viewer'>
     <div class='topbar'>
@@ -104,15 +109,15 @@
         <OverlayCard isEditable={false} handleDelete={handleDeleteButtonClick}/>
     </div>
     <div style="padding-bottom: 0.5rem">
-        <Thread thread={thread} username={username} page={page}/>
+        <Thread thread={thread} username={username} page={page} accessToken={accessToken}/>
     </div>
     <form>
-        <div id="replyEditor"></div>
+        <div id="replyViewerEditor"></div>
         <button on:click|preventDefault={onSubmit}>Submit</button>
     </form>
     <div>
         {#each replies as reply (reply.id)}
-            <Reply reply={reply} username={username}/>
+            <Reply reply={reply} username={username} reloadReplies={loadReplies} accessToken={accessToken}/>
         {/each}
     </div>
 </div>

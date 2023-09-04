@@ -1,8 +1,10 @@
 <script>
     import Button from "./Button.svelte";
     export let username;
+    export let projectName;
 </script>
 
+<div class="project-info">Project: {projectName}</div>
 <div class='header'>
     <div>Welcome <span style="font-weight:500; font-size:14px" >{username}</span></div>
     <div class='icon-container'>

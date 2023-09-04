@@ -77,7 +77,6 @@
         });
         
         quillEditor.root.innerHTML = threadMessage;
-        console.log(threadMessage);
     }
 
     async function loadThreads() {
@@ -122,7 +121,7 @@
 </style>
 
 
-<ViewerTopBar username={user.name}/>
+<ViewerTopBar username={user.name} projectName={currentProject?.name}/>
 
 <form
     on:submit|preventDefault={submitThreadMessage}>
