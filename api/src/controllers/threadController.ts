@@ -1,6 +1,8 @@
 import { SnippetFilePath } from "../entities/SnippetFilePath";
 import { Thread } from "../entities/Thread";
 import { Snippet } from "../entities/Snippet";
+import { getCustomRepository } from "typeorm";
+import { ThreadRepository } from "../repostiories/ThreadRepository";
 
 export const postThread = async (req: any, res: any) => {
     const threadMessage: string = req.body.message;
@@ -62,13 +64,19 @@ export const postThread = async (req: any, res: any) => {
     thread.message = updatedThreadMessage;
     await thread.save();
 
-    (await thread.snippets).fill;
+    const threadRepository = getCustomRepository(ThreadRepository);
 
-    for (const snippet of await thread.snippets) {
-        (await snippet.snippetFilePaths).fill;
+    let responseThread = await threadRepository.findThreadByThreadId(thread.id);
+    responseThread = fillUpThreadMessageWithSnippet(responseThread);
+    
+    const response = {
+        id: responseThread.id,
+        message: responseThread.message,
+        userId: responseThread.user?.id,
+        userName: responseThread.user?.name
     }
 
-    res.send({ thread });
+    res.send({ thread: response });
 }
 
 const getSnippetTag = (snippetId: number) => {
@@ -79,16 +87,34 @@ export const getThreads = async (req: any, res: any) => {
     const filePath = req.query.filePath;
     const projectId = req.query.projectId;
 
-    let threads = await Thread.createQueryBuilder('thread')
-                              .leftJoinAndSelect('thread.snippets', 'snippet')
-                              .leftJoinAndSelect('snippet.snippetFilePaths', 'snippetFilePath')
-                              .leftJoinAndSelect('thread.user', 'user')
-                              .where('snippetFilePath.filePath = :filePath', { filePath })
-                              .andWhere('thread.projectId = :projectId', { projectId })
-                              .orderBy('thread.id', 'DESC')
-                              .getMany();
+    const threadRepository = getCustomRepository(ThreadRepository);
 
-    res.send({threads});
+    let threads: Thread[] = await threadRepository.findThreadByFilePathAndProjectId(filePath, projectId);
+
+    for (let thread of threads) {
+        thread = fillUpThreadMessageWithSnippet(thread);
+    };
+
+    const response = threads.map((thread) => ({
+            id: thread.id,
+            message: thread.message,
+            userId: thread.user?.id,
+            userName: thread.user?.name
+        })
+    );
+
+    res.send({ threads: response });
+}
+
+const fillUpThreadMessageWithSnippet = (thread: Thread): Thread => {
+    for (const snippet of thread.snippets) {
+        const snippetFilePaths = snippet.snippetFilePaths;
+        const firstSnippetFilePath = snippetFilePaths[0];
+        const codeBlock = `<pre class="ql-syntax" spellcheck="false">File Path: ${firstSnippetFilePath.filePath}<hr>${snippet.text}</pre>`;
+        thread.message = thread.message.replace(getSnippetTag(snippet.id), codeBlock);
+    }
+
+    return thread;
 }
 
 export const updateThreadMessage = async (req: any, res: any) => {

@@ -12,7 +12,6 @@
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
-    "dom-parser": "^0.1.6",
     "dotenv-safe": "^8.2.0",
     "express": "^4.17.1",
     "express-session": "^1.17.3",

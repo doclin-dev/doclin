@@ -1,9 +1,9 @@
 import * as vscode from "vscode";
 import { authenticate } from "./providerHelpers/authenticationProviderHelper";
 import { apiBaseUrl } from "./constants";
-import { getNonce } from "./getNonce";
-import { TokenManager } from "./TokenManager";
-import { getGithubUrl, getGitRelativePath } from "./providerHelpers/threadProviderHelper";
+import { getNonce } from "./providerHelpers/getNonce";
+import { StateManager } from "./StateManager";
+import { getGithubUrl, getActiveEditorFilePath, getThreadsByActiveFilePath } from "./providerHelpers/threadProviderHelper";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -21,17 +21,17 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
-    webviewView.webview.onDidReceiveMessage(async (data) => {
+    webviewView.webview.onDidReceiveMessage(async (data: { type: any, value: any }) => {
       switch (data.type) {
         case "logout": {
-          TokenManager.setToken("");
+          StateManager.setState(StateManager.type.AUTH_TOKEN, "");
           break;
         }
         case "authenticate": {
           authenticate(() => {
             webviewView.webview.postMessage({
               type: "token",
-              value: TokenManager.getToken(),
+              value: StateManager.getState(StateManager.type.AUTH_TOKEN),
             });
           });
           break;
@@ -39,7 +39,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         case "get-token": {
           webviewView.webview.postMessage({
             type: "token",
-            value: TokenManager.getToken(),
+            value: StateManager.getState(StateManager.type.AUTH_TOKEN),
           });
           break;
         }
@@ -67,19 +67,21 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         case "getCurrentFilePath": {
           webviewView.webview.postMessage({
             type: "getCurrentFilePath",
-            value: await getGitRelativePath()
+            value: await getActiveEditorFilePath()
           });
           break;
         }
-      }
-    });
-
-    vscode.window.onDidChangeActiveTextEditor(async (editor) => {
-      if (editor) {
-        webviewView.webview.postMessage({
-          type: "getCurrentFilePath",
-          value: await getGitRelativePath()
-        });
+        case "getThreadsByActiveFilePath": {
+          webviewView.webview.postMessage({
+            type: "getThreadsByActiveFilePath",
+            value: await getThreadsByActiveFilePath()
+          });
+          break;
+        }
+        case "selectAThread": {
+          
+          break;
+        }
       }
     });
   }

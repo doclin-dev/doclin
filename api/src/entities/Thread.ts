@@ -29,18 +29,18 @@ export class Thread extends BaseEntity {
 
   @ManyToOne(() => User, (user) => user.threads)
   @JoinColumn({ name: "userId" })
-  user: Promise<User>;
+  user: User;
 
   @Column({ nullable: true})
   projectId: number;
 
   @OneToMany(() => Snippet, (s) => s.thread, { cascade: true })
-  snippets: Promise<Snippet[]>;
+  snippets: Snippet[];
 
   @ManyToOne(() => Project, (project) => project.threads)
   @JoinColumn({ name: "projectId" })
-  project: Promise<Project>;
+  project: Project;
 
   @OneToMany(() => Reply, (reply) => reply.thread)
-  replies: Promise<Reply[]>;
+  replies: Reply[];
 }

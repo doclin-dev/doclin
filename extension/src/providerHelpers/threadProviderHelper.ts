@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { SidebarProvider } from "../SidebarProvider";
 import * as path from "path";
 import { exec } from 'child_process';
+import threadApi from "../api/threadApi";
 
 interface ShellOutput {
     stdout: string;
@@ -38,7 +39,22 @@ export const getGithubUrl = async() : Promise<string> => {
   return "";
 }
 
-export const getGitRelativePath = async () : Promise<string> => {
+export const getThreadsByActiveFilePath = async (): Promise<any> => {
+  const activeFilePath: string = await getActiveEditorFilePath();
+  const response = await threadApi.getThreads(5, activeFilePath);
+  const payload = response?.data;
+  const threads = payload?.threads;
+
+  console.log(payload);
+
+  return threads;
+}
+
+export const selectAThread = async (threadId: number): Promise<any> => {
+  
+}
+
+export const getActiveEditorFilePath = async () : Promise<string> => {
   const { activeTextEditor } = vscode.window;
 
   if (!activeTextEditor) {
@@ -63,7 +79,7 @@ export const addCodeSnippet = async (sidebarProvider: any) => {
 
   vscode.commands.executeCommand('workbench.view.extension.doclin-sidebar-view');
 
-  const filePath = await getGitRelativePath();
+  const filePath = await getActiveEditorFilePath();
 
   const threadMessage = activeTextEditor.document.getText(
     activeTextEditor.selection

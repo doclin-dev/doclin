@@ -27,8 +27,8 @@ export class Snippet extends BaseEntity {
 
   @ManyToOne(() => Thread, (t) => t.snippets, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "threadId" })
-  thread: Promise<Thread>;
+  thread: Thread;
 
   @OneToMany(() => SnippetFilePath, (sfp) => sfp.snippet, { cascade: true })
-  snippetFilePaths: Promise<SnippetFilePath[]>;
+  snippetFilePaths: SnippetFilePath[];
 }

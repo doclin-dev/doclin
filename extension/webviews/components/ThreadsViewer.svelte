@@ -31,7 +31,6 @@
             });
         let { thread }: {thread: Thread} = await response.json();
         console.log(thread);
-        thread = loadSnippetInsideThread(thread);
         threads = [thread, ...threads];
     }
 
@@ -83,36 +82,7 @@
     }
 
     async function loadThreads() {
-        if (currentProject) {
-            const response = await fetch(`${apiBaseUrl}/threads?projectId=${currentProject.id}&filePath=${currentFilePath}`, {
-                headers: {
-                    authorization: `Bearer ${accessToken}`,
-                },
-            });
-
-            const payload = await response.json();
-            threads = payload.threads;
-
-            for (let thread of threads) {
-                thread = loadSnippetInsideThread(thread);
-            };
-        }
-    }
-
-    function loadSnippetInsideThread(thread: Thread): Thread {
-        const snippets = thread.__snippets__;
-        
-        for (const snippet of snippets) {
-            const firstSnippetFilePath = snippet.__snippetFilePaths__[0];
-            const codeBlock = `<pre class="ql-syntax" spellcheck="false">File Path: ${firstSnippetFilePath.filePath}<hr>${snippet.text}</pre>`;
-            thread.message = thread.message.replace(getSnippetTag(snippet.id), codeBlock);
-        }
-
-        return thread;
-    }
-
-    function getSnippetTag (snippetId: number) {
-        return `[snippet_${snippetId}]`;
+        tsvscode.postMessage({ type: 'getThreadsByActiveFilePath', value: undefined });
     }
 
     function chooseAnotherProject() {
@@ -130,14 +100,14 @@
                 case "populate-thread-message":
                     populateThreadMessageField(message.value);
                     break;
-                case "getCurrentFilePath":
-                    currentFilePath = message.value;
-                    loadThreads();
+                case "getThreadsByActiveFilePath":
+                    threads = message.value;
+                    console.log(threads);
                     break;
             }
         });
 
-        tsvscode.postMessage({ type: 'getCurrentFilePath', value: undefined });
+        loadThreads();
 
         initializeQuillEditor();
     });
