@@ -74,8 +74,6 @@ export function activate(context: vscode.ExtensionContext) {
 
       if (answer === "bad") {
         vscode.window.showInformationMessage("Sorry to hear that");
-      } else {
-        console.log({ answer });
       }
     })
   );

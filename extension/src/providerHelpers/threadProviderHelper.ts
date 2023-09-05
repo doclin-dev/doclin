@@ -4,20 +4,41 @@ import threadApi from "../api/threadApi";
 import { executeShellCommand } from "./providerHelperUtils";
 
 
-export const getThreadsByActiveFilePath = async (): Promise<any> => {
+export const getThreadsByActiveFilePath = async ({ currentProjectId }: { currentProjectId: number }): Promise<any> => {
   const activeFilePath: string = await getActiveEditorFilePath();
-  const response = await threadApi.getThreads(5, activeFilePath);
+  const response = await threadApi.getThreads(currentProjectId, activeFilePath);
   const payload = response?.data;
   const threads = payload?.threads;
 
   return threads;
 }
 
+export const createThread = async({ threadMessage, projectId }: {threadMessage: string, projectId: number}): Promise<any> => {
+  const response = await threadApi.postThread(threadMessage, projectId, await getActiveEditorFilePath());
+  const thread = response?.data?.thread;
+
+  return thread;
+}
+
+export const updateThread = async({threadMessage, threadId}: {threadMessage: string, threadId: number}): Promise<any> => {
+  const response = await threadApi.updateThread(threadId, threadMessage);
+  const thread = response?.data?.thread;
+
+  return thread;
+}
+
+export const deleteThread = async({ threadId }: { threadId: number }) => {
+  const response = await threadApi.deleteThread(threadId);
+  const thread = response?.data?.thread;
+
+  return thread;
+}
+
 export const selectAThread = async (threadId: number): Promise<any> => {
   
 }
 
-export const getActiveEditorFilePath = async () : Promise<string> => {
+const getActiveEditorFilePath = async () : Promise<string> => {
   const { activeTextEditor } = vscode.window;
 
   if (!activeTextEditor) {
@@ -71,7 +92,7 @@ export const addCodeSnippet = async (sidebarProvider: any) => {
   // Need to check when the sidebar is loaded and then add the textSelection to sidebar
 
   sidebarProvider._view?.webview.postMessage({
-    type: "populate-thread-message",
+    type: "populateThreadMessage",
     value: {filePath, threadMessage},
   });
 }

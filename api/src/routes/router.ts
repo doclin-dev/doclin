@@ -1,13 +1,12 @@
-
-const express = require("express");
-const router = express.Router();
-const threadController = require("../controllers/threadController");
-const replyController = require("../controllers/replyController");
-const projectController = require("../controllers/projectController");
-const userController = require("../controllers/userController");
+import express from "express";
+import { deleteThread, getThreads, postThread, updateThreadMessage } from "../controllers/threadController";
+import { deleteReply, getReplies, postReply, updateReplyMessage } from "../controllers/replyController";
+import { createProject, getExistingProjects } from "../controllers/projectController";
+import { getCurrentUser } from "../controllers/userController";
 import { isAuth } from "../isAuth";
-
 import passport from "passport";
+
+const router = express.Router();
 
 router.get("/auth/github", passport.authenticate("github", { session: false }));
 
@@ -19,23 +18,19 @@ router.get(
     }
 );
 
-router.get("/me", userController.getCurrentUser);
+router.get("/auth/user", getCurrentUser);
 
-router.get("/", (_req: any, res: any) => {
-    res.send("hello");
-});
+router.post("/threads", isAuth, postThread);
+router.get("/threads", isAuth, getThreads);
+router.put("/threads/:id", isAuth, updateThreadMessage);
+router.delete("/threads/:id", isAuth, deleteThread);
 
-router.post("/threads", isAuth, threadController.postThread);
-router.get("/threads", isAuth, threadController.getThreads);
-router.put("/threads/:id", isAuth, threadController.updateThreadMessage);
-router.delete("/threads/delete/:id", isAuth, threadController.deleteThread);
+router.post("/replies/:threadId", isAuth, postReply);
+router.get("/replies/:threadId", isAuth, getReplies);
+router.put("/replies/:id", isAuth, updateReplyMessage);
+router.delete("/replies/delete/:id", isAuth, deleteReply);
 
-router.post("/replies/:threadId", isAuth, replyController.postReply);
-router.get("/replies/:threadId", isAuth, replyController.getReplies);
-router.put("/replies/:id", isAuth, replyController.updateReplyMessage);
-router.delete("/replies/delete/:id", isAuth, replyController.deleteReply);
+router.post("/projects", isAuth, createProject);
+router.get("/projects/existing", isAuth, getExistingProjects);
 
-router.post("/projects", isAuth, projectController.createProject);
-router.get("/projects/existing", isAuth, projectController.getExistingProjects);
-
-module.exports = router;
+export default router;

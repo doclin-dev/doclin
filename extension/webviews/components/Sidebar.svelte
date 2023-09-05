@@ -28,26 +28,19 @@
         window.addEventListener("message", async (event) => {
             const message = event.data;
             switch (message.type) {
-                case "token":
-                    accessToken = message.value;
-                    const response = await fetch(`${apiBaseUrl}/me`, {
-                        headers: {
-                            authorization: `Bearer ${accessToken}`,
-                        },
-                    });
-                    const data = await response.json();
-                    user = data.user;
+                case "getAuthenticatedUser":
+                    user = message.value;
                     loading = false;
             }
         });
 
-        tsvscode.postMessage({ type: "get-token", value: undefined });
+        tsvscode.postMessage({ type: "getAuthenticatedUser", value: undefined });
     });
 </script>
 
 {#if loading}
     <div>loading...</div>
-{:else if user}
+{:else if (user != null && user)}
     {#if page === Page.InitializeProject}
         <InitializeProject bind:page={page}/>
     {:else if page === Page.ThreadsViewer}

@@ -31,7 +31,5 @@ export const createProject = async({ name }: { name: string }) => {
     const payload = response?.data;
     const project = payload?.project;
 
-    console.log(payload);
-
     return project;
 }

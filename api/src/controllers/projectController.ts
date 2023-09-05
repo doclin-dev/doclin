@@ -1,5 +1,5 @@
-import { Project } from "../entities/Project";
-const { ILike } = require('typeorm');
+import { Project } from "../database/entities/Project";
+import { ILike } from 'typeorm';
 
 export const getExistingProjects = async (req: any, res: any) => {
     const githubUrl: string = req.query.githubUrl;

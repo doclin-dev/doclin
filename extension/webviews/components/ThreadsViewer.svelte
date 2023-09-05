@@ -1,39 +1,20 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import type { Project, User } from "../types";
+    import type { Project, User, Thread as ThreadType } from "../types";
     import Quill from "quill";
     import Thread from './Thread.svelte';
     import ViewerTopBar from "./ViewerTopBar.svelte";
     import { Page } from "../enums";
-  import { WebviewStateManager } from "../WebviewStateManager";
+    import { WebviewStateManager } from "../WebviewStateManager";
 
     export let user: User;
     export let page: Page;
     
     let quillEditor: any;
-    let threadMessage: string;
-    let threads: Array<Thread> = [];
+    let threads: Array<ThreadType> = [];
     let currentProject: Project | null;
-    let currentFilePath: string | null;
 
-    async function postThreadMessage(t: string) {
-        const response = await fetch(`${apiBaseUrl}/threads`, {
-                method: "POST",
-                body: JSON.stringify({
-                    message: t,
-                    projectId: currentProject?.id,
-                    activeEditorFilePath: currentFilePath
-                }),
-                headers: {
-                    "content-type": "application/json",
-                },
-            });
-        let { thread }: {thread: Thread} = await response.json();
-        console.log(thread);
-        threads = [thread, ...threads];
-    }
-
-    async function populateThreadMessageField({filePath, threadMessage}: {filePath: string, threadMessage: string}) {
+    async function populateThreadMessageField({ filePath, threadMessage }: { filePath: string, threadMessage: string }) {
         const selection = quillEditor.getSelection(true);
         const cursorPosition: number = selection ? selection.index : quillEditor.getLength();
         const textToInsert = `File Path: ${filePath}\n${threadMessage}\n`;
@@ -46,13 +27,20 @@
     }
 
     async function submitThreadMessage() {
-        threadMessage = quillEditor.root.innerHTML;
+        const threadMessage = quillEditor.root.innerHTML;
+
         if (threadMessage) {
-            postThreadMessage(threadMessage);
+            tsvscode.postMessage({ 
+                type: "createThread", 
+                value: {
+                    threadMessage: threadMessage,
+                    projectId: currentProject?.id
+                }
+            });
         }
-        threadMessage = "";
-        quillEditor.setText(threadMessage);
-        WebviewStateManager.setState(WebviewStateManager.type.THREAD_MESSAGE, threadMessage);
+
+        quillEditor.setText("");
+        WebviewStateManager.setState(WebviewStateManager.type.THREAD_MESSAGE, "");
     }
 
     async function initializeQuillEditor() {
@@ -72,15 +60,16 @@
         quillEditor.theme.modules.toolbar.container.style.border = 'none';
 
         quillEditor.on('text-change', () => {
-            threadMessage = quillEditor.root.innerHTML;
-            WebviewStateManager.setState(WebviewStateManager.type.THREAD_MESSAGE, threadMessage);
+            WebviewStateManager.setState(WebviewStateManager.type.THREAD_MESSAGE, quillEditor.root.innerHTML);
         });
         
-        quillEditor.root.innerHTML = threadMessage;
+        quillEditor.root.innerHTML = WebviewStateManager.getState(WebviewStateManager.type.THREAD_MESSAGE) || "";
     }
 
     async function loadThreads() {
-        tsvscode.postMessage({ type: 'getThreadsByActiveFilePath', value: undefined });
+        if (currentProject) {
+            tsvscode.postMessage({ type: 'getThreadsByActiveFilePath', value: { currentProjectId: currentProject.id } });
+        }
     }
 
     function chooseAnotherProject() {
@@ -89,24 +78,27 @@
     }
 
     onMount(async () => {
-        threadMessage = WebviewStateManager.getState(WebviewStateManager.type.THREAD_MESSAGE) || "";
         currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
 
         window.addEventListener("message", async (event) => {
             const message = event.data;
             switch (message.type) {
-                case "populate-thread-message":
+                case "populateThreadMessage":
                     populateThreadMessageField(message.value);
                     break;
                 case "getThreadsByActiveFilePath":
                     threads = message.value;
-                    console.log(threads);
+                    break;
+                case "createThread":
+                    threads = [message.value, ...threads];
+                    break;
+                case "switchActiveEditor":
+                    loadThreads();
                     break;
             }
         });
 
         loadThreads();
-
         initializeQuillEditor();
     });
 </script>

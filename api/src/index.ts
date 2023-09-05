@@ -1,29 +1,27 @@
 import "reflect-metadata";
-require("dotenv-safe").config();
 import express from "express";
-import { createConnection } from "typeorm";
 import { __prod__ } from "./constants";
-import { join } from "path";
-import { User } from "./entities/User";
+import { User } from "./database/entities/User";
 import { Strategy as GitHubStrategy } from "passport-github";
 import passport from "passport";
 import jwt from "jsonwebtoken";
 import cors from "cors";
+import router from "./routes/router";
+import session from "express-session";
+import "./database/dataSource";
+import { AppDataSource } from "./database/dataSource";
 
-const router = require("./routes/router");
-const bodyParser = require("body-parser");
-const session = require('express-session');
+require("dotenv-safe").config();
 
 const main = async () => {
-  await createConnection({
-    type: "postgres",
-    database: "doclin",
-    entities: [join(__dirname, "./entities/*.*")],
-    logging: !__prod__,
-    synchronize: !__prod__,
-  });
-
   const app = express();
+
+  AppDataSource.initialize().then(() => {
+    console.log("Data Source has been initialized!");
+  })
+  .catch((err) => {
+    console.error("Error during Data Source initialization", err);
+  });
 
   passport.serializeUser((user: any, done) => {
     done(null, user.accessToken);
@@ -38,11 +36,9 @@ const main = async () => {
   app.use(passport.initialize());
 
   app.use(express.json());
-  
-  app.use(bodyParser.json());
 
   app.use(
-    bodyParser.urlencoded({
+    express.urlencoded({
       extended: true,
     })
   );

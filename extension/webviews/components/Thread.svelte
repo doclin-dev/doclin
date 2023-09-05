@@ -2,7 +2,7 @@
     import OverlayCard from './OverlayCard.svelte';
     import Button from './Button.svelte'
     import Quill from 'quill';
-    import { tick } from 'svelte';
+    import { tick, onMount } from 'svelte';
     import { editedThreadId, selectedThread } from './store.js';
     import { Page } from '../enums'; 
 
@@ -13,21 +13,7 @@
 
     let quillThreadEditor: any;
     let threadEditMode: boolean = false;
-    let threadMessage: string;
-
-    async function updateThreadMessage(message: string) {
-        await fetch(`${apiBaseUrl}/threads/${thread.id}`, {
-                method: "PUT",
-                body: JSON.stringify({
-                    message: message
-                }),
-                headers: {
-                    "content-type": "application/json",
-                },
-            });
-    }
         
-
     const handleEditButtonClick = async () => {
         if($editedThreadId !== null && $editedThreadId !== thread.id) {
             console.log('Fuck off!');
@@ -55,13 +41,18 @@
     const handleOnSubmit = async () => {
         threadEditMode= false;
         await tick();
-        threadMessage = quillThreadEditor.root.innerHTML;
-        updateThreadMessage(threadMessage);
+        const threadMessage = quillThreadEditor.root.innerHTML;
+
+        tsvscode.postMessage({ type: "updateThread", value: { threadId: thread.id, threadMessage: threadMessage }});
+
+        console.log(threadMessage);
+
         thread.message = threadMessage;
         quillThreadEditor.theme.modules.toolbar.container.style.display = 'none';
         quillThreadEditor = null;
         editedThreadId.set(null);
     }
+
     const onCancel = () => {
         threadEditMode = false;
         quillThreadEditor.theme.modules.toolbar.container.style.display = 'none';
@@ -70,19 +61,7 @@
     }
 
     const handleDeleteButtonClick = async () => {
-        try {
-            await fetch(`${apiBaseUrl}/threads/delete/${thread.id}`, {
-                method: "DELETE",
-                headers: {
-                    "content-type": "application/json",
-                },
-            });
-
-            reloadThreads();
-
-        } catch (err) {
-            console.log(err);
-        }
+        tsvscode.postMessage({ type: "deleteThread", value: { threadId: thread.id }});
     }
 
     const handleReplyButtonClick = () => {
@@ -90,6 +69,20 @@
         selectedThread.set(thread);
         tsvscode.setState({ ...tsvscode.getState(), page });
     }
+
+    onMount(async () => {
+        window.addEventListener("message", async(event) => {
+            const message = event.data;
+            switch(message.type) {
+                case "updateThread":
+                    const threadResponse = message.value;
+                    console.log(threadResponse);
+                    break;
+                case "deleteThread":
+                    reloadThreads();
+            }
+        })
+    });
 </script>
 
 <style>

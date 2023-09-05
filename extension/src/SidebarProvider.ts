@@ -1,9 +1,9 @@
 import * as vscode from "vscode";
-import { authenticate } from "./providerHelpers/authenticationProviderHelper";
+import { authenticate, getAuthenticatedUser } from "./providerHelpers/authenticationProviderHelper";
 import { apiBaseUrl } from "./constants";
 import { getNonce } from "./providerHelpers/getNonce";
 import { GlobalStateManager } from "./GlobalStateManager";
-import { getActiveEditorFilePath, getThreadsByActiveFilePath } from "./providerHelpers/threadProviderHelper";
+import { createThread, deleteThread, getThreadsByActiveFilePath, updateThread } from "./providerHelpers/threadProviderHelper";
 import { getGithubUrl } from "./providerHelpers/projectProviderHelper";
 import { getExistingProjects, createProject } from "./providerHelpers/projectProviderHelper";
 
@@ -23,8 +23,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
-    webviewView.webview.onDidReceiveMessage(async (data: { type: any, value: any }) => {
-      switch (data.type) {
+    webviewView.webview.onDidReceiveMessage(async (message: { type: any, value: any }) => {
+      switch (message.type) {
         case "logout": {
           GlobalStateManager.setState(GlobalStateManager.type.AUTH_TOKEN, "");
           break;
@@ -32,31 +32,31 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         case "authenticate": {
           authenticate(() => {
             webviewView.webview.postMessage({
-              type: "token",
+              type: "getAuthenticatedUser",
               value: GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN),
             });
           });
           break;
         }
-        case "get-token": {
+        case "getAuthenticatedUser": {
           webviewView.webview.postMessage({
-            type: "token",
-            value: GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN),
+            type: "getAuthenticatedUser",
+            value: await getAuthenticatedUser(),
           });
           break;
         }
         case "onInfo": {
-          if (!data.value) {
+          if (!message.value) {
             return;
           }
-          vscode.window.showInformationMessage(data.value);
+          vscode.window.showInformationMessage(message.value);
           break;
         }
         case "onError": {
-          if (!data.value) {
+          if (!message.value) {
             return;
           }
-          vscode.window.showErrorMessage(data.value);
+          vscode.window.showErrorMessage(message.value);
           break;
         }
         case "getGithubUrl": {
@@ -69,12 +69,32 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         case "getThreadsByActiveFilePath": {
           webviewView.webview.postMessage({
             type: "getThreadsByActiveFilePath",
-            value: await getThreadsByActiveFilePath()
+            value: await getThreadsByActiveFilePath(message.value)
           });
           break;
         }
         case "selectAThread": {
-          
+          break;
+        }
+        case "createThread": {
+          webviewView.webview.postMessage({
+            type: "createThread",
+            value: await createThread(message.value)
+          });
+          break;
+        }
+        case "updateThread": {
+          webviewView.webview.postMessage({
+            type: "updateThread",
+            value: await updateThread(message.value)
+          });
+          break;
+        }
+        case "deleteThread": {
+          webviewView.webview.postMessage({
+            type: "deleteThread",
+            value: await deleteThread(message.value)
+          });
           break;
         }
         case "getExistingProjects": {
@@ -87,10 +107,18 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         case "createProject": {
           webviewView.webview.postMessage({
             type: "createProject",
-            value: await createProject(data.value)
+            value: await createProject(message.value)
           });
           break;
         }
+      }
+    });
+
+    vscode.window.onDidChangeActiveTextEditor(async (editor) => {
+      if (editor) {
+        webviewView.webview.postMessage({
+          type: "switchActiveEditor"
+        });
       }
     });
   }

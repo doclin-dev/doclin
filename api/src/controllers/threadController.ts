@@ -1,11 +1,10 @@
-import { SnippetFilePath } from "../entities/SnippetFilePath";
-import { Thread } from "../entities/Thread";
-import { Snippet } from "../entities/Snippet";
-import { getCustomRepository } from "typeorm";
-import { ThreadRepository } from "../repostiories/ThreadRepository";
+import { SnippetFilePath } from "../database/entities/SnippetFilePath";
+import { Thread } from "../database/entities/Thread";
+import { Snippet } from "../database/entities/Snippet";
+import { ThreadRepository } from "../database/repositiories/ThreadRepository";
 
 export const postThread = async (req: any, res: any) => {
-    const threadMessage: string = req.body.message;
+    const threadMessage: string | undefined = req.body.threadMessage;
     const userId: number = req.userId;
     const projectId: number = req.body.projectId;
     const activeEditorFilePath: string = req.body.activeEditorFilePath;
@@ -15,31 +14,37 @@ export const postThread = async (req: any, res: any) => {
     const snippets: string[] = [];
     let count = -1;
 
-    let updatedThreadMessage: string = threadMessage.replace(snippetsMatcher, (_match: string, content: string) => {
-        const codeBlockLines: string[] = content.split("\n");
-        
-        if (codeBlockLines.length > 0) {
-            let filePath: string;
-            const filePathPrefix = "File Path: ";
+    let updatedThreadMessage: string = "";
+    
+    if (threadMessage) {
+        updatedThreadMessage = threadMessage.replace(/(<p><br><\/p>)+/gi, '<p><br></p>')
 
-            if (codeBlockLines[0]?.startsWith(filePathPrefix)) {
-                filePath = codeBlockLines.shift()?.substring(filePathPrefix.length) || "";
-            } else {
-                filePath = activeEditorFilePath;
+        updatedThreadMessage = updatedThreadMessage.replace(snippetsMatcher, (_match: string, content: string) => {
+            const codeBlockLines: string[] = content.split("\n");
+            
+            if (codeBlockLines.length > 0) {
+                let filePath: string;
+                const filePathPrefix = "File Path: ";
+
+                if (codeBlockLines[0]?.startsWith(filePathPrefix)) {
+                    filePath = codeBlockLines.shift()?.substring(filePathPrefix.length) || "";
+                } else {
+                    filePath = activeEditorFilePath;
+                }
+
+                filePaths.push(filePath);
+                
+                const snippetText: string = codeBlockLines.join("\n");
+                snippets.push(snippetText);
+
+                count += 1;
+
+                return getSnippetTag(count);
             }
 
-            filePaths.push(filePath);
-            
-            const snippetText: string = codeBlockLines.join("\n");
-            snippets.push(snippetText);
-
-            count += 1;
-
-            return getSnippetTag(count);
-        }
-
-        return content;
-    });
+            return content;
+        });
+    }
 
     const thread = await Thread.create({
         message: "",
@@ -47,7 +52,7 @@ export const postThread = async (req: any, res: any) => {
         projectId: projectId
     }).save();
 
-    for(let i = 0; i < snippets.length; i++) {
+    for (let i = 0; i < snippets.length; i++) {
         const snippet: Snippet = await Snippet.create({
             text: snippets[i],
             threadId: thread.id
@@ -64,14 +69,13 @@ export const postThread = async (req: any, res: any) => {
     thread.message = updatedThreadMessage;
     await thread.save();
 
-    const threadRepository = getCustomRepository(ThreadRepository);
-
-    let responseThread = await threadRepository.findThreadByThreadId(thread.id);
+    let responseThread = await ThreadRepository.findThreadByThreadId(thread.id);
     responseThread = fillUpThreadMessageWithSnippet(responseThread);
     
     const response = {
         id: responseThread.id,
         message: responseThread.message,
+        projectId: responseThread.projectId,
         userId: responseThread.user?.id,
         userName: responseThread.user?.name
     }
@@ -87,9 +91,7 @@ export const getThreads = async (req: any, res: any) => {
     const filePath = req.query.filePath;
     const projectId = req.query.projectId;
 
-    const threadRepository = getCustomRepository(ThreadRepository);
-
-    let threads: Thread[] = await threadRepository.findThreadByFilePathAndProjectId(filePath, projectId);
+    let threads: Thread[] = await ThreadRepository.findThreadByFilePathAndProjectId(filePath, projectId);
 
     for (let thread of threads) {
         thread = fillUpThreadMessageWithSnippet(thread);
@@ -119,28 +121,31 @@ const fillUpThreadMessageWithSnippet = (thread: Thread): Thread => {
 
 export const updateThreadMessage = async (req: any, res: any) => {
     const threadId = req.params.id;
+    const threadMessage = req.body.message;
 
-    const thread = await Thread.findOne(threadId);
-    if(!thread) {
+    let thread = await ThreadRepository.findOneBy({ id: threadId });
+
+    if (!thread) {
         res.send({thread: null});
         return;
     }
 
-    const threadMessage = req.body.message;
-
     thread.message = threadMessage;
-    await thread.save();
 
-    res.send({thread});
+    const response = await Thread.save(thread);
+
+    console.log(response);
+
+    res.send({ thread: thread });
 }
 
 export const deleteThread = async (req: any, res: any) => {
     const threadId = req.params.id;
 
-    const thread = await Thread.findOne(threadId);
+    const thread = await Thread.findOne({ where: {id: threadId }});
 
-    if(!thread) {
-        res.send({thread: null});
+    if (!thread) {
+        res.send({ thread: null });
         return;
     }
 

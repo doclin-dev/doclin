@@ -1,4 +1,4 @@
-import { User } from "../entities/User";
+import { User } from "../database/entities/User";
 import jwt from "jsonwebtoken";
 
 export const getCurrentUser = async (req: any, res: any) => {
@@ -29,6 +29,7 @@ export const getCurrentUser = async (req: any, res: any) => {
         return;
     }
 
-    const user = await User.findOne(userId);
+    const user = await User.findOne({ where: { id: userId }});
+
     res.send({ user });
 }

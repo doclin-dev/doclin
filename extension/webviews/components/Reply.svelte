@@ -7,7 +7,6 @@
 
     export let reply: any;
     export let username: string;
-    export let accessToken: string;
     export let reloadReplies: () => void = () => {};
 
     let quillReplyCardEditor: any;
@@ -21,8 +20,7 @@
                     message: message
                 }),
                 headers: {
-                    "content-type": "application/json",
-                    authorization: `Bearer ${accessToken}`,
+                    "content-type": "application/json"
                 },
             });
     }
@@ -74,8 +72,7 @@
             await fetch(`${apiBaseUrl}/replies/delete/${reply.id}`, {
                 method: "DELETE",
                 headers: {
-                    "content-type": "application/json",
-                    authorization: `Bearer ${accessToken}`,
+                    "content-type": "application/json"
                 },
             });
 

@@ -36,7 +36,7 @@
         quillReplyViewer.theme.modules.toolbar.container.style.border = 'none';
     }
 
-    async function postReplyMessage(message: string: string) {
+    async function postReplyMessage(message: string) {
         const response = await fetch(`${apiBaseUrl}/replies/${thread.id}`, {
                 method: "POST",
                 body: JSON.stringify({
@@ -109,7 +109,7 @@
         <OverlayCard isEditable={false} handleDelete={handleDeleteButtonClick}/>
     </div>
     <div style="padding-bottom: 0.5rem">
-        <Thread thread={thread} username={username} page={page} accessToken={accessToken}/>
+        <Thread thread={thread} username={username} page={page}/>
     </div>
     <form>
         <div id="replyViewerEditor"></div>
@@ -117,7 +117,7 @@
     </form>
     <div>
         {#each replies as reply (reply.id)}
-            <Reply reply={reply} username={username} reloadReplies={loadReplies} accessToken={accessToken}/>
+            <Reply reply={reply} username={username} reloadReplies={loadReplies}/>
         {/each}
     </div>
 </div>
