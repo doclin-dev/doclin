@@ -69,7 +69,7 @@ export const postThread = async (req: any, res: any) => {
     thread.message = updatedThreadMessage;
     await thread.save();
 
-    let responseThread = await ThreadRepository.findThreadByThreadId(thread.id);
+    let responseThread = await ThreadRepository.findThreadWithPropertiesByThreadId(thread.id);
     responseThread = fillUpThreadMessageWithSnippet(responseThread);
     
     const response = {
@@ -123,7 +123,7 @@ export const updateThreadMessage = async (req: any, res: any) => {
     const threadId = req.params.id;
     const threadMessage = req.body.message;
 
-    let thread = await ThreadRepository.findOneBy({ id: threadId });
+    let thread = await ThreadRepository.findThreadById(threadId);
 
     if (!thread) {
         res.send({thread: null});
@@ -132,9 +132,7 @@ export const updateThreadMessage = async (req: any, res: any) => {
 
     thread.message = threadMessage;
 
-    const response = await Thread.save(thread);
-
-    console.log(response);
+    await ThreadRepository.save(thread);
 
     res.send({ thread: thread });
 }
@@ -142,7 +140,7 @@ export const updateThreadMessage = async (req: any, res: any) => {
 export const deleteThread = async (req: any, res: any) => {
     const threadId = req.params.id;
 
-    const thread = await Thread.findOne({ where: {id: threadId }});
+    const thread = await ThreadRepository.findThreadById(threadId);
 
     if (!thread) {
         res.send({ thread: null });

@@ -24,12 +24,16 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
         return relevantThreadsWithAllInfoPopulated;
     },
 
-    findThreadByThreadId(threadId: number) {
+    findThreadWithPropertiesByThreadId(threadId: number) {
         return this.createQueryBuilder('thread')
                     .leftJoinAndSelect('thread.snippets', 'snippet')
                     .leftJoinAndSelect('snippet.snippetFilePaths', 'snippetFilePath')
                     .leftJoinAndSelect('thread.user', 'user')
                     .andWhere('thread.id = :threadId', { threadId })
                     .getOneOrFail();
+    },
+
+    findThreadById(threadId: number) {
+        return this.findOneBy({ id: threadId });
     }
 });

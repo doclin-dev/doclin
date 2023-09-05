@@ -74,10 +74,6 @@
         window.addEventListener("message", async(event) => {
             const message = event.data;
             switch(message.type) {
-                case "updateThread":
-                    const threadResponse = message.value;
-                    console.log(threadResponse);
-                    break;
                 case "deleteThread":
                     reloadThreads();
             }
@@ -121,7 +117,7 @@
 
 <div class='thread-card'>
     <div class="thread-header">
-        <div> {username}</div>
+        <div> {thread.userName}</div>
         <div class='button-container'>
             <Button icon='reply' onClick={handleReplyButtonClick} type='text'/>
             <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
