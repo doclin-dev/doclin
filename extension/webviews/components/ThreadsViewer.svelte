@@ -123,7 +123,7 @@
 
 <div id='viewer'>
     {#each threads as thread (thread.id)}
-        <Thread thread={thread} username={user.name} bind:page={page} reloadThreads={loadThreads}/>
+        <Thread thread={thread} bind:page={page} reloadThreads={loadThreads}/>
     {/each}
 </div>
 

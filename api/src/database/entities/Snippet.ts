@@ -22,12 +22,12 @@ export class Snippet extends BaseEntity {
   @Column("text")
   text: string;
 
-  @Column({ nullable: true})
-  threadId: number;
 
-  @ManyToOne(() => Thread, (t) => t.snippets, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Thread, (t) => t.snippets, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: "threadId" })
   thread: Thread;
+
+  threadId: number;
 
   @OneToMany(() => SnippetFilePath, (sfp) => sfp.snippet, { cascade: true })
   snippetFilePaths: SnippetFilePath[];

@@ -7,7 +7,6 @@
     import { Page } from '../enums'; 
 
     export let thread: any;
-    export let username: string;
     export let page: Page;
     export let reloadThreads: () => void = () => {};
 
@@ -45,9 +44,6 @@
 
         tsvscode.postMessage({ type: "updateThread", value: { threadId: thread.id, threadMessage: threadMessage }});
 
-        console.log(threadMessage);
-
-        thread.message = threadMessage;
         quillThreadEditor.theme.modules.toolbar.container.style.display = 'none';
         quillThreadEditor = null;
         editedThreadId.set(null);
@@ -76,6 +72,12 @@
             switch(message.type) {
                 case "deleteThread":
                     reloadThreads();
+                case "updateThread":
+                    const updatedThread = message.value;
+                    if (thread.id == updatedThread.id) {
+                        console.log(updatedThread)
+                        thread.message = updatedThread.message;
+                    }
             }
         })
     });

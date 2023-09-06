@@ -84,7 +84,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           break;
         }
         case "updateThread": {
-          updateThread(message.value);
+          webviewView.webview.postMessage({
+            type: "updateThread",
+            value: await updateThread(message.value)
+          });
           break;
         }
         case "deleteThread": {

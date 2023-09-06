@@ -2,7 +2,6 @@ import {
   BaseEntity,
   Column,
   Entity,
-  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   CreateDateColumn
@@ -20,10 +19,8 @@ export class SnippetFilePath extends BaseEntity {
   @Column()
   filePath: string;
 
-  @Column()
-  snippetId: number;
-
   @ManyToOne(() => Snippet, (s) => s.snippetFilePaths, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: "snippetId" })
-  snippet: Promise<Snippet>;
+  snippet: Snippet;
+
+  snippetId: number;
 }

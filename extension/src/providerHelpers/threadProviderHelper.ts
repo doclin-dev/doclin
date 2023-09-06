@@ -21,7 +21,7 @@ export const createThread = async({ threadMessage, projectId }: {threadMessage: 
 }
 
 export const updateThread = async({threadMessage, threadId}: {threadMessage: string, threadId: number}): Promise<any> => {
-  const response = await threadApi.updateThread(threadId, threadMessage);
+  const response = await threadApi.updateThread(threadId, threadMessage, await getActiveEditorFilePath());
   const thread = response?.data?.thread;
 
   return thread;

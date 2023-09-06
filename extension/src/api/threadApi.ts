@@ -28,9 +28,10 @@ const postThread = async (threadMessage: string, projectId: number, activeEditor
     return response;
 }
 
-const updateThread = async(threadId: number, threadMessage: string) => {
+const updateThread = async(threadId: number, threadMessage: string, activeEditorFilePath: string) => {
     const data = {
-        message: threadMessage
+        message: threadMessage,
+        activeEditorFilePath: activeEditorFilePath
     };
 
     const apiService = createAxiosInstance(GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN));

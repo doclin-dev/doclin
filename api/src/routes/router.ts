@@ -1,5 +1,5 @@
 import express from "express";
-import { deleteThread, getThreads, postThread, updateThreadMessage } from "../controllers/threadController";
+import { deleteThread, getThreads, postThread, updateThread } from "../controllers/threadController";
 import { deleteReply, getReplies, postReply, updateReplyMessage } from "../controllers/replyController";
 import { createProject, getExistingProjects } from "../controllers/projectController";
 import { getCurrentUser } from "../controllers/userController";
@@ -22,7 +22,7 @@ router.get("/auth/user", getCurrentUser);
 
 router.post("/threads", isAuth, postThread);
 router.get("/threads", isAuth, getThreads);
-router.put("/threads/:id", isAuth, updateThreadMessage);
+router.put("/threads/:id", isAuth, updateThread);
 router.delete("/threads/:id", isAuth, deleteThread);
 
 router.post("/replies/:threadId", isAuth, postReply);
