@@ -3,8 +3,9 @@
     import Button from './Button.svelte'
     import Quill from 'quill';
     import { tick, onMount } from 'svelte';
-    import { editedThreadId, selectedThread } from './store.js';
+    import { editedThreadId } from './store.js';
     import { Page } from '../enums'; 
+    import { WebviewStateManager } from '../WebviewStateManager';
 
     export let thread: any;
     export let page: Page;
@@ -62,7 +63,7 @@
 
     const handleReplyButtonClick = () => {
         page = Page.ReplyViewer;
-        selectedThread.set(thread);
+        WebviewStateManager.setState(WebviewStateManager.type.THREAD_SELECTED, thread);
         tsvscode.setState({ ...tsvscode.getState(), page });
     }
 
@@ -119,20 +120,20 @@
 
 <div class='thread-card'>
     <div class="thread-header">
-        <div> {thread.userName}</div>
+        <div> {thread?.userName}</div>
         <div class='button-container'>
             <Button icon='reply' onClick={handleReplyButtonClick} type='text'/>
             <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
         </div>
     </div>
     {#if threadEditMode}
-    <div id="thread-editor">{@html thread.message}</div> 
+    <div id="thread-editor">{@html thread?.message}</div> 
     <div class='thread-editor-footer'>
         <Button variant='secondary' onClick={onCancel} title="Cancel"/>
         <Button variant='secondary' onClick={handleOnSubmit} title="Submit"/>
     </div>
     {:else}
-    <div>{@html thread.message}</div>
+    <div>{@html thread?.message}</div>
     {/if}
 
 </div>

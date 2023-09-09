@@ -5,14 +5,12 @@
     import ThreadsViewer from "./ThreadsViewer.svelte";
     import InitializeProject from "./InitializeProject.svelte";
     import ReplyViewer from "./ReplyViewer.svelte";
-    import {selectedThread} from './store';
     import { WebviewStateManager } from "../WebviewStateManager";
 
     let accessToken = "";
     let loading = true;
     let user: User | null = null;
     let page: Page = WebviewStateManager.getState(WebviewStateManager.type.PAGE) ?? Page.InitializeProject;
-    let currentProject: Project;
 
     const authenticate = () => {
         tsvscode.postMessage({ type: 'authenticate', value: undefined });
@@ -40,13 +38,13 @@
 
 {#if loading}
     <div>loading...</div>
-{:else if (user != null && user)}
+{:else if user}
     {#if page === Page.InitializeProject}
         <InitializeProject bind:page={page}/>
     {:else if page === Page.ThreadsViewer}
         <ThreadsViewer {user} bind:page={page} />
     {:else if page === Page.ReplyViewer}
-        <ReplyViewer thread={$selectedThread} username={user.name} projectName={currentProject?.name} bind:page={page}/>
+        <ReplyViewer username={user.name} bind:page={page}/>
     {:else if page === Page.Contact}
         <div>Contact me here:</div>
         <button

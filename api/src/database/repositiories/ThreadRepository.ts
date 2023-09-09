@@ -9,7 +9,11 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
                                             .where('snippetFilePath.filePath = :filePath', { filePath })
                                             .andWhere('thread.projectId = :projectId', { projectId })
                                             .getMany();
-        
+
+        if (relevantThreads.length == 0) {
+            return relevantThreads;
+        }
+                                            
         const threadIds = relevantThreads.map(thread => (thread.id));
 
         const relevantThreadsWithAllInfoPopulated =  this.createQueryBuilder('thread')

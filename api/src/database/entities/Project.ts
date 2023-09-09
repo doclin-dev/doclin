@@ -2,7 +2,6 @@ import {
   BaseEntity,
   Column,
   Entity,
-  JoinColumn,
   OneToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -29,10 +28,9 @@ export class Project extends BaseEntity {
   @Column({ nullable: true})
   userId: number;
 
-  @ManyToOne(() => User, (u) => u.projects)
-  @JoinColumn({ name: "userId" })
+  @ManyToOne(() => User, (user) => user.projects)
   creator: Promise<User>;
 
-  @OneToMany(() => Thread, (t) => t.userId)
+  @OneToMany(() => Thread, (thread) => thread.project)
   threads: Promise<Thread[]>;
 }

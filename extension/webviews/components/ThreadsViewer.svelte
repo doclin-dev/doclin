@@ -80,6 +80,11 @@
     onMount(async () => {
         currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
 
+        if (currentProject === null) {
+            page = Page.InitializeProject;
+            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+        }
+
         window.addEventListener("message", async (event) => {
             const message = event.data;
             switch (message.type) {
@@ -113,7 +118,7 @@
 </style>
 
 
-<ViewerTopBar username={user.name} projectName={currentProject?.name}/>
+<ViewerTopBar username={user.name}/>
 
 <form
     on:submit|preventDefault={submitThreadMessage}>

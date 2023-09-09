@@ -24,12 +24,12 @@ export class User extends BaseEntity {
   @Column("text", { unique: true })
   githubId: string;
 
-  @OneToMany(() => Project, (p) => p.userId)
+  @OneToMany(() => Project, (p) => p.creator)
   projects: Promise<Project[]>;
 
-  @OneToMany(() => Thread, (t) => t.userId)
+  @OneToMany(() => Thread, (thread) => thread.user)
   threads: Promise<Thread[]>;
 
-  @OneToMany(() => Reply, (t) => t.userId)
+  @OneToMany(() => Reply, (t) => t.user)
   replies: Promise<Reply[]>;
 }

@@ -4,14 +4,13 @@
     import Button from "./Button.svelte";
     import Quill from 'quill';
     import { Page } from "../enums";
-    import { selectedThread } from './store.js';
     import Thread from "./Thread.svelte";
     import { onMount } from "svelte";
     import Reply from "./Reply.svelte";
-  import { WebviewStateManager } from "../WebviewStateManager";
+    import { WebviewStateManager } from "../WebviewStateManager";
+    import type { Thread as ThreadType } from "../types";
 
-    export let thread: any;
-    export let projectName: string;
+    let thread: ThreadType;
     export let username: string;
     export let page: Page;
 
@@ -65,7 +64,7 @@
     }
 
     const handleBackClick = () => {
-        selectedThread.set(null);
+        WebviewStateManager.setState(WebviewStateManager.type.THREAD_SELECTED, null);
         page = Page.ThreadsViewer;
         WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
     }
@@ -79,6 +78,14 @@
     }
 
     onMount(async () => {
+        thread = WebviewStateManager.getState(WebviewStateManager.type.THREAD_SELECTED);
+
+        if (thread == null) {
+            page = Page.ThreadsViewer;
+            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+            return;
+        }
+
         initializeQuillEditor();
         loadReplies();
     });
@@ -101,7 +108,7 @@
     }
 </style>
 
-<ViewerTopBar username={username} projectName={projectName}/>
+<ViewerTopBar username={username}/>
 
 <div class='reply-viewer'>
     <div class='topbar'>
@@ -109,7 +116,7 @@
         <OverlayCard isEditable={false} handleDelete={handleDeleteButtonClick}/>
     </div>
     <div style="padding-bottom: 0.5rem">
-        <Thread thread={thread} username={username} page={page}/>
+        <Thread thread={thread} page={page}/>
     </div>
     <form>
         <div id="replyViewerEditor"></div>

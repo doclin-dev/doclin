@@ -19,8 +19,10 @@ export const postThread = async (req: any, res: any) => {
 
     await thread.save();
 
-    let responseThread = fillUpThreadMessageWithSnippet(thread);
-    
+    let responseThread = await ThreadRepository.findThreadWithPropertiesByThreadId(thread.id);
+
+    responseThread = fillUpThreadMessageWithSnippet(responseThread);
+
     const response = {
         id: responseThread.id,
         message: responseThread.message,
