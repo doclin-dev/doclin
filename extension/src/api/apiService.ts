@@ -1,6 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
 import { apiBaseUrl } from '../constants';
-import { GlobalStateManager } from '../GlobalStateManager';
 import * as vscode from "vscode";
 
 export const createAxiosInstance = (token: string | null) => {

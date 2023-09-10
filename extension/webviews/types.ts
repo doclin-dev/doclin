@@ -16,5 +16,5 @@ export type Thread = {
   message: string;
   projectId: number;
   userId: number;
-  userName: string;
+  username: string;
 }

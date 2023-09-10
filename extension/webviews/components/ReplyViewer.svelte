@@ -16,7 +16,6 @@
 
     let quillReplyViewer: any;
     let replies : Array<{message: string, id: number}> = [];
-    let replyMessage: string;
 
     async function initializeQuillEditor() {
         quillReplyViewer = new Quill('#replyViewerEditor', {
@@ -33,34 +32,33 @@
         
         quillReplyViewer.theme.modules.toolbar.container.style.background = '#f1f1f1';
         quillReplyViewer.theme.modules.toolbar.container.style.border = 'none';
+
+        quillReplyViewer.on('text-change', () => {
+            WebviewStateManager.setState(WebviewStateManager.type.REPLY_MESSAGE, quillReplyViewer.root.innerHTML);
+        });
+        
+        quillReplyViewer.root.innerHTML = WebviewStateManager.getState(WebviewStateManager.type.REPLY_MESSAGE) || "";
     }
 
     async function postReplyMessage(message: string) {
-        const response = await fetch(`${apiBaseUrl}/replies/${thread.id}`, {
-                method: "POST",
-                body: JSON.stringify({
-                    message: message,
-                }),
-                headers: {
-                    "content-type": "application/json",
-                },
-            });
-        const { reply } = await response.json();
-        replies = [reply, ...replies];
+        tsvscode.postMessage({
+            type: "postReply",
+            value: { threadId: thread.id, replyMessage: message }
+        });
     }
 
     async function loadReplies () {
-        const response = await fetch(`${apiBaseUrl}/replies/${thread.id}`, {
-            headers: {
-            },
+        tsvscode.postMessage({
+            type: "getRepliesByThreadId",
+            value: { threadId: thread.id }
         });
-
-        const payload = await response.json();
-        replies = payload.replies;
     }
 
     const handleDeleteButtonClick = () => {
-        console.log('Delete button clicked!');
+        tsvscode.postMessage({
+            type: "deleteThread",
+            value: { threadId: thread.id }
+        });
     }
 
     const handleBackClick = () => {
@@ -70,11 +68,9 @@
     }
 
     const onSubmit= () => {
-        replyMessage = quillReplyViewer.root.innerHTML;
-        postReplyMessage(replyMessage);
-        replyMessage = "";
-        quillReplyViewer.setText(replyMessage);
-        tsvscode.setState({...tsvscode.getState(), replyMessage});
+        postReplyMessage(quillReplyViewer.root.innerHTML);
+        quillReplyViewer.setText("");
+        WebviewStateManager.setState(WebviewStateManager.type.REPLY_MESSAGE, "");
     }
 
     onMount(async () => {
@@ -85,6 +81,19 @@
             WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
             return;
         }
+
+        window.addEventListener("message", async (event) => {
+            const message = event.data;
+            switch (message.type) {
+                case "getRepliesByThreadId":
+                    replies = message.value;
+                    break;
+                case "postReply":
+                    const reply = message.value;
+                    replies = [reply, ...replies];
+                    break;
+            }
+        });
 
         initializeQuillEditor();
         loadReplies();
@@ -124,7 +133,7 @@
     </form>
     <div>
         {#each replies as reply (reply.id)}
-            <Reply reply={reply} username={username} reloadReplies={loadReplies}/>
+            <Reply reply={reply} reloadReplies={loadReplies}/>
         {/each}
     </div>
 </div>

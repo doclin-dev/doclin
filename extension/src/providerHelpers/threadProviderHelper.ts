@@ -13,7 +13,7 @@ export const getThreadsByActiveFilePath = async ({ currentProjectId }: { current
   return threads;
 }
 
-export const createThread = async({ threadMessage, projectId }: {threadMessage: string, projectId: number}): Promise<any> => {
+export const postThread = async({ threadMessage, projectId }: {threadMessage: string, projectId: number}): Promise<any> => {
   const response = await threadApi.postThread(threadMessage, projectId, await getActiveEditorFilePath());
   const thread = response?.data?.thread;
 

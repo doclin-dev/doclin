@@ -25,9 +25,9 @@ export class Reply extends BaseEntity {
 
   @ManyToOne(() => User, (user) => user.replies)
   @JoinColumn({ name: "userId" })
-  user: Promise<User>;
+  user: User;
 
-  @ManyToOne(() => Thread, (thread) => thread.replies)
+  @ManyToOne(() => Thread, (thread) => thread.replies, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "threadId" })
-  thread: Promise<Thread>;
+  thread: Thread;
 }

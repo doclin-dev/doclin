@@ -31,7 +31,7 @@
 
         if (threadMessage) {
             tsvscode.postMessage({ 
-                type: "createThread", 
+                type: "postThread", 
                 value: {
                     threadMessage: threadMessage,
                     projectId: currentProject?.id
@@ -94,7 +94,7 @@
                 case "getThreadsByActiveFilePath":
                     threads = message.value;
                     break;
-                case "createThread":
+                case "postThread":
                     threads = [message.value, ...threads];
                     break;
                 case "switchActiveEditor":

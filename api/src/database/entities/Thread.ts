@@ -41,6 +41,6 @@ export class Thread extends BaseEntity {
   @JoinColumn({ name: "projectId" })
   project: Project;
 
-  @OneToMany(() => Reply, (reply) => reply.thread)
+  @OneToMany(() => Reply, (reply) => reply.thread, { cascade: true })
   replies: Reply[];
 }

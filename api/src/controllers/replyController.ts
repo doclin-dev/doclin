@@ -1,13 +1,14 @@
-import { Thread } from "../database/entities/Thread";
 import { Reply } from "../database/entities/Reply";
+import { ReplyRepository } from "../database/repositiories/ReplyRepository";
+import { ThreadRepository } from "../database/repositiories/ThreadRepository";
 
 export const postReply = async (req: any, res: any) => {
-    const threadId = req.params.threadId;
-    const replyMessage = req.body.message;
-    const thread = await Thread.findOne({ where: {id: threadId }});
+    const threadId = req.body.threadId;
+    const replyMessage = req.body.replyMessage;
+    const thread = await ThreadRepository.findThreadById(threadId);
 
     if(!thread) {
-        res.send({thread: null});
+        res.send({ reply: null });
         return;
     }
     
@@ -16,47 +17,67 @@ export const postReply = async (req: any, res: any) => {
         message: replyMessage,
         userId: req.userId,
     }).save();
+
+    const responseReply = await ReplyRepository.findReplyById(reply.id);
+    
+    const response = {
+        id: responseReply?.id,
+        threadId: responseReply?.threadId,
+        message: responseReply?.message,
+        userId: responseReply?.user?.id,
+        username: responseReply?.user?.name
+    }
  
-    res.send({reply});
+    res.send({ reply: response });
 };
 
 export const getReplies = async (req: any, res: any) => {
-    const threadId = req.params.threadId;
-    const replies = await Reply.find({ 
-        where: { threadId: parseInt(threadId) }
-    });
+    const threadId = req.query.threadId;
 
-    if(!replies) {
-        res.send({replies: null});
-        return;
-    }
+    const replies = await ReplyRepository.findRepliesByThreadId(threadId);
     
-    res.send({replies});
+    const response = replies.map((reply) => ({
+        id: reply.id,
+        message: reply.message,
+        username: reply.user?.name,
+        threadId: reply.threadId
+    }));
+
+    res.send({ replies: response });
 }
 
 export const updateReplyMessage = async (req: any, res: any) => {
     const replyId = req.params.id;
+    const replyMessage = req.body.message;
 
-    const reply = await Reply.findOne({ where: {id: replyId }});
+    const reply = await ReplyRepository.findReplyById(replyId);
+
     if(!reply) {
-        res.send({reply: null});
+        res.send({ reply: null });
         return;
     }
 
-    const replyMessage = req.body.message;
-
     reply.message = replyMessage;
     await reply.save();
+    
+    const response = {
+        id: reply?.id,
+        threadId: reply?.threadId,
+        message: reply?.message,
+        userId: reply?.user?.id,
+        username: reply?.user?.name
+    }
 
-    res.send({reply});
+    res.send({ reply: response });
 }
 
 export const deleteReply = async (req: any, res: any) => {
     const replyId = req.params.id;
 
-    const reply = await Reply.findOne({ where: {id: replyId }});
+    const reply = await ReplyRepository.findReplyById(replyId);
+
     if(!reply) {
-        res.send({reply: null});
+        res.send({ reply: null });
         return;
     }
 

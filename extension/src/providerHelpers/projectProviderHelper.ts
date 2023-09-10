@@ -25,7 +25,7 @@ export const getExistingProjects = async () => {
     return projects;
 }
 
-export const createProject = async({ name }: { name: string }) => {
+export const postProject = async({ name }: { name: string }) => {
     const githubUrl: string = await getGithubUrl();
     const response = await projectApi.postProject(name, githubUrl);
     const payload = response?.data;

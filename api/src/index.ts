@@ -83,7 +83,7 @@ const main = async () => {
   app.use("/", router);
 
   app.listen(3002, () => {
-    console.log("listening on localhost:3002");
+    console.log("Listening on localhost:3002");
   });
 };
 

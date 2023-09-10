@@ -11,13 +11,12 @@ export const postThread = async (req: any, res: any) => {
     
     const { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage, activeEditorFilePath);
 
-    const thread = new Thread();
-    thread.message = updatedThreadMessage;
-    thread.userId = userId;
-    thread.projectId = projectId;
-    thread.snippets = snippetEntities;
-
-    await thread.save();
+    const thread = await Thread.create({
+        message: updatedThreadMessage,
+        userId: userId,
+        projectId: projectId,
+        snippets: snippetEntities
+    }).save();
 
     let responseThread = await ThreadRepository.findThreadWithPropertiesByThreadId(thread.id);
 
@@ -28,7 +27,7 @@ export const postThread = async (req: any, res: any) => {
         message: responseThread.message,
         projectId: responseThread.projectId,
         userId: responseThread.user?.id,
-        userName: responseThread.user?.name
+        username: responseThread.user?.name
     }
 
     res.send({ thread: response });
@@ -94,7 +93,7 @@ const fillUpThreadMessageWithSnippet = (thread: Thread): Thread => {
     for (const snippet of thread.snippets) {
         const snippetFilePaths = snippet.snippetFilePaths;
         const firstSnippetFilePath = snippetFilePaths[0];
-        const codeBlock = `<pre class="ql-syntax" spellcheck="false">File Path: ${firstSnippetFilePath.filePath}<hr>${snippet.text}</pre>`;
+        const codeBlock = `<pre class="ql-syntax" spellcheck="false">File Path: ${firstSnippetFilePath.filePath}<hr>\n${snippet.text}</pre>`;
         thread.message = thread.message.replace(getSnippetTag(snippet.id), codeBlock);
     }
 
@@ -119,7 +118,7 @@ export const getThreads = async (req: any, res: any) => {
             id: thread.id,
             message: thread.message,
             userId: thread.user?.id,
-            userName: thread.user?.name
+            username: thread.user?.name
         })
     );
 
@@ -154,7 +153,7 @@ export const updateThread = async (req: any, res: any) => {
         message: responseThread.message,
         projectId: responseThread.projectId,
         userId: responseThread.user?.id,
-        userName: responseThread.user?.name
+        username: responseThread.user?.name
     }
 
     res.send({ thread: response });
@@ -172,5 +171,5 @@ export const deleteThread = async (req: any, res: any) => {
 
     await thread.remove();
 
-    res.send("thread sucessfully deleted");
+    res.send("Thread sucessfully deleted");
 }

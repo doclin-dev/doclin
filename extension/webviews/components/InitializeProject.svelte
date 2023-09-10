@@ -6,7 +6,7 @@
 
     export let page: Page;
 
-    let createProjectName: string = "";
+    let postProjectName: string = "";
     let githubUrl: string = "";
     let existingProjects: Project[] = [];
 
@@ -17,7 +17,7 @@
     }
 
     const createNewProject = async () => {
-        tsvscode.postMessage({ type: 'createProject', value: { name: createProjectName } });
+        tsvscode.postMessage({ type: 'postProject', value: { name: postProjectName } });
     }
 
     const fetchExistingProjects = async () => {
@@ -45,7 +45,7 @@
                 case "getGithubUrl":
                     handleGetGithubUrl(message.value);
                     break;
-                case "createProject":
+                case "postProject":
                     setCurrentProject(message.value);
                     break;
                 case "getExistingProjects":
@@ -63,7 +63,7 @@
         Create a project:
 
         <form>
-            <input placeholder="Enter project name" bind:value={createProjectName} />
+            <input placeholder="Enter project name" bind:value={postProjectName} />
             <input placeholder="Github repo url" value={githubUrl} disabled/>
             <button on:click|preventDefault={createNewProject}>Submit</button>
         </form>

@@ -1,7 +1,7 @@
 import express from "express";
 import { deleteThread, getThreads, postThread, updateThread } from "../controllers/threadController";
 import { deleteReply, getReplies, postReply, updateReplyMessage } from "../controllers/replyController";
-import { createProject, getExistingProjects } from "../controllers/projectController";
+import { postProject, getExistingProjects } from "../controllers/projectController";
 import { getCurrentUser } from "../controllers/userController";
 import { isAuth } from "../isAuth";
 import passport from "passport";
@@ -25,12 +25,12 @@ router.get("/threads", isAuth, getThreads);
 router.put("/threads/:id", isAuth, updateThread);
 router.delete("/threads/:id", isAuth, deleteThread);
 
-router.post("/replies/:threadId", isAuth, postReply);
-router.get("/replies/:threadId", isAuth, getReplies);
+router.post("/replies/", isAuth, postReply);
+router.get("/replies/", isAuth, getReplies);
 router.put("/replies/:id", isAuth, updateReplyMessage);
-router.delete("/replies/delete/:id", isAuth, deleteReply);
+router.delete("/replies/:id", isAuth, deleteReply);
 
-router.post("/projects", isAuth, createProject);
+router.post("/projects", isAuth, postProject);
 router.get("/projects/existing", isAuth, getExistingProjects);
 
 export default router;

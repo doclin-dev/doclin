@@ -15,9 +15,7 @@
     let threadEditMode: boolean = false;
         
     const handleEditButtonClick = async () => {
-        if($editedThreadId !== null && $editedThreadId !== thread.id) {
-            console.log('Fuck off!');
-        } else {
+        if($editedThreadId == null) {
             threadEditMode = true;
             editedThreadId.set(thread.id);
             await tick();
@@ -64,7 +62,7 @@
     const handleReplyButtonClick = () => {
         page = Page.ReplyViewer;
         WebviewStateManager.setState(WebviewStateManager.type.THREAD_SELECTED, thread);
-        tsvscode.setState({ ...tsvscode.getState(), page });
+        WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
     }
 
     onMount(async () => {
@@ -72,13 +70,16 @@
             const message = event.data;
             switch(message.type) {
                 case "deleteThread":
+                    page = Page.ThreadsViewer;
+                    WebviewStateManager.setState(WebviewStateManager.type.PAGE, Page.ThreadsViewer);
                     reloadThreads();
+                    break;
                 case "updateThread":
                     const updatedThread = message.value;
                     if (thread.id == updatedThread.id) {
-                        console.log(updatedThread)
                         thread.message = updatedThread.message;
                     }
+                    break;
             }
         })
     });
@@ -120,7 +121,7 @@
 
 <div class='thread-card'>
     <div class="thread-header">
-        <div> {thread?.userName}</div>
+        <div> {thread?.username}</div>
         <div class='button-container'>
             <Button icon='reply' onClick={handleReplyButtonClick} type='text'/>
             <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>

@@ -2,7 +2,8 @@ enum StateType {
   CURRENT_PROJECT = "currentProject",
   THREAD_MESSAGE = "threadMessage",
   PAGE = "page",
-  THREAD_SELECTED = "threadSelected"
+  THREAD_SELECTED = "threadSelected",
+  REPLY_MESSAGE = "replyMessage",
 }
 
 export class WebviewStateManager {
