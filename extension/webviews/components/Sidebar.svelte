@@ -23,15 +23,14 @@
     }
 
     const messageEventListener = async (event: any) => {
-            const message = event.data;
-            switch (message.type) {
-                case "getAuthenticatedUser":
-                    user = message.value;
-                    loading = false;
-                    break;
-            }
-        };
-
+        const message = event.data;
+        switch (message.type) {
+            case "getAuthenticatedUser":
+                user = message.value;
+                loading = false;
+                break;
+        }
+    };
 
     onMount(async () => {
         window.addEventListener("message", messageEventListener);
