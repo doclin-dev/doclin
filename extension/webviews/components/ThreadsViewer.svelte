@@ -28,6 +28,7 @@
 
     async function submitThreadMessage() {
         const threadMessage = quillEditor.root.innerHTML;
+        currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
 
         if (threadMessage) {
             tsvscode.postMessage({ 
@@ -67,6 +68,7 @@
     }
 
     async function loadThreads() {
+        currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
         if (currentProject) {
             tsvscode.postMessage({ type: 'getThreadsByActiveFilePath', value: { currentProjectId: currentProject.id } });
         }

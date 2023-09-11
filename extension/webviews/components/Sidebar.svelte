@@ -29,6 +29,7 @@
                 case "getAuthenticatedUser":
                     user = message.value;
                     loading = false;
+                    break;
             }
         });
 
