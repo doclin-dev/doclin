@@ -5,7 +5,7 @@
     import Quill from 'quill';
     import { Page } from "../enums";
     import Thread from "./Thread.svelte";
-    import { onMount } from "svelte";
+    import { onMount, onDestroy } from "svelte";
     import Reply from "./Reply.svelte";
     import { WebviewStateManager } from "../WebviewStateManager";
     import type { Thread as ThreadType } from "../types";
@@ -73,6 +73,20 @@
         WebviewStateManager.setState(WebviewStateManager.type.REPLY_MESSAGE, "");
     }
 
+    const messageEventListener = async (event: any) => {
+        const message = event.data;
+        switch (message.type) {
+            case "getRepliesByThreadId":
+                replies = message.value;
+                break;
+            case "postReply":
+                console.log("postReply");
+                const reply = message.value;
+                replies = [reply, ...replies];
+                break;
+        }
+    };
+
     onMount(async () => {
         thread = WebviewStateManager.getState(WebviewStateManager.type.THREAD_SELECTED);
 
@@ -82,21 +96,14 @@
             return;
         }
 
-        window.addEventListener("message", async (event) => {
-            const message = event.data;
-            switch (message.type) {
-                case "getRepliesByThreadId":
-                    replies = message.value;
-                    break;
-                case "postReply":
-                    const reply = message.value;
-                    replies = [reply, ...replies];
-                    break;
-            }
-        });
+        window.addEventListener("message", messageEventListener);
 
         initializeQuillEditor();
         loadReplies();
+    });
+
+    onDestroy(() => {
+        window.removeEventListener("message", messageEventListener);
     });
 
 </script>

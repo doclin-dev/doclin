@@ -2,7 +2,7 @@
     import OverlayCard from './OverlayCard.svelte';
     import Button from './Button.svelte'
     import Quill from 'quill';
-    import { onMount, tick } from 'svelte';
+    import { onMount, tick, onDestroy } from 'svelte';
     import { editedReplyId } from './store.js';
 
     export let reply: any;
@@ -62,25 +62,30 @@
         });
     }
 
+    const messageEventListener = async (event: any) => {
+        const message = event.data;
+        switch(message.type) {
+            case "updateReply":
+                if (reply.id === message.value?.id) {
+                    reply.message = message.value?.message;
+                    quillReplyCardEditor.theme.modules.toolbar.container.style.display = 'none';
+                    quillReplyCardEditor = null;
+                    editedReplyId.set(null);
+                }
+                break;
+            case "deleteReply":
+                reloadReplies();
+                break;
+        }
+    }
+
     onMount(() => {
-        window.addEventListener("message", async (event) => {
-            const message = event.data;
-            switch(message.type) {
-                case "updateReply":
-                    if (reply.id === message.value?.id) {
-                        reply.message = message.value?.message;
-                        quillReplyCardEditor.theme.modules.toolbar.container.style.display = 'none';
-                        quillReplyCardEditor = null;
-                        editedReplyId.set(null);
-                    }
-                    break;
-                case "deleteReply":
-                    reloadReplies();
-                    break;
-            }
-        })
+        window.addEventListener("message", messageEventListener);
     });
 
+    onDestroy(() => {
+        window.removeEventListener("message", messageEventListener);
+    });
 </script>
 
 <style>

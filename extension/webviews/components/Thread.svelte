@@ -2,7 +2,7 @@
     import OverlayCard from './OverlayCard.svelte';
     import Button from './Button.svelte'
     import Quill from 'quill';
-    import { tick, onMount } from 'svelte';
+    import { tick, onMount, onDestroy } from 'svelte';
     import { editedThreadId } from './store.js';
     import { Page } from '../enums'; 
     import { WebviewStateManager } from '../WebviewStateManager';
@@ -65,23 +65,27 @@
         WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
     }
 
+    const messageEventListener = async(event: any) => {
+        const message = event.data;
+        switch(message.type) {
+            case "deleteThread":
+                page = Page.ThreadsViewer;
+                WebviewStateManager.setState(WebviewStateManager.type.PAGE, Page.ThreadsViewer);
+                reloadThreads();
+                break;
+            case "updateThread":
+                const updatedThread = message.value;
+                if (thread.id == updatedThread.id) thread.message = updatedThread.message;
+                break;
+        }
+    }
+
     onMount(async () => {
-        window.addEventListener("message", async(event) => {
-            const message = event.data;
-            switch(message.type) {
-                case "deleteThread":
-                    page = Page.ThreadsViewer;
-                    WebviewStateManager.setState(WebviewStateManager.type.PAGE, Page.ThreadsViewer);
-                    reloadThreads();
-                    break;
-                case "updateThread":
-                    const updatedThread = message.value;
-                    if (thread.id == updatedThread.id) {
-                        thread.message = updatedThread.message;
-                    }
-                    break;
-            }
-        })
+        window.addEventListener("message", messageEventListener);
+    });
+
+    onDestroy(() => {
+        window.removeEventListener("message", messageEventListener);
     });
 </script>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { onMount, onDestroy } from "svelte";
     import type { Project, User, Thread as ThreadType } from "../types";
     import Quill from "quill";
     import Thread from './Thread.svelte';
@@ -68,6 +68,7 @@
     }
 
     async function loadThreads() {
+        console.log("load threads");
         currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
         if (currentProject) {
             tsvscode.postMessage({ type: 'getThreadsByActiveFilePath', value: { currentProjectId: currentProject.id } });
@@ -79,6 +80,24 @@
         page = Page.InitializeProject;
     }
 
+    const messageEventListener = async (event: any) => {
+        const message = event.data;
+        switch (message.type) {
+            case "populateThreadMessage":
+                populateThreadMessageField(message.value);
+                break;
+            case "getThreadsByActiveFilePath":
+                threads = message.value;
+                break;
+            case "postThread":
+                threads = [message.value, ...threads];
+                break;
+            case "switchActiveEditor":
+                loadThreads();
+                break;
+        }
+    }
+
     onMount(async () => {
         currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
 
@@ -87,26 +106,14 @@
             WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
         }
 
-        window.addEventListener("message", async (event) => {
-            const message = event.data;
-            switch (message.type) {
-                case "populateThreadMessage":
-                    populateThreadMessageField(message.value);
-                    break;
-                case "getThreadsByActiveFilePath":
-                    threads = message.value;
-                    break;
-                case "postThread":
-                    threads = [message.value, ...threads];
-                    break;
-                case "switchActiveEditor":
-                    loadThreads();
-                    break;
-            }
-        });
+        window.addEventListener("message", messageEventListener);
 
         loadThreads();
         initializeQuillEditor();
+    });
+
+    onDestroy(() => {
+        window.removeEventListener("message", messageEventListener)
     });
 </script>
 

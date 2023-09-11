@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import type { Project, User } from "../types";
+    import { onMount, onDestroy } from "svelte";
+    import type { User } from "../types";
     import { Page } from "../enums";
     import ThreadsViewer from "./ThreadsViewer.svelte";
     import InitializeProject from "./InitializeProject.svelte";
@@ -22,8 +22,7 @@
         tsvscode.postMessage({ type: 'logout', value: undefined });
     }
 
-    onMount(async () => {
-        window.addEventListener("message", async (event) => {
+    const messageEventListener = async (event: any) => {
             const message = event.data;
             switch (message.type) {
                 case "getAuthenticatedUser":
@@ -31,9 +30,17 @@
                     loading = false;
                     break;
             }
-        });
+        };
+
+
+    onMount(async () => {
+        window.addEventListener("message", messageEventListener);
 
         tsvscode.postMessage({ type: "getAuthenticatedUser", value: undefined });
+    });
+
+    onDestroy(() => {
+        window.removeEventListener("message", messageEventListener);
     });
 </script>
 

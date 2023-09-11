@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Project } from "../types";
-    import { onMount } from "svelte";
+    import { onMount, onDestroy } from "svelte";
     import { Page } from "../enums";
     import { WebviewStateManager } from "../WebviewStateManager";
 
@@ -36,23 +36,29 @@
         fetchExistingProjects();
     }
 
+    const messageEventListener = async (event: any) => {
+        const message = event.data;
+        switch (message.type) {
+            case "getGithubUrl":
+                handleGetGithubUrl(message.value);
+                break;
+            case "postProject":
+                setCurrentProject(message.value);
+                break;
+            case "getExistingProjects":
+                existingProjects = message.value;
+                break;
+        }
+    }
+
     onMount(async () => {
         tsvscode.postMessage({ type: 'getGithubUrl', value: undefined });
 
-        window.addEventListener("message", async (event) => {
-            const message = event.data;
-            switch (message.type) {
-                case "getGithubUrl":
-                    handleGetGithubUrl(message.value);
-                    break;
-                case "postProject":
-                    setCurrentProject(message.value);
-                    break;
-                case "getExistingProjects":
-                    existingProjects = message.value;
-                    break;
-            }
-        });
+        window.addEventListener("message", messageEventListener);
+    });
+
+    onDestroy(() => {
+        window.removeEventListener("message", messageEventListener);
     });
 </script>
 
