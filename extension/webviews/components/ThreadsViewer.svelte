@@ -68,7 +68,6 @@
     }
 
     async function loadThreads() {
-        console.log("load threads");
         currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
         if (currentProject) {
             tsvscode.postMessage({ type: 'getThreadsByActiveFilePath', value: { currentProjectId: currentProject.id } });

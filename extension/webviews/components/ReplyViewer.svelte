@@ -80,7 +80,6 @@
                 replies = message.value;
                 break;
             case "postReply":
-                console.log("postReply");
                 const reply = message.value;
                 replies = [reply, ...replies];
                 break;
