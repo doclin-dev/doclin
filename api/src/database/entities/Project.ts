@@ -2,10 +2,10 @@ import {
   BaseEntity,
   Column,
   Entity,
-  JoinColumn,
   OneToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
+  CreateDateColumn
 } from "typeorm";
 import { User } from "./User";
 import { Thread } from "./Thread";
@@ -16,6 +16,9 @@ export class Project extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @CreateDateColumn()
+  createdAt: Date;
+
   @Column("text")
   name: string;
 
@@ -25,10 +28,9 @@ export class Project extends BaseEntity {
   @Column({ nullable: true})
   userId: number;
 
-  @ManyToOne(() => User, (u) => u.todos)
-  @JoinColumn({ name: "userId" })
+  @ManyToOne(() => User, (user) => user.projects)
   creator: Promise<User>;
 
-  @OneToMany(() => Thread, (t) => t.userId)
+  @OneToMany(() => Thread, (thread) => thread.project)
   threads: Promise<Thread[]>;
 }

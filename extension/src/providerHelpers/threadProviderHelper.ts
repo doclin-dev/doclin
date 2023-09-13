@@ -1,44 +1,44 @@
 import * as vscode from "vscode";
-import { SidebarProvider } from "../SidebarProvider";
 import * as path from "path";
-import { exec } from 'child_process';
+import threadApi from "../api/threadApi";
+import { executeShellCommand } from "./providerHelperUtils";
 
-interface ShellOutput {
-    stdout: string;
-    stderr: string;
+
+export const getThreadsByActiveFilePath = async ({ currentProjectId }: { currentProjectId: number }): Promise<any> => {
+  const activeFilePath: string = await getActiveEditorFilePath();
+  const response = await threadApi.getThreads(currentProjectId, activeFilePath);
+  const payload = response?.data;
+  const threads = payload?.threads;
+
+  return threads;
 }
 
-/**
- * Execute simple shell command (async wrapper).
- * @param {String} cmd
- * @return {Object} { stdout: String, stderr: String }
- */
-async function sh(cmd: string): Promise<ShellOutput> {
-  return new Promise(function (resolve, reject) {
-    exec(cmd, (err, stdout, stderr) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve({ stdout, stderr });
-      }
-    });
-  });
+export const postThread = async({ threadMessage, projectId }: {threadMessage: string, projectId: number}): Promise<any> => {
+  const response = await threadApi.postThread(threadMessage, projectId, await getActiveEditorFilePath());
+  const thread = response?.data?.thread;
+
+  return thread;
 }
 
-export const getGithubUrl = async() : Promise<string> => {
-  if (vscode.workspace.workspaceFolders) {
-    const openedFolderUri: any = vscode.workspace.workspaceFolders[0]?.uri;
-    const openedFolderPath: string = openedFolderUri.fsPath;
-    
-    if (openedFolderPath) {
-      let { stdout }: {stdout: string} = await sh(`cd ${openedFolderPath} && git config --get remote.origin.url`);
-      return stdout;
-    }
-  }
-  return "";
+export const updateThread = async({threadMessage, threadId}: {threadMessage: string, threadId: number}): Promise<any> => {
+  const response = await threadApi.updateThread(threadId, threadMessage, await getActiveEditorFilePath());
+  const thread = response?.data?.thread;
+
+  return thread;
 }
 
-export const getGitRelativePath = async () : Promise<string> => {
+export const deleteThread = async({ threadId }: { threadId: number }) => {
+  const response = await threadApi.deleteThread(threadId);
+  const thread = response?.data?.thread;
+
+  return thread;
+}
+
+export const selectAThread = async (threadId: number): Promise<any> => {
+  
+}
+
+const getActiveEditorFilePath = async () : Promise<string> => {
   const { activeTextEditor } = vscode.window;
 
   if (!activeTextEditor) {
@@ -49,25 +49,23 @@ export const getGitRelativePath = async () : Promise<string> => {
   const activeDirectory: string = path.dirname(activeFilePath);
   const activeFileName = path.basename(activeFilePath);
 
-  let { stdout }: {stdout: string} = await sh(`cd ${activeDirectory} && git rev-parse --show-prefix ${activeFileName}`);
+  let { stdout }: {stdout: string} = await executeShellCommand(`cd ${activeDirectory} && git rev-parse --show-prefix ${activeFileName}`);
   return stdout.split('\n')[0] + activeFileName;
 }
 
 export const addCodeSnippet = async (sidebarProvider: any) => {
   const { activeTextEditor } = vscode.window;
 
-  const view = vscode.window
-
   if (!activeTextEditor) {
     vscode.window.showInformationMessage("No active text editor");
     return;
   }
 
-  const gitRelativeFilePath = await getGitRelativePath();
-
   vscode.commands.executeCommand('workbench.view.extension.doclin-sidebar-view');
 
-  const message = activeTextEditor.document.getText(
+  const filePath = await getActiveEditorFilePath();
+
+  const threadMessage = activeTextEditor.document.getText(
     activeTextEditor.selection
   );
 
@@ -83,8 +81,6 @@ export const addCodeSnippet = async (sidebarProvider: any) => {
   //     console.log('No text selected');
   // }
 
-  const threadMessage = `${gitRelativeFilePath}\n${message}`;
-
   const pauseExecution = () => {
     return new Promise((resolve) => {
       setTimeout(resolve, 500); // Resolves the promise after 2 seconds
@@ -96,7 +92,7 @@ export const addCodeSnippet = async (sidebarProvider: any) => {
   // Need to check when the sidebar is loaded and then add the textSelection to sidebar
 
   sidebarProvider._view?.webview.postMessage({
-    type: "populate-thread-message",
-    value: threadMessage,
+    type: "populateThreadMessage",
+    value: {filePath, threadMessage},
   });
 }

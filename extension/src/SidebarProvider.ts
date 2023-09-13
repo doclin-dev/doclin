@@ -1,9 +1,12 @@
 import * as vscode from "vscode";
-import { authenticate } from "./providerHelpers/authenticationProviderHelper";
+import { authenticate, getAuthenticatedUser } from "./providerHelpers/authenticationProviderHelper";
 import { apiBaseUrl } from "./constants";
-import { getNonce } from "./getNonce";
-import { TokenManager } from "./TokenManager";
-import { getGithubUrl, getGitRelativePath } from "./providerHelpers/threadProviderHelper";
+import { getNonce } from "./providerHelpers/getNonce";
+import { GlobalStateManager } from "./GlobalStateManager";
+import { postThread, deleteThread, getThreadsByActiveFilePath, updateThread } from "./providerHelpers/threadProviderHelper";
+import { getGithubUrl } from "./providerHelpers/projectProviderHelper";
+import { getExistingProjects, postProject } from "./providerHelpers/projectProviderHelper";
+import { deleteReply, getRepliesByThreadId, postReply, updateReply } from "./providerHelpers/replyProviderHelper";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -21,64 +24,118 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
-    webviewView.webview.onDidReceiveMessage(async (data) => {
-      switch (data.type) {
-        case "logout": {
-          TokenManager.setToken("");
+    webviewView.webview.onDidReceiveMessage(async (message: { type: any, value: any }) => {
+      switch (message.type) {
+        case "logout":
+          GlobalStateManager.setState(GlobalStateManager.type.AUTH_TOKEN, "");
           break;
-        }
-        case "authenticate": {
+        case "authenticate":
           authenticate(() => {
             webviewView.webview.postMessage({
-              type: "token",
-              value: TokenManager.getToken(),
+              type: "getAuthenticatedUser",
+              value: GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN),
             });
           });
           break;
-        }
-        case "get-token": {
+        case "getAuthenticatedUser":
           webviewView.webview.postMessage({
-            type: "token",
-            value: TokenManager.getToken(),
+            type: "getAuthenticatedUser",
+            value: await getAuthenticatedUser(),
           });
           break;
-        }
-        case "onInfo": {
-          if (!data.value) {
+        case "onInfo":
+          if (!message.value) {
             return;
           }
-          vscode.window.showInformationMessage(data.value);
+          vscode.window.showInformationMessage(message.value);
           break;
-        }
-        case "onError": {
-          if (!data.value) {
+        case "onError":
+          if (!message.value) {
             return;
           }
-          vscode.window.showErrorMessage(data.value);
+          vscode.window.showErrorMessage(message.value);
           break;
-        }
-        case "getGithubUrl": {
+        case "getGithubUrl":
           webviewView.webview.postMessage({
             type: "getGithubUrl",
             value: await getGithubUrl(),
           });
           break;
-        }
-        case "getCurrentFilePath": {
+        case "getThreadsByActiveFilePath":
           webviewView.webview.postMessage({
-            type: "getCurrentFilePath",
-            value: await getGitRelativePath()
+            type: "getThreadsByActiveFilePath",
+            value: await getThreadsByActiveFilePath(message.value)
           });
           break;
-        }
+        case "selectAThread":
+          break;
+        case "postThread":
+          webviewView.webview.postMessage({
+            type: "postThread",
+            value: await postThread(message.value)
+          });
+          break;
+        case "updateThread":
+          webviewView.webview.postMessage({
+            type: "updateThread",
+            value: await updateThread(message.value)
+          });
+          break;
+        case "deleteThread":
+          webviewView.webview.postMessage({
+            type: "deleteThread",
+            value: await deleteThread(message.value)
+          });
+          break;
+        case "getExistingProjects":
+          webviewView.webview.postMessage({
+            type: "getExistingProjects",
+            value: await getExistingProjects()
+          });
+          break;
+        case "postProject":
+          webviewView.webview.postMessage({
+            type: "postProject",
+            value: await postProject(message.value)
+          });
+          break;
+        case "postReply":
+          webviewView.webview.postMessage({
+            type: "postReply",
+            value: await postReply(message.value)
+          });
+          break;
+        case "getRepliesByThreadId":
+          webviewView.webview.postMessage({
+            type: "getRepliesByThreadId",
+            value: await getRepliesByThreadId(message.value)
+          });
+          break;
+        case "getRepliesByThreadId":
+          webviewView.webview.postMessage({
+            type: "getRepliesByThreadId",
+            value: await getRepliesByThreadId(message.value)
+          });
+          break;
+        case "updateReply":
+          webviewView.webview.postMessage({
+            type: "updateReply",
+            value: await updateReply(message.value)
+          });
+          break;
+				case "deleteReply":
+					webviewView.webview.postMessage({
+            type: "deleteReply",
+            value: await deleteReply(message.value)
+          });
+          break;
       }
     });
 
     vscode.window.onDidChangeActiveTextEditor(async (editor) => {
       if (editor) {
         webviewView.webview.postMessage({
-          type: "getCurrentFilePath",
-          value: await getGitRelativePath()
+          type: "switchActiveEditor"
         });
       }
     });

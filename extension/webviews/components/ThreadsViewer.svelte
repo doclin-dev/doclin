@@ -1,67 +1,47 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import type { Project, User } from "../types";
+    import { onMount, onDestroy } from "svelte";
+    import type { Project, User, Thread as ThreadType } from "../types";
     import Quill from "quill";
     import Thread from './Thread.svelte';
     import ViewerTopBar from "./ViewerTopBar.svelte";
     import { Page } from "../enums";
+    import { WebviewStateManager } from "../WebviewStateManager";
 
     export let user: User;
-    export let accessToken: string;
     export let page: Page;
     
     let quillEditor: any;
-    let threadMessage: string;
-    let threads: Array<{ message: string; id: number }> = [];
+    let threads: Array<ThreadType> = [];
     let currentProject: Project | null;
-    let currentFilePath: string | null;
 
-    async function postThreadMessage(t: string) {
-        const response = await fetch(`${apiBaseUrl}/threads`, {
-                method: "POST",
-                body: JSON.stringify({
-                    message: t,
-                    projectId: currentProject?.id,
-                    filePath: currentFilePath
-                }),
-                headers: {
-                    "content-type": "application/json",
-                    authorization: `Bearer ${accessToken}`,
-                },
-            });
-        const { thread } = await response.json();
-        threads = [thread, ...threads];
-    }
-
-    async function populateThreadMessageField(message: string) {
-        const selection = quillEditor.getSelection();
+    async function populateThreadMessageField({ filePath, threadMessage }: { filePath: string, threadMessage: string }) {
+        const selection = quillEditor.getSelection(true);
         const cursorPosition: number = selection ? selection.index : quillEditor.getLength();
+        const textToInsert = `File Path: ${filePath}\n${threadMessage}\n`;
 
-        // Insert a line break to move the cursor to the next line
         quillEditor.insertText(cursorPosition, "\n");
-        quillEditor.setSelection(cursorPosition + 1);
-
-        const range = quillEditor.getSelection(true);
-        quillEditor.formatText(range.index, message.length + 1, "code-block", true);
-
-        // Insert the new message at the cursor position
-        quillEditor.insertText(cursorPosition + 1, message);
-
-        // remove codeblock from filepath (1st line)
-        quillEditor.formatLine(range.index, 1, "code-block", false);
-
-        // Move the cursor to the end of the new message
-        quillEditor.setSelection(cursorPosition + 1 + message.length);
+        quillEditor.insertText(cursorPosition + 1, textToInsert);
+        quillEditor.formatText(cursorPosition + 1, textToInsert.length, "code-block", true);
+        quillEditor.insertText(cursorPosition + 1 + textToInsert.length, "\n");
+        quillEditor.setSelection(cursorPosition + 1 + textToInsert.length);
     }
 
     async function submitThreadMessage() {
-        threadMessage = quillEditor.root.innerHTML;
+        const threadMessage = quillEditor.root.innerHTML;
+        currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
+
         if (threadMessage) {
-            postThreadMessage(threadMessage);
+            tsvscode.postMessage({ 
+                type: "postThread", 
+                value: {
+                    threadMessage: threadMessage,
+                    projectId: currentProject?.id
+                }
+            });
         }
-        threadMessage = "";
-        quillEditor.setText(threadMessage);
-        tsvscode.setState({...tsvscode.getState(), threadMessage});
+
+        quillEditor.setText("");
+        WebviewStateManager.setState(WebviewStateManager.type.THREAD_MESSAGE, "");
     }
 
     async function initializeQuillEditor() {
@@ -81,51 +61,58 @@
         quillEditor.theme.modules.toolbar.container.style.border = 'none';
 
         quillEditor.on('text-change', () => {
-            threadMessage = quillEditor.root.innerHTML;
-            tsvscode.setState({...tsvscode.getState(), threadMessage});
+            WebviewStateManager.setState(WebviewStateManager.type.THREAD_MESSAGE, quillEditor.root.innerHTML);
         });
         
-        quillEditor.root.innerHTML = threadMessage;
+        quillEditor.root.innerHTML = WebviewStateManager.getState(WebviewStateManager.type.THREAD_MESSAGE) || "";
     }
 
     async function loadThreads() {
+        currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
         if (currentProject) {
-            const response = await fetch(`${apiBaseUrl}/threads?projectId=${currentProject.id}&filePath=${currentFilePath}`, {
-                headers: {
-                    authorization: `Bearer ${accessToken}`,
-                },
-            });
-
-            const payload = await response.json();
-            threads = payload.threads;
+            tsvscode.postMessage({ type: 'getThreadsByActiveFilePath', value: { currentProjectId: currentProject.id } });
         }
     }
 
     function chooseAnotherProject() {
-        tsvscode.setState({...tsvscode.getState(), currentProject: null});
+        WebviewStateManager.setState(WebviewStateManager.type.CURRENT_PROJECT, null);
         page = Page.InitializeProject;
     }
 
+    const messageEventListener = async (event: any) => {
+        const message = event.data;
+        switch (message.type) {
+            case "populateThreadMessage":
+                populateThreadMessageField(message.value);
+                break;
+            case "getThreadsByActiveFilePath":
+                threads = message.value;
+                break;
+            case "postThread":
+                threads = [message.value, ...threads];
+                break;
+            case "switchActiveEditor":
+                loadThreads();
+                break;
+        }
+    }
+
     onMount(async () => {
-        threadMessage = tsvscode.getState()?.threadMessage || "";
-        currentProject = tsvscode.getState()?.currentProject;
+        currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
 
-        window.addEventListener("message", async (event) => {
-            const message = event.data;
-            switch (message.type) {
-                case "populate-thread-message":
-                    populateThreadMessageField(message.value);
-                    break;
-                case "getCurrentFilePath":
-                    currentFilePath = message.value;
-                    loadThreads();
-                    break;
-            }
-        });
+        if (currentProject === null) {
+            page = Page.InitializeProject;
+            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+        }
 
-        tsvscode.postMessage({ type: 'getCurrentFilePath', value: undefined });
+        window.addEventListener("message", messageEventListener);
 
+        loadThreads();
         initializeQuillEditor();
+    });
+
+    onDestroy(() => {
+        window.removeEventListener("message", messageEventListener)
     });
 </script>
 
@@ -139,7 +126,7 @@
 </style>
 
 
-<ViewerTopBar username={user.name} projectName={currentProject?.name}/>
+<ViewerTopBar username={user.name}/>
 
 <form
     on:submit|preventDefault={submitThreadMessage}>
@@ -149,7 +136,7 @@
 
 <div id='viewer'>
     {#each threads as thread (thread.id)}
-        <Thread thread={thread} username={user.name} bind:page={page} accessToken={accessToken} reloadThreads={loadThreads}/>
+        <Thread thread={thread} bind:page={page} reloadThreads={loadThreads}/>
     {/each}
 </div>
 

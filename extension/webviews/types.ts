@@ -10,3 +10,11 @@ export type Project = {
   url: string;
   userId: number;
 }
+
+export type Thread = {
+  id: number;
+  message: string;
+  projectId: number;
+  userId: number;
+  username: string;
+}

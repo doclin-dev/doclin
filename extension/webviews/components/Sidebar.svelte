@@ -1,17 +1,16 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import type { Project, User } from "../types";
+    import { onMount, onDestroy } from "svelte";
+    import type { User } from "../types";
     import { Page } from "../enums";
     import ThreadsViewer from "./ThreadsViewer.svelte";
     import InitializeProject from "./InitializeProject.svelte";
     import ReplyViewer from "./ReplyViewer.svelte";
-    import {selectedThread} from './store';
+    import { WebviewStateManager } from "../WebviewStateManager";
 
     let accessToken = "";
     let loading = true;
     let user: User | null = null;
-    let page: Page = tsvscode.getState()?.page ?? Page.InitializeProject;
-    let currentProject: Project;
+    let page: Page = WebviewStateManager.getState(WebviewStateManager.type.PAGE) ?? Page.InitializeProject;
 
     const authenticate = () => {
         tsvscode.postMessage({ type: 'authenticate', value: undefined });
@@ -23,24 +22,24 @@
         tsvscode.postMessage({ type: 'logout', value: undefined });
     }
 
-    onMount(async () => {
-        window.addEventListener("message", async (event) => {
-            const message = event.data;
-            switch (message.type) {
-                case "token":
-                    accessToken = message.value;
-                    const response = await fetch(`${apiBaseUrl}/me`, {
-                        headers: {
-                            authorization: `Bearer ${accessToken}`,
-                        },
-                    });
-                    const data = await response.json();
-                    user = data.user;
-                    loading = false;
-            }
-        });
+    const messageEventListener = async (event: any) => {
+        const message = event.data;
+        switch (message.type) {
+            case "getAuthenticatedUser":
+                user = message.value;
+                loading = false;
+                break;
+        }
+    };
 
-        tsvscode.postMessage({ type: "get-token", value: undefined });
+    onMount(async () => {
+        window.addEventListener("message", messageEventListener);
+
+        tsvscode.postMessage({ type: "getAuthenticatedUser", value: undefined });
+    });
+
+    onDestroy(() => {
+        window.removeEventListener("message", messageEventListener);
     });
 </script>
 
@@ -48,11 +47,11 @@
     <div>loading...</div>
 {:else if user}
     {#if page === Page.InitializeProject}
-        <InitializeProject {accessToken} bind:page={page}/>
-    {:else if page === Page.ThreadsViewer || $selectedThread === null}
-        <ThreadsViewer {user} {accessToken} bind:page={page} />
+        <InitializeProject bind:page={page}/>
+    {:else if page === Page.ThreadsViewer}
+        <ThreadsViewer {user} bind:page={page} />
     {:else if page === Page.ReplyViewer}
-        <ReplyViewer thread={$selectedThread} username={user.name} projectName={currentProject?.name} bind:page={page} accessToken={accessToken}/>
+        <ReplyViewer username={user.name} bind:page={page}/>
     {:else if page === Page.Contact}
         <div>Contact me here:</div>
         <button

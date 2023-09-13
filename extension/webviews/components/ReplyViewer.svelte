@@ -4,21 +4,18 @@
     import Button from "./Button.svelte";
     import Quill from 'quill';
     import { Page } from "../enums";
-    import { selectedThread } from './store.js';
     import Thread from "./Thread.svelte";
-    import { onMount } from "svelte";
+    import { onMount, onDestroy } from "svelte";
     import Reply from "./Reply.svelte";
+    import { WebviewStateManager } from "../WebviewStateManager";
+    import type { Thread as ThreadType } from "../types";
 
-    export let thread: any;
-    export let projectName: string;
+    let thread: ThreadType;
     export let username: string;
     export let page: Page;
-    export let accessToken: string;
-
 
     let quillReplyViewer: any;
     let replies : Array<{message: string, id: number}> = [];
-    let replyMessage: string;
 
     async function initializeQuillEditor() {
         quillReplyViewer = new Quill('#replyViewerEditor', {
@@ -35,55 +32,77 @@
         
         quillReplyViewer.theme.modules.toolbar.container.style.background = '#f1f1f1';
         quillReplyViewer.theme.modules.toolbar.container.style.border = 'none';
+
+        quillReplyViewer.on('text-change', () => {
+            WebviewStateManager.setState(WebviewStateManager.type.REPLY_MESSAGE, quillReplyViewer.root.innerHTML);
+        });
+        
+        quillReplyViewer.root.innerHTML = WebviewStateManager.getState(WebviewStateManager.type.REPLY_MESSAGE) || "";
     }
 
     async function postReplyMessage(message: string) {
-        const response = await fetch(`${apiBaseUrl}/replies/${thread.id}`, {
-                method: "POST",
-                body: JSON.stringify({
-                    message: message,
-                }),
-                headers: {
-                    "content-type": "application/json",
-                    authorization: `Bearer ${accessToken}`,
-                },
-            });
-        const { reply } = await response.json();
-        replies = [reply, ...replies];
+        tsvscode.postMessage({
+            type: "postReply",
+            value: { threadId: thread.id, replyMessage: message }
+        });
     }
 
     async function loadReplies () {
-        const response = await fetch(`${apiBaseUrl}/replies/${thread.id}`, {
-            headers: {
-                authorization: `Bearer ${accessToken}`,
-            },
+        tsvscode.postMessage({
+            type: "getRepliesByThreadId",
+            value: { threadId: thread.id }
         });
-
-        const payload = await response.json();
-        replies = payload.replies;
     }
 
     const handleDeleteButtonClick = () => {
-        console.log('Delete button clicked!');
+        tsvscode.postMessage({
+            type: "deleteThread",
+            value: { threadId: thread.id }
+        });
     }
 
     const handleBackClick = () => {
-        selectedThread.set(null);
+        WebviewStateManager.setState(WebviewStateManager.type.THREAD_SELECTED, null);
         page = Page.ThreadsViewer;
-        tsvscode.setState({ ...tsvscode.getState(), page});
+        WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
     }
 
     const onSubmit= () => {
-        replyMessage = quillReplyViewer.root.innerHTML;
-        postReplyMessage(replyMessage);
-        replyMessage = "";
-        quillReplyViewer.setText(replyMessage);
-        tsvscode.setState({...tsvscode.getState(), replyMessage});
+        postReplyMessage(quillReplyViewer.root.innerHTML);
+        quillReplyViewer.setText("");
+        WebviewStateManager.setState(WebviewStateManager.type.REPLY_MESSAGE, "");
     }
 
+    const messageEventListener = async (event: any) => {
+        const message = event.data;
+        switch (message.type) {
+            case "getRepliesByThreadId":
+                replies = message.value;
+                break;
+            case "postReply":
+                const reply = message.value;
+                replies = [reply, ...replies];
+                break;
+        }
+    };
+
     onMount(async () => {
+        thread = WebviewStateManager.getState(WebviewStateManager.type.THREAD_SELECTED);
+
+        if (thread == null) {
+            page = Page.ThreadsViewer;
+            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+            return;
+        }
+
+        window.addEventListener("message", messageEventListener);
+
         initializeQuillEditor();
         loadReplies();
+    });
+
+    onDestroy(() => {
+        window.removeEventListener("message", messageEventListener);
     });
 
 </script>
@@ -104,7 +123,7 @@
     }
 </style>
 
-<ViewerTopBar username={username} projectName={projectName}/>
+<ViewerTopBar username={username}/>
 
 <div class='reply-viewer'>
     <div class='topbar'>
@@ -112,7 +131,7 @@
         <OverlayCard isEditable={false} handleDelete={handleDeleteButtonClick}/>
     </div>
     <div style="padding-bottom: 0.5rem">
-        <Thread thread={thread} username={username} page={page} accessToken={accessToken}/>
+        <Thread thread={thread} page={page}/>
     </div>
     <form>
         <div id="replyViewerEditor"></div>
@@ -120,7 +139,7 @@
     </form>
     <div>
         {#each replies as reply (reply.id)}
-            <Reply reply={reply} username={username} reloadReplies={loadReplies} accessToken={accessToken}/>
+            <Reply reply={reply} reloadReplies={loadReplies}/>
         {/each}
     </div>
 </div>

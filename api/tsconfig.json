@@ -6,7 +6,8 @@
       "dom",
       "es6",
       "es2017",
-      "esnext.asynciterable"
+      "esnext.asynciterable",
+      "es2020.string"
     ],
     "sourceMap": true,
     "outDir": "./dist",

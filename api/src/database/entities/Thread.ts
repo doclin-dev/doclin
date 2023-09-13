@@ -6,16 +6,20 @@ import {
   OneToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
+  CreateDateColumn
 } from "typeorm";
 import { User } from "./User";
 import { Project } from "./Project";
 import { Reply } from "./Reply";
-import { ThreadFile } from "./ThreadFile";
+import { Snippet } from "./Snippet";
 
 @Entity()
 export class Thread extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @CreateDateColumn()
+  createdAt: Date;
 
   @Column("text")
   message: string;
@@ -25,18 +29,18 @@ export class Thread extends BaseEntity {
 
   @ManyToOne(() => User, (user) => user.threads)
   @JoinColumn({ name: "userId" })
-  user: Promise<User>;
+  user: User;
 
   @Column({ nullable: true})
   projectId: number;
 
-  @OneToMany(() => ThreadFile, (threadFile) => threadFile.thread)
-  threadFiles: Promise<ThreadFile[]>;
+  @OneToMany(() => Snippet, (s) => s.thread, { cascade: true })
+  snippets: Snippet[];
 
   @ManyToOne(() => Project, (project) => project.threads)
   @JoinColumn({ name: "projectId" })
-  project: Promise<Project>;
+  project: Project;
 
-  @OneToMany(() => Reply, (reply) => reply.thread)
-  replies: Promise<Reply[]>;
+  @OneToMany(() => Reply, (reply) => reply.thread, { cascade: true })
+  replies: Reply[];
 }

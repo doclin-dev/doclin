@@ -2,12 +2,10 @@
     import OverlayCard from './OverlayCard.svelte';
     import Button from './Button.svelte'
     import Quill from 'quill';
-    import { tick } from 'svelte';
+    import { onMount, tick, onDestroy } from 'svelte';
     import { editedReplyId } from './store.js';
 
     export let reply: any;
-    export let username: string;
-    export let accessToken: string;
     export let reloadReplies: () => void = () => {};
 
     let quillReplyCardEditor: any;
@@ -15,23 +13,14 @@
     let replyCardMessage: string;
 
     async function updateReplyMessage(message: string) {
-        await fetch(`${apiBaseUrl}/replies/${reply.id}`, {
-                method: "PUT",
-                body: JSON.stringify({
-                    message: message
-                }),
-                headers: {
-                    "content-type": "application/json",
-                    authorization: `Bearer ${accessToken}`,
-                },
-            });
+        tsvscode.postMessage({
+            type: "updateReply",
+            value: { replyId: reply.id, replyMessage: message }
+        });
     }
-        
 
     const handleEditButtonClick = async () => {
-        if($editedReplyId !== null && $editedReplyId !== reply.id) {
-            console.log('Fuck off!');
-        } else {
+        if($editedReplyId == null) {
             replyCardEditMode = true;
             editedReplyId.set(reply.id);
             await tick();
@@ -57,11 +46,8 @@
         await tick();
         replyCardMessage = quillReplyCardEditor.root.innerHTML;
         updateReplyMessage(replyCardMessage);
-        reply.message = replyCardMessage;
-        quillReplyCardEditor.theme.modules.toolbar.container.style.display = 'none';
-        quillReplyCardEditor = null;
-        editedReplyId.set(null);
     }
+    
     const onCancel = () => {
         replyCardEditMode = false;
         quillReplyCardEditor.theme.modules.toolbar.container.style.display = 'none';
@@ -70,22 +56,36 @@
     }
 
     const handleDeleteButtonClick = async () => {
-        try {
-            await fetch(`${apiBaseUrl}/replies/delete/${reply.id}`, {
-                method: "DELETE",
-                headers: {
-                    "content-type": "application/json",
-                    authorization: `Bearer ${accessToken}`,
-                },
-            });
+        tsvscode.postMessage({
+            type: "deleteReply",
+            value: { replyId: reply.id }
+        });
+    }
 
-            reloadReplies();
-
-        } catch (err) {
-            console.log(err);
+    const messageEventListener = async (event: any) => {
+        const message = event.data;
+        switch(message.type) {
+            case "updateReply":
+                if (reply.id === message.value?.id) {
+                    reply.message = message.value?.message;
+                    quillReplyCardEditor.theme.modules.toolbar.container.style.display = 'none';
+                    quillReplyCardEditor = null;
+                    editedReplyId.set(null);
+                }
+                break;
+            case "deleteReply":
+                reloadReplies();
+                break;
         }
     }
 
+    onMount(() => {
+        window.addEventListener("message", messageEventListener);
+    });
+
+    onDestroy(() => {
+        window.removeEventListener("message", messageEventListener);
+    });
 </script>
 
 <style>
@@ -124,19 +124,19 @@
 
 <div class='reply-card'>
     <div class="reply-card-header">
-        <div> {username}</div>
+        <div> {reply.username}</div>
         <div class='button-container'>
             <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
         </div>
     </div>
     {#if replyCardEditMode}
-    <div id="reply-card-editor">{@html reply.message}</div> 
-    <div class='reply-card-footer'>
-        <Button variant='secondary' onClick={onCancel} title="Cancel"/>
-        <Button variant='secondary' onClick={handleOnSubmit} title="Submit"/>
-    </div>
+        <div id="reply-card-editor">{@html reply.message}</div> 
+        <div class='reply-card-footer'>
+            <Button variant='secondary' onClick={onCancel} title="Cancel"/>
+            <Button variant='secondary' onClick={handleOnSubmit} title="Submit"/>
+        </div>
     {:else}
-    <div>{@html reply.message}</div>
+        <div>{@html reply.message}</div>
     {/if}
 
 </div>
