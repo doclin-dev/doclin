@@ -107,22 +107,6 @@
 
 </script>
 
-<style>
-    .topbar{
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;  
-        padding-bottom: 0.5rem;
-        align-items: center;
-    }
-    #replyViewerEditor{
-        width: 100%;
-        height: 100px;
-        resize: both; 
-        overflow: auto;
-    }
-</style>
-
 <ViewerTopBar username={username}/>
 
 <div class='reply-viewer'>

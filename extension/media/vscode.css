@@ -96,6 +96,206 @@ pre.ql-syntax {
   padding: 5px;
 }
 
-#textEditor {
+#textEditor{
   background-color: var(--vscode-input-background);
+  width: 100%;
+  height: 150px;
+  resize: both; 
+  overflow: auto;
+}
+
+#replyViewerEditor {
+  background-color: var(--vscode-input-background);
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.button:hover {
+    cursor: pointer;
+    background-color: #726f6f; 
+}
+
+.button.md {
+    padding: 0.5rem;
+}
+
+.button.sm {
+    padding: 0.25rem;
+}
+
+.button.text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    /* padding: 5px; */
+    cursor: pointer;
+}
+
+.button.submit {
+    border: none;
+    padding: 5px;
+}
+
+.button.submit:hover{
+    background-color: rgb(7, 104, 239);
+    border-radius: 0;
+    color: white;
+}
+
+.button.danger {
+    color: red;
+    background-color: white;
+}
+
+.button.danger:hover {
+    background-color: rgb(246, 68, 68);
+    color: white;
+    border-radius: 0;
+}
+.button.secondary {
+    border: 1px solid #908f8f;
+    border-radius: 5px;
+}
+
+.button.secondary:hover {
+    background-color: rgb(7, 104, 239);
+    color: white;
+    border-radius: 5px;
+}
+
+.dropdown-btn {
+  border: none;
+  padding: 0 0.25rem;
+  align-items: center;
+}
+
+.dropdown{
+  padding: 0 0.5rem;
+}
+
+.dropdown-menu {
+  font-weight: 400;
+  min-width: 6rem;
+  padding: 0.25rem 0;
+}
+
+.divider {
+  height: 1px;
+  background-color: #c3c0c0;
+}
+
+.project-info {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  font-size: large;
+  font-weight: 400;
+  justify-content: center;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.5rem;
+  margin-right: 0.75rem;
+}
+
+.icon-container {
+  display: flex;
+  width: 10%;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  gap: 0.25rem;
+}
+
+.thread-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0;
+}
+
+.button-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.thread-card {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(46, 48, 48);
+  padding: 0.5rem;
+  gap: 0.25;
+  border-radius: 5px;
+  border: 2px;
+  margin-bottom: 0.5rem;
+}
+
+.thread-editor-footer {
+  display: flex;
+  padding-top: 0.5rem;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 0.25rem;
+}
+
+.topbar{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;  
+  padding-bottom: 0.5rem;
+  align-items: center;
+}
+
+#replyViewerEditor{
+  width: 100%;
+  height: 100px;
+  resize: both; 
+  overflow: auto;
+}
+
+.reply-card-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0;
+}
+
+.button-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.reply-card {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(46, 48, 48);
+  padding: 0.5rem;
+  gap: 0.25;
+  border-radius: 5px;
+  border: 2px;
+  margin-bottom: 0.5rem;
+}
+.reply-card-footer {
+  display: flex;
+  padding-top: 0.5rem;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 0.25rem;
 }
