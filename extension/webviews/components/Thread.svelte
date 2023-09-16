@@ -57,6 +57,10 @@
 
     const handleDeleteButtonClick = async () => {
         tsvscode.postMessage({ type: "deleteThread", value: { threadId: thread.id }});
+
+        WebviewStateManager.setState(WebviewStateManager.type.THREAD_SELECTED, null);
+        page = Page.ThreadsViewer;
+        WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
     }
 
     const handleReplyButtonClick = () => {

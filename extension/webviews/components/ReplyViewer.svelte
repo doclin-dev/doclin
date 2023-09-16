@@ -59,6 +59,8 @@
             type: "deleteThread",
             value: { threadId: thread.id }
         });
+
+        handleBackClick();
     }
 
     const handleBackClick = () => {
@@ -115,7 +117,7 @@
         <OverlayCard isEditable={false} handleDelete={handleDeleteButtonClick}/>
     </div>
     <div style="padding-bottom: 0.5rem">
-        <Thread thread={thread} page={page}/>
+        <Thread thread={thread} bind:page={page}/>
     </div>
     <form>
         <div id="replyViewerEditor"></div>
