@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn
 } from "typeorm";
-import { User } from "./User";
+import { Company } from "./Company";
 import { Thread } from "./Thread";
 
 
@@ -25,12 +25,11 @@ export class Project extends BaseEntity {
   @Column("text")
   url: string;
 
-  @Column({ nullable: true})
-  userId: number;
+  companyId: number;
 
-  @ManyToOne(() => User, (user) => user.projects)
-  creator: Promise<User>;
+  @ManyToOne(() => Company, (company) => company.projects)
+  company: Company;
 
   @OneToMany(() => Thread, (thread) => thread.project)
-  threads: Promise<Thread[]>;
+  threads: Thread[];
 }
