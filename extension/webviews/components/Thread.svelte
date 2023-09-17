@@ -6,6 +6,7 @@
     import { editedThreadId } from './store.js';
     import { Page } from '../enums'; 
     import { WebviewStateManager } from '../WebviewStateManager';
+    import {populateThreadMessageField} from "../utilities";
 
     export let thread: any;
     export let page: Page;
@@ -33,6 +34,7 @@
 
             quillThreadEditor.theme.modules.toolbar.container.style.background = '#f1f1f1';
             quillThreadEditor.theme.modules.toolbar.container.style.border = 'none';
+
         }
     }
 
@@ -68,6 +70,9 @@
     const messageEventListener = async(event: any) => {
         const message = event.data;
         switch(message.type) {
+            case "populateThreadMessage":
+                $editedThreadId ? populateThreadMessageField(quillThreadEditor, message.value): null;
+                break;
             case "deleteThread":
                 page = Page.ThreadsViewer;
                 WebviewStateManager.setState(WebviewStateManager.type.PAGE, Page.ThreadsViewer);

@@ -4,8 +4,10 @@
     import Quill from "quill";
     import Thread from './Thread.svelte';
     import ViewerTopBar from "./ViewerTopBar.svelte";
+    import { editedThreadId } from './store.js';
     import { Page } from "../enums";
     import { WebviewStateManager } from "../WebviewStateManager";
+    import {populateThreadMessageField} from "../utilities";
 
     export let user: User;
     export let page: Page;
@@ -13,18 +15,6 @@
     let quillEditor: any;
     let threads: Array<ThreadType> = [];
     let currentProject: Project | null;
-
-    async function populateThreadMessageField({ filePath, threadMessage }: { filePath: string, threadMessage: string }) {
-        const selection = quillEditor.getSelection(true);
-        const cursorPosition: number = selection ? selection.index : quillEditor.getLength();
-        const textToInsert = `File Path: ${filePath}\n${threadMessage}\n`;
-
-        quillEditor.insertText(cursorPosition, "\n");
-        quillEditor.insertText(cursorPosition + 1, textToInsert);
-        quillEditor.formatText(cursorPosition + 1, textToInsert.length, "code-block", true);
-        quillEditor.insertText(cursorPosition + 1 + textToInsert.length, "\n");
-        quillEditor.setSelection(cursorPosition + 1 + textToInsert.length);
-    }
 
     async function submitThreadMessage() {
         const threadMessage = quillEditor.root.innerHTML;
@@ -83,7 +73,7 @@
         const message = event.data;
         switch (message.type) {
             case "populateThreadMessage":
-                populateThreadMessageField(message.value);
+                $editedThreadId == null ? populateThreadMessageField(quillEditor, message.value) : null;
                 break;
             case "getThreadsByActiveFilePath":
                 threads = message.value;

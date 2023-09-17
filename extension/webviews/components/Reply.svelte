@@ -4,6 +4,7 @@
     import Quill from 'quill';
     import { onMount, tick, onDestroy } from 'svelte';
     import { editedReplyId } from './store.js';
+    import { populateThreadMessageField } from '../utilities';
 
     export let reply: any;
     export let reloadReplies: () => void = () => {};
@@ -38,6 +39,7 @@
 
             quillReplyCardEditor.theme.modules.toolbar.container.style.background = '#f1f1f1';
             quillReplyCardEditor.theme.modules.toolbar.container.style.border = 'none';
+
         }
     }
 
@@ -65,6 +67,9 @@
     const messageEventListener = async (event: any) => {
         const message = event.data;
         switch(message.type) {
+            case "populateThreadMessage":
+                $editedReplyId ? populateThreadMessageField(quillReplyCardEditor, message.value): null;
+                break;
             case "updateReply":
                 if (reply.id === message.value?.id) {
                     reply.message = message.value?.message;

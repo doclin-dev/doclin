@@ -9,7 +9,7 @@ export type Project = {
   name: string;
   url: string;
   userId: number;
-}
+};
 
 export type Thread = {
   id: number;
@@ -17,4 +17,4 @@ export type Thread = {
   projectId: number;
   userId: number;
   username: string;
-}
+};

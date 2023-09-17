@@ -9,6 +9,8 @@
     import Reply from "./Reply.svelte";
     import { WebviewStateManager } from "../WebviewStateManager";
     import type { Thread as ThreadType } from "../types";
+    import {populateThreadMessageField} from "../utilities";
+    import { editedReplyId, editedThreadId } from "./store";
 
     let thread: ThreadType;
     export let username: string;
@@ -76,6 +78,11 @@
     const messageEventListener = async (event: any) => {
         const message = event.data;
         switch (message.type) {
+            case "populateThreadMessage":
+            if ($editedThreadId === null && $editedReplyId === null){
+                    populateThreadMessageField (quillReplyViewer, message.value);
+                }
+                break;
             case "getRepliesByThreadId":
                 replies = message.value;
                 break;
