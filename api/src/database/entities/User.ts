@@ -4,10 +4,13 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  CreateDateColumn
+  CreateDateColumn,
+  ManyToMany,
+  JoinTable
 } from "typeorm";
 import { Thread } from "./Thread";
 import { Reply } from "./Reply";
+import { Organization } from "./Organization";
 
 @Entity()
 export class User extends BaseEntity {
@@ -28,4 +31,8 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Reply, (t) => t.user)
   replies: Reply[];
+
+  @ManyToMany(() => Organization, (organization) => organization.users, { cascade: true })
+  @JoinTable()
+  organizations: Organization[];
 }

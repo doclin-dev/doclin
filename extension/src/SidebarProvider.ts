@@ -7,6 +7,7 @@ import { postThread, deleteThread, getThreadsByActiveFilePath, updateThread } fr
 import { getGithubUrl } from "./providerHelpers/projectProviderHelper";
 import { getExistingProjects, postProject } from "./providerHelpers/projectProviderHelper";
 import { deleteReply, getRepliesByThreadId, postReply, updateReply } from "./providerHelpers/replyProviderHelper";
+import { postOrganization } from "./providerHelpers/organizationProviderHelper";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -127,6 +128,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					webviewView.webview.postMessage({
             type: "deleteReply",
             value: await deleteReply(message.value)
+          });
+          break;
+        case "postOrganization":
+          webviewView.webview.postMessage({
+            type: "postOrganization",
+            value: await postOrganization(message.value)
           });
           break;
       }

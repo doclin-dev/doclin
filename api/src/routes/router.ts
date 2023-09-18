@@ -3,8 +3,9 @@ import { deleteThread, getThreads, postThread, updateThread } from "../controlle
 import { deleteReply, getReplies, postReply, updateReplyMessage } from "../controllers/replyController";
 import { postProject, getExistingProjects } from "../controllers/projectController";
 import { getCurrentUser } from "../controllers/userController";
-import { isAuth } from "../isAuth";
+import { authorize } from "../isAuth";
 import passport from "passport";
+import { postOrganization } from "../controllers/organizationController";
 
 const router = express.Router();
 
@@ -20,17 +21,19 @@ router.get(
 
 router.get("/auth/user", getCurrentUser);
 
-router.post("/threads", isAuth, postThread);
-router.get("/threads", isAuth, getThreads);
-router.put("/threads/:id", isAuth, updateThread);
-router.delete("/threads/:id", isAuth, deleteThread);
+router.post("/threads", authorize, postThread);
+router.get("/threads", authorize, getThreads);
+router.put("/threads/:id", authorize, updateThread);
+router.delete("/threads/:id", authorize, deleteThread);
 
-router.post("/replies/", isAuth, postReply);
-router.get("/replies/", isAuth, getReplies);
-router.put("/replies/:id", isAuth, updateReplyMessage);
-router.delete("/replies/:id", isAuth, deleteReply);
+router.post("/replies/", authorize, postReply);
+router.get("/replies/", authorize, getReplies);
+router.put("/replies/:id", authorize, updateReplyMessage);
+router.delete("/replies/:id", authorize, deleteReply);
 
-router.post("/projects", isAuth, postProject);
-router.get("/projects/existing", isAuth, getExistingProjects);
+router.post("/projects", authorize, postProject);
+router.get("/projects/existing", authorize, getExistingProjects);
+
+router.post("/organizations", authorize, postOrganization);
 
 export default router;

@@ -19,7 +19,6 @@ h6,
 p,
 ol,
 ul {
-  margin: 0;
   padding: 0;
   font-weight: normal;
 }
@@ -27,4 +26,8 @@ ul {
 img {
   max-width: 100%;
   height: auto;
+}
+
+h3 {
+  font-size: 16px;
 }

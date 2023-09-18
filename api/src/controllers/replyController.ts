@@ -1,6 +1,6 @@
 import { Reply } from "../database/entities/Reply";
-import { ReplyRepository } from "../database/repositiories/ReplyRepository";
-import { ThreadRepository } from "../database/repositiories/ThreadRepository";
+import { ReplyRepository } from "../database/repositories/ReplyRepository";
+import { ThreadRepository } from "../database/repositories/ThreadRepository";
 
 export const postReply = async (req: any, res: any) => {
     const threadId = req.body.threadId;

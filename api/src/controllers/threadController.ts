@@ -1,7 +1,7 @@
 import { SnippetFilePath } from "../database/entities/SnippetFilePath";
 import { Thread } from "../database/entities/Thread";
 import { Snippet } from "../database/entities/Snippet";
-import { ThreadRepository } from "../database/repositiories/ThreadRepository";
+import { ThreadRepository } from "../database/repositories/ThreadRepository";
 
 export const postThread = async (req: any, res: any) => {
     const threadMessage: string = req.body.threadMessage;

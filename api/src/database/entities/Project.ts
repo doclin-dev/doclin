@@ -5,9 +5,10 @@ import {
   OneToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
-  CreateDateColumn
+  CreateDateColumn,
+  JoinColumn
 } from "typeorm";
-import { Company } from "./Company";
+import { Organization } from "./Organization";
 import { Thread } from "./Thread";
 
 
@@ -25,10 +26,12 @@ export class Project extends BaseEntity {
   @Column("text")
   url: string;
 
-  companyId: number;
+  @Column()
+  organizationId: number;
 
-  @ManyToOne(() => Company, (company) => company.projects)
-  company: Company;
+  @ManyToOne(() => Organization, (organization) => organization.projects)
+  @JoinColumn({ name: "organizationId" })
+  organization: Organization;
 
   @OneToMany(() => Thread, (thread) => thread.project)
   threads: Thread[];

@@ -1,25 +1,32 @@
 import { RequestHandler } from "express";
 import jwt from "jsonwebtoken";
 
-export const isAuth: RequestHandler<{}, any, any, {}> = (req, _, next) => {
+export const authorize: RequestHandler<{}, any, any, {}> = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
-    next();
+    res.status(403).send("Unauthorized");
     return;
   }
 
   const token = authHeader.split(" ")[1];
   if (!token) {
-    next();
+    res.status(403).send("Unauthorized");
     return;
   }
 
   try {
     const payload: any = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+    if (!payload.userId) {
+      res.status(403).send("Unauthorized");
+      return;
+    }
+
     req.userId = payload.userId;
-    next();
+  } catch {
+    res.status(403).send("Unauthorized");
     return;
-  } catch {}
+  }
 
   next();
   return;

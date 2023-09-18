@@ -6,11 +6,12 @@
     import InitializeProject from "./InitializeProject.svelte";
     import ReplyViewer from "./ReplyViewer.svelte";
     import { WebviewStateManager } from "../WebviewStateManager";
+    import InitializeOrganization from "./InitializeOrganization.svelte";
 
     let accessToken = "";
     let loading = true;
     let user: User | null = null;
-    let page: Page = WebviewStateManager.getState(WebviewStateManager.type.PAGE) ?? Page.InitializeProject;
+    let page: Page = WebviewStateManager.getState(WebviewStateManager.type.PAGE) ?? Page.InitializeOrganization;
 
     const authenticate = () => {
         tsvscode.postMessage({ type: 'authenticate', value: undefined });
@@ -33,6 +34,7 @@
     };
 
     onMount(async () => {
+        page = Page.InitializeOrganization;
         window.addEventListener("message", messageEventListener);
 
         tsvscode.postMessage({ type: "getAuthenticatedUser", value: undefined });
@@ -46,7 +48,9 @@
 {#if loading}
     <div>loading...</div>
 {:else if user}
-    {#if page === Page.InitializeProject}
+    {#if page === Page.InitializeOrganization}
+        <InitializeOrganization bind:page={page}/>
+    {:else if page === Page.InitializeProject}
         <InitializeProject bind:page={page}/>
     {:else if page === Page.ThreadsViewer}
         <ThreadsViewer {user} bind:page={page} />

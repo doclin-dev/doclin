@@ -12,7 +12,7 @@ import { User } from "./User";
 import { Project } from "./Project";
 
 @Entity()
-export class Company extends BaseEntity {
+export class Organization extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -22,10 +22,10 @@ export class Company extends BaseEntity {
   @Column("text")
   name: string;
 
-  @ManyToMany(() => User)
+  @ManyToMany(() => User, (user) => user.organizations)
   @JoinTable()
-  users: User;
+  users: User[];
 
-  @OneToMany(() => Project, (project) => project.company, { cascade: true })
+  @OneToMany(() => Project, (project) => project.organization, { cascade: true })
   projects: Project[];
 }

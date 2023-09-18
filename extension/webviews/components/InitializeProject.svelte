@@ -52,9 +52,9 @@
     }
 
     onMount(async () => {
-        tsvscode.postMessage({ type: 'getGithubUrl', value: undefined });
-
         window.addEventListener("message", messageEventListener);
+
+        tsvscode.postMessage({ type: 'getGithubUrl', value: undefined });
     });
 
     onDestroy(() => {
