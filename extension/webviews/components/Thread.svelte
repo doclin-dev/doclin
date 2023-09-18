@@ -3,7 +3,7 @@
     import Button from './Button.svelte'
     import Quill from 'quill';
     import { tick, onMount, onDestroy } from 'svelte';
-    import { editedThreadId } from './store.js';
+    import { editedReplyId, editedThreadId } from './store.js';
     import { Page } from '../enums'; 
     import { WebviewStateManager } from '../WebviewStateManager';
     import {populateThreadMessageField} from "../utilities";
@@ -16,7 +16,7 @@
     let threadEditMode: boolean = false;
         
     const handleEditButtonClick = async () => {
-        if($editedThreadId == null) {
+        if($editedThreadId == null && $editedReplyId === null) {
             threadEditMode = true;
             editedThreadId.set(thread.id);
             await tick();
@@ -71,7 +71,7 @@
         const message = event.data;
         switch(message.type) {
             case "populateThreadMessage":
-                $editedThreadId ? populateThreadMessageField(quillThreadEditor, message.value): null;
+                $editedThreadId  && $editedThreadId === thread.id ? populateThreadMessageField(quillThreadEditor, message.value): null;
                 break;
             case "deleteThread":
                 page = Page.ThreadsViewer;

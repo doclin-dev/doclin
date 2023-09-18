@@ -3,7 +3,7 @@
     import Button from './Button.svelte'
     import Quill from 'quill';
     import { onMount, tick, onDestroy } from 'svelte';
-    import { editedReplyId } from './store.js';
+    import { editedReplyId, editedThreadId } from './store.js';
     import { populateThreadMessageField } from '../utilities';
 
     export let reply: any;
@@ -21,7 +21,7 @@
     }
 
     const handleEditButtonClick = async () => {
-        if($editedReplyId == null) {
+        if($editedReplyId == null && $editedThreadId === null) {
             replyCardEditMode = true;
             editedReplyId.set(reply.id);
             await tick();
@@ -48,6 +48,7 @@
         await tick();
         replyCardMessage = quillReplyCardEditor.root.innerHTML;
         updateReplyMessage(replyCardMessage);
+        editedReplyId.set(null);
     }
     
     const onCancel = () => {
@@ -68,7 +69,7 @@
         const message = event.data;
         switch(message.type) {
             case "populateThreadMessage":
-                $editedReplyId ? populateThreadMessageField(quillReplyCardEditor, message.value): null;
+                $editedReplyId && $editedReplyId === reply.id ? populateThreadMessageField(quillReplyCardEditor, message.value): null;
                 break;
             case "updateReply":
                 if (reply.id === message.value?.id) {
