@@ -32,26 +32,44 @@ export const deleteThread = async({ threadId }: { threadId: number }) => {
   const thread = response?.data?.thread;
 
   return thread;
-}
+};
 
 export const selectAThread = async (threadId: number): Promise<any> => {
   
-}
+};
+
+let lastActiveFilePath: string | null = null;
+
+vscode.window.onDidChangeActiveTextEditor((editor) => {
+  if (editor && editor.document.uri.scheme === 'file') {
+    lastActiveFilePath = editor.document.uri.fsPath;
+  }
+});
 
 const getActiveEditorFilePath = async () : Promise<string> => {
+  let activeFilePath: string | null;
   const { activeTextEditor } = vscode.window;
 
   if (!activeTextEditor) {
-    return "";
+    return "No active text editor found!";
   }
 
-  const activeFilePath: string = activeTextEditor.document.uri.fsPath;
+  if (activeTextEditor.document.uri.scheme === 'file'){
+    activeFilePath = activeTextEditor.document.uri.fsPath;
+  } else {
+    activeFilePath = lastActiveFilePath;
+  }
+
+  if (!activeFilePath){
+    return "No valid file path was found!";
+  }
+
   const activeDirectory: string = path.dirname(activeFilePath);
   const activeFileName = path.basename(activeFilePath);
 
   let { stdout }: {stdout: string} = await executeShellCommand(`cd ${activeDirectory} && git rev-parse --show-prefix ${activeFileName}`);
   return stdout.split('\n')[0] + activeFileName;
-}
+};
 
 export const addCodeSnippet = async (sidebarProvider: any) => {
   const { activeTextEditor } = vscode.window;
