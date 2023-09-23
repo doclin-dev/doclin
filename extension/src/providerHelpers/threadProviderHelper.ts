@@ -3,6 +3,13 @@ import * as path from "path";
 import threadApi from "../api/threadApi";
 import { executeShellCommand } from "./providerHelperUtils";
 
+let lastActiveFilePath: string | null = null;
+
+vscode.window.onDidChangeActiveTextEditor((editor) => {
+  if (editor && editor.document.uri.scheme === 'file') {
+    lastActiveFilePath = editor.document.uri.fsPath;
+  }
+});
 
 export const getThreadsByActiveFilePath = async ({ currentProjectId }: { currentProjectId: number }): Promise<any> => {
   const activeFilePath: string = await getActiveEditorFilePath();
@@ -11,21 +18,21 @@ export const getThreadsByActiveFilePath = async ({ currentProjectId }: { current
   const threads = payload?.threads;
 
   return threads;
-}
+};
 
 export const postThread = async({ threadMessage, projectId }: {threadMessage: string, projectId: number}): Promise<any> => {
   const response = await threadApi.postThread(threadMessage, projectId, await getActiveEditorFilePath());
   const thread = response?.data?.thread;
 
   return thread;
-}
+};
 
 export const updateThread = async({threadMessage, threadId}: {threadMessage: string, threadId: number}): Promise<any> => {
   const response = await threadApi.updateThread(threadId, threadMessage, await getActiveEditorFilePath());
   const thread = response?.data?.thread;
 
   return thread;
-}
+};
 
 export const deleteThread = async({ threadId }: { threadId: number }) => {
   const response = await threadApi.deleteThread(threadId);
@@ -33,18 +40,6 @@ export const deleteThread = async({ threadId }: { threadId: number }) => {
 
   return thread;
 };
-
-export const selectAThread = async (threadId: number): Promise<any> => {
-  
-};
-
-let lastActiveFilePath: string | null = null;
-
-vscode.window.onDidChangeActiveTextEditor((editor) => {
-  if (editor && editor.document.uri.scheme === 'file') {
-    lastActiveFilePath = editor.document.uri.fsPath;
-  }
-});
 
 const getActiveEditorFilePath = async () : Promise<string> => {
   let activeFilePath: string | null;
@@ -61,7 +56,7 @@ const getActiveEditorFilePath = async () : Promise<string> => {
   }
 
   if (!activeFilePath){
-    return "No valid file path was found!";
+    return "";
   }
 
   const activeDirectory: string = path.dirname(activeFilePath);
