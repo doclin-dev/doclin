@@ -46,7 +46,7 @@ const getActiveEditorFilePath = async () : Promise<string> => {
   const { activeTextEditor } = vscode.window;
 
   if (!activeTextEditor) {
-    return "No active text editor found!";
+    return "";
   }
 
   if (activeTextEditor.document.uri.scheme === 'file'){
