@@ -32,14 +32,11 @@
   </script>
   
   
-  <div
-    class="button {size} {type} {variant}"
-    on:click={onClick}
-    on:keydown={handleKeyPress}
-  >
+  
+<div class="button {size} {type} {variant}" on:click={onClick} on:keydown={handleKeyPress}>
     {#if icon}
       <span class="icon"><Icon width={iconWidth} height={iconHeight} name={icon}/></span>
     {/if}
     <span>{title}</span>
-  </div>
+</div>
   
