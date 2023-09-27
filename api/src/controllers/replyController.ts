@@ -3,7 +3,7 @@ import { ReplyRepository } from "../database/repositories/ReplyRepository";
 import { ThreadRepository } from "../database/repositories/ThreadRepository";
 
 export const postReply = async (req: any, res: any) => {
-    const threadId = req.body.threadId;
+    const threadId = req.params.threadId;
     const replyMessage = req.body.replyMessage;
     const thread = await ThreadRepository.findThreadById(threadId);
 
@@ -32,7 +32,7 @@ export const postReply = async (req: any, res: any) => {
 };
 
 export const getReplies = async (req: any, res: any) => {
-    const threadId = req.query.threadId;
+    const threadId = req.params.threadId;
 
     const replies = await ReplyRepository.findRepliesByThreadId(threadId);
     

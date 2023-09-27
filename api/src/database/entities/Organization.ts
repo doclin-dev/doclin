@@ -13,8 +13,8 @@ import { Project } from "./Project";
 
 @Entity()
 export class Organization extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -22,7 +22,7 @@ export class Organization extends BaseEntity {
   @Column("text")
   name: string;
 
-  @ManyToMany(() => User, (user) => user.organizations)
+  @ManyToMany(() => User, { cascade: true })
   @JoinTable()
   users: User[];
 

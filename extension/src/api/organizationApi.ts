@@ -8,7 +8,7 @@ const getOrganizations = async (githubUrl: string) => {
         githubUrl: githubUrl
     };
 
-    const apiService = createAxiosInstance(GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN));
+    const apiService = createAxiosInstance();
     const response = await apiService.get(baseOrganizationUrl + "/existing", { params });
 
     return response;
@@ -19,7 +19,7 @@ const postOrganization = async(name: string) => {
         name: name
     };
 
-    const apiService = createAxiosInstance(GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN));
+    const apiService = createAxiosInstance();
     const response = await apiService.post(baseOrganizationUrl, data);
 
     return response;

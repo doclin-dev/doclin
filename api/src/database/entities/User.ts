@@ -31,8 +31,4 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Reply, (t) => t.user)
   replies: Reply[];
-
-  @ManyToMany(() => Organization, (organization) => organization.users, { cascade: true })
-  @JoinTable()
-  organizations: Organization[];
 }

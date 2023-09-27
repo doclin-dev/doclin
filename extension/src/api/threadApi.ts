@@ -1,7 +1,12 @@
-import { GlobalStateManager } from "../GlobalStateManager";
+import { getCurrentOrganizationId } from "../providerHelpers/organizationProviderHelper";
+import { getCurrentProjectId } from "../providerHelpers/projectProviderHelper";
 import { createAxiosInstance } from "./apiService";
 
-const baseThreadUrl = `/threads`;
+const getBaseThreadUrl = (): string => {
+    const organizationId = getCurrentOrganizationId();
+    const projectId = getCurrentProjectId();
+    return `/organizations/${organizationId}/projects/${projectId}/threads`;
+}
 
 const getThreads = async (projectId: number, filePath: string) => {
     const params = {
@@ -9,8 +14,8 @@ const getThreads = async (projectId: number, filePath: string) => {
         filePath: filePath
     };
 
-    const apiService = createAxiosInstance(GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN));
-    const response = await apiService.get(baseThreadUrl, { params });
+    const apiService = createAxiosInstance();
+    const response = await apiService.get(getBaseThreadUrl(), { params });
 
     return response;
 }
@@ -22,8 +27,8 @@ const postThread = async (threadMessage: string, projectId: number, activeEditor
         activeEditorFilePath: activeEditorFilePath
     };
 
-    const apiService = createAxiosInstance(GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN));
-    const response = await apiService.post(baseThreadUrl, data);
+    const apiService = createAxiosInstance();
+    const response = await apiService.post(getBaseThreadUrl(), data);
 
     return response;
 }
@@ -34,15 +39,15 @@ const updateThread = async(threadId: number, threadMessage: string, activeEditor
         activeEditorFilePath: activeEditorFilePath
     };
 
-    const apiService = createAxiosInstance(GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN));
-    const response = await apiService.put(baseThreadUrl + `/${threadId}`, data);
+    const apiService = createAxiosInstance();
+    const response = await apiService.put(`${getBaseThreadUrl()}/${threadId}`, data);
 
     return response;
 }
 
 const deleteThread = async(threadId: number) => {
-    const apiService = createAxiosInstance(GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN));
-    const response = await apiService.delete(baseThreadUrl + `/${threadId}`);
+    const apiService = createAxiosInstance();
+    const response = await apiService.delete(`${getBaseThreadUrl()}/${threadId}`);
 
     return response;
 }

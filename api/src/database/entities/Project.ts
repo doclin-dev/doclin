@@ -27,7 +27,7 @@ export class Project extends BaseEntity {
   url: string;
 
   @Column()
-  organizationId: number;
+  organizationId: string;
 
   @ManyToOne(() => Organization, (organization) => organization.projects)
   @JoinColumn({ name: "organizationId" })

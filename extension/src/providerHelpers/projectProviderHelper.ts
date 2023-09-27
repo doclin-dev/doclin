@@ -16,6 +16,10 @@ export const getGithubUrl = async() : Promise<string> => {
     return "";
 }
 
+export const getCurrentProjectId = (): number => {
+	return 19;
+}
+
 export const getExistingProjects = async () => {
     const githubUrl: string = await getGithubUrl();
     const response = await projectApi.getProjects(githubUrl);

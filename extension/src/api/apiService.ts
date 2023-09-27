@@ -1,13 +1,13 @@
 import axios, { AxiosInstance } from 'axios';
-import { apiBaseUrl } from '../constants';
+import { apiBaseUrl as baseURL } from '../constants';
 import * as vscode from "vscode";
+import { GlobalStateManager } from '../GlobalStateManager';
 
-export const createAxiosInstance = (token: string | null) => {
-    const instance: AxiosInstance = axios.create({
-      baseURL: apiBaseUrl,
-    });
-  
-    // Set headers dynamically
+export const createAxiosInstance = () => {
+	const token: string | null = GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN);
+
+    const instance: AxiosInstance = axios.create({ baseURL });
+
     if (token) {
       instance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     } else {

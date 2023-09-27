@@ -3,7 +3,7 @@ import { Organization } from "../database/entities/Organization";
 import { UserRepository } from "../database/repositories/UserRepository";
 import { AppDataSource } from "../database/dataSource";
 
-export const getExistingOrganizations = async (req: any, res: any) => {
+export const getOrganizations = async (req: any, res: any) => {
     const organizations = await OrganizationRepository.findOrganizationsByUserId(req.user?.id);
 
     const responseOrganizations = organizations.map(organization => ({
@@ -17,8 +17,6 @@ export const getExistingOrganizations = async (req: any, res: any) => {
 export const postOrganization = async (req:any, res:any) => {
     const name = req.body.name;
 
-    console.log("post", name);
-
     const organization = Organization.create({
         name: name,
     });
@@ -26,13 +24,11 @@ export const postOrganization = async (req:any, res:any) => {
     const user = await UserRepository.findUserById(req.userId);
 
     if (!user) {
-        return res.status(403).send("Unauthorized");
+        throw new Error('User does not exist');
     }
 
-    user.organizations = [organization];
-    await AppDataSource.manager.save(user);
-
-    console.log(user);
+    organization.users = [user];
+    await AppDataSource.manager.save(organization);
 
     return res.send({ organization });
 }

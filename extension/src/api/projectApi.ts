@@ -1,15 +1,18 @@
 import { GlobalStateManager } from "../GlobalStateManager";
+import { getCurrentOrganizationId } from "../providerHelpers/organizationProviderHelper";
 import { createAxiosInstance } from "./apiService";
 
-const baseProjectUrl = `/projects`;
+const getBaseProjectUrl = (): string => {
+    return `/organizations/${getCurrentOrganizationId()}/projects`;
+}
 
 const getProjects = async (githubUrl: string) => {
     const params = {
         githubUrl: githubUrl
     };
 
-    const apiService = createAxiosInstance(GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN));
-    const response = await apiService.get(baseProjectUrl + "/existing", { params });
+    const apiService = createAxiosInstance();
+    const response = await apiService.get(getBaseProjectUrl(), { params });
 
     return response;
 }
@@ -20,8 +23,8 @@ const postProject = async(name: string, githubUrl: string) => {
         url: githubUrl
     };
 
-    const apiService = createAxiosInstance(GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN));
-    const response = await apiService.post(baseProjectUrl, data);
+    const apiService = createAxiosInstance();
+    const response = await apiService.post(getBaseProjectUrl(), data);
 
     return response;
 }
