@@ -94,40 +94,6 @@
     });
 </script>
 
-<style>
-    .reply-card-header {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.25rem;
-    }
-
-    .button-container{
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .reply-card {
-        display: flex;
-        flex-direction: column;
-        background-color: rgb(46, 48, 48);
-        padding: 0.5rem;
-        gap: 0.25;
-        border-radius: 5px;
-        border: 2px;
-        margin-bottom: 0.5rem;
-    }
-    .reply-card-footer {
-        display: flex;
-        padding-top: 0.5rem;
-        flex-direction: row;
-        justify-content: flex-end;
-        gap: 0.25rem;
-    }
-</style>
-
 <div class='reply-card'>
     <div class="reply-card-header">
         <div> {reply.username}</div>

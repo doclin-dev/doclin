@@ -61,6 +61,8 @@
             type: "deleteThread",
             value: { threadId: thread.id }
         });
+
+        handleBackClick();
     }
 
     const handleBackClick = () => {
@@ -114,22 +116,6 @@
 
 </script>
 
-<style>
-    .topbar{
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;  
-        padding-bottom: 0.5rem;
-        align-items: center;
-    }
-    #replyViewerEditor{
-        width: 100%;
-        height: 100px;
-        resize: both; 
-        overflow: auto;
-    }
-</style>
-
 <ViewerTopBar username={username}/>
 
 <div class='reply-viewer'>
@@ -138,7 +124,7 @@
         <OverlayCard isEditable={false} handleDelete={handleDeleteButtonClick}/>
     </div>
     <div style="padding-bottom: 0.5rem">
-        <Thread thread={thread} page={page}/>
+        <Thread thread={thread} bind:page={page}/>
     </div>
     <form>
         <div id="replyViewerEditor"></div>

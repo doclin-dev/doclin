@@ -59,6 +59,10 @@
 
     const handleDeleteButtonClick = async () => {
         tsvscode.postMessage({ type: "deleteThread", value: { threadId: thread.id }});
+
+        WebviewStateManager.setState(WebviewStateManager.type.THREAD_SELECTED, null);
+        page = Page.ThreadsViewer;
+        WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
     }
 
     const handleReplyButtonClick = () => {
@@ -94,43 +98,9 @@
     });
 </script>
 
-<style>
-    .thread-header {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.25rem;
-    }
-
-    .button-container{
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .thread-card {
-        display: flex;
-        flex-direction: column;
-        background-color: rgb(46, 48, 48);
-        padding: 0.5rem;
-        gap: 0.25;
-        border-radius: 5px;
-        border: 2px;
-        margin-bottom: 0.5rem;
-    }
-    .thread-editor-footer {
-        display: flex;
-        padding-top: 0.5rem;
-        flex-direction: row;
-        justify-content: flex-end;
-        gap: 0.25rem;
-    }
-</style>
-
 <div class='thread-card'>
     <div class="thread-header">
-        <div> {thread?.username}</div>
+        <div>{thread?.username}</div>
         <div class='button-container'>
             <Button icon='reply' onClick={handleReplyButtonClick} type='text'/>
             <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>

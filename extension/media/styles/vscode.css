@@ -95,7 +95,3 @@ pre.ql-syntax {
   background-color: var(--vscode-editor-background);
   padding: 5px;
 }
-
-#textEditor {
-  background-color: var(--vscode-input-background);
-}
