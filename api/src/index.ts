@@ -16,7 +16,7 @@ const main = async () => {
   const app = express();
 
   AppDataSource.initialize().then(() => {
-    console.log("Data Source has been initialized!");
+    console.debug("Data Source has been initialized!");
   })
   .catch((err) => {
     console.error("Error during Data Source initialization", err);
@@ -53,7 +53,7 @@ const main = async () => {
   app.use("/", router);
 
   app.listen(3002, () => {
-    console.log("Listening on localhost:3002");
+    console.debug("Listening on localhost:3002");
   });
 };
 

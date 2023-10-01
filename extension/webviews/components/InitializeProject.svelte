@@ -10,10 +10,19 @@
     let githubUrl: string = "";
     let existingProjects: Project[] = [];
 
-    const setCurrentProject = (currentProject: Project) => {
-        WebviewStateManager.setState(WebviewStateManager.type.CURRENT_PROJECT, currentProject);
+    const switchPageToThreadsViewer = () => {
         page = Page.ThreadsViewer;
         WebviewStateManager.setState(WebviewStateManager.type.PAGE, Page.ThreadsViewer);
+    }
+
+    const addCurrentProjectToState = (project: Project) => {
+        WebviewStateManager.setState(WebviewStateManager.type.CURRENT_PROJECT, project);
+    }
+
+    const setCurrentProject = (project: Project) => {
+        tsvscode.postMessage({ type: 'setCurrentProject', value: project.id });
+        addCurrentProjectToState(project)
+        switchPageToThreadsViewer();
     }
 
     const createNewProject = async () => {
@@ -24,26 +33,12 @@
         tsvscode.postMessage({ type: 'getExistingProjects', value: undefined });
     }
 
-    const handleGetGithubUrl = async(url: string) => {
-        githubUrl = url;
-        const currentProject: Project = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT)?.currentProject;
-
-        if (githubUrl && currentProject) {
-            page = Page.ThreadsViewer;
-            return;
-        }
-        
-        fetchExistingProjects();
-    }
-
     const messageEventListener = async (event: any) => {
         const message = event.data;
         switch (message.type) {
-            case "getGithubUrl":
-                handleGetGithubUrl(message.value);
-                break;
             case "postProject":
-                setCurrentProject(message.value);
+                addCurrentProjectToState(message.value);
+                switchPageToThreadsViewer();
                 break;
             case "getExistingProjects":
                 existingProjects = message.value;
@@ -54,7 +49,8 @@
     onMount(async () => {
         window.addEventListener("message", messageEventListener);
 
-        tsvscode.postMessage({ type: 'getGithubUrl', value: undefined });
+        githubUrl = WebviewStateManager.getState(WebviewStateManager.type.GITHUB_URL);
+        fetchExistingProjects();
     });
 
     onDestroy(() => {
@@ -64,32 +60,24 @@
 
 <h1>Get Started!</h1>
 
-{#if githubUrl}
-    <div>
-        Create a project:
+<div>
+    Create a project:
 
-        <form>
-            <input placeholder="Enter project name" bind:value={postProjectName} />
-            <input placeholder="Github repo url" value={githubUrl} disabled/>
-            <button on:click|preventDefault={createNewProject}>Submit</button>
-        </form>
+    <form>
+        <input placeholder="Enter project name" bind:value={postProjectName} />
+        <input placeholder="Github repo url" value={githubUrl} disabled/>
+        <button on:click|preventDefault={createNewProject}>Submit</button>
+    </form>
 
-        {#if existingProjects.length > 0}
-            <p>Or select an existing project:</p>
+    {#if existingProjects.length > 0}
+        <p>Or select an existing project:</p>
 
-            <ul>
-                {#each existingProjects as project (project.id)}
-                    <li >
-                        <a href="0" on:click|preventDefault={() => {
-                            setCurrentProject(project)
-                        }}> {project.name} </a>
-                    </li>
-                {/each}
-            </ul>
-        {/if}
-    </div>
-{:else}
-    <div>
-        Workspace folder is not a github repository.
-    </div>
-{/if}
+        <ul>
+            {#each existingProjects as project (project.id)}
+                <li >
+                    <a href="0" on:click|preventDefault={() => setCurrentProject(project)}> {project.name} </a>
+                </li>
+            {/each}
+        </ul>
+    {/if}
+</div>

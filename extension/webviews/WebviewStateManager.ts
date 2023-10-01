@@ -5,6 +5,7 @@ enum StateType {
   REPLY_MESSAGE = "replyMessage",
   THREAD_MESSAGE = "threadMessage",
   THREAD_SELECTED = "threadSelected",
+  GITHUB_URL = "githubUrl"
 }
 
 export class WebviewStateManager {

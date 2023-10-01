@@ -20,23 +20,27 @@ export const postOrganization = async({ name }: { name: string }) => {
     return organization;
 }
 
-export const getCurrentOrganizationId = async () => {
+export const getCurrentOrganizationId = async (): Promise<string|undefined> => {
     const fileJSON = await readDoclinFile();
 
     return fileJSON?.organizationId;
 }
 
 export const getCurrentOrganization = async () => {
-    const organizationid = await getCurrentOrganizationId();
+    const organizationId = await getCurrentOrganizationId();
     
+    if (organizationId) {
+        const response = await organizationApi.getOrganization(organizationId);
+        const payload = response?.data;
+        const organization = payload?.organization;
+
+        return organization;
+    }
+
+    return null;
 }
 
-export const setCurrentOrganization = async (organizationId: string) => {
-    await storeOrganizationId(organizationId);
-    return true;
-}
-
-const storeOrganizationId = async (organizationId: string) => {
+export const storeOrganizationId = async (organizationId: string) => {
     try {
         const fileJSON = await readDoclinFile();
 

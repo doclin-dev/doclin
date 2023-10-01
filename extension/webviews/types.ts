@@ -18,3 +18,8 @@ export type Thread = {
   userId: number;
   username: string;
 }
+
+export type Organization = {
+  id: string;
+  name: string;
+}

@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte";
-    import type { Project, User, Thread as ThreadType } from "../types";
+    import type { Project, User, Thread as ThreadType, Organization } from "../types";
     import Quill from "quill";
     import Thread from './Thread.svelte';
     import ViewerTopBar from "./ViewerTopBar.svelte";
@@ -13,6 +13,7 @@
     let quillEditor: any;
     let threads: Array<ThreadType> = [];
     let currentProject: Project | null;
+    let currentOrganization: Organization | null;
 
     async function populateThreadMessageField({ filePath, threadMessage }: { filePath: string, threadMessage: string }) {
         const selection = quillEditor.getSelection(true);
@@ -77,6 +78,13 @@
     function chooseAnotherProject() {
         WebviewStateManager.setState(WebviewStateManager.type.CURRENT_PROJECT, null);
         page = Page.InitializeProject;
+        WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+    }
+
+    function chooseAnotherOrganization() {
+        WebviewStateManager.setState(WebviewStateManager.type.CURRENT_ORGANIZATION, null);
+        page = Page.InitializeOrganization;
+        WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
     }
 
     const messageEventListener = async (event: any) => {
@@ -99,6 +107,7 @@
 
     onMount(async () => {
         currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
+        currentOrganization = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_ORGANIZATION);
 
         if (currentProject === null) {
             page = Page.InitializeProject;
@@ -131,3 +140,4 @@
 </div>
 
 <button on:click={() => {chooseAnotherProject()}}>Project: {currentProject?.name}</button>
+<button on:click={() => {chooseAnotherOrganization()}}>Organization: {currentOrganization?.name}</button>

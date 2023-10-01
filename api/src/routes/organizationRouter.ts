@@ -1,5 +1,5 @@
 import express from "express";
-import { getOrganizations, postOrganization } from "../controllers/organizationController";
+import { getOrganization, getOrganizations, postOrganization } from "../controllers/organizationController";
 import { verifyAuthentication, verifyOrganizationAccess } from "../middlewares/auth";
 import projectRouter from "./projectRouter";
 
@@ -9,7 +9,8 @@ const organizationRouter = express.Router({ mergeParams: true });
 
 organizationRouter.get("/", verifyAuthentication, getOrganizations);
 organizationRouter.post("/", verifyAuthentication, postOrganization);
+organizationRouter.get("/:organizationId", verifyAuthentication, getOrganization);
 
-organizationRouter.use(BASE_PROJECT_ROUTE, [verifyAuthentication, verifyOrganizationAccess], projectRouter);
+organizationRouter.use(BASE_PROJECT_ROUTE, verifyOrganizationAccess, projectRouter);
 
 export default organizationRouter;

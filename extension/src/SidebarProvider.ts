@@ -4,10 +4,10 @@ import { apiBaseUrl } from "./constants";
 import { getNonce } from "./providerHelpers/getNonce";
 import { GlobalStateManager } from "./GlobalStateManager";
 import { postThread, deleteThread, getThreadsByActiveFilePath, updateThread } from "./providerHelpers/threadProviderHelper";
-import { getGithubUrl } from "./providerHelpers/projectProviderHelper";
+import { getGithubUrl, storeProjectId } from "./providerHelpers/projectProviderHelper";
 import { getExistingProjects, postProject } from "./providerHelpers/projectProviderHelper";
 import { deleteReply, getRepliesByThreadId, postReply, updateReply } from "./providerHelpers/replyProviderHelper";
-import { postOrganization, getExistingOrganizations, setCurrentOrganization, getCurrentOrganizationId } from "./providerHelpers/organizationProviderHelper";
+import { postOrganization, getExistingOrganizations, storeOrganizationId } from "./providerHelpers/organizationProviderHelper";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -102,6 +102,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             value: await postProject(message.value)
           });
           break;
+        case "setCurrentProject":
+          storeProjectId(message.value);
+          break;
         case "postReply":
           webviewView.webview.postMessage({
             type: "postReply",
@@ -145,10 +148,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           });
           break;
         case "setCurrentOrganization":
-          webviewView.webview.postMessage({
-            type: "setCurrentOrganization",
-            value: await setCurrentOrganization(message.value)
-          });
+          storeOrganizationId(message.value);
           break;
       }
     });

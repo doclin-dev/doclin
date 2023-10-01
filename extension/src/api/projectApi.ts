@@ -26,7 +26,17 @@ const postProject = async(organizationId: string, name: string, githubUrl: strin
     return response;
 }
 
+const getProject = async (projectId: number, organizationId: string) => {
+    const apiService = createAxiosInstance();
+    const baseProjectUrl = getBaseProjectUrl(organizationId);
+
+    const response = await apiService.get(`${baseProjectUrl}/${projectId}`);
+
+    return response;
+}
+
 export default {
     getProjects,
-    postProject
+    postProject,
+    getProject
 }

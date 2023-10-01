@@ -23,25 +23,48 @@
         tsvscode.postMessage({ type: 'logout', value: undefined });
     }
 
+    const handleGetExtensionState = (extensionState: any) => {
+        user = extensionState?.user;
+        const organization = extensionState?.organization;
+        const project = extensionState?.project;
+        const githubUrl = extensionState?.githubUrl;
+
+        if (!githubUrl) {
+            page = Page.NotGitRepo;
+            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+            loading = false;
+            return;
+        }
+
+        WebviewStateManager.setState(WebviewStateManager.type.GITHUB_URL, githubUrl);
+
+        if (!organization) {
+            page = Page.InitializeOrganization;
+            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+            loading = false;
+            return;
+        }
+
+        WebviewStateManager.setState(WebviewStateManager.type.CURRENT_ORGANIZATION, organization);
+
+        if (!project) {
+            page = Page.InitializeProject;
+            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+            loading = false;
+            return;
+        }
+
+        WebviewStateManager.setState(WebviewStateManager.type.CURRENT_PROJECT, project);
+
+        
+        loading = false;
+    }
+
     const messageEventListener = async (event: any) => {
         const message = event.data;
         switch (message.type) {
             case "getExtensionState":
-                user = message.value?.user;
-                const organization = message.value?.organization;
-                const project = message.value?.project;
-
-                if (!organization) {
-                    page = Page.InitializeOrganization;
-                    WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
-                }
-
-                if (!project) {
-                    page = Page.InitializeProject;
-                    WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
-                }
-
-                loading = false;
+                handleGetExtensionState(message.value);
                 break;
         }
     };
@@ -60,7 +83,11 @@
 {#if loading}
     <div>loading...</div>
 {:else if user}
-    {#if page === Page.InitializeOrganization}
+    {#if page == Page.NotGitRepo}
+        <div>
+            Workspace folder is not a github repository.
+        </div>
+    {:else if page === Page.InitializeOrganization}
         <InitializeOrganization bind:page={page}/>
     {:else if page === Page.InitializeProject}
         <InitializeProject bind:page={page}/>

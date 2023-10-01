@@ -9,7 +9,7 @@ const getOrganizations = async () => {
     return response;
 }
 
-const postOrganization = async(name: string) => {
+const postOrganization = async (name: string) => {
     const data = {
         name: name
     };
@@ -20,7 +20,15 @@ const postOrganization = async(name: string) => {
     return response;
 }
 
+const getOrganization = async (organizationId: string) => {
+    const apiService = createAxiosInstance();
+    const response = await apiService.get(`${baseOrganizationUrl}/${organizationId}`);
+
+    return response;
+}
+
 export default {
     getOrganizations,
-    postOrganization
+    postOrganization,
+    getOrganization
 }

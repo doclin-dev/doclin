@@ -3,8 +3,8 @@ import { apiBaseUrl } from "../constants";
 import * as polka from "polka";
 import { GlobalStateManager } from "../GlobalStateManager";
 import authApi from "../api/authApi";
-import { getCurrentOrganizationId } from "./organizationProviderHelper";
-import { getCurrentProjectId } from "./projectProviderHelper";
+import { getCurrentOrganization } from "./organizationProviderHelper";
+import { getCurrentProject, getGithubUrl } from "./projectProviderHelper";
 
 export const authenticate = (fn?: () => void) => {
   const app = polka();
@@ -43,8 +43,9 @@ export const authenticate = (fn?: () => void) => {
 export const getExtensionState = async () => {
   return {
     user: await getAuthenticatedUser(),
-    organization: await getCurrentOrganizationId(),
-    project: await getCurrentProjectId()
+    organization: await getCurrentOrganization(),
+    project: await getCurrentProject(),
+    githubUrl: await getGithubUrl()
   }
 }
 

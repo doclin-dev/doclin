@@ -4,5 +4,6 @@ export enum Page {
   ReplyViewer = "replyViewer",
   Contact = "contact",
   InitializeOrganization = "initializeOrganization",
-  Login = "login"
+  Login = "login",
+  NotGitRepo = "notGitRepo"
 }

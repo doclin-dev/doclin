@@ -35,7 +35,7 @@ export const postProject = async (req:any, res:any) => {
         organizationId: organizationId
     }).save();
 
-    return res.send({project});
+    return res.send({ project });
 }
 
 export const getProject = async (req: Request, res: Response) => {
@@ -48,9 +48,11 @@ export const getProject = async (req: Request, res: Response) => {
         return;
     }
 
-    res.send({
+    const responseProject = {
         id: project.id,
         name: project.name,
         url: project.url
-    });
+    };
+
+    res.send({ project: responseProject });
 }
