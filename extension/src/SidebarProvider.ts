@@ -167,27 +167,17 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
-    const styleResetUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "reset.css")
-    );
-    const styleVSCodeUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "vscode.css")
+    const styleUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, "media", "styles", "main.css")
     );
 
     const scriptUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, "out", "compiled/sidebar.js")
     );
+
     const styleMainUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, "out", "compiled/sidebar.css")
     );
-
-    const quillStylesheetUri = webview.asWebviewUri(
-      vscode.Uri.parse("https://cdn.quilljs.com/1.3.6/quill.snow.css")
-    );
-
-    const bootstrapStylesheetUri = webview.asWebviewUri(
-      vscode.Uri.parse("https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css")
-    )
 
     // Use a nonce to only allow a specific script to be run.
     const nonce = getNonce();
@@ -202,10 +192,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         -->
         
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="${bootstrapStylesheetUri}" rel="stylesheet">
-        <link href="${quillStylesheetUri}" rel="stylesheet">
-				<link href="${styleResetUri}" rel="stylesheet">
-				<link href="${styleVSCodeUri}" rel="stylesheet">
+				<link href="${styleUri}" rel="stylesheet">
         <link href="${styleMainUri}" rel="stylesheet">
         <script nonce="${nonce}">
           const tsvscode = acquireVsCodeApi();

@@ -116,16 +116,6 @@
     });
 </script>
 
-<style>
-    #textEditor{
-        width: 100%;
-        height: 150px;
-        resize: both; 
-        overflow: auto;
-    }
-</style>
-
-
 <ViewerTopBar username={user.name}/>
 
 <form
