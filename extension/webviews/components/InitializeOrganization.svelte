@@ -7,31 +7,37 @@
     export let page: Page;
 
     let postOrganizationName: string = "";
-    let existingCompanies: Project[] = [];
+    let existingOrganizations: Project[] = [];
     let invitationCode: string = "";
 
-    const setCurrentOrganization = (currentOrganization: Project) => {
-        WebviewStateManager.setState(WebviewStateManager.type.CURRENT_ORGANIZATION, currentOrganization);
+    const switchPageToProject = () => {
         page = Page.InitializeProject;
         WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+    }
+
+    const setCurrentOrganization = (organizationId: number) => {
+        tsvscode.postMessage({ type: 'setCurrentOrganization', value: organizationId });
     }
 
     const createNewOrganization = async () => {
         tsvscode.postMessage({ type: 'postOrganization', value: { name: postOrganizationName } });
     }
 
-    const getExistingCompanies = async () => {
-        tsvscode.postMessage({ type: 'getExistingCompanies', value: undefined });
+    const getExistingOrganizations = async () => {
+        tsvscode.postMessage({ type: 'getExistingOrganizations', value: undefined });
     }
 
     const messageEventListener = async (event: any) => {
         const message = event.data;
         switch (message.type) {
             case "postOrganization":
-                setCurrentOrganization(message.value);
+                switchPageToProject();
                 break;
-            case "getExistingCompanies":
-                existingCompanies = message.value;
+            case "getExistingOrganizations":
+                existingOrganizations = message.value;
+                break;
+            case "setCurrentOrganization":
+                switchPageToProject();
                 break;
         }
     }
@@ -39,7 +45,7 @@
     onMount(async () => {
         window.addEventListener("message", messageEventListener);
 
-        getExistingCompanies();
+        getExistingOrganizations();
     });
 
     onDestroy(() => {
@@ -48,14 +54,14 @@
 </script>
 
 <div>
-    {#if existingCompanies.length > 0}
+    {#if existingOrganizations.length > 0}
         <p>Login into Existing Organization:</p>
 
         <ul>
-            {#each existingCompanies as organization (organization.id)}
+            {#each existingOrganizations as organization (organization.id)}
                 <li >
                     <a href="0" on:click|preventDefault={() => {
-                        setCurrentOrganization(organization)
+                        setCurrentOrganization(organization.id)
                     }}> {organization.name} </a>
                 </li>
             {/each}

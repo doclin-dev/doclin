@@ -1,8 +1,13 @@
 import * as vscode from "vscode";
 import organizationApi from "../api/organizationApi";
+import { readDoclinFile, writeDoclinFile } from "../utils/fileReadWriteUtil";
 
 export const getExistingOrganizations = async () => {
-    return "hello";
+    const response = await organizationApi.getOrganizations();
+    const payload = response?.data;
+    const organizations = payload?.organizations;
+
+    return organizations;
 }
 
 export const postOrganization = async({ name }: { name: string }) => {
@@ -15,42 +20,31 @@ export const postOrganization = async({ name }: { name: string }) => {
     return organization;
 }
 
-export const getCurrentOrganizationId = () => {
-    return "551c9801-0d43-4dd3-8386-cabe414eca2a";
+export const getCurrentOrganizationId = async () => {
+    const fileJSON = await readDoclinFile();
+
+    return fileJSON?.organizationId;
+}
+
+export const getCurrentOrganization = async () => {
+    const organizationid = await getCurrentOrganizationId();
+    
+}
+
+export const setCurrentOrganization = async (organizationId: string) => {
+    await storeOrganizationId(organizationId);
+    return true;
 }
 
 const storeOrganizationId = async (organizationId: string) => {
     try {
-        const fileName = ".doclin";
-        const workspaceFolders = vscode.workspace.workspaceFolders;
+        const fileJSON = await readDoclinFile();
 
-        if (!workspaceFolders || workspaceFolders.length === 0) {
-            return;
+        if (fileJSON) {
+            fileJSON["organizationId"] = organizationId;
+
+            writeDoclinFile(fileJSON);
         }
-
-        const workspaceFolder = workspaceFolders[0];
-        const filePath = vscode.Uri.joinPath(workspaceFolder.uri, fileName);
-
-        const fileExists = await vscode.workspace.fs.stat(filePath).then(
-            () => true,
-            () => false
-        );
-
-        let fileJSON;
-
-        if (fileExists) {
-            const fileContent = await vscode.workspace.fs.readFile(filePath);
-            fileJSON = JSON.parse(fileContent.toString());
-        } else {
-            fileJSON = {};
-        }
-
-        fileJSON["organizationId"] = organizationId;
-
-        const utf8Buffer = Buffer.from(JSON.stringify(fileJSON), 'utf-8');
-        const utf8Array = new Uint8Array(utf8Buffer);
-
-        await vscode.workspace.fs.writeFile(filePath, utf8Array);
     } catch (error: any) {
         vscode.window.showErrorMessage(`An error occurred: ${error.message}`);
     }

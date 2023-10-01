@@ -1,10 +1,10 @@
 enum StateType {
+  CURRENT_ORGANIZATION = "currentOrganization",
   CURRENT_PROJECT = "currentProject",
-  THREAD_MESSAGE = "threadMessage",
   PAGE = "page",
-  THREAD_SELECTED = "threadSelected",
   REPLY_MESSAGE = "replyMessage",
-  CURRENT_ORGANIZATION = "currentCompany"
+  THREAD_MESSAGE = "threadMessage",
+  THREAD_SELECTED = "threadSelected",
 }
 
 export class WebviewStateManager {

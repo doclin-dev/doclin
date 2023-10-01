@@ -4,13 +4,10 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  CreateDateColumn,
-  ManyToMany,
-  JoinTable
+  CreateDateColumn
 } from "typeorm";
 import { Thread } from "./Thread";
 import { Reply } from "./Reply";
-import { Organization } from "./Organization";
 
 @Entity()
 export class User extends BaseEntity {

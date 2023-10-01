@@ -1,15 +1,10 @@
-import { GlobalStateManager } from "../GlobalStateManager";
 import { createAxiosInstance } from "./apiService";
 
 const baseOrganizationUrl = `/organizations`;
 
-const getOrganizations = async (githubUrl: string) => {
-    const params = {
-        githubUrl: githubUrl
-    };
-
+const getOrganizations = async () => {
     const apiService = createAxiosInstance();
-    const response = await apiService.get(baseOrganizationUrl + "/existing", { params });
+    const response = await apiService.get(baseOrganizationUrl);
 
     return response;
 }

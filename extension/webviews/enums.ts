@@ -3,5 +3,6 @@ export enum Page {
   ThreadsViewer = "threadViewer",
   ReplyViewer = "replyViewer",
   Contact = "contact",
-  InitializeOrganization = "initializeOrganization"
+  InitializeOrganization = "initializeOrganization",
+  Login = "login"
 }

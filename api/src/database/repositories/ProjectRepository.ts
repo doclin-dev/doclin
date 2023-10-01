@@ -9,5 +9,9 @@ export const ProjectRepository = AppDataSource.getRepository(Project).extend({
 
     findProjectsByOrganizationIdAndGitUrl(organizationId: string, githubUrl: string) {
         return this.findBy({ organizationId: organizationId, url: ILike(`%${githubUrl}%`) });
+    },
+
+    findProjectById(projectId: number) {
+        return this.findOneBy({ id: projectId });
     }
 });

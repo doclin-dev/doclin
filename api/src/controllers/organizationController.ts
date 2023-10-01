@@ -4,7 +4,7 @@ import { UserRepository } from "../database/repositories/UserRepository";
 import { AppDataSource } from "../database/dataSource";
 
 export const getOrganizations = async (req: any, res: any) => {
-    const organizations = await OrganizationRepository.findOrganizationsByUserId(req.user?.id);
+    const organizations = await OrganizationRepository.findOrganizationsByUserId(req.userId);
 
     const responseOrganizations = organizations.map(organization => ({
         id: organization.id,

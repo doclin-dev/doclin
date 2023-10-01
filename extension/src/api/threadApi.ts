@@ -1,26 +1,26 @@
-import { getCurrentOrganizationId } from "../providerHelpers/organizationProviderHelper";
-import { getCurrentProjectId } from "../providerHelpers/projectProviderHelper";
 import { createAxiosInstance } from "./apiService";
 
-const getBaseThreadUrl = (): string => {
-    const organizationId = getCurrentOrganizationId();
-    const projectId = getCurrentProjectId();
+const getBaseThreadUrl = (organizationId: string, projectId: number) => {
     return `/organizations/${organizationId}/projects/${projectId}/threads`;
 }
 
-const getThreads = async (projectId: number, filePath: string) => {
+const getThreads = async (organizationId: string, projectId: number, filePath: string) => {
     const params = {
         projectId: projectId,
         filePath: filePath
     };
 
     const apiService = createAxiosInstance();
-    const response = await apiService.get(getBaseThreadUrl(), { params });
+    const baseThreadUrl = getBaseThreadUrl(organizationId, projectId);
+    const response = await apiService.get(baseThreadUrl, { params });
 
     return response;
 }
 
-const postThread = async (threadMessage: string, projectId: number, activeEditorFilePath: string) => {
+const postThread = async (organizationId: string,
+                          projectId: number, 
+                          threadMessage: string, 
+                          activeEditorFilePath: string) => {
     const data = {
         threadMessage: threadMessage,
         projectId: projectId,
@@ -28,26 +28,33 @@ const postThread = async (threadMessage: string, projectId: number, activeEditor
     };
 
     const apiService = createAxiosInstance();
-    const response = await apiService.post(getBaseThreadUrl(), data);
+    const baseThreadUrl = getBaseThreadUrl(organizationId, projectId);
+    const response = await apiService.post(baseThreadUrl, data);
 
     return response;
 }
 
-const updateThread = async(threadId: number, threadMessage: string, activeEditorFilePath: string) => {
+const updateThread = async (organizationId: string, 
+                            projectId: number, 
+                            threadId: number, 
+                            threadMessage: string, 
+                            activeEditorFilePath: string) => {
     const data = {
         message: threadMessage,
         activeEditorFilePath: activeEditorFilePath
     };
 
     const apiService = createAxiosInstance();
-    const response = await apiService.put(`${getBaseThreadUrl()}/${threadId}`, data);
+    const baseThreadUrl = getBaseThreadUrl(organizationId, projectId);
+    const response = await apiService.put(`${baseThreadUrl}/${threadId}`, data);
 
     return response;
 }
 
-const deleteThread = async(threadId: number) => {
+const deleteThread = async(organizationId: string, projectId: number, threadId: number) => {
     const apiService = createAxiosInstance();
-    const response = await apiService.delete(`${getBaseThreadUrl()}/${threadId}`);
+    const baseThreadUrl = getBaseThreadUrl(organizationId, projectId);
+    const response = await apiService.delete(`${baseThreadUrl}/${threadId}`);
 
     return response;
 }

@@ -26,18 +26,30 @@
     const messageEventListener = async (event: any) => {
         const message = event.data;
         switch (message.type) {
-            case "getAuthenticatedUser":
-                user = message.value;
+            case "getExtensionState":
+                user = message.value?.user;
+                const organization = message.value?.organization;
+                const project = message.value?.project;
+
+                if (!organization) {
+                    page = Page.InitializeOrganization;
+                    WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+                }
+
+                if (!project) {
+                    page = Page.InitializeProject;
+                    WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+                }
+
                 loading = false;
                 break;
         }
     };
 
     onMount(async () => {
-        page = Page.InitializeOrganization;
         window.addEventListener("message", messageEventListener);
 
-        tsvscode.postMessage({ type: "getAuthenticatedUser", value: undefined });
+        tsvscode.postMessage({ type: "getExtensionState", value: undefined });
     });
 
     onDestroy(() => {

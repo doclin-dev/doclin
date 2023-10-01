@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { executeShellCommand } from "./providerHelperUtils";
 import projectApi from "../api/projectApi";
+import { getCurrentOrganizationId } from "./organizationProviderHelper";
 
 export const getGithubUrl = async() : Promise<string> => {
     if (vscode.workspace.workspaceFolders) {
@@ -21,8 +22,11 @@ export const getCurrentProjectId = (): number => {
 }
 
 export const getExistingProjects = async () => {
-    const githubUrl: string = await getGithubUrl();
-    const response = await projectApi.getProjects(githubUrl);
+    const organizationId = await getCurrentOrganizationId();
+
+    if (!organizationId) return { project: null };
+
+    const response = await projectApi.getProjects(organizationId);
     const payload = response?.data;
     const projects = payload?.projects;
 
@@ -31,7 +35,11 @@ export const getExistingProjects = async () => {
 
 export const postProject = async({ name }: { name: string }) => {
     const githubUrl: string = await getGithubUrl();
-    const response = await projectApi.postProject(name, githubUrl);
+    const organizationId = await getCurrentOrganizationId();
+
+    if (!githubUrl || !organizationId) return { project: null };
+
+    const response = await projectApi.postProject(organizationId, name, githubUrl);
     const payload = response?.data;
     const project = payload?.project;
 
