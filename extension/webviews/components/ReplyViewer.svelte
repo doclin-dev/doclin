@@ -3,7 +3,7 @@
     import ViewerTopBar from "./ViewerTopBar.svelte";
     import Button from "./Button.svelte";
     import Quill from 'quill';
-    import { ActiveEditor, Page } from "../enums";
+    import { ActiveTextEditor, Page } from "../enums";
     import Thread from "./Thread.svelte";
     import { onMount, onDestroy } from "svelte";
     import Reply from "./Reply.svelte";
@@ -25,8 +25,8 @@
             WebviewStateManager.setState(WebviewStateManager.type.REPLY_MESSAGE, quillReplyViewer.getText());
         });
         
-        WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_EDITOR, ActiveEditor.ReplyViewerTextEditor);
-        quillReplyViewer.setActiveEditor(ActiveEditor.ReplyViewerTextEditor);
+        WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ReplyViewerTextEditor);
+        quillReplyViewer.setActiveEditor(ActiveTextEditor.ReplyViewerTextEditor);
         const message = WebviewStateManager.getState(WebviewStateManager.type.REPLY_MESSAGE) || "";
         quillReplyViewer.setText(message);
 
@@ -72,7 +72,7 @@
         switch (message.type) {
             case "populateCodeSnippet":
             // if ($editedThreadId === null && $editedReplyId === null) quillReplyViewer.insertCodeSnippet( message.value);
-            if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_EDITOR)===2) quillReplyViewer.insertCodeSnippet(message.value);
+            if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR)===2) quillReplyViewer.insertCodeSnippet(message.value);
                 break;
             case "getRepliesByThreadId":
                 replies = message.value;

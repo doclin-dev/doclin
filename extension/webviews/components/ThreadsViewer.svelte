@@ -4,7 +4,7 @@
     import Thread from './Thread.svelte';
     import ViewerTopBar from "./ViewerTopBar.svelte";
     import { TextEditor } from "./TextEditor";
-    import { ActiveEditor, Page } from "../enums";
+    import { ActiveTextEditor, Page } from "../enums";
     import { WebviewStateManager } from "../WebviewStateManager";
 
     export let user: User;
@@ -46,10 +46,10 @@
             });
         }
         
-        WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_EDITOR, ActiveEditor.ThreadsViewerTextditor);
+        WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ThreadsViewerTextditor);
         const message = WebviewStateManager.getState(WebviewStateManager.type.THREAD_MESSAGE) || "";
         quillEditor.setText(message);
-        quillEditor.setActiveEditor(ActiveEditor.ThreadsViewerTextditor);
+        quillEditor.setActiveEditor(ActiveTextEditor.ThreadsViewerTextditor);
     }
 
     async function loadThreads() {
@@ -68,7 +68,7 @@
         const message = event.data;
         switch (message.type) {
             case "populateCodeSnippet":
-                if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_EDITOR) === 1) quillEditor.insertCodeSnippet(message.value);
+                if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === 1) quillEditor.insertCodeSnippet(message.value);
                 break;
             case "getThreadsByActiveFilePath":
                 threads = message.value;

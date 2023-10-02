@@ -3,7 +3,7 @@
     import Button from './Button.svelte'
     import { tick, onMount, onDestroy } from 'svelte';
     import { editedReplyId, editedThreadId } from './store.js';
-    import { ActiveEditor, Page } from '../enums'; 
+    import { ActiveTextEditor, Page } from '../enums'; 
     import { WebviewStateManager } from '../WebviewStateManager';
     import { TextEditor } from './TextEditor';
 
@@ -18,8 +18,8 @@
             editedThreadId.set(thread.id);
             await tick();
             quillThreadEditor = new TextEditor('#thread-editor');
-            WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_EDITOR, ActiveEditor.ThreadTextEditor);
-            quillThreadEditor.setActiveEditor(ActiveEditor.ThreadTextEditor);
+            WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ThreadTextEditor);
+            quillThreadEditor.setActiveEditor(ActiveTextEditor.ThreadTextEditor);
         }
     }
 
@@ -38,12 +38,12 @@
         quillThreadEditor.removeToolbarTheme();
         quillThreadEditor = null;
         editedThreadId.set(null);
-        if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_EDITOR) === null){
+        if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === null){
             if (WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ThreadsViewer){
-                WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_EDITOR, ActiveEditor.ThreadsViewerTextditor);
+                WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ThreadsViewerTextditor);
             }
             else if (WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ReplyViewer){
-                WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_EDITOR, ActiveEditor.ReplyViewerTextEditor);
+                WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ReplyViewerTextEditor);
             }
         }
     }
@@ -69,7 +69,7 @@
         const message = event.data;
         switch(message.type) {
             case "populateCodeSnippet":
-                if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_EDITOR)===3 && $editedThreadId === thread.id) {
+                if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === 3 && $editedThreadId === thread.id) {
                     quillThreadEditor.insertCodeSnippet(message.value);
                 };
                 break;

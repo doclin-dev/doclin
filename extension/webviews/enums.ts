@@ -5,7 +5,7 @@ export enum Page {
   Contact = "contact"
 }
 
-export enum ActiveEditor {
+export enum ActiveTextEditor {
   ThreadsViewerTextditor = 1,
   ReplyViewerTextEditor = 2,
   ThreadTextEditor = 3,

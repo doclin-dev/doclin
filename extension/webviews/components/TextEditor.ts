@@ -41,7 +41,7 @@ export class TextEditor {
 
     setActiveEditor(activeEditor: Number): void {
         this.quillInstance.container.addEventListener('mousedown', () => {
-            WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_EDITOR, activeEditor);
+            WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, activeEditor);
         });
     };
 

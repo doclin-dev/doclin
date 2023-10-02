@@ -5,7 +5,7 @@
     import { onMount, tick, onDestroy } from 'svelte';
     import { editedReplyId, editedThreadId } from './store.js';
     import { WebviewStateManager } from '../WebviewStateManager';
-    import { ActiveEditor } from '../enums';
+    import { ActiveTextEditor } from '../enums';
 
     export let reply: any;
     export let reloadReplies: () => void = () => {};
@@ -25,8 +25,8 @@
             editedReplyId.set(reply.id);
             await tick();
             quillReplyCardEditor = new TextEditor('#reply-card-editor');
-            WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_EDITOR, ActiveEditor.ReplyTextEditor);
-            quillReplyCardEditor.setActiveEditor(ActiveEditor.ReplyTextEditor);
+            WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ReplyTextEditor);
+            quillReplyCardEditor.setActiveEditor(ActiveTextEditor.ReplyTextEditor);
         }
     }
 
@@ -41,7 +41,7 @@
         quillReplyCardEditor.removeToolbarTheme();
         quillReplyCardEditor = null;
         editedReplyId.set(null);
-        WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_EDITOR, ActiveEditor.ReplyViewerTextEditor);
+        WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ReplyViewerTextEditor);
     }
 
     const handleDeleteButtonClick = async () => {
@@ -55,7 +55,7 @@
         const message = event.data;
         switch(message.type) {
             case "populateCodeSnippet":
-                if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_EDITOR)===4 && $editedReplyId === reply.id) {
+                if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR)===4 && $editedReplyId === reply.id) {
                     quillReplyCardEditor.insertCodeSnippet(message.value);
                 };
                 break;
