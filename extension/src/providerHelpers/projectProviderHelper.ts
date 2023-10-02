@@ -4,6 +4,8 @@ import projectApi from "../api/projectApi";
 import { getCurrentOrganizationId } from "./organizationProviderHelper";
 import { readDoclinFile, writeDoclinFile } from "../utils/fileReadWriteUtil";
 
+const ACCESS_REQUIRED = "accessRequired";
+
 export const getGithubUrl = async() : Promise<string|undefined> => {
 	if (vscode.workspace.workspaceFolders) {
 		const openedFolderUri: any = vscode.workspace.workspaceFolders[0]?.uri;
@@ -31,11 +33,16 @@ export const getCurrentProject = async () => {
 
 	if (!organizationId || !projectId) return;
 
-	const response = await projectApi.getProject(projectId, organizationId);
-	const payload = response?.data;
-	const project = payload?.project;
+	try {
+		const response = await projectApi.getProject(projectId, organizationId);
+		const payload = response?.data;
+		const project = payload?.project;
+		
+		return project;
+	} catch {
+		return ACCESS_REQUIRED;
+	}
 
-	return project;
 }
 
 export const getExistingProjects = async () => {

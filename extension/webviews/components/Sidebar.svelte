@@ -12,6 +12,7 @@
     let loading = true;
     let user: User | null = null;
     let page: Page = WebviewStateManager.getState(WebviewStateManager.type.PAGE) ?? Page.InitializeOrganization;
+    const ACCESS_REQUIRED = "accessRequired";
 
     const authenticate = () => {
         tsvscode.postMessage({ type: 'authenticate', value: undefined });
@@ -28,6 +29,13 @@
         const organization = extensionState?.organization;
         const project = extensionState?.project;
         const githubUrl = extensionState?.githubUrl;
+
+        if (organization == ACCESS_REQUIRED || project == ACCESS_REQUIRED) {
+            page = Page.AccessRequired;
+            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+            loading = false;
+            return;
+        }
 
         if (!githubUrl) {
             page = Page.NotGitRepo;
@@ -82,9 +90,9 @@
     <div>loading...</div>
 {:else if user}
     {#if page === Page.NotGitRepo}
-        <div>
-            Workspace folder is not a github repository.
-        </div>
+        <div>Workspace folder is not a github repository.</div>
+    {:else if page === Page.AccessRequired}
+        <div>Contact admin for access to this project.</div>
     {:else if page === Page.InitializeOrganization}
         <InitializeOrganization bind:page={page}/>
     {:else if page === Page.InitializeProject}

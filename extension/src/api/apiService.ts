@@ -17,7 +17,10 @@ export const createAxiosInstance = () => {
     instance.interceptors.response.use(
         response => response,
         error => {
-            vscode.window.showInformationMessage("Unexpected error occured!");
+            if (error.response.status != 403) {
+                vscode.window.showInformationMessage("Unexpected error occured!");
+            }
+
             return Promise.reject(error);
         }
     );

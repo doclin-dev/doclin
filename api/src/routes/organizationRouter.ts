@@ -9,7 +9,7 @@ const organizationRouter = express.Router({ mergeParams: true });
 
 organizationRouter.get("/", verifyAuthentication, getOrganizations);
 organizationRouter.post("/", verifyAuthentication, postOrganization);
-organizationRouter.get("/:organizationId", verifyAuthentication, getOrganization);
+organizationRouter.get("/:organizationId", [verifyAuthentication, verifyOrganizationAccess], getOrganization);
 
 organizationRouter.use(BASE_PROJECT_ROUTE, verifyOrganizationAccess, projectRouter);
 

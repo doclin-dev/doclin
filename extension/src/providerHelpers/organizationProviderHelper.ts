@@ -2,6 +2,8 @@ import * as vscode from "vscode";
 import organizationApi from "../api/organizationApi";
 import { readDoclinFile, writeDoclinFile } from "../utils/fileReadWriteUtil";
 
+const ACCESS_REQUIRED = "accessRequired";
+
 export const getExistingOrganizations = async () => {
     const response = await organizationApi.getOrganizations();
     const payload = response?.data;
@@ -29,12 +31,16 @@ export const getCurrentOrganizationId = async (): Promise<string|undefined> => {
 export const getCurrentOrganization = async () => {
     const organizationId = await getCurrentOrganizationId();
     
-    if (organizationId) {
-        const response = await organizationApi.getOrganization(organizationId);
-        const payload = response?.data;
-        const organization = payload?.organization;
+    if (organizationId) {    
+        try {
+            const response = await organizationApi.getOrganization(organizationId);
+            const payload = response?.data;
+            const organization = payload?.organization;
 
-        return organization;
+            return organization;
+        } catch {
+            return ACCESS_REQUIRED;
+        }
     }
 
     return null;
