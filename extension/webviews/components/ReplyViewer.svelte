@@ -71,7 +71,6 @@
         const message = event.data;
         switch (message.type) {
             case "populateCodeSnippet":
-            // if ($editedThreadId === null && $editedReplyId === null) quillReplyViewer.insertCodeSnippet( message.value);
             if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR)===2) quillReplyViewer.insertCodeSnippet(message.value);
                 break;
             case "getRepliesByThreadId":

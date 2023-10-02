@@ -21,7 +21,7 @@
     }
 
     const handleEditButtonClick = async () => {
-        if($editedReplyId == null && $editedThreadId === null) {
+        if ($editedReplyId == null && $editedThreadId === null) {
             editedReplyId.set(reply.id);
             await tick();
             quillReplyCardEditor = new TextEditor('#reply-card-editor');

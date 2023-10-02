@@ -14,7 +14,7 @@
     let quillThreadEditor: any;
         
     const handleEditButtonClick = async () => {
-        if($editedThreadId === null && $editedReplyId === null) {
+        if ($editedThreadId === null && $editedReplyId === null) {
             editedThreadId.set(thread.id);
             await tick();
             quillThreadEditor = new TextEditor('#thread-editor');
