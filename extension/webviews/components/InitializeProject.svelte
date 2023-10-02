@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Project } from "../types";
+    import type { Organization, Project } from "../types";
     import { onMount, onDestroy } from "svelte";
     import { Page } from "../enums";
     import { WebviewStateManager } from "../WebviewStateManager";
@@ -9,6 +9,7 @@
     let postProjectName: string = "";
     let githubUrl: string = "";
     let existingProjects: Project[] = [];
+    let currentOrganization: Organization | null;
 
     const switchPageToThreadsViewer = () => {
         page = Page.ThreadsViewer;
@@ -48,10 +49,17 @@
         }
     }
 
+    const chooseAnotherOrganization = () => {
+        WebviewStateManager.setState(WebviewStateManager.type.CURRENT_ORGANIZATION, null);
+        page = Page.InitializeOrganization;
+        WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+    }
+
     onMount(async () => {
         window.addEventListener("message", messageEventListener);
 
         githubUrl = WebviewStateManager.getState(WebviewStateManager.type.GITHUB_URL);
+        currentOrganization = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_ORGANIZATION);
         fetchExistingProjects();
     });
 
@@ -60,15 +68,13 @@
     });
 </script>
 
-<h1>Get Started!</h1>
-
 <div>
-    Create a project:
+    <h3>Join Project</h3>
 
     <form>
         <input placeholder="Enter project name" bind:value={postProjectName} />
         <input placeholder="Github repo url" value={githubUrl} disabled/>
-        <button on:click|preventDefault={createNewProject}>Submit</button>
+        <button on:click|preventDefault={createNewProject}>Create New Project</button>
     </form>
 
     {#if existingProjects.length > 0}
@@ -83,3 +89,5 @@
         </ul>
     {/if}
 </div>
+
+<button on:click={() => {chooseAnotherOrganization()}}>Organization: {currentOrganization?.name}</button>

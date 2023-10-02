@@ -16,6 +16,6 @@ export class WebviewStateManager {
   }
 
   static getState(key: StateType): any {
-    return tsvscode.getState()[key];
+    return tsvscode.getState() ? tsvscode.getState()[key] : null;
   }
 }

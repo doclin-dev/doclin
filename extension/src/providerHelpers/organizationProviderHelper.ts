@@ -15,7 +15,7 @@ export const postOrganization = async({ name }: { name: string }) => {
     const payload = response?.data;
     const organization = payload?.organization;
 
-    storeOrganizationId(organization.id);
+    await storeOrganizationId(organization.id);
 
     return organization;
 }

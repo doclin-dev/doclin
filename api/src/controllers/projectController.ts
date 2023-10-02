@@ -24,10 +24,7 @@ export const postProject = async (req:any, res:any) => {
 
     const organization = await OrganizationRepository.findOrganizationById(organizationId);
 
-    if (!organization) {
-        res.send({ project: null });
-        return;
-    }
+    if (!organization) return;
 
     const project = await Project.create({
         name: name,

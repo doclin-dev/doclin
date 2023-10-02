@@ -81,7 +81,7 @@
         WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
     }
 
-    function chooseAnotherOrganization() {
+    const chooseAnotherOrganization = () => {
         WebviewStateManager.setState(WebviewStateManager.type.CURRENT_ORGANIZATION, null);
         page = Page.InitializeOrganization;
         WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);

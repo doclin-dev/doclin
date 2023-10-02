@@ -40,15 +40,6 @@ export const authenticate = (fn?: () => void) => {
   });
 };
 
-export const getExtensionState = async () => {
-  return {
-    user: await getAuthenticatedUser(),
-    organization: await getCurrentOrganization(),
-    project: await getCurrentProject(),
-    githubUrl: await getGithubUrl()
-  }
-}
-
 export const getAuthenticatedUser = async () => {
   const response = await authApi.getAuthenticatedUser();
   const payload = response?.data;

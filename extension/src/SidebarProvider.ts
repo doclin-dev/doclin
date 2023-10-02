@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { authenticate, getExtensionState } from "./providerHelpers/authenticationProviderHelper";
+import { authenticate } from "./providerHelpers/authenticationProviderHelper";
 import { apiBaseUrl } from "./constants";
 import { getNonce } from "./providerHelpers/getNonce";
 import { GlobalStateManager } from "./GlobalStateManager";
@@ -8,6 +8,7 @@ import { getGithubUrl, storeProjectId } from "./providerHelpers/projectProviderH
 import { getExistingProjects, postProject } from "./providerHelpers/projectProviderHelper";
 import { deleteReply, getRepliesByThreadId, postReply, updateReply } from "./providerHelpers/replyProviderHelper";
 import { postOrganization, getExistingOrganizations, storeOrganizationId } from "./providerHelpers/organizationProviderHelper";
+import { getExtensionState } from "./utils/sidebarProviderUtil";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -24,8 +25,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     };
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
-
-    console.log(GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN));
 
     webviewView.webview.onDidReceiveMessage(async (message: { type: any, value: any }) => {
       switch (message.type) {

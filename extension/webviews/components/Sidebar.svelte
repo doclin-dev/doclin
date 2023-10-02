@@ -81,7 +81,7 @@
 {#if loading}
     <div>loading...</div>
 {:else if user}
-    {#if page == Page.NotGitRepo}
+    {#if page === Page.NotGitRepo}
         <div>
             Workspace folder is not a github repository.
         </div>

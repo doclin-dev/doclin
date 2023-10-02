@@ -3,8 +3,6 @@ import { UserRepository } from "../database/repositories/UserRepository";
 import { OrganizationRepository } from "../database/repositories/OrganizationRepository";
 import { getUserIdFromAuthHeader } from "../controllers/userController";
 
-
-
 export const verifyAuthentication = async (req: Request, res: Response, next: NextFunction) => {
 	const authHeader = req.headers.authorization;
 	const userId = getUserIdFromAuthHeader(authHeader);

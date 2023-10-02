@@ -5,21 +5,24 @@ import { getCurrentOrganizationId } from "./organizationProviderHelper";
 import { readDoclinFile, writeDoclinFile } from "../utils/fileReadWriteUtil";
 
 export const getGithubUrl = async() : Promise<string|undefined> => {
-    if (vscode.workspace.workspaceFolders) {
+	if (vscode.workspace.workspaceFolders) {
 		const openedFolderUri: any = vscode.workspace.workspaceFolders[0]?.uri;
 		const openedFolderPath: string = openedFolderUri.fsPath;
-		
-		if (openedFolderPath) {
-			let { stdout }: {stdout: string} = await executeShellCommand(`cd ${openedFolderPath} && git config --get remote.origin.url`);
-			return stdout;
+		try {
+			if (openedFolderPath) {
+				let { stdout }: {stdout: string} = await executeShellCommand(`cd ${openedFolderPath} && git config --get remote.origin.url`);
+				return stdout;
+			}
+		} catch {
+			return;
 		}
-    }
+	}
 }
 
 export const getCurrentProjectId = async (): Promise<number|undefined> => {
 	const fileJSON = await readDoclinFile();
 
-  	return fileJSON?.projectId;
+		return fileJSON?.projectId;
 }
 
 export const getCurrentProject = async () => {
@@ -36,30 +39,30 @@ export const getCurrentProject = async () => {
 }
 
 export const getExistingProjects = async () => {
-    const organizationId = await getCurrentOrganizationId();
+	const organizationId = await getCurrentOrganizationId();
 
-    if (!organizationId) return { projects: null };
+	if (!organizationId) return { projects: null };
 
-    const response = await projectApi.getProjects(organizationId);
-    const payload = response?.data;
-    const projects = payload?.projects;
+	const response = await projectApi.getProjects(organizationId);
+	const payload = response?.data;
+	const projects = payload?.projects;
 
-    return projects;
+	return projects;
 }
 
 export const postProject = async({ name }: { name: string }) => {
-    const githubUrl = await getGithubUrl();
-    const organizationId = await getCurrentOrganizationId();
+	const githubUrl = await getGithubUrl();
+	const organizationId = await getCurrentOrganizationId();
 
-    if (!githubUrl || !organizationId) return { project: null };
+	if (!githubUrl || !organizationId) return { project: null };
 
-    const response = await projectApi.postProject(organizationId, name, githubUrl);
-    const payload = response?.data;
-    const project = payload?.project;
+	const response = await projectApi.postProject(organizationId, name, githubUrl);
+	const payload = response?.data;
+	const project = payload?.project;
 
-	storeProjectId(project.id);
-    
-    return project;
+	await storeProjectId(project.id);
+	
+	return project;
 }
 
 export const storeProjectId = async (projectId: number) => {

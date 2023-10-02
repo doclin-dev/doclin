@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { UserRepository } from "../database/repositories/UserRepository";
 
 export const getCurrentUser = async (req: Request, res: Response) => {
-    const authHeader = req.headers.authorization;
+	const authHeader = req.headers.authorization;
 	const userId = getUserIdFromAuthHeader(authHeader);
 
     if (userId == null) {
