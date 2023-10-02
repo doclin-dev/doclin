@@ -3,14 +3,13 @@
     import ViewerTopBar from "./ViewerTopBar.svelte";
     import Button from "./Button.svelte";
     import Quill from 'quill';
-    import { Page } from "../enums";
+    import { ActiveEditor, Page } from "../enums";
     import Thread from "./Thread.svelte";
     import { onMount, onDestroy } from "svelte";
     import Reply from "./Reply.svelte";
     import { WebviewStateManager } from "../WebviewStateManager";
     import type { Thread as ThreadType } from "../types";
-    import {populateThreadMessageField} from "../utilities";
-    import { editedReplyId, editedThreadId } from "./store";
+    import { TextEditor } from "./TextEditor";
 
     let thread: ThreadType;
     export let username: string;
@@ -20,26 +19,17 @@
     let replies : Array<{message: string, id: number}> = [];
 
     async function initializeQuillEditor() {
-        quillReplyViewer = new Quill('#replyViewerEditor', {
-            modules: {
-                toolbar: [
-                    ['bold', 'italic', 'underline', 'strike'],
-                    ['link', 'blockquote', 'code-block', 'image'],
-                    [{ list: 'ordered' }, { list: 'bullet' }],
-                    [{ color: [] }, { background: [] }]
-                ]
-            },
-            theme: 'snow'
-        });   
-        
-        quillReplyViewer.theme.modules.toolbar.container.style.background = '#f1f1f1';
-        quillReplyViewer.theme.modules.toolbar.container.style.border = 'none';
+        quillReplyViewer = new TextEditor('#replyViewerEditor')
 
-        quillReplyViewer.on('text-change', () => {
-            WebviewStateManager.setState(WebviewStateManager.type.REPLY_MESSAGE, quillReplyViewer.root.innerHTML);
+        quillReplyViewer.onTextChange(() => {
+            WebviewStateManager.setState(WebviewStateManager.type.REPLY_MESSAGE, quillReplyViewer.getText());
         });
         
-        quillReplyViewer.root.innerHTML = WebviewStateManager.getState(WebviewStateManager.type.REPLY_MESSAGE) || "";
+        WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_EDITOR, ActiveEditor.ReplyViewerTextEditor);
+        quillReplyViewer.setActiveEditor(ActiveEditor.ReplyViewerTextEditor);
+        const message = WebviewStateManager.getState(WebviewStateManager.type.REPLY_MESSAGE) || "";
+        quillReplyViewer.setText(message);
+
     }
 
     async function postReplyMessage(message: string) {
@@ -72,7 +62,7 @@
     }
 
     const onSubmit= () => {
-        postReplyMessage(quillReplyViewer.root.innerHTML);
+        postReplyMessage(quillReplyViewer.getText());
         quillReplyViewer.setText("");
         WebviewStateManager.setState(WebviewStateManager.type.REPLY_MESSAGE, "");
     }
@@ -80,10 +70,9 @@
     const messageEventListener = async (event: any) => {
         const message = event.data;
         switch (message.type) {
-            case "populateThreadMessage":
-            if ($editedThreadId === null && $editedReplyId === null){
-                    populateThreadMessageField (quillReplyViewer, message.value);
-                }
+            case "populateCodeSnippet":
+            // if ($editedThreadId === null && $editedReplyId === null) quillReplyViewer.insertCodeSnippet( message.value);
+            if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_EDITOR)===2) quillReplyViewer.insertCodeSnippet(message.value);
                 break;
             case "getRepliesByThreadId":
                 replies = message.value;

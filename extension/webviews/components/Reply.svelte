@@ -1,16 +1,16 @@
 <script lang="ts">
     import OverlayCard from './OverlayCard.svelte';
     import Button from './Button.svelte'
-    import Quill from 'quill';
+    import { TextEditor } from "./TextEditor";
     import { onMount, tick, onDestroy } from 'svelte';
     import { editedReplyId, editedThreadId } from './store.js';
-    import { populateThreadMessageField } from '../utilities';
+    import { WebviewStateManager } from '../WebviewStateManager';
+    import { ActiveEditor } from '../enums';
 
     export let reply: any;
     export let reloadReplies: () => void = () => {};
 
     let quillReplyCardEditor: any;
-    let replyCardEditMode: boolean = false;
     let replyCardMessage: string;
 
     async function updateReplyMessage(message: string) {
@@ -22,40 +22,26 @@
 
     const handleEditButtonClick = async () => {
         if($editedReplyId == null && $editedThreadId === null) {
-            replyCardEditMode = true;
             editedReplyId.set(reply.id);
             await tick();
-            quillReplyCardEditor = new Quill('#reply-card-editor', {
-                modules: {
-                    toolbar: [
-                        ['bold', 'italic', 'underline', 'strike'],
-                        ['link', 'blockquote', 'code-block', 'image'],
-                        [{ list: 'ordered' }, { list: 'bullet' }],
-                        [{ color: [] }, { background: [] }]
-                    ]
-                },
-                theme: 'snow'
-            });
-
-            quillReplyCardEditor.theme.modules.toolbar.container.style.background = '#f1f1f1';
-            quillReplyCardEditor.theme.modules.toolbar.container.style.border = 'none';
-
+            quillReplyCardEditor = new TextEditor('#reply-card-editor');
+            WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_EDITOR, ActiveEditor.ReplyTextEditor);
+            quillReplyCardEditor.setActiveEditor(ActiveEditor.ReplyTextEditor);
         }
     }
 
     const handleOnSubmit = async () => {
-        replyCardEditMode= false;
         await tick();
-        replyCardMessage = quillReplyCardEditor.root.innerHTML;
+        replyCardMessage = quillReplyCardEditor.getText();
         updateReplyMessage(replyCardMessage);
         editedReplyId.set(null);
     }
     
     const onCancel = () => {
-        replyCardEditMode = false;
-        quillReplyCardEditor.theme.modules.toolbar.container.style.display = 'none';
+        quillReplyCardEditor.removeToolbarTheme();
         quillReplyCardEditor = null;
         editedReplyId.set(null);
+        WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_EDITOR, ActiveEditor.ReplyViewerTextEditor);
     }
 
     const handleDeleteButtonClick = async () => {
@@ -68,16 +54,18 @@
     const messageEventListener = async (event: any) => {
         const message = event.data;
         switch(message.type) {
-            case "populateThreadMessage":
-                $editedReplyId && $editedReplyId === reply.id ? populateThreadMessageField(quillReplyCardEditor, message.value): null;
+            case "populateCodeSnippet":
+                if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_EDITOR)===4 && $editedReplyId === reply.id) {
+                    quillReplyCardEditor.insertCodeSnippet(message.value);
+                };
                 break;
             case "updateReply":
                 if (reply.id === message.value?.id) {
                     reply.message = message.value?.message;
-                    quillReplyCardEditor.theme.modules.toolbar.container.style.display = 'none';
+                    quillReplyCardEditor.removeToolbarTheme();
                     quillReplyCardEditor = null;
                     editedReplyId.set(null);
-                }
+                };
                 break;
             case "deleteReply":
                 reloadReplies();
@@ -101,7 +89,7 @@
             <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
         </div>
     </div>
-    {#if replyCardEditMode}
+    {#if $editedReplyId === reply.id}
         <div id="reply-card-editor">{@html reply.message}</div> 
         <div class='reply-card-footer'>
             <Button variant='secondary' onClick={onCancel} title="Cancel"/>

@@ -1,23 +1,21 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte";
     import type { Project, User, Thread as ThreadType } from "../types";
-    import Quill from "quill";
     import Thread from './Thread.svelte';
     import ViewerTopBar from "./ViewerTopBar.svelte";
-    import { editedThreadId } from './store.js';
-    import { Page } from "../enums";
+    import { TextEditor } from "./TextEditor";
+    import { ActiveEditor, Page } from "../enums";
     import { WebviewStateManager } from "../WebviewStateManager";
-    import {populateThreadMessageField} from "../utilities";
 
     export let user: User;
     export let page: Page;
     
     let quillEditor: any;
     let threads: Array<ThreadType> = [];
-    let currentProject: Project | null;
+    let currentProject: Project | null; 
 
     async function submitThreadMessage() {
-        const threadMessage = quillEditor.root.innerHTML;
+        const threadMessage = quillEditor.getText();
         currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
 
         if (threadMessage) {
@@ -35,26 +33,23 @@
     }
 
     async function initializeQuillEditor() {
-        quillEditor = new Quill('#textEditor', {
-            modules: {
-                toolbar: [
-                    ['bold', 'italic', 'underline', 'strike'],
-                    ['link', 'blockquote', 'code-block', 'image'],
-                    [{ list: 'ordered' }, { list: 'bullet' }],
-                    [{ color: [] }, { background: [] }]
-                ]
-            },
-            theme: 'snow'
-        });   
-        
-        quillEditor.theme.modules.toolbar.container.style.background = '#f1f1f1';
-        quillEditor.theme.modules.toolbar.container.style.border = 'none';
+        quillEditor = new TextEditor('#textEditor');
 
-        quillEditor.on('text-change', () => {
-            WebviewStateManager.setState(WebviewStateManager.type.THREAD_MESSAGE, quillEditor.root.innerHTML);
+        quillEditor.onTextChange(() => {
+            WebviewStateManager.setState(WebviewStateManager.type.THREAD_MESSAGE, quillEditor.getText());
         });
+
+        const editorContainer = quillEditor.container || quillEditor.editor;
+        if (editorContainer) {
+            editorContainer.addEventListener('click', function () {
+                console.log('Quill editor is active');
+            });
+        }
         
-        quillEditor.root.innerHTML = WebviewStateManager.getState(WebviewStateManager.type.THREAD_MESSAGE) || "";
+        WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_EDITOR, ActiveEditor.ThreadsViewerTextditor);
+        const message = WebviewStateManager.getState(WebviewStateManager.type.THREAD_MESSAGE) || "";
+        quillEditor.setText(message);
+        quillEditor.setActiveEditor(ActiveEditor.ThreadsViewerTextditor);
     }
 
     async function loadThreads() {
@@ -72,8 +67,8 @@
     const messageEventListener = async (event: any) => {
         const message = event.data;
         switch (message.type) {
-            case "populateThreadMessage":
-                $editedThreadId == null ? populateThreadMessageField(quillEditor, message.value) : null;
+            case "populateCodeSnippet":
+                if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_EDITOR) === 1) quillEditor.insertCodeSnippet(message.value);
                 break;
             case "getThreadsByActiveFilePath":
                 threads = message.value;

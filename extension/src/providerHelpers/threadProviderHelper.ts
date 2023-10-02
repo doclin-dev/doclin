@@ -105,7 +105,7 @@ export const addCodeSnippet = async (sidebarProvider: any) => {
   // Need to check when the sidebar is loaded and then add the textSelection to sidebar
 
   sidebarProvider._view?.webview.postMessage({
-    type: "populateThreadMessage",
+    type: "populateCodeSnippet",
     value: {filePath, threadMessage},
   });
 }
