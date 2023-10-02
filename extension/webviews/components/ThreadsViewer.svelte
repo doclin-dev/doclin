@@ -38,13 +38,6 @@
         quillEditor.onTextChange(() => {
             WebviewStateManager.setState(WebviewStateManager.type.THREAD_MESSAGE, quillEditor.getText());
         });
-
-        const editorContainer = quillEditor.container || quillEditor.editor;
-        if (editorContainer) {
-            editorContainer.addEventListener('click', function () {
-                console.log('Quill editor is active');
-            });
-        }
         
         WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ThreadsViewerTextditor);
         const message = WebviewStateManager.getState(WebviewStateManager.type.THREAD_MESSAGE) || "";
