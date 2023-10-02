@@ -39,10 +39,10 @@
             WebviewStateManager.setState(WebviewStateManager.type.THREAD_MESSAGE, quillEditor.getText());
         });
         
-        WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ThreadsViewerTextditor);
+        WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ThreadsViewerTextEditor);
         const message = WebviewStateManager.getState(WebviewStateManager.type.THREAD_MESSAGE) || "";
         quillEditor.setText(message);
-        quillEditor.setActiveEditor(ActiveTextEditor.ThreadsViewerTextditor);
+        quillEditor.setActiveEditor(ActiveTextEditor.ThreadsViewerTextEditor);
     }
 
     async function loadThreads() {
@@ -61,7 +61,7 @@
         const message = event.data;
         switch (message.type) {
             case "populateCodeSnippet":
-                if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === 1) quillEditor.insertCodeSnippet(message.value);
+                if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === ActiveTextEditor.ThreadsViewerTextEditor) quillEditor.insertCodeSnippet(message.value);
                 break;
             case "getThreadsByActiveFilePath":
                 threads = message.value;

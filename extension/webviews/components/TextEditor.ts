@@ -1,8 +1,8 @@
-import hljs from 'highlight.js';
+// import hljs from 'highlight.js';
 
-hljs.configure({
-    languages: ['javascript', 'ruby', 'python', 'cpp']
-});
+// hljs.configure({
+//     languages: ['javascript', 'ruby', 'python', 'cpp']
+// });
 
 import Quill from 'quill';
 import { WebviewStateManager } from '../WebviewStateManager';
@@ -13,11 +13,11 @@ export class TextEditor {
     constructor(selector: string, customOptions?: object) {
         const defaultOptions: object = {
             modules: {
-               syntax: {
-                    highlight: (text:string) => {
-                      return hljs.highlightAuto(text).value;
-                    },
-                  },
+            //    syntax: {
+            //         highlight: (text:string) => {
+            //           return hljs.highlightAuto(text).value;
+            //         },
+            //       },
                 toolbar: [
                     ['bold', 'italic', 'underline', 'strike'],
                     ['link', 'blockquote', 'code-block', 'image'],
@@ -45,15 +45,15 @@ export class TextEditor {
         });
     };
 
-    setText(text:string): void {
+    setText(text: string): void {
         this.quillInstance.root.innerHTML = text;
     };
 
-    getText():string {
+    getText(): string {
         return this.quillInstance.root.innerHTML;
     };
 
-    getContents():void{
+    getContents(): void{
         return this.quillInstance.getContents();
     };
 

@@ -55,9 +55,9 @@
         const message = event.data;
         switch(message.type) {
             case "populateCodeSnippet":
-                if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR)===4 && $editedReplyId === reply.id) {
+                if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === ActiveTextEditor.ReplyTextEditor && $editedReplyId === reply.id) {
                     quillReplyCardEditor.insertCodeSnippet(message.value);
-                };
+                }
                 break;
             case "updateReply":
                 if (reply.id === message.value?.id) {
@@ -65,7 +65,7 @@
                     quillReplyCardEditor.removeToolbarTheme();
                     quillReplyCardEditor = null;
                     editedReplyId.set(null);
-                };
+                }
                 break;
             case "deleteReply":
                 reloadReplies();

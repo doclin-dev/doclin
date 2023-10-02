@@ -40,7 +40,7 @@
         editedThreadId.set(null);
         if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === null){
             if (WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ThreadsViewer){
-                WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ThreadsViewerTextditor);
+                WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ThreadsViewerTextEditor);
             }
             else if (WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ReplyViewer){
                 WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ReplyViewerTextEditor);
@@ -69,7 +69,7 @@
         const message = event.data;
         switch(message.type) {
             case "populateCodeSnippet":
-                if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === 3 && $editedThreadId === thread.id) {
+                if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === ActiveTextEditor.ThreadTextEditor && $editedThreadId === thread.id) {
                     quillThreadEditor.insertCodeSnippet(message.value);
                 };
                 break;

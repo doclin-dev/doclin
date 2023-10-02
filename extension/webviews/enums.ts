@@ -6,7 +6,7 @@ export enum Page {
 }
 
 export enum ActiveTextEditor {
-  ThreadsViewerTextditor = 1,
+  ThreadsViewerTextEditor = 1,
   ReplyViewerTextEditor = 2,
   ThreadTextEditor = 3,
   ReplyTextEditor = 4,

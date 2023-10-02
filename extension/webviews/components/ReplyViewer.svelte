@@ -2,7 +2,6 @@
     import OverlayCard from "./OverlayCard.svelte";
     import ViewerTopBar from "./ViewerTopBar.svelte";
     import Button from "./Button.svelte";
-    import Quill from 'quill';
     import { ActiveTextEditor, Page } from "../enums";
     import Thread from "./Thread.svelte";
     import { onMount, onDestroy } from "svelte";
@@ -71,7 +70,7 @@
         const message = event.data;
         switch (message.type) {
             case "populateCodeSnippet":
-            if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR)===2) quillReplyViewer.insertCodeSnippet(message.value);
+            if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === ActiveTextEditor.ReplyViewerTextEditor) quillReplyViewer.insertCodeSnippet(message.value);
                 break;
             case "getRepliesByThreadId":
                 replies = message.value;
