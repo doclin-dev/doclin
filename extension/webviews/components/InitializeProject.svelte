@@ -22,7 +22,6 @@
     const setCurrentProject = (project: Project) => {
         tsvscode.postMessage({ type: 'setCurrentProject', value: project.id });
         addCurrentProjectToState(project)
-        switchPageToThreadsViewer();
     }
 
     const createNewProject = async () => {
@@ -42,6 +41,9 @@
                 break;
             case "getExistingProjects":
                 existingProjects = message.value;
+                break;
+            case "setCurrentProject":
+                switchPageToThreadsViewer();
                 break;
         }
     }

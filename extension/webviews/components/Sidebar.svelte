@@ -55,8 +55,6 @@
         }
 
         WebviewStateManager.setState(WebviewStateManager.type.CURRENT_PROJECT, project);
-
-        
         loading = false;
     }
 

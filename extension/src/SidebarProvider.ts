@@ -103,7 +103,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           });
           break;
         case "setCurrentProject":
-          storeProjectId(message.value);
+          webviewView.webview.postMessage({
+            type: "setCurrentProject",
+            value: await storeProjectId(message.value)
+          });
           break;
         case "postReply":
           webviewView.webview.postMessage({
@@ -148,7 +151,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           });
           break;
         case "setCurrentOrganization":
-          storeOrganizationId(message.value);
+          webviewView.webview.postMessage({
+            type: "setCurrentOrganization",
+            value: await storeOrganizationId(message.value)
+          });
           break;
       }
     });

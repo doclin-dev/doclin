@@ -21,7 +21,6 @@
     const setCurrentOrganization = (organization: Organization) => {
         tsvscode.postMessage({ type: 'setCurrentOrganization', value: organization?.id });
         addCurrentOrganizationToState(organization);
-        switchPageToProject();
     }
 
     const createNewOrganization = async () => {
@@ -41,6 +40,9 @@
                 break;
             case "getExistingOrganizations":
                 existingOrganizations = message.value;
+                break;
+            case "setCurrentOrganization":
+                switchPageToProject();
                 break;
         }
     }
