@@ -101,20 +101,8 @@
         <ThreadsViewer {user} bind:page={page} />
     {:else if page === Page.ReplyViewer}
         <ReplyViewer username={user.name} bind:page={page}/>
-    {:else if page === Page.Contact}
-        <div>Contact me here:</div>
-        <button
-            on:click={() => {
-                page = Page.ThreadsViewer;
-            }}>go back</button>
     {/if}
-    <button
-        on:click={() => {
-            page = Page.Contact;
-        }}>Feedback</button>
-    <button
-        on:click={logout}>Logout</button>
+    <button on:click={logout}>Logout</button>
 {:else}
-    <button
-        on:click={authenticate}>Login with GitHub</button>
+    <button on:click={authenticate}>Login with GitHub</button>
 {/if}
