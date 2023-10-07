@@ -53,18 +53,6 @@
         }
     }
 
-    function chooseAnotherProject() {
-        WebviewStateManager.setState(WebviewStateManager.type.CURRENT_PROJECT, null);
-        page = Page.InitializeProject;
-        WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
-    }
-
-    const chooseAnotherOrganization = () => {
-        WebviewStateManager.setState(WebviewStateManager.type.CURRENT_ORGANIZATION, null);
-        page = Page.InitializeOrganization;
-        WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
-    }
-
     const messageEventListener = async (event: any) => {
         const message = event.data;
         switch (message.type) {
@@ -116,6 +104,3 @@
         <Thread thread={thread} bind:page={page} reloadThreads={loadThreads}/>
     {/each}
 </div>
-
-<button on:click={() => {chooseAnotherProject()}}>Project: {currentProject?.name}</button>
-<button on:click={() => {chooseAnotherOrganization()}}>Organization: {currentOrganization?.name}</button>
