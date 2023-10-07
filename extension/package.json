@@ -95,6 +95,7 @@
     "concurrently": "^5.3.0",
     "eslint": "^7.15.0",
     "glob": "^7.1.6",
+    "highlight.js": "^11.8.0",
     "mocha": "^10.2.0",
     "rollup": "^2.3.4",
     "rollup-plugin-svelte": "^6.0.0",

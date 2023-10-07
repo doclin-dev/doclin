@@ -3,6 +3,13 @@ import * as path from "path";
 import threadApi from "../api/threadApi";
 import { executeShellCommand } from "./providerHelperUtils";
 
+let lastActiveFilePath: string | null = null;
+
+vscode.window.onDidChangeActiveTextEditor((editor) => {
+  if (editor && editor.document.uri.scheme === 'file') {
+    lastActiveFilePath = editor.document.uri.fsPath;
+  }
+});
 
 export const getThreadsByActiveFilePath = async ({ currentProjectId }: { currentProjectId: number }): Promise<any> => {
   const activeFilePath: string = await getActiveEditorFilePath();
@@ -11,47 +18,53 @@ export const getThreadsByActiveFilePath = async ({ currentProjectId }: { current
   const threads = payload?.threads;
 
   return threads;
-}
+};
 
 export const postThread = async({ threadMessage, projectId }: {threadMessage: string, projectId: number}): Promise<any> => {
   const response = await threadApi.postThread(threadMessage, projectId, await getActiveEditorFilePath());
   const thread = response?.data?.thread;
 
   return thread;
-}
+};
 
 export const updateThread = async({threadMessage, threadId}: {threadMessage: string, threadId: number}): Promise<any> => {
   const response = await threadApi.updateThread(threadId, threadMessage, await getActiveEditorFilePath());
   const thread = response?.data?.thread;
 
   return thread;
-}
+};
 
 export const deleteThread = async({ threadId }: { threadId: number }) => {
   const response = await threadApi.deleteThread(threadId);
   const thread = response?.data?.thread;
 
   return thread;
-}
-
-export const selectAThread = async (threadId: number): Promise<any> => {
-  
-}
+};
 
 const getActiveEditorFilePath = async () : Promise<string> => {
+  let activeFilePath: string | null;
   const { activeTextEditor } = vscode.window;
 
   if (!activeTextEditor) {
     return "";
   }
 
-  const activeFilePath: string = activeTextEditor.document.uri.fsPath;
+  if (activeTextEditor.document.uri.scheme === 'file'){
+    activeFilePath = activeTextEditor.document.uri.fsPath;
+  } else {
+    activeFilePath = lastActiveFilePath;
+  }
+
+  if (!activeFilePath){
+    return "";
+  }
+
   const activeDirectory: string = path.dirname(activeFilePath);
   const activeFileName = path.basename(activeFilePath);
 
   let { stdout }: {stdout: string} = await executeShellCommand(`cd ${activeDirectory} && git rev-parse --show-prefix ${activeFileName}`);
   return stdout.split('\n')[0] + activeFileName;
-}
+};
 
 export const addCodeSnippet = async (sidebarProvider: any) => {
   const { activeTextEditor } = vscode.window;
@@ -92,7 +105,7 @@ export const addCodeSnippet = async (sidebarProvider: any) => {
   // Need to check when the sidebar is loaded and then add the textSelection to sidebar
 
   sidebarProvider._view?.webview.postMessage({
-    type: "populateThreadMessage",
+    type: "populateCodeSnippet",
     value: {filePath, threadMessage},
   });
 }

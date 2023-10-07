@@ -1,58 +1,51 @@
 <script lang="ts">
     import OverlayCard from './OverlayCard.svelte';
     import Button from './Button.svelte'
-    import Quill from 'quill';
     import { tick, onMount, onDestroy } from 'svelte';
-    import { editedThreadId } from './store.js';
-    import { Page } from '../enums'; 
+    import { editedReplyId, editedThreadId } from './store.js';
+    import { ActiveTextEditor, Page } from '../enums'; 
     import { WebviewStateManager } from '../WebviewStateManager';
+    import { TextEditor } from './TextEditor';
 
     export let thread: any;
     export let page: Page;
     export let reloadThreads: () => void = () => {};
 
     let quillThreadEditor: any;
-    let threadEditMode: boolean = false;
         
     const handleEditButtonClick = async () => {
-        if($editedThreadId == null) {
-            threadEditMode = true;
+        if ($editedThreadId === null && $editedReplyId === null) {
             editedThreadId.set(thread.id);
             await tick();
-            quillThreadEditor = new Quill('#thread-editor', {
-                modules: {
-                    toolbar: [
-                        ['bold', 'italic', 'underline', 'strike'],
-                        ['link', 'blockquote', 'code-block', 'image'],
-                        [{ list: 'ordered' }, { list: 'bullet' }],
-                        [{ color: [] }, { background: [] }]
-                    ]
-                },
-                theme: 'snow'
-            });
-
-            quillThreadEditor.theme.modules.toolbar.container.style.background = '#f1f1f1';
-            quillThreadEditor.theme.modules.toolbar.container.style.border = 'none';
+            quillThreadEditor = new TextEditor('#thread-editor');
+            WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ThreadTextEditor);
+            quillThreadEditor.setActiveEditor(ActiveTextEditor.ThreadTextEditor);
         }
     }
 
     const handleOnSubmit = async () => {
-        threadEditMode= false;
         await tick();
-        const threadMessage = quillThreadEditor.root.innerHTML;
+        const threadMessage = quillThreadEditor.getText();
 
         tsvscode.postMessage({ type: "updateThread", value: { threadId: thread.id, threadMessage: threadMessage }});
 
-        quillThreadEditor.theme.modules.toolbar.container.style.display = 'none';
+        quillThreadEditor.removeToolbarTheme();
         quillThreadEditor = null;
         editedThreadId.set(null);
     }
 
     const onCancel = () => {
-        threadEditMode = false;
-        quillThreadEditor.theme.modules.toolbar.container.style.display = 'none';
+        quillThreadEditor.removeToolbarTheme();
         quillThreadEditor = null;
         editedThreadId.set(null);
+        if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === null){
+            if (WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ThreadsViewer){
+                WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ThreadsViewerTextEditor);
+            }
+            else if (WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ReplyViewer){
+                WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ReplyViewerTextEditor);
+            }
+        }
     }
 
     const handleDeleteButtonClick = async () => {
@@ -64,6 +57,9 @@
     }
 
     const handleReplyButtonClick = () => {
+        if ($editedThreadId !== null){
+            return "Cancel or submit the edit first!";
+        }
         page = Page.ReplyViewer;
         WebviewStateManager.setState(WebviewStateManager.type.THREAD_SELECTED, thread);
         WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
@@ -72,6 +68,11 @@
     const messageEventListener = async(event: any) => {
         const message = event.data;
         switch(message.type) {
+            case "populateCodeSnippet":
+                if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === ActiveTextEditor.ThreadTextEditor && $editedThreadId === thread.id) {
+                    quillThreadEditor.insertCodeSnippet(message.value);
+                };
+                break;
             case "deleteThread":
                 page = Page.ThreadsViewer;
                 WebviewStateManager.setState(WebviewStateManager.type.PAGE, Page.ThreadsViewer);
@@ -101,12 +102,12 @@
             <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
         </div>
     </div>
-    {#if threadEditMode}
-    <div id="thread-editor">{@html thread?.message}</div> 
-    <div class='thread-editor-footer'>
-        <Button variant='secondary' onClick={onCancel} title="Cancel"/>
-        <Button variant='secondary' onClick={handleOnSubmit} title="Submit"/>
-    </div>
+    {#if $editedThreadId === thread?.id}
+        <div id="thread-editor">{@html thread?.message}</div> 
+        <div class='thread-editor-footer'>
+            <Button variant='secondary' onClick={onCancel} title="Cancel"/>
+            <Button variant='secondary' onClick={handleOnSubmit} title="Submit"/>
+        </div>
     {:else}
     <div>{@html thread?.message}</div>
     {/if}

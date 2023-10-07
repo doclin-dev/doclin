@@ -13,7 +13,7 @@
     const setCurrentProject = (currentProject: Project) => {
         WebviewStateManager.setState(WebviewStateManager.type.CURRENT_PROJECT, currentProject);
         page = Page.ThreadsViewer;
-        WebviewStateManager.setState(WebviewStateManager.type.PAGE, Page.ThreadsViewer);
+        WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
     }
 
     const createNewProject = async () => {

@@ -4,6 +4,7 @@ enum StateType {
   PAGE = "page",
   THREAD_SELECTED = "threadSelected",
   REPLY_MESSAGE = "replyMessage",
+  ACTIVE_TEXT_EDITOR = "activeTextEditor",
 }
 
 export class WebviewStateManager {
