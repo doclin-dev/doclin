@@ -13,7 +13,7 @@
 
     const switchPageToThreadsViewer = () => {
         page = Page.ThreadsViewer;
-        WebviewStateManager.setState(WebviewStateManager.type.PAGE, Page.ThreadsViewer);
+        WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
     }
 
     const addCurrentProjectToState = (project: Project) => {

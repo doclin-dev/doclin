@@ -6,5 +6,12 @@ export enum Page {
   InitializeOrganization = "initializeOrganization",
   Login = "login",
   NotGitRepo = "notGitRepo",
-  AccessRequired = "accessRequired"
+  AccessRequired = "accessRequired",
+}
+
+export enum ActiveTextEditor {
+  ThreadsViewerTextEditor = 1,
+  ReplyViewerTextEditor = 2,
+  ThreadTextEditor = 3,
+  ReplyTextEditor = 4,
 }
