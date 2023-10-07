@@ -2,6 +2,8 @@ import * as vscode from "vscode";
 import * as path from "path";
 import threadApi from "../api/threadApi";
 import { executeShellCommand } from "./providerHelperUtils";
+import { getCurrentOrganizationId } from "./organizationProviderHelper";
+import { getCurrentProjectId } from "./projectProviderHelper";
 
 let lastActiveFilePath: string | null = null;
 
@@ -11,31 +13,54 @@ vscode.window.onDidChangeActiveTextEditor((editor) => {
   }
 });
 
-export const getThreadsByActiveFilePath = async ({ currentProjectId }: { currentProjectId: number }): Promise<any> => {
-  const activeFilePath: string = await getActiveEditorFilePath();
-  const response = await threadApi.getThreads(currentProjectId, activeFilePath);
+export const getThreadsByActiveFilePath = async (): Promise<any> => {
+  const activeFilePath = await getActiveEditorFilePath();
+  const organizationId = await getCurrentOrganizationId();
+  const projectId = await getCurrentProjectId();
+
+  if (!organizationId || !projectId || !activeFilePath) return;
+
+  const response = await threadApi.getThreads(organizationId, projectId, activeFilePath);
   const payload = response?.data;
   const threads = payload?.threads;
 
   return threads;
 };
 
-export const postThread = async({ threadMessage, projectId }: {threadMessage: string, projectId: number}): Promise<any> => {
-  const response = await threadApi.postThread(threadMessage, projectId, await getActiveEditorFilePath());
+export const postThread = async({ threadMessage }: { threadMessage: string }): Promise<any> => {
+  const organizationId = await getCurrentOrganizationId();
+  const projectId = await getCurrentProjectId();
+  const activeFilePath = await getActiveEditorFilePath();
+
+  if (!organizationId || !projectId || !activeFilePath) return;
+
+  const response = await threadApi.postThread(organizationId, projectId, threadMessage, activeFilePath);
   const thread = response?.data?.thread;
 
   return thread;
 };
 
 export const updateThread = async({threadMessage, threadId}: {threadMessage: string, threadId: number}): Promise<any> => {
-  const response = await threadApi.updateThread(threadId, threadMessage, await getActiveEditorFilePath());
+  const organizationId = await getCurrentOrganizationId();
+  const projectId = await getCurrentProjectId();
+  const activeFilePath = await getActiveEditorFilePath();
+
+  if (!organizationId || !projectId || !activeFilePath) return;
+
+  const response = await threadApi.updateThread(organizationId, projectId, threadId, threadMessage, activeFilePath);
   const thread = response?.data?.thread;
 
   return thread;
 };
 
 export const deleteThread = async({ threadId }: { threadId: number }) => {
-  const response = await threadApi.deleteThread(threadId);
+  const organizationId = await getCurrentOrganizationId();
+  const projectId = await getCurrentProjectId();
+  const activeFilePath = await getActiveEditorFilePath();
+
+  if (!organizationId || !projectId || !activeFilePath) return;
+  
+  const response = await threadApi.deleteThread(organizationId, projectId, threadId);
   const thread = response?.data?.thread;
 
   return thread;

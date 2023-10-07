@@ -1,7 +1,14 @@
 import replyApi from "../api/replyApi";
+import { getCurrentOrganizationId } from "./organizationProviderHelper";
+import { getCurrentProjectId } from "./projectProviderHelper";
 
 export const getRepliesByThreadId = async ({ threadId }: { threadId: number }): Promise<any> => {
-  const response = await replyApi.getReplies(threadId);
+  const organizationId = await getCurrentOrganizationId();
+  const projectId = await getCurrentProjectId();
+
+  if (!organizationId || !projectId) return null;
+
+  const response = await replyApi.getReplies(organizationId, projectId, threadId);
   const payload = response?.data;
   const replies = payload?.replies;
 
@@ -9,21 +16,36 @@ export const getRepliesByThreadId = async ({ threadId }: { threadId: number }): 
 }
 
 export const postReply = async ({ replyMessage, threadId }: {replyMessage: string, threadId: number}): Promise<any> => {
-  const response = await replyApi.postReply(replyMessage, threadId);
+  const organizationId = await getCurrentOrganizationId();
+  const projectId = await getCurrentProjectId();
+
+  if (!organizationId || !projectId) return null;
+
+  const response = await replyApi.postReply(organizationId, projectId, replyMessage, threadId);
   const reply = response?.data?.reply;
 
   return reply;
 }
 
 export const updateReply = async ({ replyMessage, replyId }: { replyMessage: string, replyId: number }): Promise<any> => {
-  const response = await replyApi.updateReply(replyId, replyMessage);
+  const organizationId = await getCurrentOrganizationId();
+  const projectId = await getCurrentProjectId();
+
+  if (!organizationId || !projectId) return null;
+
+  const response = await replyApi.updateReply(organizationId, projectId, replyId, replyMessage);
   const reply = response?.data?.reply;
 
   return reply;
 }
 
 export const deleteReply = async ({ replyId }: { replyId: number }) => {
-  const response = await replyApi.deleteReply(replyId);
+  const organizationId = await getCurrentOrganizationId();
+  const projectId = await getCurrentProjectId();
+
+  if (!organizationId || !projectId) return null;
+
+  const response = await replyApi.deleteReply(organizationId, projectId, replyId);
   const reply = response?.data?.reply;
 
   return reply;

@@ -1,42 +1,41 @@
-import { User } from "../database/entities/User";
 import jwt from "jsonwebtoken";
+import { Request, Response } from "express";
+import { UserRepository } from "../database/repositories/UserRepository";
 
-export const getCurrentUser = async (req: any, res: any) => {
-    const authHeader = req.headers.authorization;
-    let user = null;
+export const getCurrentUser = async (req: Request, res: Response) => {
+	const authHeader = req.headers.authorization;
+	const userId = getUserIdFromAuthHeader(authHeader);
 
-    if (!authHeader) {
-        res.send({ user });
+    if (userId == null) {
+        res.send({ user: null});
         return;
     }
-
-    const token = authHeader.split(" ")[1];
-    if (!token) {
-        res.send({ user });
-        return;
-    }
-
-    let userId;
-
-    try {
-        const payload: any = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-        userId = payload.userId;
-    } catch (err) {
-        res.send({ user });
-        return;
-    }
-
-    if (!userId) {
-        res.send({ user });
-        return;
-    }
-
-    try {
-        user = await User.findOneBy({ id: userId });
-    } catch(err) {
-        res.send({ user });
-        return;
-    }
+    
+    const user = await UserRepository.findUserById(userId);
 
     res.send({ user });
+}
+
+export const getUserIdFromAuthHeader = (authHeader: string | undefined) => {
+	if (!authHeader) {
+		return null;
+	}
+
+	const token = authHeader.split(" ")[1];
+
+	if (!token) {
+		return null;
+	}
+
+	try {
+		const payload: any = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+    	if (!payload.userId) {
+      		return null;
+    	}
+
+		return payload.userId;
+	} catch {
+		return null;
+	}
 }

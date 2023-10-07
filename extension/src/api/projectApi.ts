@@ -1,32 +1,42 @@
-import { GlobalStateManager } from "../GlobalStateManager";
 import { createAxiosInstance } from "./apiService";
 
-const baseProjectUrl = `/projects`;
+const getBaseProjectUrl = (organizationId: string) => {
+    return `/organizations/${organizationId}/projects`;
+}
 
-const getProjects = async (githubUrl: string) => {
-    const params = {
-        githubUrl: githubUrl
-    };
+const getProjects = async (organizationId: string) => {
+    const apiService = createAxiosInstance();
+    const baseProjectUrl = getBaseProjectUrl(organizationId);
 
-    const apiService = createAxiosInstance(GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN));
-    const response = await apiService.get(baseProjectUrl + "/existing", { params });
+    const response = await apiService.get(baseProjectUrl);
 
     return response;
 }
 
-const postProject = async(name: string, githubUrl: string) => {
+const postProject = async(organizationId: string, name: string, githubUrl: string) => {
     const data = {
         name: name,
         url: githubUrl
     };
 
-    const apiService = createAxiosInstance(GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN));
+    const apiService = createAxiosInstance();
+    const baseProjectUrl = getBaseProjectUrl(organizationId);
     const response = await apiService.post(baseProjectUrl, data);
+
+    return response;
+}
+
+const getProject = async (projectId: number, organizationId: string) => {
+    const apiService = createAxiosInstance();
+    const baseProjectUrl = getBaseProjectUrl(organizationId);
+
+    const response = await apiService.get(`${baseProjectUrl}/${projectId}`);
 
     return response;
 }
 
 export default {
     getProjects,
-    postProject
+    postProject,
+    getProject
 }

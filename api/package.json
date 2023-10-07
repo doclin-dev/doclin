@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "watch": "tsc -w",
-    "dev": "nodemon dist/index.js"
+    "dev": "nodemon dist/index.js",
+    "clean": "rm -rf node_modules && rm -rf dist && npm install"
   },
   "keywords": [],
   "author": "",

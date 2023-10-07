@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte";
-    import type { Project, User, Thread as ThreadType } from "../types";
+    import type { Project, User, Thread as ThreadType, Organization } from "../types";
     import Thread from './Thread.svelte';
     import ViewerTopBar from "./ViewerTopBar.svelte";
     import { TextEditor } from "./TextEditor";
@@ -13,6 +13,7 @@
     let quillEditor: any;
     let threads: Array<ThreadType> = [];
     let currentProject: Project | null; 
+    let currentOrganization: Organization | null;
 
     async function submitThreadMessage() {
         const threadMessage = quillEditor.getText();
@@ -52,11 +53,6 @@
         }
     }
 
-    function chooseAnotherProject() {
-        WebviewStateManager.setState(WebviewStateManager.type.CURRENT_PROJECT, null);
-        page = Page.InitializeProject;
-    }
-
     const messageEventListener = async (event: any) => {
         const message = event.data;
         switch (message.type) {
@@ -77,6 +73,7 @@
 
     onMount(async () => {
         currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
+        currentOrganization = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_ORGANIZATION);
 
         if (currentProject === null) {
             page = Page.InitializeProject;
@@ -107,5 +104,3 @@
         <Thread thread={thread} bind:page={page} reloadThreads={loadThreads}/>
     {/each}
 </div>
-
-<button on:click={() => {chooseAnotherProject()}}>Project: {currentProject?.name}</button>

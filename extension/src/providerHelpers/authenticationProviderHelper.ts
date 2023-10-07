@@ -3,6 +3,8 @@ import { apiBaseUrl } from "../constants";
 import * as polka from "polka";
 import { GlobalStateManager } from "../GlobalStateManager";
 import authApi from "../api/authApi";
+import { getCurrentOrganization } from "./organizationProviderHelper";
+import { getCurrentProject, getGithubUrl } from "./projectProviderHelper";
 
 export const authenticate = (fn?: () => void) => {
   const app = polka();

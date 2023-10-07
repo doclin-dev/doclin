@@ -1,9 +1,11 @@
 enum StateType {
+  CURRENT_ORGANIZATION = "currentOrganization",
   CURRENT_PROJECT = "currentProject",
-  THREAD_MESSAGE = "threadMessage",
   PAGE = "page",
-  THREAD_SELECTED = "threadSelected",
   REPLY_MESSAGE = "replyMessage",
+  THREAD_MESSAGE = "threadMessage",
+  THREAD_SELECTED = "threadSelected",
+  GITHUB_URL = "githubUrl",
   ACTIVE_TEXT_EDITOR = "activeTextEditor",
 }
 
@@ -15,6 +17,6 @@ export class WebviewStateManager {
   }
 
   static getState(key: StateType): any {
-    return tsvscode.getState()[key];
+    return tsvscode.getState() ? tsvscode.getState()[key] : null;
   }
 }

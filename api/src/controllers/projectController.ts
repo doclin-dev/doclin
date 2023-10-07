@@ -1,28 +1,55 @@
+import { ProjectRepository } from "../database/repositories/ProjectRepository";
 import { Project } from "../database/entities/Project";
-import { ILike } from 'typeorm';
+import { OrganizationRepository } from "../database/repositories/OrganizationRepository";
+import { Request, Response } from "express";
 
-export const getExistingProjects = async (req: any, res: any) => {
-    const githubUrl: string = req.query.githubUrl;
+export const getProjects = async (req: any, res: any) => {
+    const organizationId: string = req.params.organizationId;
 
-    let projects = await Project.find({
-        where: {
-            userId: req.userId,
-            url: ILike(`%${githubUrl}%`)
-        }
-    });
+    const projects = await ProjectRepository.findProjectsByOrganizationId(organizationId);
 
-    return res.send({projects});
+    const responseProjects = projects.map(project => ({
+        id: project.id,
+        name: project.name,
+        url: project.url
+    }));
+
+    return res.send({ projects: responseProjects });
 }
 
 export const postProject = async (req:any, res:any) => {
+    const name = req.body.name;
+    const url = req.body.url;
+    const organizationId = req.params.organizationId;
+
+    const organization = await OrganizationRepository.findOrganizationById(organizationId);
+
+    if (!organization) return;
+
     const project = await Project.create({
-        name: req.body.name,
-        url: req.body.url,
-        userId: req.userId,
+        name: name,
+        url: url,
+        organizationId: organizationId
     }).save();
 
-    req.session.currentProjectId = project.id;
-    req.session.save();
+    return res.send({ project });
+}
 
-    return res.send({project});
+export const getProject = async (req: Request, res: Response) => {
+    const projectId: number = parseInt(req.params.projectId);
+
+    const project = await ProjectRepository.findProjectById(projectId);
+
+    if (!project) {
+        res.send({ project: null });
+        return;
+    }
+
+    const responseProject = {
+        id: project.id,
+        name: project.name,
+        url: project.url
+    };
+
+    res.send({ project: responseProject });
 }

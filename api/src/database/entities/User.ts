@@ -6,7 +6,6 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn
 } from "typeorm";
-import { Project } from "./Project";
 import { Thread } from "./Thread";
 import { Reply } from "./Reply";
 
@@ -24,12 +23,9 @@ export class User extends BaseEntity {
   @Column("text", { unique: true })
   githubId: string;
 
-  @OneToMany(() => Project, (p) => p.creator)
-  projects: Promise<Project[]>;
-
   @OneToMany(() => Thread, (thread) => thread.user)
-  threads: Promise<Thread[]>;
+  threads: Thread[];
 
   @OneToMany(() => Reply, (t) => t.user)
-  replies: Promise<Reply[]>;
+  replies: Reply[];
 }

@@ -1,12 +1,14 @@
 import * as vscode from "vscode";
-import { authenticate, getAuthenticatedUser } from "./providerHelpers/authenticationProviderHelper";
+import { authenticate } from "./providerHelpers/authenticationProviderHelper";
 import { apiBaseUrl } from "./constants";
 import { getNonce } from "./providerHelpers/getNonce";
 import { GlobalStateManager } from "./GlobalStateManager";
 import { postThread, deleteThread, getThreadsByActiveFilePath, updateThread } from "./providerHelpers/threadProviderHelper";
-import { getGithubUrl } from "./providerHelpers/projectProviderHelper";
+import { getGithubUrl, storeProjectId } from "./providerHelpers/projectProviderHelper";
 import { getExistingProjects, postProject } from "./providerHelpers/projectProviderHelper";
 import { deleteReply, getRepliesByThreadId, postReply, updateReply } from "./providerHelpers/replyProviderHelper";
+import { postOrganization, getExistingOrganizations, storeOrganizationId } from "./providerHelpers/organizationProviderHelper";
+import { getExtensionState } from "./utils/sidebarProviderUtil";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -30,17 +32,17 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           GlobalStateManager.setState(GlobalStateManager.type.AUTH_TOKEN, "");
           break;
         case "authenticate":
-          authenticate(() => {
+          authenticate(async () => {
             webviewView.webview.postMessage({
-              type: "getAuthenticatedUser",
-              value: GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN),
+              type: "getExtensionState",
+              value: await getExtensionState(),
             });
           });
           break;
-        case "getAuthenticatedUser":
+        case "getExtensionState":
           webviewView.webview.postMessage({
-            type: "getAuthenticatedUser",
-            value: await getAuthenticatedUser(),
+            type: "getExtensionState",
+            value: await getExtensionState(),
           });
           break;
         case "onInfo":
@@ -64,7 +66,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         case "getThreadsByActiveFilePath":
           webviewView.webview.postMessage({
             type: "getThreadsByActiveFilePath",
-            value: await getThreadsByActiveFilePath(message.value)
+            value: await getThreadsByActiveFilePath()
           });
           break;
         case "selectAThread":
@@ -99,6 +101,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             value: await postProject(message.value)
           });
           break;
+        case "setCurrentProject":
+          webviewView.webview.postMessage({
+            type: "setCurrentProject",
+            value: await storeProjectId(message.value)
+          });
+          break;
         case "postReply":
           webviewView.webview.postMessage({
             type: "postReply",
@@ -127,6 +135,24 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					webviewView.webview.postMessage({
             type: "deleteReply",
             value: await deleteReply(message.value)
+          });
+          break;
+        case "postOrganization":
+          webviewView.webview.postMessage({
+            type: "postOrganization",
+            value: await postOrganization(message.value)
+          });
+          break;
+        case "getExistingOrganizations":
+          webviewView.webview.postMessage({
+            type: "getExistingOrganizations",
+            value: await getExistingOrganizations()
+          });
+          break;
+        case "setCurrentOrganization":
+          webviewView.webview.postMessage({
+            type: "setCurrentOrganization",
+            value: await storeOrganizationId(message.value)
           });
           break;
       }
