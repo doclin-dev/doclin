@@ -2,6 +2,8 @@ import { Reply } from "../database/entities/Reply";
 import { ReplyRepository } from "../database/repositories/ReplyRepository";
 import { ThreadRepository } from "../database/repositories/ThreadRepository";
 
+const ANONYMOUS_USER = "Anonymous User"
+
 export const postReply = async (req: any, res: any) => {
     const threadId = req.params.threadId;
     const replyMessage = req.body.replyMessage;
@@ -21,14 +23,13 @@ export const postReply = async (req: any, res: any) => {
     }).save();
 
     const responseReply = await ReplyRepository.findReplyById(reply.id);
+    const username = responseReply?.anonymous ? ANONYMOUS_USER : responseReply?.user?.name;
     
     const response = {
         id: responseReply?.id,
         threadId: responseReply?.threadId,
         message: responseReply?.message,
-        userId: responseReply?.user?.id,
-        username: responseReply?.user?.name,
-        anonymous: responseReply?.anonymous
+        username: username
     }
  
     res.send({ reply: response });
@@ -42,7 +43,7 @@ export const getReplies = async (req: any, res: any) => {
     const response = replies.map((reply) => ({
         id: reply.id,
         message: reply.message,
-        username: reply.user?.name,
+        username: reply.anonymous ? ANONYMOUS_USER : reply.user?.name,
         threadId: reply.threadId
     }));
 
@@ -62,13 +63,13 @@ export const updateReplyMessage = async (req: any, res: any) => {
 
     reply.message = replyMessage;
     await reply.save();
+    const username = reply?.anonymous ? ANONYMOUS_USER : reply?.user?.name;
     
     const response = {
         id: reply?.id,
         threadId: reply?.threadId,
         message: reply?.message,
-        userId: reply?.user?.id,
-        username: reply?.user?.name
+        username: username
     }
 
     res.send({ reply: response });

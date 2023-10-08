@@ -14,7 +14,7 @@
     let threads: Array<ThreadType> = [];
     let currentProject: Project | null; 
     let currentOrganization: Organization | null;
-    let checked: boolean = false;
+    let anonymousCheck: boolean = false;
 
     async function submitThreadMessage() {
         const threadMessage = quillEditor.getText();
@@ -26,7 +26,7 @@
                 value: {
                     threadMessage: threadMessage,
                     projectId: currentProject?.id,
-                    anonymous: checked ? "yes" : null
+                    anonymous: anonymousCheck ? "yes" : null
                 }
             });
         }
@@ -99,7 +99,7 @@
     on:submit|preventDefault={submitThreadMessage}>
     <div id="textEditor"></div>
     <label class="checkbox">
-        <input type="checkbox" bind:checked={checked}>
+        <input type="checkbox" bind:checked={anonymousCheck}>
         Post as an anonymous user
     </label>
     <button on:click|preventDefault={submitThreadMessage}>Submit</button>

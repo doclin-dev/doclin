@@ -16,7 +16,7 @@
 
     let quillReplyViewer: any;
     let replies : Array<{message: string, id: number}> = [];
-    let checked: boolean = false;
+    let anonymousCheck: boolean = false;
 
     async function initializeQuillEditor() {
         quillReplyViewer = new TextEditor('#replyViewerEditor')
@@ -35,7 +35,7 @@
     async function postReplyMessage(message: string) {
         tsvscode.postMessage({
             type: "postReply",
-            value: { threadId: thread.id, replyMessage: message, anonymous: checked ? "yes" : null }
+            value: { threadId: thread.id, replyMessage: message, anonymous: anonymousCheck ? "yes" : null }
         });
     }
 
@@ -117,7 +117,7 @@
     <form>
         <div id="replyViewerEditor"></div>
         <label class="checkbox">
-            <input type="checkbox" bind:checked={checked}>
+            <input type="checkbox" bind:checked={anonymousCheck}>
             Post as an anonymous user
         </label>
         <button on:click|preventDefault={onSubmit}>Submit</button>
