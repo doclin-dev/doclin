@@ -15,13 +15,13 @@ export const getRepliesByThreadId = async ({ threadId }: { threadId: number }): 
   return replies;
 }
 
-export const postReply = async ({ replyMessage, threadId }: {replyMessage: string, threadId: number}): Promise<any> => {
+export const postReply = async ({ replyMessage, threadId, anonymous }: {replyMessage: string, threadId: number, anonymous: string}): Promise<any> => {
   const organizationId = await getCurrentOrganizationId();
   const projectId = await getCurrentProjectId();
 
   if (!organizationId || !projectId) return null;
 
-  const response = await replyApi.postReply(organizationId, projectId, replyMessage, threadId);
+  const response = await replyApi.postReply(organizationId, projectId, replyMessage, threadId, anonymous);
   const reply = response?.data?.reply;
 
   return reply;

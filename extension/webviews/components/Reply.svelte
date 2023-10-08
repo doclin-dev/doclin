@@ -12,6 +12,7 @@
 
     let quillReplyCardEditor: any;
     let replyCardMessage: string;
+    let anonymousUser: string = "Anonymous User";
 
     async function updateReplyMessage(message: string) {
         tsvscode.postMessage({
@@ -73,6 +74,8 @@
         }
     }
 
+    console.log(reply.anonymous);
+
     onMount(() => {
         window.addEventListener("message", messageEventListener);
     });
@@ -84,7 +87,7 @@
 
 <div class='reply-card'>
     <div class="reply-card-header">
-        <div> {reply.username}</div>
+        <div> {reply.anonymous ? anonymousUser : reply.username}</div>
         <div class='button-container'>
             <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
         </div>

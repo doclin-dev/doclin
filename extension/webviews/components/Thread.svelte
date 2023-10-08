@@ -12,6 +12,7 @@
     export let reloadThreads: () => void = () => {};
 
     let quillThreadEditor: any;
+    let anonymousUser: string = "Anonymous User";
         
     const handleEditButtonClick = async () => {
         if ($editedThreadId === null && $editedReplyId === null) {
@@ -96,7 +97,7 @@
 
 <div class='thread-card'>
     <div class="thread-header">
-        <div>{thread?.username}</div>
+        <div>{thread?.anonymous ? anonymousUser : thread?.username}</div>
         <div class='button-container'>
             <Button icon='reply' onClick={handleReplyButtonClick} type='text'/>
             <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>

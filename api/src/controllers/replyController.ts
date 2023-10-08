@@ -6,6 +6,7 @@ export const postReply = async (req: any, res: any) => {
     const threadId = req.params.threadId;
     const replyMessage = req.body.replyMessage;
     const thread = await ThreadRepository.findThreadById(threadId);
+    const anonymous = req.body.anonymous;
 
     if(!thread) {
         res.send({ reply: null });
@@ -16,6 +17,7 @@ export const postReply = async (req: any, res: any) => {
         threadId: threadId,
         message: replyMessage,
         userId: req.userId,
+        anonymous: anonymous
     }).save();
 
     const responseReply = await ReplyRepository.findReplyById(reply.id);
@@ -25,7 +27,8 @@ export const postReply = async (req: any, res: any) => {
         threadId: responseReply?.threadId,
         message: responseReply?.message,
         userId: responseReply?.user?.id,
-        username: responseReply?.user?.name
+        username: responseReply?.user?.name,
+        anonymous: responseReply?.anonymous
     }
  
     res.send({ reply: response });

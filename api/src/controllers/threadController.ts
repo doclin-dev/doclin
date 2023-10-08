@@ -8,6 +8,7 @@ export const postThread = async (req: any, res: any) => {
     const userId: number = req.userId;
     const projectId: number = req.body.projectId;
     const activeEditorFilePath: string = req.body.activeEditorFilePath;
+    const anonymousPost:string = req.body.anonymous;
     
     const { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage, activeEditorFilePath);
 
@@ -15,19 +16,21 @@ export const postThread = async (req: any, res: any) => {
         message: updatedThreadMessage,
         userId: userId,
         projectId: projectId,
-        snippets: snippetEntities
+        snippets: snippetEntities,
+        anonymous: anonymousPost
     }).save();
 
     let responseThread = await ThreadRepository.findThreadWithPropertiesByThreadId(thread.id);
 
     responseThread = fillUpThreadMessageWithSnippet(responseThread);
-
+    
     const response = {
         id: responseThread.id,
         message: responseThread.message,
         projectId: responseThread.projectId,
         userId: responseThread.user?.id,
-        username: responseThread.user?.name
+        username: responseThread.user?.name,
+        anonymous: responseThread.anonymous
     }
 
     res.send({ thread: response });
@@ -118,7 +121,8 @@ export const getThreads = async (req: any, res: any) => {
             id: thread.id,
             message: thread.message,
             userId: thread.user?.id,
-            username: thread.user?.name
+            username: thread.user?.name,
+            anonymous: thread.anonymous,
         })
     );
 
@@ -153,7 +157,8 @@ export const updateThread = async (req: any, res: any) => {
         message: responseThread.message,
         projectId: responseThread.projectId,
         userId: responseThread.user?.id,
-        username: responseThread.user?.name
+        username: responseThread.user?.name,
+        anonymous: responseThread.anonymous,
     }
 
     res.send({ thread: response });

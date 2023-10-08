@@ -17,9 +17,11 @@ const getReplies = async (organizationId: string, projectId: number, threadId: n
 const postReply = async (organizationId: string, 
                          projectId: number, 
                          replyMessage: string, 
-                         threadId: number) => {
+                         threadId: number,
+                         anonymous: string) => {
     const data = {
-        replyMessage: replyMessage
+        replyMessage: replyMessage,
+        anonymous: anonymous
     };
 
     const apiService = createAxiosInstance();
