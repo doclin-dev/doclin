@@ -91,7 +91,7 @@
     });
 </script>
 
-<ViewerTopBar username={user.name}/>
+<ViewerTopBar username={user?.name} bind:page={page}/>
 
 <form
     on:submit|preventDefault={submitThreadMessage}>

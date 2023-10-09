@@ -1,0 +1,17 @@
+pre.ql-syntax {
+    color: var(--vscode-foreground);
+    background-color: var(--vscode-editor-background);
+    color: var(--vscode-editor-foreground);
+    padding: 5px;
+    border-radius: 0.2em;
+}
+
+.ql-toolbar.ql-snow {
+    border-radius: 0.2em 0.2em 0 0;
+}
+
+.ql-snow .ql-editor pre.ql-syntax {
+    background-color: var(--vscode-editor-background);
+    color: var(--vscode-editor-foreground);
+    border-radius: 0.2em;
+}

@@ -45,15 +45,6 @@
         });
     }
 
-    const handleDeleteButtonClick = () => {
-        tsvscode.postMessage({
-            type: "deleteThread",
-            value: { threadId: thread.id }
-        });
-
-        handleBackClick();
-    }
-
     const handleBackClick = () => {
         WebviewStateManager.setState(WebviewStateManager.type.THREAD_SELECTED, null);
         page = Page.ThreadsViewer;
@@ -107,11 +98,12 @@
 
 <div class='reply-viewer'>
     <div class='topbar'>
-        <Button icon='back-icon' iconWidth={25} type='text' onClick={handleBackClick}/>
-        <OverlayCard isEditable={false} handleDelete={handleDeleteButtonClick}/>
+        <div class="button-container">
+            <Button icon='back-icon' type='text' onClick={handleBackClick}/> <span>Replies</span>
+        </div>
     </div>
     <div style="padding-bottom: 0.5rem">
-        <Thread thread={thread} bind:page={page}/>
+        <Thread thread={thread} bind:page={page} showReplyButton={false}/>
     </div>
     <form>
         <div id="replyViewerEditor"></div>

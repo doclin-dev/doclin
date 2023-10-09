@@ -1,17 +1,15 @@
-
-
 .button {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 0.2em;
     cursor: pointer;
 }
   
 .button:hover {
     cursor: pointer;
-    background-color: #726f6f; 
+    background-color: var(--vscode-button-secondaryHoverBackground);
+    color: var(--vscode-button-secondaryForeground);
 }
 
 .button.md {
@@ -34,10 +32,11 @@
 .button.submit {
     border: none;
     padding: 5px;
+    background-color: none;
 }
 
 .button.submit:hover{
-    background-color: rgb(7, 104, 239);
+    background-color: var(--vscode-button-secondaryHoverBackground);
     border-radius: 0;
     color: white;
 }
@@ -54,12 +53,17 @@
 }
 
 .button.secondary {
-    border: 1px solid #908f8f;
+    border: 1px solid var(--vscode-button-secondaryHoverBackground);
     border-radius: 5px;
 }
 
 .button.secondary:hover {
-    background-color: rgb(7, 104, 239);
-    color: white;
+    background-color: var(--vscode-button-secondaryHoverBackground); 
+    color: var(--vscode-button-secondaryHoverForeground);
     border-radius: 5px;
+}
+
+.icon {
+    padding: 0;
+    align-items: center;
 }
