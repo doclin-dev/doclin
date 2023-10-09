@@ -10,7 +10,7 @@ export const postThread = async (req: any, res: any) => {
     const userId: number = req.userId;
     const projectId: number = req.body.projectId;
     const activeEditorFilePath: string = req.body.activeEditorFilePath;
-    const anonymousPost:string = req.body.anonymous;
+    const anonymousPost: boolean = req.body.anonymous;
     
     const { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage, activeEditorFilePath);
 

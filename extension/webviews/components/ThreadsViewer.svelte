@@ -26,7 +26,7 @@
                 value: {
                     threadMessage: threadMessage,
                     projectId: currentProject?.id,
-                    anonymous: anonymousCheck ? "yes" : null
+                    anonymous: anonymousCheck ? true : false
                 }
             });
         }

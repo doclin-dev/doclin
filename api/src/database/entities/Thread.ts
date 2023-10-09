@@ -35,7 +35,7 @@ export class Thread extends BaseEntity {
   projectId: number;
 
   @Column ({nullable: true})
-  anonymous: string;
+  anonymous: boolean;
 
   @OneToMany(() => Snippet, (s) => s.thread, { cascade: true })
   snippets: Snippet[];

@@ -18,7 +18,7 @@ const postReply = async (organizationId: string,
                          projectId: number, 
                          replyMessage: string, 
                          threadId: number,
-                         anonymous: string) => {
+                         anonymous: boolean) => {
     const data = {
         replyMessage: replyMessage,
         anonymous: anonymous

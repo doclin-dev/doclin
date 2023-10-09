@@ -15,7 +15,7 @@ export const getRepliesByThreadId = async ({ threadId }: { threadId: number }): 
   return replies;
 }
 
-export const postReply = async ({ replyMessage, threadId, anonymous }: {replyMessage: string, threadId: number, anonymous: string}): Promise<any> => {
+export const postReply = async ({ replyMessage, threadId, anonymous }: {replyMessage: string, threadId: number, anonymous: boolean}): Promise<any> => {
   const organizationId = await getCurrentOrganizationId();
   const projectId = await getCurrentProjectId();
 

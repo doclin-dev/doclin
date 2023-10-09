@@ -27,7 +27,7 @@ export const getThreadsByActiveFilePath = async (): Promise<any> => {
   return threads;
 };
 
-export const postThread = async({ threadMessage, anonymous }: { threadMessage: string, anonymous: string }): Promise<any> => {
+export const postThread = async({ threadMessage, anonymous }: { threadMessage: string, anonymous: boolean }): Promise<any> => {
   const organizationId = await getCurrentOrganizationId();
   const projectId = await getCurrentProjectId();
   const activeFilePath = await getActiveEditorFilePath();

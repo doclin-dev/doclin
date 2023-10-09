@@ -35,7 +35,7 @@
     async function postReplyMessage(message: string) {
         tsvscode.postMessage({
             type: "postReply",
-            value: { threadId: thread.id, replyMessage: message, anonymous: anonymousCheck ? "yes" : null }
+            value: { threadId: thread.id, replyMessage: message, anonymous: anonymousCheck ? true : false }
         });
     }
 

@@ -21,7 +21,7 @@ const postThread = async (organizationId: string,
                           projectId: number, 
                           threadMessage: string, 
                           activeEditorFilePath: string,
-                          anonymous: string) => {
+                          anonymous: boolean) => {
     const data = {
         threadMessage: threadMessage,
         projectId: projectId,
