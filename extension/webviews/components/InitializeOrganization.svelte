@@ -5,9 +5,10 @@
     import { WebviewStateManager } from "../WebviewStateManager";
 
     export let page: Page;
-
     let postOrganizationName: string = "";
     let existingOrganizations: Organization[] = [];
+    let error: string = "";
+    const EMPTY_STRING_ERROR: string = "Organization name cannot be empty!";
 
     const switchPageToProject = () => {
         page = Page.InitializeProject;
@@ -24,6 +25,11 @@
     }
 
     const createNewOrganization = async () => {
+        if (!postOrganizationName) {
+            error = EMPTY_STRING_ERROR;
+            return;
+        }
+
         tsvscode.postMessage({ type: 'postOrganization', value: { name: postOrganizationName } });
     }
 
@@ -65,21 +71,24 @@
     <form>
         <input placeholder="Enter Organization Name" bind:value={postOrganizationName} />
         <button on:click|preventDefault={createNewOrganization}>Create New Organization</button>
+        <div class="text-danger">{error}</div>
     </form>
 
-    {#if existingOrganizations.length > 0}
-        <p>Login into Existing Organization:</p>
+    <div class="mt-4">
+        {#if existingOrganizations.length > 0}
+            <div>Login into Existing Organization:</div>
 
-        <ul>
-            {#each existingOrganizations as organization (organization.id)}
-                <li >
-                    <a href="0" on:click|preventDefault={() => {
-                        setCurrentOrganization(organization)
-                    }}> {organization.name} </a>
-                </li>
-            {/each}
-        </ul>
-    {:else}
-        <p>You have not joined any organization.</p>
-    {/if}
+            <ul>
+                {#each existingOrganizations as organization (organization.id)}
+                    <li >
+                        <a href="0" on:click|preventDefault={() => {
+                            setCurrentOrganization(organization)
+                        }}> {organization.name} </a>
+                    </li>
+                {/each}
+            </ul>
+        {:else}
+            <p>You have not joined any organization.</p>
+        {/if}
+    </div>
 </div>
