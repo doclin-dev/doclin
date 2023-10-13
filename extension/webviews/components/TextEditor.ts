@@ -76,5 +76,4 @@ export class TextEditor {
         editor.insertText(cursorPosition + 1 + textToInsert.length, "\n");
         editor.setSelection(cursorPosition + 1 + textToInsert.length);
     };
-    
 }

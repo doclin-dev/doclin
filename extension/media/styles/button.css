@@ -54,13 +54,13 @@
 
 .button.secondary {
     border: 1px solid var(--vscode-button-secondaryHoverBackground);
-    border-radius: 5px;
+    border-radius: 0.2em;
 }
 
 .button.secondary:hover {
     background-color: var(--vscode-button-secondaryHoverBackground); 
-    color: var(--vscode-button-secondaryHoverForeground);
-    border-radius: 5px;
+    color: var(--vscode-button-secondaryForeground);
+    border-radius: 0.2em;
 }
 
 .icon {
