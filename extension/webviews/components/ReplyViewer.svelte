@@ -94,12 +94,12 @@
 
 </script>
 
-<ViewerTopBar username={username}/>
+<ViewerTopBar username={username} page={page}/>
 
 <div class='reply-viewer'>
     <div class='topbar'>
         <div class="button-container">
-            <Button icon='back-icon' type='text' onClick={handleBackClick}/> <span>Replies</span>
+            <Button icon='back-icon' type='text' onClick={handleBackClick}/>
         </div>
     </div>
     <div style="padding-bottom: 0.5rem">

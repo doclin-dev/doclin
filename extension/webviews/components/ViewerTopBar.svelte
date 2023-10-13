@@ -22,7 +22,7 @@
 
 <div class="project-info">Project: {currentProject?.name}</div>
 <div class='header'>
-    <div>Welcome <span style="font-weight:500; font-size:14px">{username}</span></div>
+    <div>Welcome <span class="name-header">{username}</span></div>
     <div class='icon-container'>
         <Button icon="invite" type='text' onClick={switchToInvitePage}/>
     </div>
