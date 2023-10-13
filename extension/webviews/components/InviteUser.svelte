@@ -1,6 +1,7 @@
 <script type="ts">
     import { WebviewStateManager } from "../WebviewStateManager";
     import { Page } from "../enums";
+    import Button from "./Button.svelte";
 
     export let page: Page;
 
@@ -17,6 +18,12 @@
 </script>
 
 <div>
+    <div class='topbar'>
+        <div class="button-container">
+            <Button icon='back-icon' type='text' onClick={switchPageToThreadsViewer}/>
+        </div>
+    </div>
+    
     <h3>Invite user to organizationName/project</h3>
 
     <form>
@@ -25,6 +32,4 @@
     </form>
 
     Members:
-
-    <button on:click|preventDefault={switchPageToThreadsViewer}>Go Back</button>
 </div>
