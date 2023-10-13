@@ -5,11 +5,12 @@
     import { WebviewStateManager } from "../WebviewStateManager";
 
     export let page: Page;
-
     let postProjectName: string = "";
     let githubUrl: string = "";
     let existingProjects: Project[] = [];
     let currentOrganization: Organization | null;
+    let error: string = "";
+    const EMPTY_STRING_ERROR: string = "Project name cannot be empty!";
 
     const switchPageToThreadsViewer = () => {
         page = Page.ThreadsViewer;
@@ -26,6 +27,11 @@
     }
 
     const createNewProject = async () => {
+        if (!postProjectName) {
+            error = EMPTY_STRING_ERROR;
+            return;
+        }
+
         tsvscode.postMessage({ type: 'postProject', value: { name: postProjectName } });
     }
 
@@ -75,10 +81,12 @@
         <input placeholder="Enter project name" bind:value={postProjectName} />
         <input placeholder="Github repo url" value={githubUrl} disabled/>
         <button on:click|preventDefault={createNewProject}>Create New Project</button>
+        <div class="text-danger">{error}</div>
     </form>
 
+    <div class="mt-4"></div>
     {#if existingProjects.length > 0}
-        <p>Or select an existing project:</p>
+        <div>Or select an existing project:</div>
 
         <ul>
             {#each existingProjects as project (project.id)}
@@ -88,6 +96,6 @@
             {/each}
         </ul>
     {/if}
-</div>
 
-<button on:click={() => {chooseAnotherOrganization()}}>Organization: {currentOrganization?.name}</button>
+    <button on:click={() => {chooseAnotherOrganization()}}>Organization: {currentOrganization?.name}</button>
+</div>
