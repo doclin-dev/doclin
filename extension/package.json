@@ -1,7 +1,7 @@
 {
   "name": "doclin",
   "displayName": "doclin",
-  "description": "Keeping track of stuff",
+  "description": "Comment on your code",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.52.0"
@@ -25,7 +25,7 @@
         {
           "id": "doclin-sidebar-view",
           "title": "doclin",
-          "icon": "media/checklist.svg"
+          "icon": "media/doclinLogo.svg"
         }
       ]
     },
@@ -35,7 +35,7 @@
           "type": "webview",
           "id": "doclin-sidebar",
           "name": "doclin",
-          "icon": "media/checklist.svg",
+          "icon": "media/doclinLogo.svg",
           "contextualTitle": "doclin"
         }
       ]
