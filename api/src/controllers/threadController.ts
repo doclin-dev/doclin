@@ -3,11 +3,14 @@ import { Thread } from "../database/entities/Thread";
 import { Snippet } from "../database/entities/Snippet";
 import { ThreadRepository } from "../database/repositories/ThreadRepository";
 
+const ANONYMOUS_USER: string = "Anonymous User";
+
 export const postThread = async (req: any, res: any) => {
     const threadMessage: string = req.body.threadMessage;
     const userId: number = req.userId;
     const projectId: number = req.body.projectId;
     const activeEditorFilePath: string = req.body.activeEditorFilePath;
+    const anonymousPost: boolean = req.body.anonymous;
     
     const { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage, activeEditorFilePath);
 
@@ -15,19 +18,20 @@ export const postThread = async (req: any, res: any) => {
         message: updatedThreadMessage,
         userId: userId,
         projectId: projectId,
-        snippets: snippetEntities
+        snippets: snippetEntities,
+        anonymous: anonymousPost
     }).save();
 
     let responseThread = await ThreadRepository.findThreadWithPropertiesByThreadId(thread.id);
 
     responseThread = fillUpThreadMessageWithSnippet(responseThread);
-
+    const username = responseThread.anonymous ? ANONYMOUS_USER : responseThread.user?.name;
+    
     const response = {
         id: responseThread.id,
         message: responseThread.message,
         projectId: responseThread.projectId,
-        userId: responseThread.user?.id,
-        username: responseThread.user?.name
+        username: username
     }
 
     res.send({ thread: response });
@@ -117,8 +121,7 @@ export const getThreads = async (req: any, res: any) => {
     const response = threads.map((thread) => ({
             id: thread.id,
             message: thread.message,
-            userId: thread.user?.id,
-            username: thread.user?.name
+            username: thread.anonymous ? ANONYMOUS_USER : thread.user?.name
         })
     );
 
@@ -147,13 +150,13 @@ export const updateThread = async (req: any, res: any) => {
     await thread.save();
 
     let responseThread = fillUpThreadMessageWithSnippet(thread);
+    const username = responseThread.anonymous ? ANONYMOUS_USER : responseThread.user?.name;
 
     const response = {
         id: responseThread.id,
         message: responseThread.message,
         projectId: responseThread.projectId,
-        userId: responseThread.user?.id,
-        username: responseThread.user?.name
+        username: username
     }
 
     res.send({ thread: response });

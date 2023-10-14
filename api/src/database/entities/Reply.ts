@@ -23,6 +23,9 @@ export class Reply extends BaseEntity {
   @Column()
   threadId: number;
 
+  @Column({nullable: true})
+  anonymous: boolean;
+
   @ManyToOne(() => User, (user) => user.replies)
   @JoinColumn({ name: "userId" })
   user: User;

@@ -84,7 +84,7 @@
 
 <div class='reply-card'>
     <div class="reply-card-header">
-        <div> {reply.username}</div>
+        <div> { reply.username }</div>
         <div class='button-container'>
             <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
         </div>

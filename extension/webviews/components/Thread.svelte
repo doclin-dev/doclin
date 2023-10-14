@@ -96,7 +96,7 @@
 
 <div class='thread-card'>
     <div class="thread-header">
-        <div>{thread?.username}</div>
+        <div>{ thread?.username }</div>
         <div class='button-container'>
             <Button icon='reply' onClick={handleReplyButtonClick} type='text'/>
             <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
