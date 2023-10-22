@@ -1,4 +1,4 @@
 node_modules
 dist
 extension/out/compiled/
-extension/.DS_Store
+.DS_Store
