@@ -20,11 +20,13 @@ const getThreads = async (organizationId: string, projectId: number, filePath: s
 const postThread = async (organizationId: string,
                           projectId: number, 
                           threadMessage: string, 
-                          activeEditorFilePath: string) => {
+                          activeEditorFilePath: string,
+                          anonymous: boolean) => {
     const data = {
         threadMessage: threadMessage,
         projectId: projectId,
-        activeEditorFilePath: activeEditorFilePath
+        activeEditorFilePath: activeEditorFilePath,
+        anonymous: anonymous
     };
 
     const apiService = createAxiosInstance();
