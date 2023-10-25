@@ -7,7 +7,7 @@ import { postThread, deleteThread, getThreadsByActiveFilePath, updateThread } fr
 import { getGithubUrl, storeProjectId } from "./providerHelpers/projectProviderHelper";
 import { getExistingProjects, postProject } from "./providerHelpers/projectProviderHelper";
 import { deleteReply, getRepliesByThreadId, postReply, updateReply } from "./providerHelpers/replyProviderHelper";
-import { postOrganization, getExistingOrganizations, storeOrganizationId } from "./providerHelpers/organizationProviderHelper";
+import { postOrganization, getExistingOrganizations, storeOrganizationId, inviteUser } from "./providerHelpers/organizationProviderHelper";
 import { getExtensionState } from "./utils/sidebarProviderUtil";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
@@ -153,6 +153,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           webviewView.webview.postMessage({
             type: "setCurrentOrganization",
             value: await storeOrganizationId(message.value)
+          });
+          break;
+        case "inviteUser":
+          webviewView.webview.postMessage({
+            type: "inviteUser",
+            value: await inviteUser(message.value)
           });
           break;
       }

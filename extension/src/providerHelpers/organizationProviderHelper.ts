@@ -59,3 +59,16 @@ export const storeOrganizationId = async (organizationId: string) => {
         vscode.window.showErrorMessage(`An error occurred: ${error.message}`);
     }
 }
+
+export const inviteUser = async({ email }: { email: string }) => {
+	const organizationId = await getCurrentOrganizationId();
+
+	if (!organizationId || !email) {
+		return;
+	}
+
+	const response = await organizationApi.inviteUser(organizationId, email);
+	const payload = response?.data;
+	
+	return payload;
+}

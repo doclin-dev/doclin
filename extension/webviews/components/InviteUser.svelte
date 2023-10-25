@@ -8,7 +8,10 @@
     let emailValue: string;
 
     const submitInvite = () => {
-        
+        tsvscode.postMessage({
+            type: "inviteUser",
+            value: { email: emailValue }
+        });
     };
 
     const switchPageToThreadsViewer = () => {
