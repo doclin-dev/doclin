@@ -12,10 +12,3 @@
 <div class="icon">
     <Icon icon={icon} width={width} height={height} />
 </div>
-
-<style>
-    .icon {
-        padding: 0;
-        align-items: center;
-    }
-</style>

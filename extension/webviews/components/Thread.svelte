@@ -10,6 +10,7 @@
     export let thread: any;
     export let page: Page;
     export let reloadThreads: () => void = () => {};
+    export let showReplyButton: boolean = true;
 
     let quillThreadEditor: any;
         
@@ -96,9 +97,12 @@
 
 <div class='thread-card'>
     <div class="thread-header">
-        <div>{ thread?.username }</div>
+        <div class="name-header">{thread?.username}</div>
         <div class='button-container'>
-            <Button icon='reply' onClick={handleReplyButtonClick} type='text'/>
+            {#if showReplyButton}
+                <Button icon='reply' onClick={handleReplyButtonClick} type='text'/>
+            {/if}
+
             <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
         </div>
     </div>
@@ -109,7 +113,6 @@
             <Button variant='secondary' onClick={handleOnSubmit} title="Submit"/>
         </div>
     {:else}
-    <div>{@html thread?.message}</div>
+        <div>{@html thread?.message}</div>
     {/if}
-
 </div>

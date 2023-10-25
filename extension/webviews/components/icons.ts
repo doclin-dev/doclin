@@ -4,6 +4,7 @@ import dotsHorizontal from '@iconify/icons-mdi/dots-horizontal';
 import keyboardBackspace from '@iconify/icons-mdi/keyboard-backspace';
 import bellOutline from '@iconify/icons-mdi/bell-outline';
 import openInNew from '@iconify/icons-mdi/open-in-new';
+import accountPlusOutline from '@iconify/icons-mdi/account-plus-outline';
 
 export const iconsMap = {
     "reply": replyOutline,
@@ -11,5 +12,6 @@ export const iconsMap = {
     "context-menu": dotsHorizontal,
     "back-icon": keyboardBackspace,
     "notification": bellOutline,
-    "open-in-new-window": openInNew
+    "open-in-new-window": openInNew,
+    "invite": accountPlusOutline
 }

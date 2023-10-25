@@ -7,7 +7,7 @@
     padding: 0.25rem 0;
 }
   
-.button-container{
+.button-container {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -17,20 +17,19 @@
 .thread-card {
     display: flex;
     flex-direction: column;
-    background-color: rgb(46, 48, 48);
+    background-color: var(--vscode-input-background);
     padding: 0.5rem;
-    gap: 0.25;
-    border-radius: 5px;
+    border-radius: 0.2em;
     border: 2px;
-    margin-bottom: 0.5rem;
-  }
-  
+    margin: 0.5rem 0;
+    border: 1px solid var(--vscode-input-border);
+}
+
 .thread-editor-footer {
     display: flex;
     padding-top: 0.5rem;
     flex-direction: row;
     justify-content: flex-end;
-    gap: 0.25rem;
 }
 
 #textEditor {
@@ -39,6 +38,10 @@
     height: 150px;
     resize: both; 
     overflow: auto;
+    border: none;
+    border-radius: 0.2em;
+    resize: vertical;
+    border: 1px solid var(--vscode-input-border);
 }
 
 .checkbox {

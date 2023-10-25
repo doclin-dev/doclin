@@ -7,6 +7,7 @@
     import ReplyViewer from "./ReplyViewer.svelte";
     import { WebviewStateManager } from "../WebviewStateManager";
     import InitializeOrganization from "./InitializeOrganization.svelte";
+    import InviteUser from "./InviteUser.svelte";
 
     let accessToken = "";
     let loading = true;
@@ -101,6 +102,8 @@
         <ThreadsViewer {user} bind:page={page} />
     {:else if page === Page.ReplyViewer}
         <ReplyViewer username={user.name} bind:page={page}/>
+    {:else if page === Page.InviteUser}
+        <InviteUser bind:page={page}/>
     {/if}
     <button on:click={logout}>Logout</button>
 {:else}

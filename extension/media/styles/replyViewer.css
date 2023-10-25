@@ -16,12 +16,12 @@
 .reply-card {
     display: flex;
     flex-direction: column;
-    background-color: rgb(46, 48, 48);
+    background-color: var(--vscode-input-background);
     padding: 0.5rem;
     gap: 0.25;
-    border-radius: 5px;
+    border-radius: 0.2em;
     border: 2px;
-    margin-bottom: 0.5rem;
+    margin: 0.5rem 0;
 }
 
 .reply-card-footer {
@@ -46,6 +46,9 @@
     height: 100px;
     resize: both; 
     overflow: auto;
+    border: none;
+    border-radius: 0.2em;
+    resize: vertical;
 }
 
 .checkbox {

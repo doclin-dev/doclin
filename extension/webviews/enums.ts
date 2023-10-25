@@ -7,6 +7,7 @@ export enum Page {
   Login = "login",
   NotGitRepo = "notGitRepo",
   AccessRequired = "accessRequired",
+  InviteUser = "inviteUser"
 }
 
 export enum ActiveTextEditor {

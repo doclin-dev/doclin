@@ -12,18 +12,12 @@ body {
   font-size: var(--vscode-font-size);
   font-weight: var(--vscode-font-weight);
   font-family: var(--vscode-font-family);
-  background-color: var(--vscode-editor-background);
+  background-color: var(--vscode-secondaryBackground);
 }
 
 ol,
 ul {
   padding-left: var(--container-paddding);
-}
-
-body > *,
-form > * {
-  margin-block-start: var(--input-margin-vertical);
-  margin-block-end: var(--input-margin-vertical);
 }
 
 *:focus {
@@ -45,7 +39,7 @@ code {
 }
 
 button {
-  border: none;
+  border: 1px solid var(--vscode-button-border);
   padding: var(--input-padding-vertical) var(--input-padding-horizontal);
   width: 100%;
   text-align: center;
@@ -53,6 +47,8 @@ button {
   outline-offset: 2px !important;
   color: var(--vscode-button-foreground);
   background: var(--vscode-button-background);
+  margin: var(--input-margin-vertical) 0;
+  border-radius: 0.2em;
 }
 
 button:hover {
@@ -88,10 +84,4 @@ textarea {
 input::placeholder,
 textarea::placeholder {
   color: var(--vscode-input-placeholderForeground);
-}
-
-pre.ql-syntax {
-  color: var(--vscode-foreground);
-  background-color: var(--vscode-editor-background);
-  padding: 5px;
 }

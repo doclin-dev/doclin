@@ -78,23 +78,24 @@
     <h3>Join Project</h3>
 
     <form>
-        <input placeholder="Enter project name" bind:value={postProjectName} />
-        <input placeholder="Github repo url" value={githubUrl} disabled/>
+        <input class="my-1" placeholder="Enter project name" bind:value={postProjectName} />
+        <input class="my-1" placeholder="Github repo url" value={githubUrl} disabled/>
         <button on:click|preventDefault={createNewProject}>Create New Project</button>
         <div class="text-danger">{error}</div>
     </form>
 
-    <div class="mt-4"></div>
     {#if existingProjects.length > 0}
-        <div>Or select an existing project:</div>
+        <div class="my-2">
+            <div>Or select an existing project:</div>
 
-        <ul>
-            {#each existingProjects as project (project.id)}
-                <li >
-                    <a href="0" on:click|preventDefault={() => setCurrentProject(project)}> {project.name} </a>
-                </li>
-            {/each}
-        </ul>
+            <ul>
+                {#each existingProjects as project (project.id)}
+                    <li >
+                        <a href="0" on:click|preventDefault={() => setCurrentProject(project)}> {project.name} </a>
+                    </li>
+                {/each}
+            </ul>
+        </div>
     {/if}
 
     <button on:click={() => {chooseAnotherOrganization()}}>Organization: {currentOrganization?.name}</button>
