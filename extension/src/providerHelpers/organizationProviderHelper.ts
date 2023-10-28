@@ -72,3 +72,17 @@ export const inviteUser = async({ email }: { email: string }) => {
 	
 	return payload;
 }
+
+export const getCurrentOrganizationUsers = async () => {
+    const organizationId = await getCurrentOrganizationId();
+
+	if (!organizationId) {
+		return;
+	}
+
+    const response = await organizationApi.getOrganizationUsers(organizationId);
+	const payload = response?.data;
+    const members = payload?.organization?.members;
+	
+	return members;
+}

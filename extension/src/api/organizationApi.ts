@@ -40,9 +40,23 @@ const inviteUser = async (organizationId: string, email: string) => {
     return response;
 }
 
+const getOrganizationUsers = async (organizationId: string) => {
+    const params = {
+        includeMembers: true
+    }
+    
+    const apiService = createAxiosInstance();
+    const invitationUrl = `${baseOrganizationUrl}/${organizationId}`;
+
+    const response = await apiService.get(invitationUrl, { params });
+
+    return response;
+}
+
 export default {
     getOrganizations,
     postOrganization,
     getOrganization,
-    inviteUser
+    inviteUser,
+    getOrganizationUsers
 }

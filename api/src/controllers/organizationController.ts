@@ -37,6 +37,7 @@ export const postOrganization = async (req: Request, res: Response) => {
 
 export const getOrganization = async (req: Request, res: Response) => {
     const organizationId: string = req.params.organizationId;
+    const includeMembers: boolean = req.query.includeMembers === 'true';
 
     const organization = await OrganizationRepository.findOrganizationById(organizationId);
 
@@ -47,8 +48,12 @@ export const getOrganization = async (req: Request, res: Response) => {
 
     const responseOrganization = {
         id: organization.id,
-        name: organization.name
+        name: organization.name,
+        members: includeMembers ? await UserRepository.findUsersByOrganizationId(organizationId) : null
     };
+
+    console.log(responseOrganization);
 
     res.send({ organization: responseOrganization });
 }
+

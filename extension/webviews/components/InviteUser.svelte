@@ -1,11 +1,14 @@
 <script type="ts">
     import { WebviewStateManager } from "../WebviewStateManager";
     import { Page } from "../enums";
+    import type { User } from "../types";
     import Button from "./Button.svelte";
+    import { onMount, onDestroy } from "svelte";
 
     export let page: Page;
 
     let emailValue: string;
+    let organizationUsers: User[];
 
     const submitInvite = () => {
         tsvscode.postMessage({
@@ -18,6 +21,30 @@
         page = Page.ThreadsViewer;
         WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
     };
+
+    const getCurrentOrganizationUsers = () => {
+        tsvscode.postMessage({ type: "getCurrentOrganizationUsers", value: "" });
+    }
+
+    const messageEventListener = async (event: any) => {
+        const message = event.data;
+        switch (message.type) {
+            case "getCurrentOrganizationUsers":
+                organizationUsers = message.value;
+                console.log(organizationUsers);
+                break;
+        }
+    }
+
+    onMount(async () => {
+        window.addEventListener("message", messageEventListener);
+
+        getCurrentOrganizationUsers();
+    });
+
+    onDestroy(() => {
+        window.removeEventListener("message", messageEventListener);
+    });
 </script>
 
 <div>
@@ -34,5 +61,13 @@
         <button on:click|preventDefault={submitInvite}>Invite user</button>
     </form>
 
-    Members:
+    
+    {#if organizationUsers}
+        Users:
+        <ul>
+            {#each organizationUsers as user (user.id)}
+                <li>{user.name}</li>
+            {/each}
+        </ul>
+    {/if}
 </div>
