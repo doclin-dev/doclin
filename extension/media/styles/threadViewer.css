@@ -22,6 +22,7 @@
     border-radius: 0.2em;
     border: 2px;
     margin: 0.5rem 0;
+    border: 1px solid var(--vscode-input-border);
 }
 
 .thread-editor-footer {
@@ -40,6 +41,7 @@
     border: none;
     border-radius: 0.2em;
     resize: vertical;
+    border: 1px solid var(--vscode-input-border);
 }
 
 .checkbox {

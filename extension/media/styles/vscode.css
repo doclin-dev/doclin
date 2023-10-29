@@ -39,7 +39,7 @@ code {
 }
 
 button {
-  border: none;
+  border: 1px solid var(--vscode-button-border);
   padding: var(--input-padding-vertical) var(--input-padding-horizontal);
   width: 100%;
   text-align: center;

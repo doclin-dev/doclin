@@ -4,6 +4,7 @@
     justify-content: center;
     border-radius: 0.2em;
     cursor: pointer;
+    border: 1px solid var(--vscode-button-border);
 }
   
 .button:hover {
@@ -24,20 +25,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: none;
-    /* padding: 5px; */
     cursor: pointer;
 }
 
 .button.submit {
-    border: none;
     padding: 5px;
     background-color: none;
 }
 
 .button.submit:hover{
     background-color: var(--vscode-button-secondaryHoverBackground);
-    border-radius: 0;
     color: white;
 }
 
@@ -49,16 +46,14 @@
 .button.danger:hover {
     background-color: rgb(246, 68, 68);
     color: white;
-    border-radius: 0;
 }
 
 .button.secondary {
-    border: 1px solid var(--vscode-button-secondaryHoverBackground);
     border-radius: 0.2em;
 }
 
 .button.secondary:hover {
-    background-color: var(--vscode-button-secondaryHoverBackground); 
+    background-color: var(--vscode-button-hoverBackground); 
     color: var(--vscode-button-secondaryForeground);
     border-radius: 0.2em;
 }

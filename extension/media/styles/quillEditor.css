@@ -10,3 +10,7 @@ pre.ql-syntax, .ql-snow .ql-editor pre.ql-syntax {
     border-radius: 0.2em;
     border: 2px solid var(--vscode-editorGroup-border);
 }
+
+pre.ql-syntax hr {
+    background-color: var(--vscode-editor-foreground);
+}
