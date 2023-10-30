@@ -6,14 +6,17 @@
     import { TextEditor } from "./TextEditor";
     import { ActiveTextEditor, Page } from "../enums";
     import { WebviewStateManager } from "../WebviewStateManager";
+    import FilterMenu from "./FilterMenu.svelte";
+    import Segment from "./Segment.svelte";
+    import SegmentedControl from "./SegmentedControl.svelte";
 
     export let user: User;
     export let page: Page;
     
     let quillEditor: any;
     let threads: Array<ThreadType> = [];
-    let currentProject: Project | null; 
-    let currentOrganization: Organization | null;
+    let currentProject: Project; 
+    let currentOrganization: Organization;
     let anonymousCheck: boolean = false;
 
     async function submitThreadMessage() {
@@ -53,6 +56,15 @@
         if (currentProject) {
             tsvscode.postMessage({ type: 'getThreadsByActiveFilePath', value: { currentProjectId: currentProject.id } });
         }
+        console.log("second");
+    }
+
+    const getAllThreads = () => {
+        currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
+        if (currentProject) {
+            tsvscode.postMessage({ type: 'getAllThreads', value: { currentProjectId: currentProject.id } });
+        }
+        console.log("first");
     }
 
     const messageEventListener = async (event: any) => {
@@ -62,6 +74,9 @@
                 if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === ActiveTextEditor.ThreadsViewerTextEditor) quillEditor.insertCodeSnippet(message.value);
                 break;
             case "getThreadsByActiveFilePath":
+                threads = message.value;
+                break;
+            case "getAllThreads":
                 threads = message.value;
                 break;
             case "postThread":
@@ -84,7 +99,8 @@
 
         window.addEventListener("message", messageEventListener);
 
-        loadThreads();
+        // loadThreads();
+        getAllThreads();
         initializeQuillEditor();
     });
 
@@ -94,6 +110,8 @@
 </script>
 
 <ViewerTopBar username={user?.name} bind:page={page}/>
+
+<FilterMenu organizationName={currentOrganization?.name} projectName={currentProject?.name} fileName="file" onFirstSegmentClick={getAllThreads} onSecondSegmentClick={loadThreads}/>
 
 <form
     on:submit|preventDefault={submitThreadMessage}>

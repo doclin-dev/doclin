@@ -1,0 +1,92 @@
+/* @import 'styles/lightColorScheme.css'; */
+/* @import 'styles/darkColorScheme.css'; */
+
+:root {
+    --segmented-control-color-accent: rgb(0, 125, 255);
+    --segmented-control-color-primary: rgb(0, 0, 0);
+  
+    --segmented-control-color-background-accent: rgb(25, 25, 25);
+    --segmented-control-color-background: rgb(35, 35, 35);
+  
+    --segmented-control-color-text-primary: rgb(255, 255, 255);
+    --segmented-control-color-text-disabled: rgba(0, 0, 0, 30%);
+  }
+
+.segmented-control {
+	width: 20rem;
+	height: 35px;
+	position: relative;
+	box-sizing: border-box;
+	display: inline-flex;
+	margin: 0;
+	padding: 2px;
+	border-radius: 8px;
+	-webkit-backdrop-filter: blur(14px);
+	backdrop-filter: blur(14px);
+	background-color: grey;
+	z-index: 1;
+}
+.segmented-control[aria-orientation='vertical'] {
+	width: 20rem;
+	height: auto;
+	flex-direction: column;
+}
+
+.segmented-control-background {
+	position: absolute;
+	width: 10rem;
+	height: 30px;
+	top: 2px;
+	left: 0;
+	margin: 0;
+	padding: 0;
+	border-radius: 8px;
+	background-color: white;
+	transition: width 300ms, transform 300ms;
+	z-index: 1;
+}
+.segmented-control[aria-orientation='vertical'] .segmented-control-background {
+	width: 75px;
+	height: auto;
+	top: 0;
+	left: 2px;
+	transition: height 300ms, transform 300ms;
+}
+
+.segmented-control-item {
+	position: relative;
+	box-sizing: border-box;
+	width: 10rem;
+	height: 30px;
+	margin: 0;
+	border: 0;
+	z-index: 2;
+
+	font-family: sans-serif;
+	font-size: 14px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+
+	text-align: center;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	color: var(--segmented-control-color-text-primary);
+	transition: color 275ms;
+	background-color: transparent;
+	cursor: pointer;
+}
+.segmented-control-item[aria-selected='true'] {
+	color: var(--segmented-control-color-accent);
+	cursor: default;
+}
+.segmented-control-item[aria-disabled='true'] {
+	color: var(--segmented-control-color-text-disabled);
+	cursor: default;
+}
+
+.segmented-control-item:not(:focus-visible) {
+	outline: none;
+    --vscode-button-hoverBackground: none;
+}
