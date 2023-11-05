@@ -35,8 +35,22 @@ const getProject = async (projectId: number, organizationId: string) => {
     return response;
 }
 
+const inviteUser = async (projectId: number, organizationId: string, email: string) => {
+    const data = {
+        email: email
+    };
+
+    const apiService = createAxiosInstance();
+    const invitationUrl = `${getBaseProjectUrl(organizationId)}/${projectId}/invite`;
+
+    const response = await apiService.post(invitationUrl, data);
+
+    return response;
+}
+
 export default {
     getProjects,
     postProject,
-    getProject
+    getProject,
+    inviteUser
 }

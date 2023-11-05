@@ -52,8 +52,6 @@ export const getOrganization = async (req: Request, res: Response) => {
         members: includeMembers ? await UserRepository.findUsersByOrganizationId(organizationId) : null
     };
 
-    console.log(responseOrganization);
-
     res.send({ organization: responseOrganization });
 }
 

@@ -5,9 +5,9 @@ import { getNonce } from "./providerHelpers/getNonce";
 import { GlobalStateManager } from "./GlobalStateManager";
 import { postThread, deleteThread, getThreadsByActiveFilePath, updateThread } from "./providerHelpers/threadProviderHelper";
 import { getGithubUrl, storeProjectId } from "./providerHelpers/projectProviderHelper";
-import { getExistingProjects, postProject } from "./providerHelpers/projectProviderHelper";
+import { getExistingProjects, postProject, inviteUser } from "./providerHelpers/projectProviderHelper";
 import { deleteReply, getRepliesByThreadId, postReply, updateReply } from "./providerHelpers/replyProviderHelper";
-import { postOrganization, getExistingOrganizations, storeOrganizationId, inviteUser, getCurrentOrganizationUsers } from "./providerHelpers/organizationProviderHelper";
+import { postOrganization, getExistingOrganizations, storeOrganizationId, getCurrentOrganizationUsers } from "./providerHelpers/organizationProviderHelper";
 import { getExtensionState } from "./utils/sidebarProviderUtil";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {

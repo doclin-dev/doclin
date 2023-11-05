@@ -60,19 +60,6 @@ export const storeOrganizationId = async (organizationId: string) => {
     }
 }
 
-export const inviteUser = async({ email }: { email: string }) => {
-	const organizationId = await getCurrentOrganizationId();
-
-	if (!organizationId || !email) {
-		return;
-	}
-
-	const response = await organizationApi.inviteUser(organizationId, email);
-	const payload = response?.data;
-	
-	return payload;
-}
-
 export const getCurrentOrganizationUsers = async () => {
     const organizationId = await getCurrentOrganizationId();
 

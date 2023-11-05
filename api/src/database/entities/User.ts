@@ -5,8 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-  ManyToMany,
-  JoinTable
+  ManyToMany
 } from "typeorm";
 import { Thread } from "./Thread";
 import { Reply } from "./Reply";

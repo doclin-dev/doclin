@@ -85,3 +85,17 @@ export const storeProjectId = async (projectId: number) => {
 		vscode.window.showErrorMessage(`An error occurred: ${error.message}`);
 	}
 }
+
+export const inviteUser = async({ email }: { email: string }) => {
+	const organizationId = await getCurrentOrganizationId();
+	const projectId = await getCurrentProjectId();
+
+	if (!organizationId || !email || !projectId) {
+		return;
+	}
+
+	const response = await projectApi.inviteUser(projectId, organizationId, email);
+	const payload = response?.data;
+	
+	return payload;
+}
