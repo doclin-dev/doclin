@@ -20,7 +20,7 @@ export const inviteUser = async({ email }: { email: string }) => {
 
     vscode.window.showInformationMessage(`${EMAIL_SENT_MSG} ${email}`);
 	
-	return payload;
+    return payload;
 }
 
 export const redeemInvitation = async ({ invitationCode } : { invitationCode: string }) => {

@@ -54,4 +54,3 @@ export const getOrganization = async (req: Request, res: Response) => {
 
     res.send({ organization: responseOrganization });
 }
-

@@ -68,8 +68,8 @@ export const getCurrentOrganizationUsers = async () => {
 	}
 
     const response = await organizationApi.getOrganizationUsers(organizationId);
-	const payload = response?.data;
+    const payload = response?.data;
     const members = payload?.organization?.members;
 	
-	return members;
+    return members;
 }

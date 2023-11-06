@@ -25,9 +25,9 @@ export const sendEmailFromDoclin = (recipientEmail: string, subject: string, mes
 	sgMail
 		.send(msg)
 		.then(() => {
-			console.debug(`Invitation email sent to ${recipientEmail}`)
+			console.debug(`Invitation email sent to ${recipientEmail}`);
 		})
 		.catch((error) => {
-			console.error(error)
+			console.error(error);
 		});
 };
