@@ -11,12 +11,12 @@
     let organizationUsers: User[];
 
     const submitInvite = () => {
-        emailValue = "";
-
         tsvscode.postMessage({
             type: "inviteUser",
             value: { email: emailValue }
         });
+
+        emailValue = "";
     };
 
     const switchPageToThreadsViewer = () => {

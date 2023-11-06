@@ -5,10 +5,11 @@ import { getNonce } from "./providerHelpers/getNonce";
 import { GlobalStateManager } from "./GlobalStateManager";
 import { postThread, deleteThread, getThreadsByActiveFilePath, updateThread } from "./providerHelpers/threadProviderHelper";
 import { getGithubUrl, storeProjectId } from "./providerHelpers/projectProviderHelper";
-import { getExistingProjects, postProject, inviteUser } from "./providerHelpers/projectProviderHelper";
+import { getExistingProjects, postProject } from "./providerHelpers/projectProviderHelper";
 import { deleteReply, getRepliesByThreadId, postReply, updateReply } from "./providerHelpers/replyProviderHelper";
 import { postOrganization, getExistingOrganizations, storeOrganizationId, getCurrentOrganizationUsers } from "./providerHelpers/organizationProviderHelper";
 import { getExtensionState } from "./utils/sidebarProviderUtil";
+import { inviteUser, redeemInvitation } from "./providerHelpers/invitationProviderHelper";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -159,6 +160,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           webviewView.webview.postMessage({
             type: "inviteUser",
             value: await inviteUser(message.value)
+          });
+          break;
+        case "redeemInvitation":
+          webviewView.webview.postMessage({
+            type: "redeemInvitation",
+            value: await redeemInvitation(message.value)
           });
           break;
         case "getCurrentOrganizationUsers":

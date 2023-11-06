@@ -5,7 +5,7 @@ import crypto from "crypto";
 import { Invitation } from "../database/entities/Invitation";
 import { User } from "../database/entities/User";
 import { UserRepository } from "../database/repositories/UserRepository";
-import { Organization } from "../database/entities/Organization";
+import { OrganizationRepository } from "../database/repositories/OrganizationRepository";
 
 const INVITATION_EMAIL_SUBJECT: string = "Doclin Invitation Code";
 const INVITATION_EXPIRED_MSG: string = "Invitation expired!";
@@ -71,16 +71,16 @@ export const redeemInvitation = async (req: Request, res: Response) => {
         return res.status(400).send({ error: INVITATION_EXPIRED_MSG });
     }
 
-    giveAccessToUser(user, invitation.organization);
+    try {
+        await OrganizationRepository.addAuthorizedUser(invitation.organization, user);
+    } catch {
+        console.error("User already added");
+    }
+
     await invitation.remove();
 
     return res.send({
         organizationId: invitation.organizationId,
         projectId: invitation.projectId
     });
-}
-
-const giveAccessToUser = (user: User, organization: Organization) => {
-    organization.users.push(user);
-    organization.save();
 }

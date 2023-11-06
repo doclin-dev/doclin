@@ -3,6 +3,7 @@
     import { onMount, onDestroy } from "svelte";
     import { Page } from "../enums";
     import { WebviewStateManager } from "../WebviewStateManager";
+    import RedeemInvitation from "./RedeemInvitation.svelte";
 
     export let page: Page;
     let postOrganizationName: string = "";
@@ -50,6 +51,7 @@
             case "setCurrentOrganization":
                 switchPageToProject();
                 break;
+
         }
     }
 
@@ -66,17 +68,28 @@
 </script>
 
 <div>
-    <h3>Join Organization:</h3>
+    <div class="invitation-margin-bt">
+        <h3>Create new organization:</h3>
 
-    <form>
-        <input placeholder="Enter Organization Name" bind:value={postOrganizationName} />
-        <button on:click|preventDefault={createNewOrganization}>Create New Organization</button>
-        <div class="text-danger">{error}</div>
-    </form>
+        <form>
+            <input placeholder="Enter Organization Name" bind:value={postOrganizationName} />
+            <button on:click|preventDefault={createNewOrganization}>Create New Organization</button>
+            <div class="text-danger">{error}</div>
+        </form>
+    </div>
 
-    <div class="mt-4">
-        {#if existingOrganizations.length > 0}
-            <div>Login into Existing Organization:</div>
+    <hr/>
+
+    <div class="invitation-margin-hr">
+        <h3>Or, enter invitation code:</h3>
+        <RedeemInvitation bind:page={page}/>
+    </div>
+
+    <hr />
+    
+    {#if existingOrganizations.length > 0}
+        <div class="invitation-margin-hr">
+            <h3>Or, login into existing organization:</h3>
 
             <ul>
                 {#each existingOrganizations as organization (organization.id)}
@@ -87,8 +100,8 @@
                     </li>
                 {/each}
             </ul>
-        {:else}
-            <p>You have not joined any organization.</p>
-        {/if}
-    </div>
+        </div>
+    {:else}
+        <p>You have not joined any organization.</p>
+    {/if}
 </div>
