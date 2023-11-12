@@ -16,3 +16,8 @@ export enum ActiveTextEditor {
   ThreadTextEditor = 3,
   ReplyTextEditor = 4,
 }
+
+export enum ActiveView {
+  AllThreads = 0,
+  CurrentFileThreads = 1,
+}

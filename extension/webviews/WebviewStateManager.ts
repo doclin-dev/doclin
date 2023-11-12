@@ -7,6 +7,7 @@ enum StateType {
   THREAD_SELECTED = "threadSelected",
   GITHUB_URL = "githubUrl",
   ACTIVE_TEXT_EDITOR = "activeTextEditor",
+  ACTIVE_VIEW = "activeView",
 }
 
 export class WebviewStateManager {
