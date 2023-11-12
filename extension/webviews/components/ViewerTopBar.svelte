@@ -20,7 +20,6 @@
     });
 </script>
 
-<div class="project-info"><span>Project: {currentProject?.name}</span></div>
 <div class='header'>
     <div>Welcome <span class="name-header">{username}</span></div>
     <div class='icon-container'>

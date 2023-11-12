@@ -10,20 +10,14 @@
   let offset: number = 0
 
   const context: any = getContext('SegmentedControl')
-  const orientation = context.orientation
   const index = context.setIndex()
   const selectedSegmentIndex = context.selectedSegmentIndex
-  
+
   $: isSelected = $selectedSegmentIndex === index
-  
+
   onMount(() => {
-    if (orientation === 'horizontal') {
-      length = Math.round(ref.clientWidth) 
-      offset = Math.round(ref.offsetLeft) 
-    } else if (orientation === 'vertical') {
-      length = Math.round(ref.clientHeight) 
-      offset = Math.round(ref.offsetTop) 
-    }
+    length = Math.round(ref.clientWidth) 
+    offset = Math.round(ref.offsetLeft) 
     
     context.addSegment({ index, isDisabled, length, offset })
   })
@@ -41,7 +35,7 @@
     {...$$restProps}
     on:click={onClick}
     on:click|preventDefault={() => { 
-      if (index !== $selectedSegmentIndex && !isDisabled) {
+      if (!isSelected && !isDisabled) {
         context.setSelected(index)
       }
     }}

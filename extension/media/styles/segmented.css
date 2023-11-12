@@ -23,11 +23,6 @@
 	background-color: grey;
 	z-index: 1;
 }
-.segmented-control[aria-orientation='vertical'] {
-	width: 20rem;
-	height: auto;
-	flex-direction: column;
-}
 
 .segmented-control-background {
 	position: absolute;
@@ -41,13 +36,6 @@
 	background-color: white;
 	transition: width 300ms, transform 300ms;
 	z-index: 1;
-}
-.segmented-control[aria-orientation='vertical'] .segmented-control-background {
-	width: 75px;
-	height: auto;
-	top: 0;
-	left: 2px;
-	transition: height 300ms, transform 300ms;
 }
 
 .segmented-control-item {

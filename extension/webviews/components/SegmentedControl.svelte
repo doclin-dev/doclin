@@ -3,10 +3,9 @@
     import { writable } from 'svelte/store'
   
     export let selectedIndex: number = 0
-    export let orientation: string = 'horizontal' // Options: horizontal/vertical
     
     let focusedSegmentIndex = writable(selectedIndex)
-    let selectedSegmentIndex = writable(selectedIndex) // Selected Segment is one that is focused and not disabled
+    let selectedSegmentIndex = writable(selectedIndex)
     let segments: any[] = []
     let indexesIterator: number = -1
     let backgroundLength: number = 0
@@ -15,13 +14,9 @@
     $: selectedIndex = $selectedSegmentIndex
   
     setContext('SegmentedControl', {
-      orientation,
       focusedSegmentIndex,
       selectedSegmentIndex,
-      setIndex: () => {
-        indexesIterator += 1
-        return indexesIterator
-      },
+      setIndex: () => indexesIterator += 1,
       addSegment: ({ index, isDisabled, length, offset }: {index:number, isDisabled: boolean, length: number, offset: number}) => {
         if (index === $selectedSegmentIndex) {
           if (isDisabled) {
@@ -51,10 +46,6 @@
       if (segments.length < 2) {
         console.warn('Segmented Control: For the component to function correctly, provide two or more Segments.')
       }
-  
-      if (orientation !== 'horizontal' && orientation !== 'vertical') {
-        console.error(`Segmented Control: Accepted orientation types are "horizontal" and "vertical". Provided "${orientation}".`)
-      }
     })
   </script>
   
@@ -76,8 +67,6 @@
     <div 
       class='segmented-control-background' 
       role='presentation' 
-      style='
-        {orientation === 'vertical' ? 'height' : 'width'}: {backgroundLength}px; 
-        transform: translate{orientation === 'vertical' ? 'Y' : 'X'}({backgroundOffset}px)'
+      style='width:{backgroundLength}px; transform: translateX({backgroundOffset}px)'
     ></div>
   </div>
