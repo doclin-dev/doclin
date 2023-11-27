@@ -37,5 +37,5 @@
 
 <form>
     <input placeholder="Enter Invitation Code" bind:value={invitationCodeValue} />
-    <button on:click|preventDefault={submitInvitationCode}>Enter Invitation Code</button>
+    <button on:click|preventDefault={submitInvitationCode}>Submit</button>
 </form>

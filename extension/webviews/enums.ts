@@ -16,3 +16,9 @@ export enum ActiveTextEditor {
   ThreadTextEditor = 3,
   ReplyTextEditor = 4,
 }
+
+export enum IntializeOrganizationView {
+  CreateOrganization = "createOrganization",
+  EnterInvitation = "enterInvitation",
+  JoinOrganization = "joinOrganization"
+}
