@@ -16,6 +16,7 @@
     let currentProject: Project; 
     let currentOrganization: Organization;
     let anonymousCheck: boolean = false;
+    let activeFilePath: string;
 
     async function submitThreadMessage() {
         const threadMessage = quillEditor.getText();
@@ -70,7 +71,9 @@
                 if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === ActiveTextEditor.ThreadsViewerTextEditor) quillEditor.insertCodeSnippet(message.value);
                 break;
             case "getThreadsByActiveFilePath":
-                threads = message.value;
+                const {threads: threadsByFile, activeFilePath: filePath} = message.value;
+                threads = threadsByFile;
+                activeFilePath = filePath;
                 break;
             case "getAllThreads":
                 threads = message.value;
@@ -108,7 +111,7 @@
 
 <ViewerTopBar username={user?.name} bind:page={page}/>
 
-<FilterMenu organizationName={currentOrganization?.name} projectName={currentProject?.name} onFirstSegmentClick={loadAllThreads} onSecondSegmentClick={loadCurrentFileThreads}/>
+<FilterMenu organizationName={currentOrganization?.name} projectName={currentProject?.name} filePath= {activeFilePath} onFirstSegmentClick={loadAllThreads} onSecondSegmentClick={loadCurrentFileThreads}/>
 
 <form
     on:submit|preventDefault={submitThreadMessage}>

@@ -24,7 +24,7 @@ export const getThreadsByActiveFilePath = async (): Promise<any> => {
   const payload = response?.data;
   const threads = payload?.threads;
 
-  return threads;
+  return {threads, activeFilePath};
 };
 
 export const getAllThreads = async (): Promise<any> => {
