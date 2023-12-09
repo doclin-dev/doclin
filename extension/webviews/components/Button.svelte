@@ -8,6 +8,9 @@
     export let size = 'sm';
     export let type = 'submit'; // [text, ]
     export let variant = 'primary'; // [secondary, danger]
+    export let textAlignment = 'center'; // it's used to align the text inside the button. It takes the justify-content options.
+    export let children: string = "";
+    export let childrenClassName: string = "";
 
     let clicked: boolean;
 
@@ -33,10 +36,13 @@
   
   
   
-<div class="button {size} {type} {variant}" on:click={onClick} on:keydown={handleKeyPress}>
+<div class="button {size} {type} {variant}" style="justify-content: {textAlignment}" on:click={onClick} on:keydown={handleKeyPress}>
     {#if icon}
       <span class="icon"><Icon width={iconWidth} height={iconHeight} name={icon}/></span>
     {/if}
     <span>{title}</span>
+    {#if children}
+        <span class="{childrenClassName}">{children}</span>
+    {/if}
 </div>
   

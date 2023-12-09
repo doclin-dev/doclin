@@ -72,6 +72,7 @@
                 break;
             case "getThreadsByActiveFilePath":
                 const {threads: threadsByFile, activeFilePath: filePath} = message.value;
+                console.log('con', message.value);
                 threads = threadsByFile;
                 activeFilePath = filePath;
                 break;

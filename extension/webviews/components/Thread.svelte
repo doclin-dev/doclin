@@ -11,12 +11,16 @@
     export let page: Page;
     export let reloadThreads: () => void = () => {};
     export let showReplyButton: boolean = true;
+    let replyCount: number = 5;
+    let daysOpen : number = 10;
 
     let quillThreadEditor: any;
         
     const handleEditButtonClick = async () => {
         if ($editedThreadId === null && $editedReplyId === null) {
             editedThreadId.set(thread.id);
+            console.log('reply', thread?.replies);
+            console.log(thread);
             await tick();
             quillThreadEditor = new TextEditor('#thread-editor');
             WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ThreadTextEditor);
@@ -95,24 +99,45 @@
     });
 </script>
 
-<div class='thread-card'>
-    <div class="thread-header">
-        <div class="name-header">{thread?.username}</div>
-        <div class='button-container'>
-            {#if showReplyButton}
-                <Button icon='reply' onClick={handleReplyButtonClick} type='text'/>
-            {/if}
+<div>
+    <div class='thread-card'>
+        <div class="thread-header">
+            <div class="name-header">{thread?.username}</div>
+            <div class='button-container'>
+                {#if showReplyButton}
+                    <Button icon='reply' onClick={handleReplyButtonClick} type='text'/>
+                {/if}
 
-            <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
+                <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
+            </div>
         </div>
+        {#if $editedThreadId === thread?.id}
+            <div id="thread-editor">{@html thread?.message}</div> 
+            <div class='thread-editor-footer'>
+                <Button variant='secondary' onClick={onCancel} title="Cancel"/>
+                <Button variant='secondary' onClick={handleOnSubmit} title="Submit"/>
+            </div>
+        {:else}
+            <div>{@html thread?.message}</div>
+            {#if replyCount &&  WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ThreadsViewer}
+                <div class="number-of-replies-button">
+                    <Button 
+                        textAlignment="flex-start" 
+                        variant='primary' 
+                        onClick={handleReplyButtonClick} 
+                        title="{replyCount} replies" 
+                        children="{daysOpen} days ago"
+                        childrenClassName="last-reply"
+                    />
+                </div>
+            {/if}
+        {/if}
     </div>
-    {#if $editedThreadId === thread?.id}
-        <div id="thread-editor">{@html thread?.message}</div> 
-        <div class='thread-editor-footer'>
-            <Button variant='secondary' onClick={onCancel} title="Cancel"/>
-            <Button variant='secondary' onClick={handleOnSubmit} title="Submit"/>
+    {#if replyCount && WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ReplyViewer}
+        <div class="reply-count-line">
+            <div class="reply-count-divider"></div>
+            <p>{replyCount} replies</p>
+            <div class="reply-count-divider"></div>
         </div>
-    {:else}
-        <div>{@html thread?.message}</div>
     {/if}
 </div>

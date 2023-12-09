@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  CreateDateColumn
 } from "typeorm";
 import { User } from "./User";
 import { Thread } from "./Thread";
@@ -29,6 +30,9 @@ export class Reply extends BaseEntity {
   @ManyToOne(() => User, (user) => user.replies)
   @JoinColumn({ name: "userId" })
   user: User;
+
+  @CreateDateColumn()
+  createdAt: Date;
 
   @ManyToOne(() => Thread, (thread) => thread.replies, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "threadId" })

@@ -20,11 +20,11 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
                                                             .leftJoinAndSelect('thread.snippets', 'snippet')
                                                             .leftJoinAndSelect('snippet.snippetFilePaths', 'snippetFilePath')
                                                             .leftJoinAndSelect('thread.user', 'user')
+                                                            .addSelect('(SELECT COUNT(r.id) FROM reply r WHERE r."threadId" = thread.id)', 'replyCount')
                                                             .where('thread.projectId = :projectId', { projectId })
                                                             .andWhere("thread.id IN (:...threadIds)", { threadIds })
                                                             .orderBy('thread.id', 'DESC')
                                                             .getMany();
-        
         return relevantThreadsWithAllInfoPopulated;
     },
 
@@ -45,6 +45,7 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
                                                             .leftJoinAndSelect('thread.snippets', 'snippet')
                                                             .leftJoinAndSelect('snippet.snippetFilePaths', 'snippetFilePath')
                                                             .leftJoinAndSelect('thread.user', 'user')
+                                                            .addSelect('(SELECT COUNT(r.id) FROM reply r WHERE r."threadId" = thread.id)', 'replyCount')
                                                             .where('thread.projectId = :projectId', { projectId })
                                                             .andWhere("thread.id IN (:...threadIds)", { threadIds })
                                                             .orderBy('thread.id', 'DESC')
