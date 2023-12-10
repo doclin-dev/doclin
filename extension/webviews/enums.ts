@@ -22,3 +22,8 @@ export enum IntializeOrganizationView {
   EnterInvitation = "enterInvitation",
   JoinOrganization = "joinOrganization"
 }
+
+export enum ActiveView {
+  AllThreads = 0,
+  CurrentFileThreads = 1,
+}

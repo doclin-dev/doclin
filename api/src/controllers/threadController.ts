@@ -111,8 +111,13 @@ const getSnippetTag = (snippetId: number) => {
 export const getThreads = async (req: any, res: any) => {
     const filePath = req.query.filePath;
     const projectId = req.query.projectId;
+    let threads: Thread[];
 
-    let threads: Thread[] = await ThreadRepository.findThreadByFilePathAndProjectId(filePath, projectId);
+    if (filePath) {
+         threads = await ThreadRepository.findThreadByFilePathAndProjectId(filePath, projectId);
+    } else {
+        threads = await ThreadRepository.findAllThreadsByProjectId(projectId);
+    }
 
     for (let thread of threads) {
         thread = fillUpThreadMessageWithSnippet(thread);

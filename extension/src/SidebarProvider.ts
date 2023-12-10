@@ -3,7 +3,7 @@ import { authenticate } from "./providerHelpers/authenticationProviderHelper";
 import { apiBaseUrl } from "./constants";
 import { getNonce } from "./providerHelpers/getNonce";
 import { GlobalStateManager } from "./GlobalStateManager";
-import { postThread, deleteThread, getThreadsByActiveFilePath, updateThread } from "./providerHelpers/threadProviderHelper";
+import { postThread, deleteThread, getThreadsByActiveFilePath, updateThread, getAllThreads } from "./providerHelpers/threadProviderHelper";
 import { getGithubUrl, storeProjectId } from "./providerHelpers/projectProviderHelper";
 import { getExistingProjects, postProject } from "./providerHelpers/projectProviderHelper";
 import { deleteReply, getRepliesByThreadId, postReply, updateReply } from "./providerHelpers/replyProviderHelper";
@@ -68,6 +68,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           webviewView.webview.postMessage({
             type: "getThreadsByActiveFilePath",
             value: await getThreadsByActiveFilePath()
+          });
+          break;
+        case "getAllThreads":
+          webviewView.webview.postMessage({
+            type: "getAllThreads",
+            value: await getAllThreads()
           });
           break;
         case "selectAThread":

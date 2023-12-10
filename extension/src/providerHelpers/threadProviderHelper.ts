@@ -20,7 +20,20 @@ export const getThreadsByActiveFilePath = async (): Promise<any> => {
 
   if (!organizationId || !projectId || !activeFilePath) return;
 
-  const response = await threadApi.getThreads(organizationId, projectId, activeFilePath);
+  const response = await threadApi.getFileBasedThreads(organizationId, projectId, activeFilePath);
+  const payload = response?.data;
+  const threads = payload?.threads;
+
+  return {threads, activeFilePath};
+};
+
+export const getAllThreads = async (): Promise<any> => {
+  const organizationId = await getCurrentOrganizationId();
+  const projectId = await getCurrentProjectId();
+
+  if (!organizationId || !projectId) return;
+
+  const response = await threadApi.getAllThreads(organizationId, projectId);
   const payload = response?.data;
   const threads = payload?.threads;
 

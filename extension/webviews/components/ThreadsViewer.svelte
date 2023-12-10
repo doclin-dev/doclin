@@ -4,17 +4,19 @@
     import Thread from './Thread.svelte';
     import ViewerTopBar from "./ViewerTopBar.svelte";
     import { TextEditor } from "./TextEditor";
-    import { ActiveTextEditor, Page } from "../enums";
+    import { ActiveTextEditor, ActiveView, Page } from "../enums";
     import { WebviewStateManager } from "../WebviewStateManager";
+    import FilterMenu from "./FilterMenu.svelte";
 
     export let user: User;
     export let page: Page;
     
     let quillEditor: any;
     let threads: Array<ThreadType> = [];
-    let currentProject: Project | null; 
-    let currentOrganization: Organization | null;
+    let currentProject: Project; 
+    let currentOrganization: Organization;
     let anonymousCheck: boolean = false;
+    let activeFilePath: string;
 
     async function submitThreadMessage() {
         const threadMessage = quillEditor.getText();
@@ -48,10 +50,17 @@
         quillEditor.setActiveEditor(ActiveTextEditor.ThreadsViewerTextEditor);
     }
 
-    async function loadThreads() {
+    async function loadCurrentFileThreads() {
         currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
         if (currentProject) {
             tsvscode.postMessage({ type: 'getThreadsByActiveFilePath', value: { currentProjectId: currentProject.id } });
+        }
+    }
+
+    const loadAllThreads = () => {
+        currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
+        if (currentProject) {
+            tsvscode.postMessage({ type: 'getAllThreads', value: { currentProjectId: currentProject.id } });
         }
     }
 
@@ -62,13 +71,20 @@
                 if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === ActiveTextEditor.ThreadsViewerTextEditor) quillEditor.insertCodeSnippet(message.value);
                 break;
             case "getThreadsByActiveFilePath":
+                const {threads: threadsByFile, activeFilePath: filePath} = message.value;
+                threads = threadsByFile;
+                activeFilePath = filePath;
+                break;
+            case "getAllThreads":
                 threads = message.value;
                 break;
             case "postThread":
                 threads = [message.value, ...threads];
                 break;
             case "switchActiveEditor":
-                loadThreads();
+                if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_VIEW) === ActiveView.CurrentFileThreads){
+                    loadCurrentFileThreads();
+                }
                 break;
         }
     }
@@ -84,7 +100,7 @@
 
         window.addEventListener("message", messageEventListener);
 
-        loadThreads();
+        WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_VIEW) === ActiveView.CurrentFileThreads ? loadCurrentFileThreads() : loadAllThreads();
         initializeQuillEditor();
     });
 
@@ -94,6 +110,8 @@
 </script>
 
 <ViewerTopBar username={user?.name} bind:page={page}/>
+
+<FilterMenu organizationName={currentOrganization?.name} projectName={currentProject?.name} filePath= {activeFilePath} onFirstSegmentClick={loadAllThreads} onSecondSegmentClick={loadCurrentFileThreads}/>
 
 <form
     on:submit|preventDefault={submitThreadMessage}>
@@ -108,7 +126,7 @@
 <div id='viewer'>
     {#if threads}
         {#each threads as thread (thread.id)}
-            <Thread thread={thread} bind:page={page} reloadThreads={loadThreads}/>
+            <Thread thread={thread} bind:page={page} reloadThreads={loadCurrentFileThreads}/>
         {/each}
     {/if}
 </div>

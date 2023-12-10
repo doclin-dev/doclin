@@ -1,19 +1,10 @@
-
-.project-info {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    font-size: large;
-    font-weight: 400;
-    justify-content: center;
-}
-
 .header {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     padding-bottom: 0.5rem;
+    font-size: 14px;
 }
 
 .icon-container {
@@ -26,5 +17,5 @@
 
 .name-header {
     font-weight:500; 
-    font-size:14px;
+    font-size:medium;
 }
