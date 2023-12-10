@@ -6,12 +6,13 @@ import * as vscode from "vscode";
 const INVITATION_EXPIRED: string = "invitationExpired";
 const INVITATION_EXPIRED_MSG: string = "Invitation code is invalid/expired!";
 const EMAIL_SENT_MSG: string = "Invitation code has been sent to";
+const EMAIL_INVALID_MSG: string = "Email format is invalid!";
 
 export const inviteUser = async({ email }: { email: string }) => {
 	const organizationId = await getCurrentOrganizationId();
 	const projectId = await getCurrentProjectId();
 
-	if (!organizationId || !email || !projectId) {
+	if (!organizationId || !email || !projectId || !validateEmail(email)) {
 		return;
 	}
 
@@ -22,6 +23,21 @@ export const inviteUser = async({ email }: { email: string }) => {
 	
     return payload;
 }
+
+const validateEmail = (email: string) : boolean => {
+    if (isEmailNotValid(email)) {
+        vscode.window.showInformationMessage(EMAIL_INVALID_MSG);
+        return false;
+    }
+
+    return true;
+}
+
+const isEmailNotValid = (email: string) => {
+    return !String(email)
+        .toLowerCase()
+        .match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+};
 
 export const redeemInvitation = async ({ invitationCode } : { invitationCode: string }) => {
     try {

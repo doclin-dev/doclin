@@ -107,7 +107,9 @@
         </form>
 
         <hr/>
-        <button on:click|preventDefault={setViewToJoinExistingProject}>{JOIN_EXISTING_PROJECT}</button>
+        {#if existingProjects.length > 0}
+            <button on:click|preventDefault={setViewToJoinExistingProject}>{JOIN_EXISTING_PROJECT}</button>
+        {/if}
     {/if}
 
     {#if newProjectView === false}

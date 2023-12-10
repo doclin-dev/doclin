@@ -9,6 +9,8 @@
 
     let emailValue: string;
     let organizationUsers: User[];
+    let organizationName: string;
+    let projectName: string;
 
     const submitInvite = () => {
         tsvscode.postMessage({
@@ -37,9 +39,15 @@
         }
     }
 
+    const getOrganizationAndProjectName = () => {
+        organizationName = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_ORGANIZATION)?.name;
+        projectName = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT)?.name;
+    }
+
     onMount(async () => {
         window.addEventListener("message", messageEventListener);
 
+        getOrganizationAndProjectName();
         getCurrentOrganizationUsers();
     });
 
@@ -55,13 +63,12 @@
         </div>
     </div>
     
-    <h3>Invite user to organizationName/project</h3>
+    <h3>Invite user to {organizationName}/{projectName}</h3>
 
-    <form>
+    <form class="mb-2">
         <input placeholder="Enter user email" bind:value={emailValue} />
         <button on:click|preventDefault={submitInvite}>Invite user</button>
     </form>
-
     
     {#if organizationUsers}
         Users:

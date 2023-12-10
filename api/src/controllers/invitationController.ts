@@ -68,7 +68,7 @@ export const redeemInvitation = async (req: Request, res: Response) => {
     const invitation: Invitation | null = await InvitationRepository.findUnexpiredInvitationByCode(invitationCode);
 
     if (!invitation || !user) {
-        return res.status(400).send({ error: INVITATION_EXPIRED_MSG });
+        return res.status(403).send({ error: INVITATION_EXPIRED_MSG });
     }
 
     try {
