@@ -1,0 +1,73 @@
+:root {
+    --segmented-control-color-dark: var(--vscode-minimap-foregroundOpacity);
+	--segmented-control-color-light-dark: var(--vscode-input-placeholderForeground);
+    --segmented-control-color-light: var(--vscode-menu-selectionForeground);
+  }
+
+.segmented-control {
+	width: 20rem;
+	height: 2.75rem;
+	position: relative;
+	box-sizing: border-box;
+	display: inline-flex;
+	margin: 0;
+	padding: 2px;
+	border-radius: 8px;
+	-webkit-backdrop-filter: blur(14px);
+	backdrop-filter: blur(14px);
+	background-color: var(--segmented-control-color-light-dark);
+	z-index: 1;
+}
+
+.segmented-control-background {
+	position: absolute;
+	width: 10rem;
+	height: 2.25rem;
+	top: 3px;
+	left: 0;
+	margin: 0;
+	padding: 0;
+	border-radius: 6px;
+	background-color: var(--segmented-control-color-light);
+	transition: width 300ms, transform 300ms;
+	z-index: 1;
+}
+
+.segmented-control-item {
+	position: relative;
+	box-sizing: border-box;
+	width: 10rem;
+	height: 2rem;
+	margin: 0;
+	border: 0;
+	z-index: 2;
+
+	font-family: sans-serif;
+	font-size: 14px;
+	font-weight: 500;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+
+	text-align: center;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	color: var(--segmented-control-color-light);
+	transition: color 275ms;
+	background-color: transparent;
+	cursor: pointer;
+}
+.segmented-control-item[aria-selected='true'] {
+	color: var(--segmented-control-color-dark);
+	cursor: default;
+}
+.segmented-control-item[aria-disabled='true'] {
+	color: var(--segmented-control-color-dark);
+	cursor: default;
+}
+
+.segmented-control-item:not(:focus-visible) {
+	outline: none;
+    --vscode-button-hoverBackground: none;
+}
