@@ -22,7 +22,7 @@ export class Organization extends BaseEntity {
   @Column("text")
   name: string;
 
-  @ManyToMany(() => User, { cascade: true })
+  @ManyToMany(() => User, user => user.organizations, { cascade: true })
   @JoinTable()
   users: User[];
 

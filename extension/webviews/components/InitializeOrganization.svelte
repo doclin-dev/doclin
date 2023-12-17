@@ -1,14 +1,22 @@
 <script lang="ts">
     import type { Organization, Project } from "../types";
     import { onMount, onDestroy } from "svelte";
-    import { Page } from "../enums";
+    import { IntializeOrganizationView, Page } from "../enums";
     import { WebviewStateManager } from "../WebviewStateManager";
+    import RedeemInvitation from "./RedeemInvitation.svelte";
+    import InviteUser from "./InviteUser.svelte";
 
     export let page: Page;
     let postOrganizationName: string = "";
     let existingOrganizations: Organization[] = [];
     let error: string = "";
+    let view: IntializeOrganizationView;
+
     const EMPTY_STRING_ERROR: string = "Organization name cannot be empty!";
+    const JOIN_ORGANIZATION: string = "Join Existing Organization";
+    const ENTER_INVITATION: string = "Enter Invitation Code";
+    const CREATE_NEW_ORGANIZATION: string = "Create New Organization";
+    const SUBMIT: string = "Submit";
 
     const switchPageToProject = () => {
         page = Page.InitializeProject;
@@ -37,6 +45,26 @@
         tsvscode.postMessage({ type: 'getExistingOrganizations', value: undefined });
     }
 
+    const setView = (existingOrganizations: Organization[]) => {
+        if (existingOrganizations.length > 0) {
+            view = IntializeOrganizationView.JoinOrganization;
+        } else  {
+            view = IntializeOrganizationView.CreateOrganization;
+        }
+    }
+
+    const setViewToCreateOrganization = () => {
+        view = IntializeOrganizationView.CreateOrganization;
+    }
+
+    const setViewToJoinOrganization = () => {
+        view = IntializeOrganizationView.JoinOrganization;
+    }
+
+    const setViewToEnterInvitation = () => {
+        view = IntializeOrganizationView.EnterInvitation;
+    }
+
     const messageEventListener = async (event: any) => {
         const message = event.data;
         switch (message.type) {
@@ -46,10 +74,12 @@
                 break;
             case "getExistingOrganizations":
                 existingOrganizations = message.value;
+                setView(existingOrganizations);
                 break;
             case "setCurrentOrganization":
                 switchPageToProject();
                 break;
+
         }
     }
 
@@ -57,7 +87,6 @@
         window.addEventListener("message", messageEventListener);
 
         getExistingOrganizations();
-        tsvscode.postMessage({ type: 'getGithubUrl', value: undefined });
     });
 
     onDestroy(() => {
@@ -66,17 +95,42 @@
 </script>
 
 <div>
-    <h3>Join Organization:</h3>
+    {#if view === IntializeOrganizationView.CreateOrganization}
+        <div>
+            <h3>{CREATE_NEW_ORGANIZATION}:</h3>
 
-    <form>
-        <input placeholder="Enter Organization Name" bind:value={postOrganizationName} />
-        <button on:click|preventDefault={createNewOrganization}>Create New Organization</button>
-        <div class="text-danger">{error}</div>
-    </form>
+            <form>
+                <input placeholder="Enter Organization Name" bind:value={postOrganizationName} />
+                <button on:click|preventDefault={createNewOrganization}>{SUBMIT}</button>
+                <div class="text-danger">{error}</div>
+            </form>
 
-    <div class="mt-4">
-        {#if existingOrganizations.length > 0}
-            <div>Login into Existing Organization:</div>
+            <hr />
+
+            {#if existingOrganizations.length > 0}
+                <button on:click|preventDefault={setViewToJoinOrganization}>{JOIN_ORGANIZATION}</button>
+            {/if}
+            <button on:click|preventDefault={setViewToEnterInvitation}>{ENTER_INVITATION}</button>
+        </div>
+    {/if}
+
+    {#if view === IntializeOrganizationView.EnterInvitation}
+        <div>
+            <h3>{ENTER_INVITATION}:</h3>
+            <RedeemInvitation bind:page={page}/>
+
+            <hr />
+
+            <button on:click|preventDefault={setViewToCreateOrganization}>{CREATE_NEW_ORGANIZATION}</button>
+            {#if existingOrganizations.length > 0}
+                <button on:click|preventDefault={setViewToJoinOrganization}>{JOIN_ORGANIZATION}</button>
+            {/if}
+        </div>
+    {/if}
+    
+    {#if view === IntializeOrganizationView.JoinOrganization}
+        <div>
+            <h3>Login into existing organization:</h3>
 
             <ul>
                 {#each existingOrganizations as organization (organization.id)}
@@ -87,8 +141,11 @@
                     </li>
                 {/each}
             </ul>
-        {:else}
-            <p>You have not joined any organization.</p>
-        {/if}
-    </div>
+
+            <hr />
+
+            <button on:click|preventDefault={setViewToCreateOrganization}>{CREATE_NEW_ORGANIZATION}</button>
+            <button on:click|preventDefault={setViewToEnterInvitation}>{ENTER_INVITATION}</button>
+        </div>
+    {/if}
 </div>
