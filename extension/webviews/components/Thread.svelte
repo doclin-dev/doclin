@@ -11,15 +11,15 @@
     export let page: Page;
     export let reloadThreads: () => void = () => {};
     export let showReplyButton: boolean = true;
-    let replyCount: number = 5;
-    let daysOpen : number = 10;
+    let replyCount: number;
+    let daysOpen : number;
 
     let quillThreadEditor: any;
         
     const handleEditButtonClick = async () => {
         if ($editedThreadId === null && $editedReplyId === null) {
             editedThreadId.set(thread.id);
-            console.log('reply', thread?.replies);
+            console.log('reply', thread.lastReplyCreatedAt);
             console.log(thread);
             await tick();
             quillThreadEditor = new TextEditor('#thread-editor');
@@ -119,13 +119,13 @@
             </div>
         {:else}
             <div>{@html thread?.message}</div>
-            {#if replyCount &&  WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ThreadsViewer}
+            {#if thread.replyCount &&  WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ThreadsViewer}
                 <div class="number-of-replies-button">
                     <Button 
                         textAlignment="flex-start" 
                         variant='primary' 
                         onClick={handleReplyButtonClick} 
-                        title="{replyCount} replies" 
+                        title="{thread.replyCount} replies" 
                         children="{daysOpen} days ago"
                         childrenClassName="last-reply"
                     />
@@ -133,10 +133,10 @@
             {/if}
         {/if}
     </div>
-    {#if replyCount && WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ReplyViewer}
+    {#if thread.replyCount && WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ReplyViewer}
         <div class="reply-count-line">
             <div class="reply-count-divider"></div>
-            <p>{replyCount} replies</p>
+            <p>{thread.replyCount} replies</p>
             <div class="reply-count-divider"></div>
         </div>
     {/if}
