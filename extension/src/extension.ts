@@ -16,7 +16,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.StatusBarAlignment.Right
   );
   item.text = "$(beaker) Add Doc";
-  item.command = "doclin.addTodo";
+  item.command = "doclin.addComment";
   item.show();
 
   context.subscriptions.push(
@@ -24,17 +24,8 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("doclin.addTodo", () => {
+    vscode.commands.registerCommand("doclin.addComment", () => {
       addCodeSnippet(sidebarProvider);
-    })
-  );
-
-  context.subscriptions.push(
-    vscode.commands.registerCommand("doclin.helloWorld", () => {
-      vscode.window.showInformationMessage(
-        "token value is: " + GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN)
-      );
-      // HelloWorldPanel.createOrShow(context.extensionUri);
     })
   );
 
@@ -44,36 +35,6 @@ export function activate(context: vscode.ExtensionContext) {
         authenticate();
       } catch (err) {
         console.error(err);
-      }
-    })
-  );
-
-  context.subscriptions.push(
-    vscode.commands.registerCommand("doclin.refresh", async () => {
-      // HelloWorldPanel.kill();
-      // HelloWorldPanel.createOrShow(context.extensionUri);
-      await vscode.commands.executeCommand("workbench.action.closeSidebar");
-      await vscode.commands.executeCommand(
-        "workbench.view.extension.doclin-sidebar-view"
-      );
-      // setTimeout(() => {
-      //   vscode.commands.executeCommand(
-      //     "workbench.action.webview.openDeveloperTools"
-      //   );
-      // }, 500);
-    })
-  );
-
-  context.subscriptions.push(
-    vscode.commands.registerCommand("doclin.askQuestion", async () => {
-      const answer = await vscode.window.showInformationMessage(
-        "How was your day?",
-        "good",
-        "bad"
-      );
-
-      if (answer === "bad") {
-        vscode.window.showInformationMessage("Sorry to hear that");
       }
     })
   );
