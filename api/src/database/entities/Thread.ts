@@ -46,4 +46,6 @@ export class Thread extends BaseEntity {
 
   @OneToMany(() => Reply, (reply) => reply.thread, { cascade: true })
   replies: Reply[];
+
+  replyCount: number;
 }
