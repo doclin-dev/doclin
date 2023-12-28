@@ -17,27 +17,28 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
         const threadIds = relevantThreads.map(thread => (thread.id));
 
         const relevantThreadsWithAllInfoPopulated =  this.createQueryBuilder('thread')
-                                                            .leftJoinAndSelect('thread.snippets', 'snippet')
-                                                            .leftJoinAndSelect('snippet.snippetFilePaths', 'snippetFilePath')
-                                                            .leftJoinAndSelect('thread.user', 'user')
-                                                            .addSelect('(SELECT COUNT(r.id) FROM reply r WHERE r."threadId" = thread.id)', 'replyCount')
-                                                            .where('thread.projectId = :projectId', { projectId })
-                                                            .andWhere("thread.id IN (:...threadIds)", { threadIds })
-                                                            .orderBy('thread.id', 'DESC')
-                                                            .getMany();
+                                                        .leftJoinAndSelect('thread.snippets', 'snippet')
+                                                        .leftJoinAndSelect('snippet.snippetFilePaths', 'snippetFilePath')
+                                                        .leftJoinAndSelect('thread.user', 'user')
+                                                        .leftJoinAndSelect('thread.replies', 'reply')
+                                                        .where('thread.projectId = :projectId', { projectId })
+                                                        .andWhere("thread.id IN (:...threadIds)", { threadIds })
+                                                        .orderBy({'thread.id': 'DESC', 'reply.id' : 'DESC'})
+                                                        .loadRelationCountAndMap("thread.replyCount", "thread.replies")
+                                                        .getMany();
         return relevantThreadsWithAllInfoPopulated;
     },
 
     async findAllThreadsByProjectId(projectId: number) {
-        return this .createQueryBuilder('thread')
-                    .leftJoinAndSelect('thread.snippets', 'snippet')
-                    .leftJoinAndSelect('snippet.snippetFilePaths', 'snippetFilePath')
-                    .leftJoinAndSelect('thread.user', 'user')
-                    .leftJoinAndSelect('thread.replies', 'reply')
-                    .where('thread.projectId = :projectId', { projectId })
-                    .orderBy('thread.id', 'DESC')
-                    .loadRelationCountAndMap("thread.replyCount", "thread.replies")
-                    .getMany();
+        return this.createQueryBuilder('thread')
+          .leftJoinAndSelect('thread.snippets', 'snippet')
+          .leftJoinAndSelect('snippet.snippetFilePaths', 'snippetFilePath')
+          .leftJoinAndSelect('thread.user', 'user')
+          .leftJoinAndSelect('thread.replies', 'reply')
+          .where('thread.projectId = :projectId', { projectId })
+          .orderBy({'thread.id': 'DESC', 'reply.id' : 'DESC'})
+          .loadRelationCountAndMap("thread.replyCount", "thread.replies")
+          .getMany();
     },
 
     findThreadWithPropertiesByThreadId(threadId: number) {

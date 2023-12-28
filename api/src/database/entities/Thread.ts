@@ -48,6 +48,4 @@ export class Thread extends BaseEntity {
   replies: Reply[];
 
   replyCount: number;
-
-  lastReplyCreatedAt : number;
 }

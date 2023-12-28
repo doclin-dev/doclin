@@ -6,21 +6,20 @@
     import { ActiveTextEditor, Page } from '../enums'; 
     import { WebviewStateManager } from '../WebviewStateManager';
     import { TextEditor } from './TextEditor';
+    import moment from 'moment';
 
     export let thread: any;
     export let page: Page;
     export let reloadThreads: () => void = () => {};
     export let showReplyButton: boolean = true;
-    let replyCount: number;
-    let daysOpen : number;
+    let lastEdited : string | null = thread?.lastReplied ? moment.utc(thread.lastReplied).fromNow() : null;
+    let threadCreationTime : string = moment.utc(thread.threadCreationTime).fromNow();
 
     let quillThreadEditor: any;
         
     const handleEditButtonClick = async () => {
         if ($editedThreadId === null && $editedReplyId === null) {
             editedThreadId.set(thread.id);
-            console.log('reply', thread.lastReplyCreatedAt);
-            console.log(thread);
             await tick();
             quillThreadEditor = new TextEditor('#thread-editor');
             WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ThreadTextEditor);
@@ -102,7 +101,10 @@
 <div>
     <div class='thread-card'>
         <div class="thread-header">
-            <div class="name-header">{thread?.username}</div>
+            <div class="name-and-time-container">
+                <div class="card-name-header">{thread?.username}</div>
+                <div>{threadCreationTime}</div>
+            </div>
             <div class='button-container'>
                 {#if showReplyButton}
                     <Button icon='reply' onClick={handleReplyButtonClick} type='text'/>
@@ -119,24 +121,24 @@
             </div>
         {:else}
             <div>{@html thread?.message}</div>
-            {#if thread.replyCount &&  WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ThreadsViewer}
+            {#if thread?.replyCount &&  WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ThreadsViewer}
                 <div class="number-of-replies-button">
                     <Button 
                         textAlignment="flex-start" 
                         variant='primary' 
                         onClick={handleReplyButtonClick} 
-                        title="{thread.replyCount} replies" 
-                        children="{daysOpen} days ago"
+                        title="{thread?.replyCount} replies" 
+                        children={lastEdited ?? ""}
                         childrenClassName="last-reply"
                     />
                 </div>
             {/if}
         {/if}
     </div>
-    {#if thread.replyCount && WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ReplyViewer}
+    {#if thread?.replyCount && WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ReplyViewer}
         <div class="reply-count-line">
             <div class="reply-count-divider"></div>
-            <p>{thread.replyCount} replies</p>
+            <p>{thread?.replyCount} replies</p>
             <div class="reply-count-divider"></div>
         </div>
     {/if}

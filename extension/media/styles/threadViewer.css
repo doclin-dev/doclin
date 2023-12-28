@@ -4,7 +4,8 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 0.25rem 0;
+    padding-top: 0.25rem;
+    padding-bottom: 0.5rem
 }
   
 .button-container {
@@ -86,5 +87,16 @@
     margin-bottom: 0;
     font-size: larger;
     color: var(--vscode-focusBorder);
+}
+
+.name-and-time-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card-name-header {
+    font-size: small;
+    font-weight: 500;
 }
 
