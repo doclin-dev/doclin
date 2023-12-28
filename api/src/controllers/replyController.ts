@@ -44,7 +44,8 @@ export const getReplies = async (req: any, res: any) => {
         id: reply.id,
         message: reply.message,
         username: reply.anonymous ? ANONYMOUS_USER : reply.user?.name,
-        threadId: reply.threadId
+        threadId: reply.threadId,
+        replyCreationTime: reply.createdAt
     }));
 
     res.send({ replies: response });

@@ -6,12 +6,18 @@
     import { editedReplyId, editedThreadId } from './store.js';
     import { WebviewStateManager } from '../WebviewStateManager';
     import { ActiveTextEditor } from '../enums';
+  import moment from 'moment';
 
     export let reply: any;
     export let reloadReplies: () => void = () => {};
 
     let quillReplyCardEditor: any;
     let replyCardMessage: string;
+    let replyCreationTime : string = moment.utc(reply?.replyCreationTime).fromNow();
+
+    setInterval(()=>{
+        replyCreationTime = moment.utc(reply?.replyCreationTime).fromNow();
+    }, 60000);
 
     async function updateReplyMessage(message: string) {
         tsvscode.postMessage({
@@ -84,11 +90,12 @@
 
 <div class='reply-card'>
     <div class="reply-card-header">
-        <div class="name-header"> {reply.username}</div>
+        <div class="card-name-header"> {reply.username}</div>
         <div class='button-container'>
             <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
         </div>
     </div>
+    <div class='creation-time'>{replyCreationTime}</div>
     {#if $editedReplyId === reply.id}
         <div id="reply-card-editor">{@html reply.message}</div> 
         <div class='reply-card-footer'>

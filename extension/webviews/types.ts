@@ -17,6 +17,8 @@ export type Thread = {
   projectId: number;
   userId: number;
   username: string;
+  lastReplied: string;
+  threadCreationTime: string;
 };
 
 export type Organization = {
