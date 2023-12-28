@@ -6,7 +6,7 @@
     import { editedReplyId, editedThreadId } from './store.js';
     import { WebviewStateManager } from '../WebviewStateManager';
     import { ActiveTextEditor } from '../enums';
-  import moment from 'moment';
+    import moment from 'moment';
 
     export let reply: any;
     export let reloadReplies: () => void = () => {};

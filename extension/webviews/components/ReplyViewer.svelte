@@ -76,7 +76,6 @@
 
     onMount(async () => {
         thread = WebviewStateManager.getState(WebviewStateManager.type.THREAD_SELECTED);
-        console.log('replyView', thread);
 
         if (thread == null) {
             page = Page.ThreadsViewer;
