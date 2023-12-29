@@ -10,7 +10,7 @@
     import type { Thread as ThreadType } from "../types";
     import { TextEditor } from "./TextEditor";
 
-    let thread: ThreadType;
+    let thread: ThreadType = WebviewStateManager.getState(WebviewStateManager.type.THREAD_SELECTED);
     export let username: string;
     export let page: Page;
 

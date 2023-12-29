@@ -17,6 +17,12 @@ export enum ActiveTextEditor {
   ReplyTextEditor = 4,
 }
 
+export enum IntializeOrganizationView {
+  CreateOrganization = "createOrganization",
+  EnterInvitation = "enterInvitation",
+  JoinOrganization = "joinOrganization"
+}
+
 export enum ActiveView {
   AllThreads = 0,
   CurrentFileThreads = 1,

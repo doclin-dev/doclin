@@ -4,7 +4,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 0.25rem 0;
+    padding-top: 0.25rem;
 }
   
 .button-container {
@@ -30,6 +30,21 @@
     padding-top: 0.5rem;
     flex-direction: row;
     justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.number-of-replies-button {
+    margin-bottom: 0.5rem;
+    background-color: var(--vscode-textSeparator-foreground);
+    color: var(--vscode-focusBorder);
+    font-weight: 500;
+    border-radius: 0.25rem;
+}
+
+.last-reply {
+    padding-left: 0.75rem;
+    color: var(--vscode-foreground);
+    font-weight: 300;
 }
 
 #textEditor {
@@ -52,3 +67,40 @@
     font-size: 14px;
     cursor: pointer;
 }
+
+.reply-count-line {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.reply-count-divider {
+    height: 1px;
+    background-color: var(--vscode-focusBorder);
+    flex-grow: 1;
+}
+
+.reply-count-line p {
+    margin-bottom: 0;
+    font-size: larger;
+    color: var(--vscode-focusBorder);
+}
+
+.name-and-time-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card-name-header {
+    font-size: 1.125rem;
+    font-weight: 500;
+}
+
+.creation-time {
+    margin-top: -0.375rem;
+    padding-bottom: 0.75rem;
+}
+

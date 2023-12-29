@@ -6,11 +6,21 @@
     import { ActiveTextEditor, Page } from '../enums'; 
     import { WebviewStateManager } from '../WebviewStateManager';
     import { TextEditor } from './TextEditor';
+    import moment from 'moment';
 
     export let thread: any;
     export let page: Page;
     export let reloadThreads: () => void = () => {};
     export let showReplyButton: boolean = true;
+    let lastEdited : string | null = thread?.lastReplied ? moment.utc(thread.lastReplied).fromNow() : null;
+    let threadCreationTime : string = moment.utc(thread?.threadCreationTime).fromNow();
+
+    const replyCountText = thread?.replyCount + ` ${thread?.replyCount === 1 ? 'reply': 'replies'}`
+
+    setInterval(()=>{
+        lastEdited = thread?.lastReplied ? moment.utc(thread.lastReplied).fromNow() : null;
+        threadCreationTime = moment.utc(thread?.threadCreationTime).fromNow();
+    }, 60000);
 
     let quillThreadEditor: any;
         
@@ -95,24 +105,46 @@
     });
 </script>
 
-<div class='thread-card'>
-    <div class="thread-header">
-        <div class="name-header">{thread?.username}</div>
-        <div class='button-container'>
-            {#if showReplyButton}
-                <Button icon='reply' onClick={handleReplyButtonClick} type='text'/>
-            {/if}
+<div>
+    <div class='thread-card'>
+        <div class="thread-header">
+            <div class="card-name-header">{thread?.username}</div>
+            <div class='button-container'>
+                {#if showReplyButton}
+                    <Button icon='reply' onClick={handleReplyButtonClick} type='text'/>
+                {/if}
 
-            <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
+                <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
+            </div>
         </div>
+        <div class='creation-time'>{threadCreationTime}</div>
+        {#if $editedThreadId === thread?.id}
+            <div id="thread-editor">{@html thread?.message}</div> 
+            <div class='thread-editor-footer'>
+                <Button variant='secondary' onClick={onCancel} title="Cancel"/>
+                <Button variant='secondary' onClick={handleOnSubmit} title="Submit"/>
+            </div>
+        {:else}
+            <div>{@html thread?.message}</div>
+            {#if thread?.replyCount &&  WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ThreadsViewer}
+                <div class="number-of-replies-button">
+                    <Button 
+                        textAlignment="flex-start" 
+                        variant='primary' 
+                        onClick={handleReplyButtonClick} 
+                        title={replyCountText}
+                        children={lastEdited ?? ""}
+                        childrenClassName="last-reply"
+                    />
+                </div>
+            {/if}
+        {/if}
     </div>
-    {#if $editedThreadId === thread?.id}
-        <div id="thread-editor">{@html thread?.message}</div> 
-        <div class='thread-editor-footer'>
-            <Button variant='secondary' onClick={onCancel} title="Cancel"/>
-            <Button variant='secondary' onClick={handleOnSubmit} title="Submit"/>
+    {#if thread?.replyCount && WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ReplyViewer}
+        <div class="reply-count-line">
+            <div class="reply-count-divider"></div>
+            <p>{replyCountText}</p>
+            <div class="reply-count-divider"></div>
         </div>
-    {:else}
-        <div>{@html thread?.message}</div>
     {/if}
 </div>
