@@ -41,8 +41,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   const activeEditor = vscode.window.activeTextEditor;
   if (activeEditor) {
-    addMarker(context, activeEditor);
-
+    addMarker(context);
   }
 }
 

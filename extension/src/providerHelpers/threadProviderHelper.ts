@@ -24,8 +24,39 @@ export const getThreadsByActiveFilePath = async (): Promise<any> => {
   const payload = response?.data;
   const threads = payload?.threads;
 
+  addMarkerToEditor(threads);
+
   return {threads, activeFilePath};
 };
+
+
+const addMarkerToEditor = (threads: any) => {
+  const activeTextEditor = vscode.window.activeTextEditor;
+
+  if (!activeTextEditor) {
+    return;
+  }
+
+  const activeDocument = activeTextEditor.document;
+  const editorContent = activeDocument.getText();
+
+  threads.forEach((thread: any) => {
+    thread.snippets.forEach((snippet: any) => {
+      const codeStartPosition = editorContent.replace(/\n/g, ' ').indexOf(snippet.text.replace(/\n/g, ' '));
+      if (codeStartPosition == -1) {
+        snippet.outdated = true;
+        console.log("outdated");
+      } else {
+        snippet.outdated = false;
+        const codeRange = activeDocument.positionAt(codeStartPosition);
+        const lineNumber = codeRange.line + 1;
+        console.log(lineNumber);
+      }
+    });
+  });
+
+  console.log(threads);
+}
 
 export const getAllThreads = async (): Promise<any> => {
   const organizationId = await getCurrentOrganizationId();

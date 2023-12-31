@@ -147,4 +147,7 @@
             <div class="reply-count-divider"></div>
         </div>
     {/if}
+    {#each thread.snippets as snippet}
+        {snippet.outdated}
+    {/each}
 </div>

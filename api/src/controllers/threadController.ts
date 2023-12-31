@@ -114,26 +114,32 @@ export const getThreads = async (req: any, res: any) => {
     let threads: Thread[];
 
     if (filePath) {
-         threads = await ThreadRepository.findThreadByFilePathAndProjectId(filePath, projectId);
+        threads = await ThreadRepository.findThreadByFilePathAndProjectId(filePath, projectId);
     } else {
         threads = await ThreadRepository.findAllThreadsByProjectId(projectId);
     }
 
-    for (let thread of threads) {
-        thread = fillUpThreadMessageWithSnippet(thread);
-    };
+    threads = threads.map(fillUpThreadMessageWithSnippet);
 
     const response = threads.map((thread) => ({
-            id: thread.id,
-            message: thread.message,
-            username: thread.anonymous ? ANONYMOUS_USER : thread.user?.name,
-            replyCount: thread.replyCount,
-            threadCreationTime : thread.createdAt,
-            lastReplied: thread.replies.length > 0 ? thread.replies[0].createdAt : null,
-        })
-    );
+        id: thread.id,
+        message: thread.message,
+        username: thread.anonymous ? ANONYMOUS_USER : thread.user?.name,
+        replyCount: thread.replyCount,
+        threadCreationTime : thread.createdAt,
+        lastReplied: thread.replies.length > 0 ? thread.replies[0].createdAt : null,
+        snippets: thread.snippets.map(getSnippetDTO)
+    }));
 
     res.send({ threads: response });
+}
+
+const getSnippetDTO = (snippet: Snippet) => {
+    return {
+        id: snippet.id,
+        text: snippet.text,
+        filePath: snippet.snippetFilePaths[0].filePath
+    }
 }
 
 export const updateThread = async (req: any, res: any) => {
