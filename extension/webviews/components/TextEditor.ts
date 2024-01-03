@@ -65,11 +65,11 @@ export class TextEditor {
         this.quillInstance.theme.modules.toolbar.container.style.display = 'none';
     };
 
-    insertCodeSnippet({ filePath, threadMessage }: { filePath: string, threadMessage: string }): void {
+    insertCodeSnippet({ filePath, threadMessage, lineStart }: { filePath: string, threadMessage: string, lineStart: number }): void {
         const editor = this.quillInstance;
         const selection = editor.getSelection(true);
         const cursorPosition: number = selection ? selection.index : editor.getLength();
-        const textToInsert = `File Path: ${filePath}\n${threadMessage}\n`;
+        const textToInsert = `File Path: ${filePath}\nLine Start: ${lineStart}\n${threadMessage}\n`;
         editor.insertText(cursorPosition, "\n");
         editor.insertText(cursorPosition + 1, textToInsert);
         editor.formatText(cursorPosition + 1, textToInsert.length, "code-block", true);
