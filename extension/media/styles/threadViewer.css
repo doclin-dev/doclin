@@ -104,3 +104,16 @@
     padding-bottom: 0.75rem;
 }
 
+.outdated-label {
+    border: 1px solid rgba(226, 226, 0, 0.614);
+    border-radius: 0.5em;
+    font-size: 10px;
+    padding: 5px 5px;
+    color: rgba(226, 226, 0, 0.614);
+}
+
+.thread-file-path {
+    margin: 0px 5px;
+    font-size: 12px;
+    line-height: 5px;
+}

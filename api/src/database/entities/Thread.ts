@@ -48,4 +48,6 @@ export class Thread extends BaseEntity {
   replies: Reply[];
 
   replyCount: number;
+  originalMessage: string;
+  messageWithSnippetContainer: string;
 }

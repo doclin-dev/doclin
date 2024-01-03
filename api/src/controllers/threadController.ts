@@ -5,6 +5,7 @@ import { ThreadRepository } from "../database/repositories/ThreadRepository";
 
 const ANONYMOUS_USER: string = "Anonymous User";
 
+
 export const postThread = async (req: any, res: any) => {
     const threadMessage: string = req.body.threadMessage;
     const userId: number = req.userId;
@@ -12,7 +13,9 @@ export const postThread = async (req: any, res: any) => {
     const activeEditorFilePath: string = req.body.activeEditorFilePath;
     const anonymousPost: boolean = req.body.anonymous;
     
-    const { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage, activeEditorFilePath);
+    let { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage, activeEditorFilePath);
+
+    updatedThreadMessage = updatedThreadMessage.trim();
 
     const thread = await Thread.create({
         message: updatedThreadMessage,
@@ -24,7 +27,6 @@ export const postThread = async (req: any, res: any) => {
 
     let responseThread = await ThreadRepository.findThreadWithPropertiesByThreadId(thread.id);
 
-    responseThread = fillUpThreadMessageWithSnippet(responseThread);
     const username = responseThread.anonymous ? ANONYMOUS_USER : responseThread.user?.name;
     
     const response = {
@@ -52,6 +54,7 @@ const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, act
         
         if (codeBlockLines.length > 0) {
             let filePath: string;
+            // let lineStart: number;
             const filePathPrefix = "File Path: ";
 
             if (codeBlockLines[0]?.startsWith(filePathPrefix)) {
@@ -59,6 +62,10 @@ const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, act
             } else {
                 filePath = activeEditorFilePath;
             }
+
+            // if (codeBlockLines[0]?.startsWith(filePathPrefix)) {
+            //     filePath = codeBlockLines.shift()?.substring(filePathPrefix.length) || "";
+            // }
 
             filePaths.push(filePath);
             
@@ -93,17 +100,6 @@ const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, act
     return { updatedThreadMessage, snippetEntities }; 
 }
 
-const fillUpThreadMessageWithSnippet = (thread: Thread): Thread => {
-    for (const snippet of thread.snippets) {
-        const snippetFilePaths = snippet.snippetFilePaths;
-        const firstSnippetFilePath = snippetFilePaths[0];
-        const codeBlock = `<pre class="ql-syntax" spellcheck="false">File Path: ${firstSnippetFilePath.filePath}<hr>\n${snippet.text}</pre>`;
-        thread.message = thread.message.replace(getSnippetTag(snippet.id), codeBlock);
-    }
-
-    return thread;
-}
-
 const getSnippetTag = (snippetId: number) => {
     return `[snippet_${snippetId}]`;
 }
@@ -119,8 +115,6 @@ export const getThreads = async (req: any, res: any) => {
         threads = await ThreadRepository.findAllThreadsByProjectId(projectId);
     }
 
-    threads = threads.map(fillUpThreadMessageWithSnippet);
-
     const response = threads.map((thread) => ({
         id: thread.id,
         message: thread.message,
@@ -128,7 +122,7 @@ export const getThreads = async (req: any, res: any) => {
         replyCount: thread.replyCount,
         threadCreationTime : thread.createdAt,
         lastReplied: thread.replies.length > 0 ? thread.replies[0].createdAt : null,
-        snippets: thread.snippets.map(getSnippetDTO)
+        snippets: thread.snippets.map(getSnippetDTO),
     }));
 
     res.send({ threads: response });
@@ -163,13 +157,12 @@ export const updateThread = async (req: any, res: any) => {
 
     await thread.save();
 
-    let responseThread = fillUpThreadMessageWithSnippet(thread);
-    const username = responseThread.anonymous ? ANONYMOUS_USER : responseThread.user?.name;
+    const username = thread.anonymous ? ANONYMOUS_USER : thread.user?.name;
 
     const response = {
-        id: responseThread.id,
-        message: responseThread.message,
-        projectId: responseThread.projectId,
+        id: thread.id,
+        message: thread.message,
+        projectId: thread.projectId,
         username: username
     }
 

@@ -119,13 +119,13 @@
         </div>
         <div class='creation-time'>{threadCreationTime}</div>
         {#if $editedThreadId === thread?.id}
-            <div id="thread-editor">{@html thread?.message}</div> 
+            <div id="thread-editor">{@html thread?.originalMessage}</div> 
             <div class='thread-editor-footer'>
                 <Button variant='secondary' onClick={onCancel} title="Cancel"/>
                 <Button variant='secondary' onClick={handleOnSubmit} title="Submit"/>
             </div>
         {:else}
-            <div>{@html thread?.message}</div>
+            <div>{@html thread?.displayMessage}</div>
             {#if thread?.replyCount &&  WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ThreadsViewer}
                 <div class="number-of-replies-button">
                     <Button 
@@ -147,7 +147,4 @@
             <div class="reply-count-divider"></div>
         </div>
     {/if}
-    {#each thread.snippets as snippet}
-        {snippet.outdated}
-    {/each}
 </div>

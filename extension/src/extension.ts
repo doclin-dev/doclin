@@ -41,11 +41,12 @@ export function activate(context: vscode.ExtensionContext) {
 
   const activeEditor = vscode.window.activeTextEditor;
   if (activeEditor) {
-    addMarker(context);
+    const decorations = addMarkers();
+    addDecorationClickHandler(context, decorations);
   }
 }
 
-function addMarker(context: vscode.ExtensionContext) {
+function addMarkers() {
     if (!vscode.window.activeTextEditor) {
       return;
     }
@@ -72,6 +73,16 @@ function addMarker(context: vscode.ExtensionContext) {
 
     editor.setDecorations(decorationType, decorations);
 
+    return decorations;
+  }
+
+  const addDecorationClickHandler = (context: vscode.ExtensionContext, decorations: any) => {
+    if (!vscode.window.activeTextEditor) {
+      return;
+    }
+
+    const editor = vscode.window.activeTextEditor;
+
     // Handle icon click
     const disposable = vscode.window.onDidChangeTextEditorSelection((event) => {
       if (event.textEditor !== editor) {
@@ -79,7 +90,7 @@ function addMarker(context: vscode.ExtensionContext) {
       }
 
       const clickedPosition = event.selections[0].active;
-      decorations.forEach((decoration) => {
+      decorations.forEach((decoration: any) => {
         if (decoration.range.contains(clickedPosition)) {
           vscode.window.showInformationMessage(`Clicked icon on line ${clickedPosition.line + 1}`);
           // You can perform any action here based on the clicked line

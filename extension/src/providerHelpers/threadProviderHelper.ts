@@ -5,6 +5,9 @@ import { executeShellCommand } from "./providerHelperUtils";
 import { getCurrentOrganizationId } from "./organizationProviderHelper";
 import { getCurrentProjectId } from "./projectProviderHelper";
 
+const preTagStart: string = `<pre class="ql-syntax" spellcheck="false" contenteditable="false">`;
+const preTagEnd: string = `</pre>`;
+
 let lastActiveFilePath: string | null = null;
 
 vscode.window.onDidChangeActiveTextEditor((editor) => {
@@ -22,15 +25,46 @@ export const getThreadsByActiveFilePath = async (): Promise<any> => {
 
   const response = await threadApi.getFileBasedThreads(organizationId, projectId, activeFilePath);
   const payload = response?.data;
-  const threads = payload?.threads;
+  let threads = payload?.threads;
 
-  addMarkerToEditor(threads);
+  compareSnippetWithActiveEditor(threads);
 
-  return {threads, activeFilePath};
+  threads = threads.map(fillUpThreadMessageWithSnippet);
+
+  return { threads, activeFilePath };
 };
 
+const fillUpThreadMessageWithSnippet = (thread: any) => {
+  thread.originalMessage = thread.message;
+  thread.displayMessage = thread.message;
 
-const addMarkerToEditor = (threads: any) => {
+  for (const snippet of thread.snippets) {
+      const codeBlock = getOriginalCodeBlock(snippet.filePath, snippet.text);
+      thread.originalMessage = thread.originalMessage.replace(getSnippetTag(snippet.id), codeBlock);
+      thread.displayMessage = thread.displayMessage.replace(
+          getSnippetTag(snippet.id), 
+          getReadableCodeBlock(snippet.filePath, snippet.text, snippet.outdated)
+      );
+  }
+
+  return thread;
+}
+
+const getOriginalCodeBlock = (filePath: string, snippetText: string) => {
+  return `${preTagStart}File Path: ${filePath}\n${snippetText}${preTagEnd}`;
+}
+
+const getReadableCodeBlock = (filePath: string, snippetText: string, outdated: boolean) => {
+  const outdatedText = outdated ? `<label class="outdated-label">Outdated</label>` : "";
+  return `<label class="thread-file-path">📁 ${filePath} ${outdatedText}</label>\n
+  ${preTagStart}${snippetText}${preTagEnd}`;
+}
+
+const getSnippetTag = (snippetId: number) => {
+  return `[snippet_${snippetId}]`;
+}
+
+const compareSnippetWithActiveEditor = (threads: any) => {
   const activeTextEditor = vscode.window.activeTextEditor;
 
   if (!activeTextEditor) {
@@ -45,17 +79,13 @@ const addMarkerToEditor = (threads: any) => {
       const codeStartPosition = editorContent.replace(/\n/g, ' ').indexOf(snippet.text.replace(/\n/g, ' '));
       if (codeStartPosition == -1) {
         snippet.outdated = true;
-        console.log("outdated");
       } else {
         snippet.outdated = false;
         const codeRange = activeDocument.positionAt(codeStartPosition);
         const lineNumber = codeRange.line + 1;
-        console.log(lineNumber);
       }
     });
   });
-
-  console.log(threads);
 }
 
 export const getAllThreads = async (): Promise<any> => {
