@@ -2,9 +2,12 @@ import { SnippetFilePath } from "../database/entities/SnippetFilePath";
 import { Thread } from "../database/entities/Thread";
 import { Snippet } from "../database/entities/Snippet";
 import { ThreadRepository } from "../database/repositories/ThreadRepository";
+import { getSnippetTag, getFilePathFromCodeBlock, getLineStartFromCodeBlock } from "./utils/snippetComparisonUtil";
 
 const ANONYMOUS_USER: string = "Anonymous User";
-
+const CODE_BLOCK_REGEX: RegExp = /<pre\b[^>]*>([\s\S]*?)<\/pre>/g;
+const MULTIPLE_LINE_BREAK_REGEX: RegExp = /(<p><br><\/p>)+/gi;
+const SINGLE_LINE_BREAK: string = '<p><br></p>';
 
 export const postThread = async (req: any, res: any) => {
     const threadMessage: string = req.body.threadMessage;
@@ -40,34 +43,24 @@ export const postThread = async (req: any, res: any) => {
 }
 
 const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, activeEditorFilePath: string) => {
-    const snippetsMatcher: RegExp = /<pre\b[^>]*>([\s\S]*?)<\/pre>/g;
     const filePaths: string[] = [];
     const snippets: string[] = [];
+    const lineStarts: number[] = [];
 
     let count = -1;
     let updatedThreadMessage: string = "";
 
-    updatedThreadMessage = threadMessage.replace(/(<p><br><\/p>)+/gi, '<p><br></p>')
+    updatedThreadMessage = threadMessage.replace(MULTIPLE_LINE_BREAK_REGEX, SINGLE_LINE_BREAK)
 
-    updatedThreadMessage = updatedThreadMessage.replace(snippetsMatcher, (_match: string, content: string) => {
+    updatedThreadMessage = updatedThreadMessage.replace(CODE_BLOCK_REGEX, (_match: string, content: string) => {
         const codeBlockLines: string[] = content.split("\n");
         
         if (codeBlockLines.length > 0) {
-            let filePath: string;
-            // let lineStart: number;
-            const filePathPrefix = "File Path: ";
-
-            if (codeBlockLines[0]?.startsWith(filePathPrefix)) {
-                filePath = codeBlockLines.shift()?.substring(filePathPrefix.length) || "";
-            } else {
-                filePath = activeEditorFilePath;
-            }
-
-            // if (codeBlockLines[0]?.startsWith(filePathPrefix)) {
-            //     filePath = codeBlockLines.shift()?.substring(filePathPrefix.length) || "";
-            // }
+            const filePath: string = getFilePathFromCodeBlock(codeBlockLines, activeEditorFilePath);
+            const lineStart: number = getLineStartFromCodeBlock(codeBlockLines);
 
             filePaths.push(filePath);
+            lineStarts.push(lineStart);
             
             const snippetText: string = codeBlockLines.join("\n");
             snippets.push(snippetText);
@@ -85,6 +78,7 @@ const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, act
     for (let i = 0; i < snippets.length; i++) {
         const snippetFilePath = new SnippetFilePath();
         snippetFilePath.filePath = filePaths[i];
+        snippetFilePath.lineStart = lineStarts[i];
 
         const snippet: Snippet = new Snippet();
         snippet.text = snippets[i];
@@ -98,10 +92,6 @@ const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, act
     }
 
     return { updatedThreadMessage, snippetEntities }; 
-}
-
-const getSnippetTag = (snippetId: number) => {
-    return `[snippet_${snippetId}]`;
 }
 
 export const getThreads = async (req: any, res: any) => {
@@ -132,7 +122,8 @@ const getSnippetDTO = (snippet: Snippet) => {
     return {
         id: snippet.id,
         text: snippet.text,
-        filePath: snippet.snippetFilePaths[0].filePath
+        filePath: snippet.snippetFilePaths[0].filePath,
+        lineStart: snippet.snippetFilePaths[0].lineStart,
     }
 }
 

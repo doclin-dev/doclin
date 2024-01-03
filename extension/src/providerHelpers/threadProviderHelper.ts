@@ -5,8 +5,10 @@ import { executeShellCommand } from "./providerHelperUtils";
 import { getCurrentOrganizationId } from "./organizationProviderHelper";
 import { getCurrentProjectId } from "./projectProviderHelper";
 
-const preTagStart: string = `<pre class="ql-syntax" spellcheck="false" contenteditable="false">`;
-const preTagEnd: string = `</pre>`;
+const PRE_TAG_START: string = `<pre class="ql-syntax" spellcheck="false" contenteditable="false">`;
+const PRE_TAG_END: string = `</pre>`;
+const FILE_PATH_PREFIX: string = "File Path: ";
+const LINE_START_PREFIX: string = "Line Start: ";
 
 let lastActiveFilePath: string | null = null;
 
@@ -39,25 +41,40 @@ const fillUpThreadMessageWithSnippet = (thread: any) => {
   thread.displayMessage = thread.message;
 
   for (const snippet of thread.snippets) {
-      const codeBlock = getOriginalCodeBlock(snippet.filePath, snippet.text);
-      thread.originalMessage = thread.originalMessage.replace(getSnippetTag(snippet.id), codeBlock);
+      thread.originalMessage = thread.originalMessage.replace(
+        getSnippetTag(snippet.id), 
+        getOriginalCodeBlock(snippet.filePath, snippet.lineStart, snippet.text)
+      );
+
       thread.displayMessage = thread.displayMessage.replace(
-          getSnippetTag(snippet.id), 
-          getReadableCodeBlock(snippet.filePath, snippet.text, snippet.outdated)
+        getSnippetTag(snippet.id), 
+        getReadableCodeBlock(snippet.filePath, snippet.lineStart, snippet.text, snippet.outdated)
       );
   }
 
   return thread;
 }
 
-const getOriginalCodeBlock = (filePath: string, snippetText: string) => {
-  return `${preTagStart}File Path: ${filePath}\n${snippetText}${preTagEnd}`;
+const getOriginalCodeBlock = (filePath: string, lineStart: number, snippetText: string) => {
+  return `${PRE_TAG_START}${FILE_PATH_PREFIX}${filePath}\n${LINE_START_PREFIX}${lineStart}\n${snippetText}${PRE_TAG_END}`;
 }
 
-const getReadableCodeBlock = (filePath: string, snippetText: string, outdated: boolean) => {
+const getReadableCodeBlock = (filePath: string, lineStart: number, snippetText: string, outdated: boolean) => {
   const outdatedText = outdated ? `<label class="outdated-label">Outdated</label>` : "";
+
+  snippetText = addLineNumbers(lineStart, snippetText);
+
   return `<label class="thread-file-path">📁 ${filePath} ${outdatedText}</label>\n
-  ${preTagStart}${snippetText}${preTagEnd}`;
+  ${PRE_TAG_START}${snippetText}${PRE_TAG_END}`;
+}
+
+const addLineNumbers = (lineStart: number, snippetText: string) => {
+  const lines = snippetText.split("\n");
+  for (let i = 0; i < lines.length; i++) {
+    const lineNumber = lineStart + i;
+    lines[i] = lineNumber + " " + lines[i];
+  }
+  return lines.join("\n");
 }
 
 const getSnippetTag = (snippetId: number) => {
