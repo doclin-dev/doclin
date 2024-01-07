@@ -46,6 +46,7 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
                     .leftJoinAndSelect('thread.snippets', 'snippet')
                     .leftJoinAndSelect('snippet.snippetFilePaths', 'snippetFilePath')
                     .leftJoinAndSelect('thread.user', 'user')
+                    .leftJoinAndSelect('thread.replies', 'reply')
                     .andWhere('thread.id = :threadId', { threadId })
                     .getOneOrFail();
     },

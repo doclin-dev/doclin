@@ -29,15 +29,8 @@ export const postThread = async (req: any, res: any) => {
     }).save();
 
     let responseThread = await ThreadRepository.findThreadWithPropertiesByThreadId(thread.id);
-
-    const username = responseThread.anonymous ? ANONYMOUS_USER : responseThread.user?.name;
     
-    const response = {
-        id: responseThread.id,
-        message: responseThread.message,
-        projectId: responseThread.projectId,
-        username: username
-    }
+    const response = mapThreadResponse(responseThread);
 
     res.send({ thread: response });
 }
@@ -105,20 +98,24 @@ export const getThreads = async (req: any, res: any) => {
         threads = await ThreadRepository.findAllThreadsByProjectId(projectId);
     }
 
-    const response = threads.map((thread) => ({
+    const response = threads.map(mapThreadResponse);
+
+    res.send({ threads: response });
+}
+
+const mapThreadResponse = (thread: Thread) => {
+    return {
         id: thread.id,
         message: thread.message,
         username: thread.anonymous ? ANONYMOUS_USER : thread.user?.name,
         replyCount: thread.replyCount,
         threadCreationTime : thread.createdAt,
         lastReplied: thread.replies.length > 0 ? thread.replies[0].createdAt : null,
-        snippets: thread.snippets.map(getSnippetDTO),
-    }));
-
-    res.send({ threads: response });
+        snippets: thread.snippets.map(mapSnippetResponse),
+    }
 }
 
-const getSnippetDTO = (snippet: Snippet) => {
+const mapSnippetResponse = (snippet: Snippet) => {
     return {
         id: snippet.id,
         text: snippet.text,
@@ -148,14 +145,7 @@ export const updateThread = async (req: any, res: any) => {
 
     await thread.save();
 
-    const username = thread.anonymous ? ANONYMOUS_USER : thread.user?.name;
-
-    const response = {
-        id: thread.id,
-        message: thread.message,
-        projectId: thread.projectId,
-        username: username
-    }
+    const response = mapThreadResponse(thread);
 
     res.send({ thread: response });
 }

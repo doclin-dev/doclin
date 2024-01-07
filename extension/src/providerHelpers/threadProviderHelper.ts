@@ -36,6 +36,23 @@ export const getThreadsByActiveFilePath = async (): Promise<any> => {
   return { threads, activeFilePath };
 };
 
+export const getAllThreads = async (): Promise<any> => {
+  const organizationId = await getCurrentOrganizationId();
+  const projectId = await getCurrentProjectId();
+
+  if (!organizationId || !projectId) return;
+
+  const response = await threadApi.getAllThreads(organizationId, projectId);
+  const payload = response?.data;
+  let threads = payload?.threads;
+
+  compareSnippetWithActiveEditor(threads);
+
+  threads = threads.map(fillUpThreadMessageWithSnippet);
+
+  return threads;
+};
+
 const fillUpThreadMessageWithSnippet = (thread: any) => {
   thread.originalMessage = thread.message;
   thread.displayMessage = thread.message;
@@ -105,19 +122,6 @@ const compareSnippetWithActiveEditor = (threads: any) => {
   });
 }
 
-export const getAllThreads = async (): Promise<any> => {
-  const organizationId = await getCurrentOrganizationId();
-  const projectId = await getCurrentProjectId();
-
-  if (!organizationId || !projectId) return;
-
-  const response = await threadApi.getAllThreads(organizationId, projectId);
-  const payload = response?.data;
-  const threads = payload?.threads;
-
-  return threads;
-};
-
 export const postThread = async({ threadMessage, anonymous }: { threadMessage: string, anonymous: boolean }): Promise<any> => {
   const organizationId = await getCurrentOrganizationId();
   const projectId = await getCurrentProjectId();
@@ -126,7 +130,11 @@ export const postThread = async({ threadMessage, anonymous }: { threadMessage: s
   if (!organizationId || !projectId || !activeFilePath) return;
 
   const response = await threadApi.postThread(organizationId, projectId, threadMessage, activeFilePath, anonymous);
-  const thread = response?.data?.thread;
+  let thread = response?.data?.thread;
+
+  compareSnippetWithActiveEditor([thread]);
+
+  thread = fillUpThreadMessageWithSnippet(thread);
 
   return thread;
 };
