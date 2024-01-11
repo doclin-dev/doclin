@@ -39,7 +39,6 @@ const getReadableCodeBlock = (filePath: string, lineStart: number, snippetText: 
     const outdatedText = outdated ? `<label class="outdated-label">Outdated</label>` : "";
 
     const highlight = hljs.highlightAuto(decodeHtmlEntities(snippetText));
-    console.log(highlight.language);
     snippetText = highlight.value;
     snippetText = addLineNumbers(lineStart, snippetText);
 
@@ -66,16 +65,23 @@ const decodeHtmlEntities = (encodedString: string) => {
                         .replace(/&amp;/g,'&');
 }
 
+const removeLineBreaks = (text: string) => {
+    return text.replace(/\n/g, ' ');
+}
+
 export const compareSnippetWithActiveEditor = async (threads: any) => {
     for(const thread of threads) {
         for(const snippet of thread.snippets) {
-            const content = await readFileContent(snippet.filePath);
+            let content = await readFileContent(snippet.filePath);
 
             if (!content) {
                 return;
             }
 
-            const codeStartPosition = decodeHtmlEntities(content).indexOf(decodeHtmlEntities(snippet.text));
+            content = removeLineBreaks(decodeHtmlEntities(content));
+            const snippetText = removeLineBreaks(decodeHtmlEntities(snippet.text));
+
+            const codeStartPosition = content.indexOf(snippetText);
 
             if (codeStartPosition == -1) {
                 snippet.outdated = true;
