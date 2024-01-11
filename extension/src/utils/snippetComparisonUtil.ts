@@ -1,4 +1,9 @@
 import * as vscode from "vscode";
+import hljs from 'highlight.js';
+
+hljs.configure({
+    languages: ['javascript', 'python', 'cpp', 'ruby', 'php', 'html']
+});
 
 const PRE_TAG_START: string = `<pre class="ql-syntax" spellcheck="false" contenteditable="false">`;
 const PRE_TAG_END: string = `</pre>`;
@@ -33,6 +38,9 @@ const getOriginalCodeBlock = (filePath: string, lineStart: number, snippetText: 
 const getReadableCodeBlock = (filePath: string, lineStart: number, snippetText: string, outdated: boolean) => {
     const outdatedText = outdated ? `<label class="outdated-label">Outdated</label>` : "";
 
+    const highlight = hljs.highlightAuto(decodeHtmlEntities(snippetText));
+    console.log(highlight.language);
+    snippetText = highlight.value;
     snippetText = addLineNumbers(lineStart, snippetText);
 
     return `<label class="thread-file-path">📁 ${filePath} ${outdatedText}</label>\n
