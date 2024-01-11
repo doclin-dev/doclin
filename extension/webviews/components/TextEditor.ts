@@ -69,7 +69,12 @@ export class TextEditor {
         const editor = this.quillInstance;
         const selection = editor.getSelection(true);
         const cursorPosition: number = selection ? selection.index : editor.getLength();
-        const textToInsert = `File Path: ${filePath}\nLine Start: ${lineStart}\n${threadMessage}\n`;
+        
+        let textToInsert = ``;
+        textToInsert += `File Path: ${filePath}\n`;
+        textToInsert += lineStart ? `Line Start: ${lineStart}\n`: ``;
+        textToInsert += `${threadMessage}\n`;
+
         editor.insertText(cursorPosition, "\n");
         editor.insertText(cursorPosition + 1, textToInsert);
         editor.formatText(cursorPosition + 1, textToInsert.length, "code-block", true);

@@ -62,9 +62,7 @@ const getSnippetTag = (snippetId: number) => {
 
 const decodeHtmlEntities = (encodedString: string) => {
     return encodedString.replace(/&lt;/g,'<')
-                        .replace(/&gt;/g,'>')
-                        .replace(/&amp;/g,'&')
-                        .replace(/\n/g, ' ');
+                        .replace(/&gt;/g,'>');
 }
 
 export const compareSnippetWithActiveEditor = async (threads: any) => {
