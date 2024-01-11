@@ -38,67 +38,6 @@ export function activate(context: vscode.ExtensionContext) {
       }
     })
   );
-
-  const activeEditor = vscode.window.activeTextEditor;
-  if (activeEditor) {
-    const decorations = addMarkers();
-    addDecorationClickHandler(context, decorations);
-  }
-}
-
-function addMarkers() {
-    if (!vscode.window.activeTextEditor) {
-      return;
-    }
-
-    const editor = vscode.window.activeTextEditor;
-    const { document } = editor;
-
-    const decorationType = vscode.window.createTextEditorDecorationType({
-      after: {
-        contentText: "🚀",
-        margin: "0 0 0 10px",
-      }
-    });
-
-    const decorations: vscode.DecorationOptions[] = [];
-    for (let i = 5; i < 6; i++) {
-      const line = document.lineAt(i);
-      const range = new vscode.Range(i, line.range.end.character, i, line.range.end.character);
-      const decoration = {
-        range
-      };
-      decorations.push(decoration);
-    }
-
-    editor.setDecorations(decorationType, decorations);
-
-    return decorations;
-  }
-
-  const addDecorationClickHandler = (context: vscode.ExtensionContext, decorations: any) => {
-    if (!vscode.window.activeTextEditor) {
-      return;
-    }
-
-    const editor = vscode.window.activeTextEditor;
-
-    // Handle icon click
-    const disposable = vscode.window.onDidChangeTextEditorSelection((event) => {
-      if (event.textEditor !== editor) {
-        return;
-      }
-
-      const clickedPosition = event.selections[0].active;
-      decorations.forEach((decoration: any) => {
-        if (decoration.range.contains(clickedPosition)) {
-          vscode.window.showInformationMessage(`Clicked icon on line ${clickedPosition.line + 1}`);
-          // You can perform any action here based on the clicked line
-        }
-      });
-    });
-
-    context.subscriptions.push(disposable);
 }
 
 // this method is called when your extension is deactivated
