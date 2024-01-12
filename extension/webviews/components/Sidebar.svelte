@@ -8,6 +8,7 @@
     import { WebviewStateManager } from "../WebviewStateManager";
     import InitializeOrganization from "./InitializeOrganization.svelte";
     import InviteUser from "./InviteUser.svelte";
+    import AccessRequired from "./AccessRequired.svelte";
 
     let accessToken = "";
     let loading = true;
@@ -64,6 +65,12 @@
         }
 
         WebviewStateManager.setState(WebviewStateManager.type.CURRENT_PROJECT, project);
+
+        if (page == Page.InitializeOrganization || page == Page.InitializeProject) {
+            page = Page.ThreadsViewer;
+            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+        }
+
         loading = false;
     }
 
@@ -93,7 +100,7 @@
     {#if page === Page.NotGitRepo}
         <div>Workspace folder is not a github repository.</div>
     {:else if page === Page.AccessRequired}
-        <div>Contact admin for access to this project.</div>
+        <AccessRequired bind:page={page}/>
     {:else if page === Page.InitializeOrganization}
         <InitializeOrganization bind:page={page}/>
     {:else if page === Page.InitializeProject}

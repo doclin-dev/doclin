@@ -126,7 +126,10 @@ export const getThreads = async (req: any, res: any) => {
     const response = threads.map((thread) => ({
             id: thread.id,
             message: thread.message,
-            username: thread.anonymous ? ANONYMOUS_USER : thread.user?.name
+            username: thread.anonymous ? ANONYMOUS_USER : thread.user?.name,
+            replyCount: thread.replyCount,
+            threadCreationTime : thread.createdAt,
+            lastReplied: thread.replies.length > 0 ? thread.replies[0].createdAt : null,
         })
     );
 

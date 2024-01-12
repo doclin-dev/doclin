@@ -10,7 +10,11 @@
     let existingProjects: Project[] = [];
     let currentOrganization: Organization | null;
     let error: string = "";
+    let newProjectView: boolean;
+    
     const EMPTY_STRING_ERROR: string = "Project name cannot be empty!";
+    const CREATE_NEW_PROJECT: string = "Create New project";
+    const JOIN_EXISTING_PROJECT: string = "Join Existing Project";
 
     const switchPageToThreadsViewer = () => {
         page = Page.ThreadsViewer;
@@ -39,6 +43,22 @@
         tsvscode.postMessage({ type: 'getExistingProjects', value: undefined });
     }
 
+    const setView = (existingProjects: Project[]) => {
+        if (existingProjects.length > 0) {
+            newProjectView = false;
+        } else {
+            newProjectView = true;
+        }
+    }
+
+    const setViewToCreateProject = () => {
+        newProjectView = true;
+    }
+
+    const setViewToJoinExistingProject = () => {
+        newProjectView = false;
+    }
+
     const messageEventListener = async (event: any) => {
         const message = event.data;
         switch (message.type) {
@@ -48,6 +68,7 @@
                 break;
             case "getExistingProjects":
                 existingProjects = message.value;
+                setView(existingProjects);
                 break;
             case "setCurrentProject":
                 switchPageToThreadsViewer();
@@ -75,28 +96,38 @@
 </script>
 
 <div>
-    <h3>Join Project</h3>
+    {#if newProjectView === true}
+        <h3>Join Project</h3>
 
-    <form>
-        <input class="my-1" placeholder="Enter project name" bind:value={postProjectName} />
-        <input class="my-1" placeholder="Github repo url" value={githubUrl} disabled/>
-        <button on:click|preventDefault={createNewProject}>Create New Project</button>
-        <div class="text-danger">{error}</div>
-    </form>
+        <form>
+            <input class="my-1" placeholder="Enter project name" bind:value={postProjectName} />
+            <input class="my-1" placeholder="Github repo url" value={githubUrl} disabled/>
+            <button on:click|preventDefault={createNewProject}>Submit</button>
+            <div class="text-danger">{error}</div>
+        </form>
 
-    {#if existingProjects.length > 0}
+        <hr/>
+        {#if existingProjects.length > 0}
+            <button on:click|preventDefault={setViewToJoinExistingProject}>{JOIN_EXISTING_PROJECT}</button>
+        {/if}
+    {/if}
+
+    {#if newProjectView === false}
         <div class="my-2">
-            <div>Or select an existing project:</div>
+            <h3>Select an existing project:</h3>
 
             <ul>
                 {#each existingProjects as project (project.id)}
-                    <li >
+                    <li>
                         <a href="0" on:click|preventDefault={() => setCurrentProject(project)}> {project.name} </a>
                     </li>
                 {/each}
             </ul>
         </div>
+
+        <hr/>
+        <button on:click|preventDefault={setViewToCreateProject}>{CREATE_NEW_PROJECT}</button>
     {/if}
 
-    <button on:click={() => {chooseAnotherOrganization()}}>Organization: {currentOrganization?.name}</button>
+    <button on:click={() => {chooseAnotherOrganization()}}>Change Organization: {currentOrganization?.name}</button>
 </div>

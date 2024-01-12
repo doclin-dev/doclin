@@ -1,7 +1,6 @@
 .button {
     display: flex;
     align-items: center;
-    justify-content: center;
     border-radius: 0.2em;
     cursor: pointer;
     border: 1px solid var(--vscode-button-border);
