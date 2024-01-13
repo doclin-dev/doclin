@@ -28,4 +28,6 @@ jobs:
             script: |
               sudo docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
               sudo docker pull ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
+              sudo docker stop doclin-container || true
+              sudo docker rm doclin-container || true
               sudo docker run -d -p 3000:3000 --name doclin-container -e DB_HOST=${{secrets.DB_HOST}} -e DB_PASS=${{secrets.DB_PASS}} ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
