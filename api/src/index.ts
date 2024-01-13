@@ -1,16 +1,15 @@
+require("dotenv-safe").config();
 import "reflect-metadata";
 import express from "express";
-import { __prod__ } from "./constants";
 import { Strategy as GitHubStrategy } from "passport-github";
 import passport from "passport";
 import cors from "cors";
 import router from "./routes/router";
 import session from "express-session";
-import "./database/dataSource";
 import { AppDataSource } from "./database/dataSource";
 import { githubOAuthConfig, githubLogin } from "./controllers/githubAuthController";
 
-require("dotenv-safe").config();
+const PORT = process.env.PORT || 3000;
 
 const main = async () => {
   const app = express();
@@ -52,9 +51,7 @@ const main = async () => {
 
   app.use("/", router);
 
-  app.listen(3002, () => {
-    console.debug("Listening on localhost:3002");
-  });
+  app.listen(PORT, () => console.debug(`Listening on localhost:${PORT}`));
 };
 
 main();

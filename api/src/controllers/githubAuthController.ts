@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { User } from "../database/entities/User";
 
-require("dotenv-safe").config();
+const PORT = process.env.PORT || 3000;
 
 export const githubCallback = (req: any, res: any) => {
     res.redirect(`http://localhost:54321/auth/${req.user.accessToken}`);
@@ -34,5 +34,5 @@ export const githubLogin = async (_accessToken: any, _refreshToken: any, profile
 export const githubOAuthConfig = {
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: "http://localhost:3002/auth/github/callback",
+    callbackURL: `http://localhost:${PORT}/auth/github/callback`,
 }
