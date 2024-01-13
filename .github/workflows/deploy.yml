@@ -30,4 +30,12 @@ jobs:
               sudo docker pull ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
               sudo docker stop doclin-container || true
               sudo docker rm doclin-container || true
-              sudo docker run -d -p 3000:3000 --name doclin-container -e DB_HOST=${{secrets.DB_HOST}} -e DB_PASS=${{secrets.DB_PASS}} ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
+              sudo docker run -d -p 3000:3000 --name doclin-container\
+                -e NODE_ENV=production\
+                -e ACCESS_TOKEN_SECRET=${{secrets.ACCESS_TOKEN_SECRET}}\
+                -e GITHUB_CLIENT_SECRET=${{secrets.GIT_CLIENT_SECRET}}\
+                -e GITHUB_CLIENT_ID=${{secrets.GIT_CLIENT_ID}}\
+                -e SENDGRID_API_KEY=${{secrets.SENDGRID_API_KEY}}\
+                -e DB_HOST=${{secrets.DB_HOST}}\
+                -e DB_PASS=${{secrets.DB_PASS}}\
+                ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest

@@ -1,4 +1,4 @@
-require("dotenv-safe").config();
+require("dotenv-safe").config({ allowEmptyValues: true });
 import "reflect-metadata";
 import express from "express";
 import { Strategy as GitHubStrategy } from "passport-github";
