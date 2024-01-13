@@ -26,6 +26,7 @@ jobs:
             username: ${{ secrets.EC2_USERNAME }}
             key: ${{ secrets.MY_EC2_SSH_KEY }}
             script: |
+              sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
               sudo docker pull ${{ secrets.DOCKER_REPO_URL }}/doclin-api:latest
               sudo docker stop my-node-app || true
               sudo docker rm my-node-app || true
