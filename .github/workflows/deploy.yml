@@ -38,4 +38,5 @@ jobs:
                 -e SENDGRID_API_KEY=${{secrets.SENDGRID_API_KEY}}\
                 -e DB_HOST=${{secrets.DB_HOST}}\
                 -e DB_PASS=${{secrets.DB_PASS}}\
+                -e SERVER_URL=${{secrets.SERVER_URL}}
                 ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
