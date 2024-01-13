@@ -15,10 +15,10 @@ jobs:
             node-version: '16'
         - name: Build and push Docker image
           run: |
-            docker build -t dummy-server .
-            docker tag dummy-server:latest ${{ secrets.DOCKER_REPO_URL }}/dummy-server:latest
+            docker build -t doclin-api .
+            docker tag doclin-api:latest ${{ secrets.DOCKER_REPO_URL }}/doclin-api:latest
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            docker push ${{ secrets.DOCKER_REPO_URL }}/dummy-server:latest
+            docker push ${{ secrets.DOCKER_REPO_URL }}/doclin-api:latest
         - name: SSH into EC2 instance and deploy
           uses: appleboy/ssh-action@master
           with:
