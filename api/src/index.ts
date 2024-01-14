@@ -1,6 +1,7 @@
 require("dotenv-safe").config({ allowEmptyValues: true });
 import "reflect-metadata";
-import express from "express";
+import express, { Application } from "express";
+import https from "https";
 import { Strategy as GitHubStrategy } from "passport-github";
 import passport from "passport";
 import cors from "cors";
@@ -8,31 +9,67 @@ import router from "./routes/router";
 import session from "express-session";
 import { AppDataSource } from "./database/dataSource";
 import { githubOAuthConfig, githubLogin } from "./controllers/githubAuthController";
-
-const PORT = process.env.PORT || 3000;
+import fs from 'fs';
+import { 
+  PRODUCTION, 
+  DEVELOPMENT_PORT, 
+  PRODUCTION_PORT, 
+  SSL_CERT_PATH, 
+  SSL_PRIV_KEY_PATH, 
+  ACCESS_TOKEN_SECRET
+} from "./envConstants";
 
 const main = async () => {
-  const app = express();
+  const app: Application = express();
 
+  initializeDatabase();
+  initializeCors(app);
+  initializeSession(app);
+  initializePassportAuthentication(app);
+  initializeJsonCommunication(app);
+  initializeRouter(app);
+
+  if (PRODUCTION) {
+    listenToProductionPort(app);
+  } else {
+    listenToDevelopmentPort(app);
+  }
+};
+
+const initializeDatabase = () => {
   AppDataSource.initialize().then(() => {
     console.debug("Data Source has been initialized!");
-  })
-  .catch((err) => {
+  }).catch((err) => {
     console.error("Error during Data Source initialization", err);
   });
+}
 
-  passport.serializeUser((user: any, done) => {
-    done(null, user.accessToken);
-  });
-
+const initializeCors = (app: Application) => {
   app.use(cors({ 
     origin: true, 
     optionsSuccessStatus: 200,
     credentials: true
   }));
+}
+
+const initializeSession = (app: Application) => {
+  app.use(session({
+    secret: ACCESS_TOKEN_SECRET,
+    resave: false,
+    saveUninitialized: true
+  }));
+}
+
+const initializePassportAuthentication = (app: Application) => {
+  passport.serializeUser((user: any, done) => {
+    done(null, user.accessToken);
+  });
 
   app.use(passport.initialize());
+  passport.use(new GitHubStrategy(githubOAuthConfig, githubLogin));
+}
 
+const initializeJsonCommunication = (app: Application) => {
   app.use(express.json());
 
   app.use(
@@ -40,18 +77,28 @@ const main = async () => {
       extended: true,
     })
   );
-  
-  app.use(session({
-    secret: process.env.ACCESS_TOKEN_SECRET,
-    resave: false,
-    saveUninitialized: true
-  }));
+}
 
-  passport.use(new GitHubStrategy(githubOAuthConfig, githubLogin));
-
+const initializeRouter = (app: Application) => {
   app.use("/", router);
+}
 
-  app.listen(PORT, () => console.debug(`Listening on localhost:${PORT}`));
-};
+const listenToProductionPort = (app: Application) => {
+  const key = fs.readFileSync(SSL_PRIV_KEY_PATH, 'utf8');
+  const cert = fs.readFileSync(SSL_CERT_PATH, 'utf8');
+  const credentials = { key, cert };
+  
+  const httpsServer = https.createServer(credentials, app);
+
+  httpsServer.listen(PRODUCTION_PORT, () => {
+    console.debug(`Listerning on https://localhost:${PRODUCTION_PORT}`);
+  });
+}
+
+const listenToDevelopmentPort = (app: Application) => {
+  app.listen(DEVELOPMENT_PORT, () => {
+    console.debug(`Listening on localhost:${DEVELOPMENT_PORT}`)
+  });
+}
 
 main();
