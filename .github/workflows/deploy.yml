@@ -31,7 +31,7 @@ jobs:
               sudo docker pull ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
               sudo docker stop doclin-container || true
               sudo docker rm doclin-container || true
-              sudo docker run -d\ 
+              sudo docker run\ 
                 -v /etc/letsencrypt/live/api.doclin.dev:/doclin-api/certificates\
                 -p 443:443\
                 -name doclin-container\
@@ -42,4 +42,4 @@ jobs:
                 -e SENDGRID_API_KEY=${{secrets.SENDGRID_API_KEY}}\
                 -e DB_HOST=${{secrets.DB_HOST}}\
                 -e DB_PASS=${{secrets.DB_PASS}}\
-                ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
+                -d ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
