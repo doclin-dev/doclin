@@ -33,13 +33,13 @@ jobs:
               sudo docker rm doclin-container || true
               sudo docker run --detach\ 
                 --volume /etc/letsencrypt/live/api.doclin.dev:/doclin-api/certificates
-                --port 443:443\
+                --publish 443:443\
                 --name doclin-container\
-                -e NODE_ENV=production\
-                -e ACCESS_TOKEN_SECRET=${{secrets.ACCESS_TOKEN_SECRET}}\
-                -e GITHUB_CLIENT_SECRET=${{secrets.GIT_CLIENT_SECRET}}\
-                -e GITHUB_CLIENT_ID=${{secrets.GIT_CLIENT_ID}}\
-                -e SENDGRID_API_KEY=${{secrets.SENDGRID_API_KEY}}\
-                -e DB_HOST=${{secrets.DB_HOST}}\
-                -e DB_PASS=${{secrets.DB_PASS}}\
+                --env NODE_ENV=production\
+                --env ACCESS_TOKEN_SECRET=${{secrets.ACCESS_TOKEN_SECRET}}\
+                --env GITHUB_CLIENT_SECRET=${{secrets.GIT_CLIENT_SECRET}}\
+                --env GITHUB_CLIENT_ID=${{secrets.GIT_CLIENT_ID}}\
+                --env SENDGRID_API_KEY=${{secrets.SENDGRID_API_KEY}}\
+                --env DB_HOST=${{secrets.DB_HOST}}\
+                --env DB_PASS=${{secrets.DB_PASS}}\
                 ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
