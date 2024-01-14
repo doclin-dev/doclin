@@ -1,4 +1,4 @@
-export const PRODUCTION = process.env.production === "production";
+export const PRODUCTION = process.env.NODE_ENV === "production";
 
 export const DEVELOPMENT_PORT = 3000;
 export const DEVELOPMENT_SERVER_URL = `http://localhost:${DEVELOPMENT_PORT}`;

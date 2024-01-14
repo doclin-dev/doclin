@@ -91,7 +91,7 @@ const listenToProductionPort = (app: Application) => {
   const httpsServer = https.createServer(credentials, app);
 
   httpsServer.listen(PRODUCTION_PORT, () => {
-    console.debug(`Listerning on https://localhost:${PRODUCTION_PORT}`);
+    console.debug(`Listening on https://localhost:${PRODUCTION_PORT}`);
   });
 }
 
