@@ -34,7 +34,7 @@ jobs:
               sudo docker run\ 
                 -v /etc/letsencrypt/live/api.doclin.dev:/doclin-api/certificates\
                 -p 443:443\
-                -name doclin-container\
+                --name doclin-container\
                 -e NODE_ENV=production\
                 -e ACCESS_TOKEN_SECRET=${{secrets.ACCESS_TOKEN_SECRET}}\
                 -e GITHUB_CLIENT_SECRET=${{secrets.GIT_CLIENT_SECRET}}\
