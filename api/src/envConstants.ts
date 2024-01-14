@@ -5,8 +5,8 @@ export const DEVELOPMENT_SERVER_URL = `http://localhost:${DEVELOPMENT_PORT}`;
 
 export const PRODUCTION_PORT = 443;
 export const PRODUCTION_SERVER_URL = "https://api.doclin.dev";
-export const SSL_PRIV_KEY_PATH = "/etc/letsencrypt/live/api.doclin.dev/privkey.pem";
-export const SSL_CERT_PATH = "/etc/letsencrypt/live/api.doclin.dev/fullchain.pem";
+export const SSL_PRIV_KEY_PATH = "/doclin-api/certificates/privkey.pem";
+export const SSL_CERT_PATH = "/doclin-api/certificates/fullchain.pem";
 
 export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 
