@@ -15,6 +15,7 @@ jobs:
             node-version: '16'
         - name: Build and push Docker image
           run: |
+            cd api
             docker build --tag doclin-api .
             docker tag doclin-api:latest ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
             docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}

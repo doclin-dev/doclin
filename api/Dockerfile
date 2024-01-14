@@ -2,7 +2,7 @@
 FROM node:lts-alpine
 # Set the working directory in the container
 WORKDIR /doclin-api
-COPY api/ .
+COPY . .
 RUN npm install
 RUN npm run build
 EXPOSE 3000
