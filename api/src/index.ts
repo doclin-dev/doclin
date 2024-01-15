@@ -84,6 +84,12 @@ const initializeRouter = (app: Application) => {
 }
 
 const listenToProductionPort = (app: Application) => {
+  if (process.getuid && process.getuid() === 0) {
+    console.log('Node.js process is running as root user.');
+  } else {
+    console.log('Node.js process is not running as root user.');
+  }
+  
   console.log(`Checking for SSL certificate files at: ${SSL_CERT_PATH} and ${SSL_PRIV_KEY_PATH}`);
 
   if (!fs.existsSync(SSL_CERT_PATH) || !fs.existsSync(SSL_PRIV_KEY_PATH)) {
