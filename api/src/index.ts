@@ -107,3 +107,5 @@ const listenToDevelopmentPort = (app: Application) => {
     console.debug(`Listening on localhost:${DEVELOPMENT_PORT}`)
   });
 }
+
+main();
