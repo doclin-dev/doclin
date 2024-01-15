@@ -20,6 +20,10 @@ import {
 } from "./envConstants";
 
 const main = async () => {
+  process.on('uncaughtException', function (error) {
+    console.log(error.stack);
+  });
+
   const app: Application = express();
 
   initializeDatabase();
