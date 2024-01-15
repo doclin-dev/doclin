@@ -20,10 +20,6 @@ import {
 } from "./envConstants";
 
 const main = async () => {
-  process.on('uncaughtException', function (error) {
-    console.log(error.stack);
-  });
-
   const app: Application = express();
 
   initializeDatabase();
@@ -88,6 +84,13 @@ const initializeRouter = (app: Application) => {
 }
 
 const listenToProductionPort = (app: Application) => {
+  console.log(`Checking for SSL certificate files at: ${SSL_CERT_PATH} and ${SSL_PRIV_KEY_PATH}`);
+
+  if (!fs.existsSync(SSL_CERT_PATH) || !fs.existsSync(SSL_PRIV_KEY_PATH)) {
+    console.error('SSL certificate files not found');
+    process.exit(1);
+  }
+
   const key = fs.readFileSync(SSL_PRIV_KEY_PATH, 'utf8');
   const cert = fs.readFileSync(SSL_CERT_PATH, 'utf8');
   const credentials = { key, cert };
@@ -104,5 +107,3 @@ const listenToDevelopmentPort = (app: Application) => {
     console.debug(`Listening on localhost:${DEVELOPMENT_PORT}`)
   });
 }
-
-main();
