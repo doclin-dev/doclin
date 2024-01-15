@@ -35,7 +35,7 @@ jobs:
                 --name doclin-container \
                 --volume /etc/letsencrypt/live/api.doclin.dev:/doclin-api/certificates \
                 --publish 443:443 \
-                --env NODE_ENV=development \
+                --env NODE_ENV=production \
                 --env ACCESS_TOKEN_SECRET=${{secrets.ACCESS_TOKEN_SECRET}} \
                 --env GITHUB_CLIENT_SECRET=${{secrets.GIT_CLIENT_SECRET}} \
                 --env GITHUB_CLIENT_ID=${{secrets.GIT_CLIENT_ID}} \
