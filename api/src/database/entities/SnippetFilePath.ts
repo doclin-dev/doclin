@@ -16,8 +16,8 @@ export class SnippetFilePath extends BaseEntity {
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column()
-  filePath: string;
+  @Column({ type: "varchar", nullable: true })
+  filePath: string | null;
 
   @ManyToOne(() => Snippet, (s) => s.snippetFilePaths, { onDelete: 'CASCADE' })
   snippet: Snippet;

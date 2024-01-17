@@ -13,10 +13,9 @@ export const postThread = async (req: any, res: any) => {
     const threadMessage: string = req.body.threadMessage;
     const userId: number = req.userId;
     const projectId: number = req.body.projectId;
-    const activeEditorFilePath: string = req.body.activeEditorFilePath;
     const anonymousPost: boolean = req.body.anonymous;
     
-    let { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage, activeEditorFilePath);
+    let { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage);
 
     updatedThreadMessage = updatedThreadMessage.trim();
 
@@ -35,8 +34,8 @@ export const postThread = async (req: any, res: any) => {
     res.send({ thread: response });
 }
 
-const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, activeEditorFilePath: string) => {
-    const filePaths: string[] = [];
+const createSnippetEntitiesFromThreadMessage = async (threadMessage: string) => {
+    const filePaths: (string | null)[] = [];
     const snippets: string[] = [];
     const lineStarts: (number | null)[] = [];
 
@@ -49,7 +48,7 @@ const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, act
         const codeBlockLines: string[] = content.split("\n");
         
         if (codeBlockLines.length > 0) {
-            const filePath = getFilePathFromCodeBlock(codeBlockLines, activeEditorFilePath);
+            const filePath = getFilePathFromCodeBlock(codeBlockLines);
             const lineStart = getLineStartFromCodeBlock(codeBlockLines);
 
             filePaths.push(filePath);
@@ -138,7 +137,7 @@ export const updateThread = async (req: any, res: any) => {
 
     thread.snippets.forEach(snippet => snippet.remove());
 
-    const { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage, activeEditorFilePath);
+    const { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage);
 
     thread.message = updatedThreadMessage;
     thread.snippets = snippetEntities;
