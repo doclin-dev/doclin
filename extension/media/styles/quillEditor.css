@@ -11,6 +11,10 @@ pre.ql-syntax, .ql-snow .ql-editor pre.ql-syntax {
     border: 2px solid var(--vscode-editorGroup-border);
 }
 
+pre.ql-syntax .line-number {
+    color: grey;
+}
+
 pre.ql-syntax hr {
     background-color: var(--vscode-editor-foreground);
 }

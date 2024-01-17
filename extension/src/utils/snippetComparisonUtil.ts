@@ -70,13 +70,20 @@ const addLineNumbers = (lineStart: number, snippetText: string) => {
     if (!lineStart) {
         lineStart = 1;
     }
+
     const lines = snippetText.split("\n");
+
     for (let i = 0; i < lines.length; i++) {
-        const lineNumber = lineStart + i;
-        lines[i] = lineNumber + " " + lines[i];
+        const lineNumber = formatNumber(lineStart + i, 2);
+        lines[i] = `<span class="line-number">${lineNumber}</span>  ${lines[i]}`;
     }
+
     return lines.join("\n");
 }
+
+function formatNumber(num, length) {
+    return num.toString().padStart(length, ' ');
+  }
 
 const getSnippetTag = (snippetId: number) => {
     return `[snippet_${snippetId}]`;
