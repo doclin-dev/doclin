@@ -9,6 +9,7 @@ const PRE_TAG_START: string = `<pre class="ql-syntax" spellcheck="false" content
 const PRE_TAG_END: string = `</pre>`;
 const FILE_PATH_PREFIX: string = "File Path: ";
 const LINE_START_PREFIX: string = "Line Start: ";
+const OUTDATED_LABEL: string = `<label class="outdated-label">Outdated</label>`;
 
 const fileContentMap = new Map<vscode.Uri, string>();
 
@@ -18,13 +19,13 @@ export const fillUpThreadMessageWithSnippet = (thread: any) => {
 
     for (const snippet of thread.snippets) {
         thread.originalMessage = thread.originalMessage.replace(
-        getSnippetTag(snippet.id), 
-        getOriginalCodeBlock(snippet.filePath, snippet.lineStart, snippet.text)
+            getSnippetTag(snippet.id), 
+            getOriginalCodeBlock(snippet.filePath, snippet.lineStart, snippet.text)
         );
 
         thread.displayMessage = thread.displayMessage.replace(
-        getSnippetTag(snippet.id), 
-        getReadableCodeBlock(snippet.filePath, snippet.lineStart, snippet.text, snippet.outdated)
+            getSnippetTag(snippet.id), 
+            getReadableCodeBlock(snippet.filePath, snippet.lineStart, snippet.text, snippet.outdated)
         );
     }
 
@@ -32,25 +33,47 @@ export const fillUpThreadMessageWithSnippet = (thread: any) => {
 }
 
 const getOriginalCodeBlock = (filePath: string, lineStart: number, snippetText: string) => {
-    return `${PRE_TAG_START}${FILE_PATH_PREFIX}${filePath}\n${LINE_START_PREFIX}${lineStart}\n${snippetText}${PRE_TAG_END}`;
+    let output = `${PRE_TAG_START}`;
+    
+    if (filePath) {
+        output += `${FILE_PATH_PREFIX}${filePath}\n`;
+    }
+
+    if (lineStart) {
+        output += `${LINE_START_PREFIX}${lineStart}\n`;
+    }
+    
+    output += `${snippetText}${PRE_TAG_END}`;
+
+    return output;
 }
 
 const getReadableCodeBlock = (filePath: string, lineStart: number, snippetText: string, outdated: boolean) => {
-    const outdatedText = outdated ? `<label class="outdated-label">Outdated</label>` : "";
+    const outdatedText = outdated ? OUTDATED_LABEL : "";
 
     const highlight = hljs.highlightAuto(decodeHtmlEntities(snippetText));
     snippetText = highlight.value;
     snippetText = addLineNumbers(lineStart, snippetText);
 
-    return `<label class="thread-file-path">📁 ${filePath} ${outdatedText}</label>\n
-    ${PRE_TAG_START}${snippetText}${PRE_TAG_END}`;
+    let output = ``;
+
+    if (filePath) {
+        output += `<label class="thread-file-path">📁 ${filePath} ${outdatedText}</label>\n`;
+    }
+
+    output += `${PRE_TAG_START}${snippetText}${PRE_TAG_END}`;
+
+    return output;
 }
 
 const addLineNumbers = (lineStart: number, snippetText: string) => {
+    if (!lineStart) {
+        lineStart = 1;
+    }
     const lines = snippetText.split("\n");
     for (let i = 0; i < lines.length; i++) {
-    const lineNumber = lineStart + i;
-    lines[i] = lineNumber + " " + lines[i];
+        const lineNumber = lineStart + i;
+        lines[i] = lineNumber + " " + lines[i];
     }
     return lines.join("\n");
 }
@@ -72,6 +95,11 @@ const removeLineBreaks = (text: string) => {
 export const compareSnippetWithActiveEditor = async (threads: any) => {
     for(const thread of threads) {
         for(const snippet of thread.snippets) {
+            if (!snippet.lineStart) {
+                snippet.outdated = false;
+                continue;
+            }
+
             let content = await readFileContent(snippet.filePath);
 
             if (!content) {
@@ -80,16 +108,9 @@ export const compareSnippetWithActiveEditor = async (threads: any) => {
 
             content = removeLineBreaks(decodeHtmlEntities(content));
             const snippetText = removeLineBreaks(decodeHtmlEntities(snippet.text));
-
             const codeStartPosition = content.indexOf(snippetText);
 
-            if (codeStartPosition == -1) {
-                snippet.outdated = true;
-            } else {
-                snippet.outdated = false;
-                // const codeRange = activeDocument.positionAt(codeStartPosition);
-                // const lineNumber = codeRange.line + 1;
-            }
+            snippet.outdated = codeStartPosition == -1;
         };
     };
 

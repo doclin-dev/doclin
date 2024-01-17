@@ -22,10 +22,8 @@ export class SnippetFilePath extends BaseEntity {
   @ManyToOne(() => Snippet, (s) => s.snippetFilePaths, { onDelete: 'CASCADE' })
   snippet: Snippet;
 
-  @Column({
-    nullable: true
-  })
-  lineStart: number;
+  @Column({ type: "integer", nullable: true })
+  lineStart: number | null;
 
   snippetId: number;
 }

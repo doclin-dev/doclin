@@ -38,7 +38,7 @@ export const postThread = async (req: any, res: any) => {
 const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, activeEditorFilePath: string) => {
     const filePaths: string[] = [];
     const snippets: string[] = [];
-    const lineStarts: number[] = [];
+    const lineStarts: (number | null)[] = [];
 
     let count = -1;
     let updatedThreadMessage: string = "";
@@ -49,8 +49,8 @@ const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, act
         const codeBlockLines: string[] = content.split("\n");
         
         if (codeBlockLines.length > 0) {
-            const filePath: string = getFilePathFromCodeBlock(codeBlockLines, activeEditorFilePath);
-            const lineStart: number = getLineStartFromCodeBlock(codeBlockLines);
+            const filePath = getFilePathFromCodeBlock(codeBlockLines, activeEditorFilePath);
+            const lineStart = getLineStartFromCodeBlock(codeBlockLines);
 
             filePaths.push(filePath);
             lineStarts.push(lineStart);

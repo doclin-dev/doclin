@@ -56,7 +56,7 @@ export const postThread = async({ threadMessage, anonymous }: { threadMessage: s
   const projectId = await getCurrentProjectId();
   const activeFilePath = await getActiveEditorFilePath();
 
-  if (!organizationId || !projectId || !activeFilePath) return;
+  if (!organizationId || !projectId) return;
 
   const response = await threadApi.postThread(organizationId, projectId, threadMessage, activeFilePath, anonymous);
   let thread = response?.data?.thread;
@@ -76,7 +76,11 @@ export const updateThread = async({threadMessage, threadId}: {threadMessage: str
   if (!organizationId || !projectId || !activeFilePath) return;
 
   const response = await threadApi.updateThread(organizationId, projectId, threadId, threadMessage, activeFilePath);
-  const thread = response?.data?.thread;
+  let thread = response?.data?.thread;
+
+  await compareSnippetWithActiveEditor([thread]);
+
+  thread = fillUpThreadMessageWithSnippet(thread);
 
   return thread;
 };
@@ -130,30 +134,31 @@ export const addCodeSnippet = async (sidebarProvider: any) => {
   vscode.commands.executeCommand('workbench.view.extension.doclin-sidebar-view');
 
   const filePath = await getActiveEditorFilePath();
+  const threadMessage = activeTextEditor.document.getText(activeTextEditor.selection);
+  const lineStart = getLineStart(activeTextEditor);
 
-  const threadMessage = activeTextEditor.document.getText(
-    activeTextEditor.selection
-  );
-
-  let lineStart;
-  const selection = activeTextEditor.selection;
-
-  if (!selection.isEmpty) {
-    lineStart = selection.start.line + 1;
-  }
-
-  const pauseExecution = () => {
-    return new Promise((resolve) => {
-      setTimeout(resolve, 500); // Resolves the promise after 2 seconds
-    });
-  }
-
-  await pauseExecution(); 
   // TODO: bug - not the most ideal way to fix this!!
   // Need to check when the sidebar is loaded and then add the textSelection to sidebar
+  await pauseExecution(); 
 
   sidebarProvider._view?.webview.postMessage({
     type: "populateCodeSnippet",
     value: { filePath, threadMessage, lineStart },
+  });
+}
+
+const getLineStart = (activeTextEditor: vscode.TextEditor) => {
+  const selection = activeTextEditor.selection;
+
+  if (!selection.isEmpty) {
+    return selection.start.line + 1;
+  }
+
+  return null;
+}
+
+const pauseExecution = () => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 500); // Resolves the promise after 2 seconds
   });
 }

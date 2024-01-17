@@ -91,7 +91,10 @@
                 break;
             case "updateThread":
                 const updatedThread = message.value;
-                if (thread.id == updatedThread.id) thread.message = updatedThread.message;
+                if (thread.id == updatedThread.id) {
+                    thread.originalMessage = updatedThread.originalMessage;
+                    thread.displayMessage = updatedThread.displayMessage;
+                }
                 break;
         }
     }

@@ -1,21 +1,21 @@
-const filePathPrefix: string = "File Path: ";
-const lineStartPrefix: string = "Line Start: ";
+const FILE_PATH_PREFIX: string = "File Path: ";
+const LINE_START_PREFIX: string = "Line Start: ";
 
 export const getFilePathFromCodeBlock = (codeBlockLines: string[], activeEditorFilePath: string) => {
-    if (codeBlockLines[0]?.startsWith(filePathPrefix)) {
-        return codeBlockLines.shift()?.substring(filePathPrefix.length) || "";
+    if (codeBlockLines[0]?.startsWith(FILE_PATH_PREFIX)) {
+        return codeBlockLines.shift()?.substring(FILE_PATH_PREFIX.length) || "";
     } else {
         return activeEditorFilePath;
     }
 }
 
 export const getLineStartFromCodeBlock = (codeBlockLines: string[]) => {
-    if (codeBlockLines[0]?.startsWith(lineStartPrefix)) {
-        const lineStartStr = codeBlockLines.shift()?.substring(lineStartPrefix.length) || "1";
+    if (codeBlockLines[0]?.startsWith(LINE_START_PREFIX)) {
+        const lineStartStr = codeBlockLines.shift()?.substring(LINE_START_PREFIX.length) || "1";
         return parseInt(lineStartStr);
-    } else {
-        return 1;
     }
+
+    return null;
 }
 
 export const getSnippetTag = (snippetId: number) => {
