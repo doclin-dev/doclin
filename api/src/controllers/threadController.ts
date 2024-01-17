@@ -126,7 +126,6 @@ const mapSnippetResponse = (snippet: Snippet) => {
 export const updateThread = async (req: any, res: any) => {
     const threadId = req.params.id;
     const threadMessage = req.body.message;
-    const activeEditorFilePath = req.body.activeEditorFilePath;
 
     const thread = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
 
