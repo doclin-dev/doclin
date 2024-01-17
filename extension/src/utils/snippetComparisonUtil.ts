@@ -81,7 +81,7 @@ const addLineNumbers = (lineStart: number, snippetText: string) => {
     return lines.join("\n");
 }
 
-function formatNumber(num, length) {
+function formatNumber(num: number, length: number) {
     return num.toString().padStart(length, ' ');
   }
 
