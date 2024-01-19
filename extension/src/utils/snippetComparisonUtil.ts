@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import hljs from 'highlight.js';
+import { Snippet, Thread } from "../types";
 
 hljs.configure({
     languages: ['javascript', 'python', 'cpp', 'ruby', 'php', 'html']
@@ -13,7 +14,7 @@ const OUTDATED_LABEL: string = `<label class="outdated-label">Outdated</label>`;
 
 const fileContentMap = new Map<vscode.Uri, string>();
 
-export const fillUpThreadMessageWithSnippet = (thread: any): Promise<void> => {
+export const fillUpThreadMessageWithSnippet = (thread: Thread): void => {
     thread.originalMessage = thread.message;
     thread.displayMessage = thread.message;
 
@@ -28,8 +29,6 @@ export const fillUpThreadMessageWithSnippet = (thread: any): Promise<void> => {
             getReadableCodeBlock(snippet.filePath, snippet.lineStart, snippet.text, snippet.outdated)
         );
     }
-
-    return thread;
 }
 
 const getOriginalCodeBlock = (filePath: string, lineStart: number, snippetText: string) => {
@@ -102,7 +101,7 @@ const removeLineBreaks = (text: string) => {
     return text.replace(/\n/g, ' ');
 }
 
-export const compareSnippetWithActiveEditor = async (thread: any): Promise<void> => {
+export const compareSnippetWithActiveEditor = async (thread: Thread): Promise<void> => {
     for(const snippet of thread.snippets) {
         if (isSnippetNotFromFile(snippet)) {
             snippet.outdated = false;
@@ -126,7 +125,7 @@ export const compareSnippetWithActiveEditor = async (thread: any): Promise<void>
     fileContentMap.clear();
 }
 
-const isSnippetNotFromFile = (snippet: any) => {
+const isSnippetNotFromFile = (snippet: Snippet) => {
     return !snippet.lineStart;
 }
 

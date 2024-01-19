@@ -5,6 +5,8 @@ import { executeShellCommand } from "./providerHelperUtils";
 import { getCurrentOrganizationId } from "./organizationProviderHelper";
 import { getCurrentProjectId } from "./projectProviderHelper";
 import { compareSnippetWithActiveEditor, fillUpThreadMessageWithSnippet } from "../utils/snippetComparisonUtil";
+import { Thread } from "../types";
+import { SidebarProvider } from "../SidebarProvider";
 
 let lastActiveFilePath: string | null = null;
 
@@ -14,12 +16,14 @@ vscode.window.onDidChangeActiveTextEditor((editor) => {
   }
 });
 
-export const getThreadsByActiveFilePath = async (): Promise<any> => {
+export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[], activeFilePath: string }> => {
   const activeFilePath = await getActiveEditorFilePath();
   const organizationId = await getCurrentOrganizationId();
   const projectId = await getCurrentProjectId();
 
-  if (!organizationId || !projectId || !activeFilePath) return;
+  if (!organizationId || !projectId || !activeFilePath) {
+    return { threads: [], activeFilePath: "" };
+  }
 
   const response = await threadApi.getFileBasedThreads(organizationId, projectId, activeFilePath);
   const payload = response?.data;
@@ -34,7 +38,7 @@ export const getThreadsByActiveFilePath = async (): Promise<any> => {
   return { threads, activeFilePath };
 };
 
-export const getAllThreads = async (): Promise<any> => {
+export const getAllThreads = async (): Promise<Thread[] | undefined> => {
   const organizationId = await getCurrentOrganizationId();
   const projectId = await getCurrentProjectId();
 
@@ -42,7 +46,7 @@ export const getAllThreads = async (): Promise<any> => {
 
   const response = await threadApi.getAllThreads(organizationId, projectId);
   const payload = response?.data;
-  let threads = payload?.threads;
+  let threads: Thread[] = payload?.threads;
 
   for (const thread of threads) {
     await compareSnippetWithActiveEditor(thread);
@@ -53,9 +57,7 @@ export const getAllThreads = async (): Promise<any> => {
   return threads;
 };
 
-
-
-export const postThread = async({ threadMessage, anonymous }: { threadMessage: string, anonymous: boolean }): Promise<any> => {
+export const postThread = async({ threadMessage, anonymous }: { threadMessage: string, anonymous: boolean }): Promise<Thread | undefined> => {
   const organizationId = await getCurrentOrganizationId();
   const projectId = await getCurrentProjectId();
   const activeFilePath = await getActiveEditorFilePath();
@@ -71,7 +73,7 @@ export const postThread = async({ threadMessage, anonymous }: { threadMessage: s
   return thread;
 };
 
-export const updateThread = async({threadMessage, threadId}: {threadMessage: string, threadId: number}): Promise<any> => {
+export const updateThread = async({threadMessage, threadId}: {threadMessage: string, threadId: number}): Promise<Thread | undefined> => {
   const organizationId = await getCurrentOrganizationId();
   const projectId = await getCurrentProjectId();
   const activeFilePath = await getActiveEditorFilePath();
@@ -125,7 +127,7 @@ const getActiveEditorFilePath = async () : Promise<string> => {
   return stdout.split('\n')[0] + activeFileName;
 };
 
-export const addCodeSnippet = async (sidebarProvider: any) => {
+export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
   const { activeTextEditor } = vscode.window;
 
   if (!activeTextEditor) {
@@ -161,6 +163,6 @@ const getLineStart = (activeTextEditor: vscode.TextEditor) => {
 
 const pauseExecution = () => {
   return new Promise((resolve) => {
-    setTimeout(resolve, 500); // Resolves the promise after 2 seconds
+    setTimeout(resolve, 500);
   });
 }
