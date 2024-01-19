@@ -13,7 +13,7 @@ const OUTDATED_LABEL: string = `<label class="outdated-label">Outdated</label>`;
 
 const fileContentMap = new Map<vscode.Uri, string>();
 
-export const fillUpThreadMessageWithSnippet = (thread: any) => {
+export const fillUpThreadMessageWithSnippet = (thread: any): Promise<void> => {
     thread.originalMessage = thread.message;
     thread.displayMessage = thread.message;
 
@@ -58,7 +58,10 @@ const getReadableCodeBlock = (filePath: string, lineStart: number, snippetText: 
     let output = ``;
 
     if (filePath) {
-        output += `<label class="thread-file-path">📁 ${filePath} ${outdatedText}</label>\n`;
+        output +=   `<div class="thread-file-path">
+                        <div class="thread-file-path-text">📁 ${filePath}</div> 
+                        <div>${outdatedText}</div>
+                    </div>\n`;
     }
 
     output += `${PRE_TAG_START}${snippetText}${PRE_TAG_END}`;
@@ -99,55 +102,59 @@ const removeLineBreaks = (text: string) => {
     return text.replace(/\n/g, ' ');
 }
 
-export const compareSnippetWithActiveEditor = async (threads: any) => {
-    for(const thread of threads) {
-        for(const snippet of thread.snippets) {
-            if (!snippet.lineStart) {
-                snippet.outdated = false;
-                continue;
-            }
+export const compareSnippetWithActiveEditor = async (thread: any): Promise<void> => {
+    for(const snippet of thread.snippets) {
+        if (isSnippetNotFromFile(snippet)) {
+            snippet.outdated = false;
+            continue;
+        }
 
-            let content = await readFileContent(snippet.filePath);
+        let content = await readFileContent(snippet.filePath);
 
-            if (!content) {
-                return;
-            }
+        if (!content) {
+            snippet.outdated = true;
+            continue;
+        }
 
-            content = removeLineBreaks(decodeHtmlEntities(content));
-            const snippetText = removeLineBreaks(decodeHtmlEntities(snippet.text));
-            const codeStartPosition = content.indexOf(snippetText);
+        content = removeLineBreaks(decodeHtmlEntities(content));
+        const snippetText = removeLineBreaks(decodeHtmlEntities(snippet.text));
+        const codeStartPosition = content.indexOf(snippetText);
 
-            snippet.outdated = codeStartPosition == -1;
-        };
+        snippet.outdated = codeStartPosition == -1;
     };
 
     fileContentMap.clear();
 }
 
-async function readFileContent(workspaceRelativePath: string): Promise<string | undefined> {
+const isSnippetNotFromFile = (snippet: any) => {
+    return !snippet.lineStart;
+}
+
+const readFileContent = async (workspaceRelativePath: string): Promise<string | null> => {
     try {
-        const workspaceFolders = vscode.workspace.workspaceFolders;
-
-        if (!workspaceFolders || workspaceFolders.length === 0) {
-            console.error('No workspace opened.');
-            return undefined;
-        }
-
-        const workspaceRootPath = workspaceFolders[0].uri.fsPath;
-        const fileUri = vscode.Uri.file(`${workspaceRootPath}/${workspaceRelativePath}`);
+        const fileUri = vscode.Uri.file(`${getCurrentWorkspaceRootPath()}/${workspaceRelativePath}`);
 
         if (fileContentMap.has(fileUri)) {
-            return fileContentMap.get(fileUri);
+            return fileContentMap.get(fileUri) ?? null;
         }
         
         const fileContentUint8 = await vscode.workspace.fs.readFile(fileUri);
         const fileContent = Buffer.from(fileContentUint8).toString('utf-8');
-        fileContentMap.set(fileUri, fileContent);
 
         return fileContent;
-        
     } catch (error) {
         console.error('Error reading file:', error);
-        return undefined;
+        return null;
     }
+}
+
+const getCurrentWorkspaceRootPath = (): string | null => {
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+
+    if (!workspaceFolders || workspaceFolders.length === 0) {
+        console.error('No workspace opened.');
+        return null;
+    }
+
+    return workspaceFolders[0].uri.fsPath;
 }

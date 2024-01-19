@@ -25,9 +25,11 @@ export const getThreadsByActiveFilePath = async (): Promise<any> => {
   const payload = response?.data;
   let threads = payload?.threads;
 
-  await compareSnippetWithActiveEditor(threads);
+  for (const thread of threads) {
+    await compareSnippetWithActiveEditor(thread);
+  };
 
-  threads = threads.map(fillUpThreadMessageWithSnippet);
+  threads.forEach(fillUpThreadMessageWithSnippet);
 
   return { threads, activeFilePath };
 };
@@ -42,9 +44,11 @@ export const getAllThreads = async (): Promise<any> => {
   const payload = response?.data;
   let threads = payload?.threads;
 
-  await compareSnippetWithActiveEditor(threads);
+  for (const thread of threads) {
+    await compareSnippetWithActiveEditor(thread);
+  };
 
-  threads = threads.map(fillUpThreadMessageWithSnippet);
+  threads.forEach(fillUpThreadMessageWithSnippet);
 
   return threads;
 };
@@ -61,9 +65,8 @@ export const postThread = async({ threadMessage, anonymous }: { threadMessage: s
   const response = await threadApi.postThread(organizationId, projectId, threadMessage, activeFilePath, anonymous);
   let thread = response?.data?.thread;
 
-  await compareSnippetWithActiveEditor([thread]);
-
-  thread = fillUpThreadMessageWithSnippet(thread);
+  await compareSnippetWithActiveEditor(thread);
+  fillUpThreadMessageWithSnippet(thread);
 
   return thread;
 };
@@ -78,9 +81,8 @@ export const updateThread = async({threadMessage, threadId}: {threadMessage: str
   const response = await threadApi.updateThread(organizationId, projectId, threadId, threadMessage, activeFilePath);
   let thread = response?.data?.thread;
 
-  await compareSnippetWithActiveEditor([thread]);
-
-  thread = fillUpThreadMessageWithSnippet(thread);
+  await compareSnippetWithActiveEditor(thread);
+  fillUpThreadMessageWithSnippet(thread);
 
   return thread;
 };

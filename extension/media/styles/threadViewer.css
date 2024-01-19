@@ -108,12 +108,22 @@
     border: 1px solid rgba(226, 226, 0, 0.614);
     border-radius: 0.5em;
     font-size: 10px;
-    padding: 5px 5px;
+    padding: 2px 5px;
     color: rgba(226, 226, 0, 0.614);
 }
 
 .thread-file-path {
-    margin: 0px 5px;
     font-size: 12px;
-    line-height: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem; 
+}
+
+.thread-file-path-text {
+    white-space: nowrap;
+    overflow: hidden;  
+    text-overflow: ellipsis;
 }
