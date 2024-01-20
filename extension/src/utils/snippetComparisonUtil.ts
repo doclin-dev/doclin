@@ -47,7 +47,7 @@ const getOriginalCodeBlock = (filePath: string, lineStart: number, snippetText: 
     return output;
 }
 
-const getReadableCodeBlock = (filePath: string, lineStart: number, snippetText: string, outdated: boolean) => {
+export const getReadableCodeBlock = (filePath: string, lineStart: number, snippetText: string, outdated: boolean) => {
     const outdatedText = outdated ? OUTDATED_LABEL : "";
 
     const highlight = hljs.highlightAuto(decodeHtmlEntities(snippetText));
@@ -68,7 +68,12 @@ const getReadableCodeBlock = (filePath: string, lineStart: number, snippetText: 
     return output;
 }
 
-const addLineNumbers = (lineStart: number, snippetText: string) => {
+export const highlightCode = (snippetText: string): string => {
+    const highlight = hljs.highlightAuto(decodeHtmlEntities(snippetText));
+    return highlight.value;
+}
+
+export const addLineNumbers = (lineStart: number, snippetText: string): string => {
     if (!lineStart) {
         lineStart = 1;
     }

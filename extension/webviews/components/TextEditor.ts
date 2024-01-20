@@ -1,11 +1,12 @@
-// import hljs from 'highlight.js';
-
-// hljs.configure({
-//     languages: ['javascript', 'ruby', 'python', 'cpp']
-// });
-
 import Quill from 'quill';
 import { WebviewStateManager } from '../WebviewStateManager';
+import { QuillSnippetBlot } from './QuillSnippetBlot';
+
+Quill.register({
+    'formats/snippet': QuillSnippetBlot,
+});
+
+const Delta = Quill.import('delta');
 
 export class TextEditor {
     private quillInstance: any;
@@ -13,30 +14,21 @@ export class TextEditor {
     constructor(selector: string, customOptions?: object) {
         const defaultOptions: object = {
             modules: {
-            //    syntax: {
-            //         highlight: (text:string) => {
-            //           return hljs.highlightAuto(text).value;
-            //         },
-            //       },
                 toolbar: [
-                    ['bold', 'italic', 'underline', 'strike'],
-                    ['link', 'blockquote', 'code-block', 'image'],
-                    [{ list: 'ordered' }, { list: 'bullet' }],
-                    [{ color: [] }, { background: [] }]
+                    ['bold', 'italic', 'link', 'code-block', { list: 'ordered' }, { list: 'bullet' }, { color: [] }]
                 ]
             },
             theme: 'snow'
         };
         
         const options = { ...defaultOptions, ...customOptions };
+        
         this.quillInstance = new Quill(selector, options);
         
-        // Customize toolbar container style
         if (this.quillInstance.theme && this.quillInstance.theme.modules.toolbar) {
             this.quillInstance.theme.modules.toolbar.container.style.background = '#f1f1f1';
             this.quillInstance.theme.modules.toolbar.container.style.border = 'none';
         }
-        
     };
 
     setActiveEditor(activeEditor: Number): void {
@@ -45,17 +37,44 @@ export class TextEditor {
         });
     };
 
+    getContents(): any {
+        return JSON.stringify(this.quillInstance.getContents());
+    }
+
+    setContents(delta: any): void {
+        console.log(delta)
+        this.quillInstance.setContents(JSON.parse(delta));
+        console.log(this.quillInstance.getContents());
+    };
+
     setText(text: string): void {
-        this.quillInstance.root.innerHTML = text;
-    };
+        this.quillInstance.setText(text);
+    }
 
-    getText(): string {
-        return this.quillInstance.root.innerHTML;
-    };
+    getStructuredText(): {threadMessage: string, snippets: any} {
+        const delta = this.quillInstance.getContents();
+        const snippets: any[] = [];
 
-    getContents(): void{
-        return this.quillInstance.getContents();
-    };
+        const newDelta = delta.map((op: any) => {
+            const snippetblot = op.insert?.snippetblot;
+            if (snippetblot) {
+                snippets.push(snippetblot);
+                return { insert: "[snippet]" };
+            }
+
+            return op;
+        });
+
+        const threadMessage = this.getHtmlFromDelta(newDelta);
+
+        return { threadMessage, snippets};
+    }
+
+    private getHtmlFromDelta(delta: any): string {
+        const newQuill = new Quill(document.createElement('div'));
+        newQuill.setContents(delta);
+        return newQuill.root.innerHTML;
+    }
 
     onTextChange(callback: () => void): void {
         this.quillInstance.on('text-change', callback);
@@ -65,20 +84,17 @@ export class TextEditor {
         this.quillInstance.theme.modules.toolbar.container.style.display = 'none';
     };
 
-    insertCodeSnippet({ filePath, threadMessage, lineStart }: { filePath: string, threadMessage: string, lineStart: number }): void {
+    insertCodeSnippet({ filePath, lineStart, displaySnippet, originalSnippet }: { filePath: string, lineStart: number, displaySnippet: string, originalSnippet: string }): void {
         const editor = this.quillInstance;
         const selection = editor.getSelection(true);
         const cursorPosition: number = selection ? selection.index : editor.getLength();
-        
-        let textToInsert = ``;
-        textToInsert += `File Path: ${filePath}\n`;
-        textToInsert += lineStart ? `Line Start: ${lineStart}\n`: ``;
-        textToInsert += `${threadMessage}\n`;
 
-        editor.insertText(cursorPosition, "\n");
-        editor.insertText(cursorPosition + 1, textToInsert);
-        editor.formatText(cursorPosition + 1, textToInsert.length, "code-block", true);
-        editor.insertText(cursorPosition + 1 + textToInsert.length, "\n");
-        editor.setSelection(cursorPosition + 1 + textToInsert.length);
+        editor.updateContents(new Delta()
+            .retain(cursorPosition)
+            .insert(
+                { snippetblot: { displaySnippet, filePath, lineStart, originalSnippet } }, 
+                { 'formats/snippet': true }
+            )
+        );
     };
 }

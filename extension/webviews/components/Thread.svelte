@@ -14,6 +14,7 @@
     export let showReplyButton: boolean = true;
     let lastEdited : string | null = thread?.lastReplied ? moment.utc(thread.lastReplied).fromNow() : null;
     let threadCreationTime : string = moment.utc(thread?.threadCreationTime).fromNow();
+    let quillThreadEditor: TextEditor | null;
 
     const replyCountText = thread?.replyCount + ` ${thread?.replyCount === 1 ? 'reply': 'replies'}`
 
@@ -22,7 +23,6 @@
         threadCreationTime = moment.utc(thread?.threadCreationTime).fromNow();
     }, 60000);
 
-    let quillThreadEditor: any;
         
     const handleEditButtonClick = async () => {
         if ($editedThreadId === null && $editedReplyId === null) {
@@ -36,17 +36,20 @@
 
     const handleOnSubmit = async () => {
         await tick();
-        const threadMessage = quillThreadEditor.getText();
 
-        tsvscode.postMessage({ type: "updateThread", value: { threadId: thread.id, threadMessage: threadMessage }});
+        if (quillThreadEditor) {
+            const { threadMessage, snippets } = quillThreadEditor.getStructuredText();
 
-        quillThreadEditor.removeToolbarTheme();
-        quillThreadEditor = null;
-        editedThreadId.set(null);
+            tsvscode.postMessage({ type: "updateThread", value: { threadId: thread.id, threadMessage: threadMessage }});
+
+            quillThreadEditor?.removeToolbarTheme();
+            quillThreadEditor = null;
+            editedThreadId.set(null);
+        }
     }
 
     const onCancel = () => {
-        quillThreadEditor.removeToolbarTheme();
+        quillThreadEditor?.removeToolbarTheme();
         quillThreadEditor = null;
         editedThreadId.set(null);
         if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === null){
@@ -81,7 +84,7 @@
         switch(message.type) {
             case "populateCodeSnippet":
                 if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === ActiveTextEditor.ThreadTextEditor && $editedThreadId === thread.id) {
-                    quillThreadEditor.insertCodeSnippet(message.value);
+                    quillThreadEditor?.insertCodeSnippet(message.value);
                 };
                 break;
             case "deleteThread":

@@ -14,7 +14,7 @@
     export let username: string;
     export let page: Page;
 
-    let quillReplyViewer: any;
+    let quillReplyViewer: TextEditor;
     let replies : Array<{message: string, id: number}> = [];
     let anonymousCheck: boolean = false;
 
@@ -22,7 +22,7 @@
         quillReplyViewer = new TextEditor('#replyViewerEditor')
 
         quillReplyViewer.onTextChange(() => {
-            WebviewStateManager.setState(WebviewStateManager.type.REPLY_MESSAGE, quillReplyViewer.getText());
+            WebviewStateManager.setState(WebviewStateManager.type.REPLY_MESSAGE, quillReplyViewer.getContents());
         });
         
         WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ReplyViewerTextEditor);
@@ -53,7 +53,8 @@
     }
 
     const onSubmit= () => {
-        postReplyMessage(quillReplyViewer.getText());
+        const { threadMessage, snippets } = quillReplyViewer.getStructuredText();
+        postReplyMessage(threadMessage);
         quillReplyViewer.setText("");
         WebviewStateManager.setState(WebviewStateManager.type.REPLY_MESSAGE, "");
     }

@@ -3,7 +3,7 @@ enum StateType {
   CURRENT_PROJECT = "currentProject",
   PAGE = "page",
   REPLY_MESSAGE = "replyMessage",
-  THREAD_MESSAGE = "threadMessage",
+  THREAD_CONTENTS = "threadContents",
   THREAD_SELECTED = "threadSelected",
   GITHUB_URL = "githubUrl",
   ACTIVE_TEXT_EDITOR = "activeTextEditor",

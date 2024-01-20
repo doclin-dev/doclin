@@ -4,7 +4,7 @@ import threadApi from "../api/threadApi";
 import { executeShellCommand } from "./providerHelperUtils";
 import { getCurrentOrganizationId } from "./organizationProviderHelper";
 import { getCurrentProjectId } from "./projectProviderHelper";
-import { compareSnippetWithActiveEditor, fillUpThreadMessageWithSnippet } from "../utils/snippetComparisonUtil";
+import { getReadableCodeBlock, compareSnippetWithActiveEditor, fillUpThreadMessageWithSnippet, highlightCode, addLineNumbers } from "../utils/snippetComparisonUtil";
 import { Thread } from "../types";
 import { SidebarProvider } from "../SidebarProvider";
 
@@ -138,27 +138,27 @@ export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
   vscode.commands.executeCommand('workbench.view.extension.doclin-sidebar-view');
 
   const filePath = await getActiveEditorFilePath();
-  const threadMessage = activeTextEditor.document.getText(activeTextEditor.selection);
   const lineStart = getLineStart(activeTextEditor);
+  const originalSnippet = activeTextEditor.document.getText(activeTextEditor.selection);
+  const displaySnippet = addLineNumbers(lineStart, highlightCode(originalSnippet));
 
   // TODO: bug - not the most ideal way to fix this!!
-  // Need to check when the sidebar is loaded and then add the textSelection to sidebar
   await pauseExecution(); 
 
   sidebarProvider._view?.webview.postMessage({
     type: "populateCodeSnippet",
-    value: { filePath, threadMessage, lineStart },
+    value: { filePath, lineStart, originalSnippet, displaySnippet },
   });
 }
 
-const getLineStart = (activeTextEditor: vscode.TextEditor) => {
+const getLineStart = (activeTextEditor: vscode.TextEditor): number => {
   const selection = activeTextEditor.selection;
 
   if (!selection.isEmpty) {
     return selection.start.line + 1;
   }
 
-  return null;
+  return 1;
 }
 
 const pauseExecution = () => {

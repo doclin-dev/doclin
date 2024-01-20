@@ -11,7 +11,7 @@
     export let user: User;
     export let page: Page;
     
-    let quillEditor: any;
+    let quillEditor: TextEditor;
     let threads: Array<ThreadType> = [];
     let currentProject: Project; 
     let currentOrganization: Organization;
@@ -19,7 +19,7 @@
     let activeFilePath: string;
 
     async function submitThreadMessage() {
-        const threadMessage = quillEditor.getText();
+        const { threadMessage, snippets } = quillEditor.getStructuredText();
         currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
 
         if (threadMessage) {
@@ -34,19 +34,19 @@
         }
 
         quillEditor.setText("");
-        WebviewStateManager.setState(WebviewStateManager.type.THREAD_MESSAGE, "");
+        WebviewStateManager.setState(WebviewStateManager.type.THREAD_CONTENTS, null);
     }
 
     async function initializeQuillEditor() {
         quillEditor = new TextEditor('#textEditor');
 
         quillEditor.onTextChange(() => {
-            WebviewStateManager.setState(WebviewStateManager.type.THREAD_MESSAGE, quillEditor.getText());
+            WebviewStateManager.setState(WebviewStateManager.type.THREAD_CONTENTS, quillEditor.getContents());
         });
         
         WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ThreadsViewerTextEditor);
-        const message = WebviewStateManager.getState(WebviewStateManager.type.THREAD_MESSAGE) || "";
-        quillEditor.setText(message);
+        const contents = WebviewStateManager.getState(WebviewStateManager.type.THREAD_CONTENTS);
+        quillEditor.setContents(contents);
         quillEditor.setActiveEditor(ActiveTextEditor.ThreadsViewerTextEditor);
     }
 

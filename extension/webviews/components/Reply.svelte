@@ -11,7 +11,7 @@
     export let reply: any;
     export let reloadReplies: () => void = () => {};
 
-    let quillReplyCardEditor: any;
+    let quillReplyCardEditor: TextEditor | null;
     let replyCardMessage: string;
     let replyCreationTime : string = moment.utc(reply?.replyCreationTime).fromNow();
 
@@ -38,12 +38,23 @@
 
     const handleOnSubmit = async () => {
         await tick();
-        replyCardMessage = quillReplyCardEditor.getText();
-        updateReplyMessage(replyCardMessage);
+
+        if (!quillReplyCardEditor) {
+            return;
+        }
+
+        const { threadMessage, snippets } = quillReplyCardEditor.getStructuredText();
+
+        updateReplyMessage(threadMessage);
         editedReplyId.set(null);
     }
     
     const onCancel = () => {
+
+        if (!quillReplyCardEditor) {
+            return;
+        }
+
         quillReplyCardEditor.removeToolbarTheme();
         quillReplyCardEditor = null;
         editedReplyId.set(null);
@@ -62,13 +73,13 @@
         switch(message.type) {
             case "populateCodeSnippet":
                 if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === ActiveTextEditor.ReplyTextEditor && $editedReplyId === reply.id) {
-                    quillReplyCardEditor.insertCodeSnippet(message.value);
+                    quillReplyCardEditor?.insertCodeSnippet(message.value);
                 }
                 break;
             case "updateReply":
                 if (reply.id === message.value?.id) {
                     reply.message = message.value?.message;
-                    quillReplyCardEditor.removeToolbarTheme();
+                    quillReplyCardEditor?.removeToolbarTheme();
                     quillReplyCardEditor = null;
                     editedReplyId.set(null);
                 }
