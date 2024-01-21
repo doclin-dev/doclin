@@ -1,6 +1,7 @@
 import Quill from 'quill';
 import { WebviewStateManager } from '../WebviewStateManager';
 import { QuillSnippetBlot } from './QuillSnippetBlot';
+import type { TextEditorInsertSnippet } from '../types';
 
 Quill.register({
     'formats/snippet': QuillSnippetBlot,
@@ -51,6 +52,15 @@ export class TextEditor {
 
     getStructuredText(): { delta: any, threadMessage: string, snippets: any } {
         const delta = this.quillInstance.getContents();
+
+        const { newDelta, snippets } = this.seperateSnippetBlotsFromDelta(delta);
+
+        const threadMessage = this.getHtmlFromDelta(newDelta);
+
+        return { delta, threadMessage, snippets};
+    }
+
+    private seperateSnippetBlotsFromDelta(delta: any) {
         const snippets: any[] = [];
         let count = 0;
 
@@ -66,9 +76,7 @@ export class TextEditor {
             return op;
         });
 
-        const threadMessage = this.getHtmlFromDelta(newDelta);
-
-        return { delta, threadMessage, snippets};
+        return { newDelta, snippets }
     }
 
     private getSnippetTag(index: number) {
@@ -89,7 +97,7 @@ export class TextEditor {
         this.quillInstance.theme.modules.toolbar.container.style.display = 'none';
     };
 
-    insertCodeSnippet({ filePath, lineStart, displaySnippet, originalSnippet }: { filePath: string, lineStart: number, displaySnippet: string, originalSnippet: string }): void {
+    insertCodeSnippet({ filePath, lineStart, displaySnippet, originalSnippet }: TextEditorInsertSnippet): void {
         const editor = this.quillInstance;
         const selection = editor.getSelection(true);
         const cursorPosition: number = selection ? selection.index : editor.getLength();
@@ -97,8 +105,17 @@ export class TextEditor {
         editor.updateContents(new Delta()
             .retain(cursorPosition)
             .insert(
-                { snippetblot: { displaySnippet, filePath, lineStart, originalSnippet } }, 
-                { 'formats/snippet': true }
+                { 
+                    snippetblot: { 
+                        displaySnippet, 
+                        filePath, 
+                        lineStart, 
+                        originalSnippet 
+                    }
+                }, 
+                { 
+                    'formats/snippet': true 
+                }
             )
         );
     };

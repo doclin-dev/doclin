@@ -12,7 +12,7 @@ export const postThread = async (req: any, res: any) => {
     const projectId: number = req.body.projectId;
     const anonymousPost: boolean = req.body.anonymous;
     
-    let { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage, snippets);
+    const { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage, snippets);
 
     const thread = await Thread.create({
         message: updatedThreadMessage,
@@ -23,7 +23,7 @@ export const postThread = async (req: any, res: any) => {
         delta: delta
     }).save();
 
-    let threadResponse = await ThreadRepository.findThreadWithPropertiesByThreadId(thread.id);
+    const threadResponse = await ThreadRepository.findThreadWithPropertiesByThreadId(thread.id);
 
     const response = threadResponse ? mapThreadResponse(threadResponse) : null;
 
@@ -38,12 +38,11 @@ const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, sni
     const snippetEntities = [];
 
     for (const snippetblot of snippetblots) {
-        const snippet: ThreadSnippet = new ThreadSnippet();
-        snippet.text = snippetblot.originalSnippet;
-        snippet.filePath = snippetblot.filePath;
-        snippet.lineStart = snippetblot.lineStart;
-        
-        await snippet.save();
+        const snippet: ThreadSnippet = await ThreadSnippet.create({
+            text: snippetblot.originalSnippet,
+            filePath: snippetblot.filePath,
+            lineStart: snippetblot.lineStart
+        }).save();
 
         snippetEntities.push(snippet);
 

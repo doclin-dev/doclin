@@ -5,8 +5,6 @@ import { ThreadRepository } from "../database/repositories/ThreadRepository";
 import { MULTIPLE_LINE_BREAK_REGEX, SINGLE_LINE_BREAK, getSnippetTag } from "./utils/snippetUtils";
 import { mapReplyResponse } from "./utils/mapperUtils";
 
-const ANONYMOUS_USER = "Anonymous User"
-
 export const postReply = async (req: any, res: any) => {
     const threadId = req.params.threadId;
     const replyMessage = req.body.replyMessage;
