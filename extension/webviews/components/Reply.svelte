@@ -36,6 +36,7 @@
             editedReplyId.set(reply.id);
             await tick();
             quillReplyCardEditor = new TextEditor('#reply-card-editor');
+            quillReplyCardEditor.setContents(reply.delta);
             WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ReplyTextEditor);
             quillReplyCardEditor.setActiveEditor(ActiveTextEditor.ReplyTextEditor);
         }
@@ -55,7 +56,6 @@
     }
     
     const onCancel = () => {
-
         if (!quillReplyCardEditor) {
             return;
         }
@@ -82,8 +82,9 @@
                 }
                 break;
             case "updateReply":
-                if (reply.id === message.value?.id) {
-                    reply.message = message.value?.message;
+                const updatedReply = message.value;
+                if (reply.id === updatedReply?.id) {
+                    reply = updatedReply;
                     quillReplyCardEditor?.removeToolbarTheme();
                     quillReplyCardEditor = null;
                     editedReplyId.set(null);

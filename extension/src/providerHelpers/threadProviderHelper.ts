@@ -101,12 +101,8 @@ export const updateThread = async({ threadMessage, threadId, snippets, delta }: 
 
   const thread: Thread = response?.data?.thread;
 
-  console.log(thread);
-
   await compareSnippetsWithActiveEditor(thread.snippets);
   fillUpThreadOrReplyMessageWithSnippet(thread);
-
-  console.log(thread);
 
   return thread;
 };

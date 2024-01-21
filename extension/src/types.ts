@@ -54,3 +54,10 @@ export type PostReply = {
     snippets: any[],
     delta: any
 }
+
+export type UpdateReply = {
+    replyMessage: string, 
+    replyId: number,
+    snippets: any[],
+    delta: any
+};

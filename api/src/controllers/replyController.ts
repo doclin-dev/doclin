@@ -15,9 +15,6 @@ export const postReply = async (req: any, res: any) => {
     const snippets = req.body.snippets;
     const delta = req.body.delta;
 
-    console.log(snippets);
-    console.log(delta);
-
     if(!thread) {
         res.send({ reply: null });
         return;
@@ -49,12 +46,11 @@ const createSnippetEntitiesFromReplyMessage = async (replyMessage: string, snipp
     const snippetEntities = [];
 
     for (const snippetblot of snippetblots) {
-        const snippet: ReplySnippet = new ReplySnippet();
-        snippet.text = snippetblot.originalSnippet;
-        snippet.filePath = snippetblot.filePath;
-        snippet.lineStart = snippetblot.lineStart;
-        
-        await snippet.save();
+        const snippet: ReplySnippet = await ReplySnippet.create({
+            text: snippetblot.originalSnippet,
+            filePath: snippetblot.filePath,
+            lineStart: snippetblot.lineStart
+        }).save();
 
         snippetEntities.push(snippet);
 
@@ -75,8 +71,10 @@ export const getReplies = async (req: any, res: any) => {
 }
 
 export const updateReplyMessage = async (req: any, res: any) => {
-    const replyId = req.params.id;
-    const replyMessage = req.body.message;
+    const replyId: number = req.params.id;
+    const replyMessage: string = req.body.message;
+    const snippets: any[] = req.body.snippets;
+    const delta: any = req.body.delta;
 
     const reply = await ReplyRepository.findReplyWithPropertiesById(replyId);
 
@@ -85,16 +83,17 @@ export const updateReplyMessage = async (req: any, res: any) => {
         return;
     }
 
-    reply.message = replyMessage;
+    reply.snippets.forEach(snippet => snippet.remove());
+
+    const { updatedReplyMessage, snippetEntities } = await createSnippetEntitiesFromReplyMessage(replyMessage, snippets);
+
+    reply.message = updatedReplyMessage;
+    reply.snippets = snippetEntities;
+    reply.delta = delta;
     await reply.save();
-    const username = reply?.anonymous ? ANONYMOUS_USER : reply?.user?.name;
     
-    const response = {
-        id: reply?.id,
-        threadId: reply?.threadId,
-        message: reply?.message,
-        username: username
-    }
+    const replyResponse = await ReplyRepository.findReplyWithPropertiesById(replyId);
+    const response = replyResponse ? mapReplyResponse(replyResponse) : null;
 
     res.send({ reply: response });
 }

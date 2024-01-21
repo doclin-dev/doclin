@@ -104,8 +104,7 @@
             case "updateThread":
                 const updatedThread = message.value;
                 if (thread.id == updatedThread.id) {
-                    thread.originalMessage = updatedThread.originalMessage;
-                    thread.displayMessage = updatedThread.displayMessage;
+                    thread = updatedThread;
                 }
                 break;
         }

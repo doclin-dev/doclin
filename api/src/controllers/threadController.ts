@@ -70,12 +70,12 @@ export const getThreads = async (req: any, res: any) => {
 }
 
 export const updateThread = async (req: any, res: any) => {
-    const threadId = req.params.id;
-    const threadMessage = req.body.message;
+    const threadId: number = req.params.id;
+    const threadMessage: string = req.body.message;
     const snippets: any[] = req.body.snippets;
     const delta: any = req.body.delta;
 
-    const thread = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
+    const thread: Thread | null = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
 
     if (!thread) {
         res.send({ thread: null });
