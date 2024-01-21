@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import { UserRepository } from "../database/repositories/UserRepository";
+import { ACCESS_TOKEN_SECRET } from "../envConstants";
 
 export const getCurrentUser = async (req: Request, res: Response) => {
 	const authHeader = req.headers.authorization;
@@ -28,7 +29,7 @@ export const getUserIdFromAuthHeader = (authHeader: string | undefined) => {
 	}
 
 	try {
-		const payload: any = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+		const payload: any = jwt.verify(token, ACCESS_TOKEN_SECRET);
 
     	if (!payload.userId) {
       		return null;

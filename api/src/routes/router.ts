@@ -10,6 +10,7 @@ const BASE_ORGANIZATION_ROUTE = "/organizations";
 
 const router = express.Router();
 
+router.get("/", (_req, res) => res.send("doclin-api"));
 router.get("/auth/github", passport.authenticate("github", { session: false }));
 router.get("/auth/github/callback", passport.authenticate("github", { session: false }), githubCallback);
 router.get("/auth/user", getCurrentUser);

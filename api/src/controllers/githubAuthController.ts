@@ -1,7 +1,15 @@
 import jwt from "jsonwebtoken";
 import { User } from "../database/entities/User";
+import { 
+    PRODUCTION_SERVER_URL, 
+    DEVELOPMENT_SERVER_URL, 
+    PRODUCTION, 
+    ACCESS_TOKEN_SECRET, 
+    GITHUB_CLIENT_ID, 
+    GITHUB_CLIENT_SECRET 
+} from "../envConstants";
 
-require("dotenv-safe").config();
+const SERVER_URL = PRODUCTION ? PRODUCTION_SERVER_URL : DEVELOPMENT_SERVER_URL;
 
 export const githubCallback = (req: any, res: any) => {
     res.redirect(`http://localhost:54321/auth/${req.user.accessToken}`);
@@ -23,16 +31,14 @@ export const githubLogin = async (_accessToken: any, _refreshToken: any, profile
     cb(null, {
         accessToken: jwt.sign(
             { userId: user.id },
-            process.env.ACCESS_TOKEN_SECRET,
-            {
-            expiresIn: "1y",
-            }
+            ACCESS_TOKEN_SECRET,
+            { expiresIn: "1y" }
         ),
     });
 }
 
 export const githubOAuthConfig = {
-    clientID: process.env.GITHUB_CLIENT_ID,
-    clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: "http://localhost:3002/auth/github/callback",
+    clientID: GITHUB_CLIENT_ID,
+    clientSecret: GITHUB_CLIENT_SECRET,
+    callbackURL: `${SERVER_URL}/auth/github/callback`,
 }
