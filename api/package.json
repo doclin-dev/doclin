@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "watch": "tsc -w",
+    "build": "tsc",
     "dev": "nodemon dist/index.js",
     "clean": "rm -rf node_modules && rm -rf dist && npm install"
   },

@@ -1,0 +1,46 @@
+name: Deploy to EC2
+on:
+  push:
+    branches:
+      - prod
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout code
+          uses: actions/checkout@v3
+        - name: Set up Node.js
+          uses: actions/setup-node@v3
+          with:
+            node-version: '16'
+        - name: Build and push Docker image
+          run: |
+            cd api
+            docker build --tag doclin-api .
+            docker tag doclin-api:latest ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
+            docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+            docker push ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
+        - name: SSH into EC2 instance and deploy
+          uses: appleboy/ssh-action@master
+          with:
+            host: ${{secrets.EC2_HOST}}
+            username: ${{secrets.EC2_USERNAME}}
+            key: ${{secrets.MY_EC2_SSH_KEY}}
+            script: |
+              sudo docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+              sudo docker pull ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
+              sudo docker stop doclin-container || true
+              sudo docker rm doclin-container || true
+              sudo docker run \
+                --name doclin-container \
+                --volume /etc/letsencrypt:/doclin-api/letsencrypt \
+                --publish 443:443 \
+                --env NODE_ENV=production \
+                --env ACCESS_TOKEN_SECRET=${{secrets.ACCESS_TOKEN_SECRET}} \
+                --env GITHUB_CLIENT_SECRET=${{secrets.GIT_CLIENT_SECRET}} \
+                --env GITHUB_CLIENT_ID=${{secrets.GIT_CLIENT_ID}} \
+                --env SENDGRID_API_KEY=${{secrets.SENDGRID_API_KEY}} \
+                --env DB_HOST=${{secrets.DB_HOST}} \
+                --env DB_PASS=${{secrets.DB_PASS}} \
+                --detach \
+                ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
