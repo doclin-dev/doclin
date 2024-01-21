@@ -2,28 +2,33 @@ import {
   BaseEntity,
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   CreateDateColumn
 } from "typeorm";
-import { Snippet } from "./Snippet";
+import { Reply } from "./Reply";
 
 @Entity()
-export class SnippetFilePath extends BaseEntity {
+export class ReplySnippet extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @CreateDateColumn()
   createdAt: Date;
 
+  @Column("text")
+  text: string;
+
+  @ManyToOne(() => Reply, (reply) => reply.snippets, { nullable: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: "replyId" })
+  reply: Reply;
+
   @Column({ type: "varchar", nullable: true })
   filePath: string | null;
-
-  @ManyToOne(() => Snippet, (s) => s.snippetFilePaths, { onDelete: 'CASCADE' })
-  snippet: Snippet;
 
   @Column({ type: "integer", nullable: true })
   lineStart: number | null;
 
-  snippetId: number;
+  replyId: number;
 }

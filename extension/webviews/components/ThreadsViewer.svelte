@@ -19,14 +19,16 @@
     let activeFilePath: string;
 
     async function submitThreadMessage() {
-        const { threadMessage, snippets } = quillEditor.getStructuredText();
+        const { delta, threadMessage, snippets } = quillEditor.getStructuredText();
         currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
 
         if (threadMessage) {
             tsvscode.postMessage({ 
                 type: "postThread", 
                 value: {
+                    delta: delta, 
                     threadMessage: threadMessage,
+                    snippets: snippets,
                     projectId: currentProject?.id,
                     anonymous: anonymousCheck ? true : false
                 }

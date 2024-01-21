@@ -29,6 +29,7 @@
             editedThreadId.set(thread.id);
             await tick();
             quillThreadEditor = new TextEditor('#thread-editor');
+            quillThreadEditor.setContents(thread.delta);
             WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ThreadTextEditor);
             quillThreadEditor.setActiveEditor(ActiveTextEditor.ThreadTextEditor);
         }
@@ -38,9 +39,17 @@
         await tick();
 
         if (quillThreadEditor) {
-            const { threadMessage, snippets } = quillThreadEditor.getStructuredText();
+            const { threadMessage, snippets, delta } = quillThreadEditor.getStructuredText();
 
-            tsvscode.postMessage({ type: "updateThread", value: { threadId: thread.id, threadMessage: threadMessage }});
+            tsvscode.postMessage({ 
+                type: "updateThread", 
+                value: { 
+                    threadId: thread.id, 
+                    threadMessage: threadMessage,
+                    snippets: snippets,
+                    delta: delta
+                }
+            });
 
             quillThreadEditor?.removeToolbarTheme();
             quillThreadEditor = null;
@@ -125,7 +134,7 @@
         </div>
         <div class='creation-time'>{threadCreationTime}</div>
         {#if $editedThreadId === thread?.id}
-            <div id="thread-editor">{@html thread?.originalMessage}</div> 
+            <div id="thread-editor"></div> 
             <div class='thread-editor-footer'>
                 <Button variant='secondary' onClick={onCancel} title="Cancel"/>
                 <Button variant='secondary' onClick={handleOnSubmit} title="Submit"/>

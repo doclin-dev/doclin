@@ -32,10 +32,16 @@
 
     }
 
-    async function postReplyMessage(message: string) {
+    async function postReplyMessage(message: string, snippets: any[], delta: any) {
         tsvscode.postMessage({
             type: "postReply",
-            value: { threadId: thread.id, replyMessage: message, anonymous: anonymousCheck ? true : false }
+            value: { 
+                threadId: thread.id, 
+                replyMessage: message, 
+                anonymous: anonymousCheck ? true : false,
+                snippets: snippets,
+                delta: delta
+            }
         });
     }
 
@@ -53,8 +59,8 @@
     }
 
     const onSubmit= () => {
-        const { threadMessage, snippets } = quillReplyViewer.getStructuredText();
-        postReplyMessage(threadMessage);
+        const { threadMessage, snippets, delta } = quillReplyViewer.getStructuredText();
+        postReplyMessage(threadMessage, snippets, delta);
         quillReplyViewer.setText("");
         WebviewStateManager.setState(WebviewStateManager.type.REPLY_MESSAGE, "");
     }

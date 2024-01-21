@@ -5,8 +5,7 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
     async findThreadByFilePathAndProjectId(filePath: string, projectId: number) {
         const relevantThreads = await this.createQueryBuilder('thread')
                                             .leftJoin('thread.snippets', 'snippet')
-                                            .leftJoin('snippet.snippetFilePaths', 'snippetFilePath')
-                                            .where('snippetFilePath.filePath = :filePath', { filePath })
+                                            .where('snippet.filePath = :filePath', { filePath })
                                             .andWhere('thread.projectId = :projectId', { projectId })
                                             .getMany();
 
@@ -18,7 +17,6 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
 
         const relevantThreadsWithAllInfoPopulated =  this.createQueryBuilder('thread')
                                                         .leftJoinAndSelect('thread.snippets', 'snippet')
-                                                        .leftJoinAndSelect('snippet.snippetFilePaths', 'snippetFilePath')
                                                         .leftJoinAndSelect('thread.user', 'user')
                                                         .leftJoinAndSelect('thread.replies', 'reply')
                                                         .where('thread.projectId = :projectId', { projectId })
@@ -32,7 +30,6 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
     async findAllThreadsByProjectId(projectId: number) {
         return this.createQueryBuilder('thread')
           .leftJoinAndSelect('thread.snippets', 'snippet')
-          .leftJoinAndSelect('snippet.snippetFilePaths', 'snippetFilePath')
           .leftJoinAndSelect('thread.user', 'user')
           .leftJoinAndSelect('thread.replies', 'reply')
           .where('thread.projectId = :projectId', { projectId })
@@ -44,11 +41,10 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
     findThreadWithPropertiesByThreadId(threadId: number) {
         return this.createQueryBuilder('thread')
                     .leftJoinAndSelect('thread.snippets', 'snippet')
-                    .leftJoinAndSelect('snippet.snippetFilePaths', 'snippetFilePath')
                     .leftJoinAndSelect('thread.user', 'user')
                     .leftJoinAndSelect('thread.replies', 'reply')
                     .andWhere('thread.id = :threadId', { threadId })
-                    .getOneOrFail();
+                    .getOne();
     },
 
     findThreadById(threadId: number) {

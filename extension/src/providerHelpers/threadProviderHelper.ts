@@ -4,8 +4,8 @@ import threadApi from "../api/threadApi";
 import { executeShellCommand } from "./providerHelperUtils";
 import { getCurrentOrganizationId } from "./organizationProviderHelper";
 import { getCurrentProjectId } from "./projectProviderHelper";
-import { getReadableCodeBlock, compareSnippetWithActiveEditor, fillUpThreadMessageWithSnippet, highlightCode, addLineNumbers } from "../utils/snippetComparisonUtil";
-import { Thread } from "../types";
+import { getReadableCodeBlock, compareSnippetsWithActiveEditor, fillUpThreadOrReplyMessageWithSnippet, highlightCode, addLineNumbers } from "../utils/snippetComparisonUtil";
+import { PostThread, Thread, UpdateThread } from "../types";
 import { SidebarProvider } from "../SidebarProvider";
 
 let lastActiveFilePath: string | null = null;
@@ -27,13 +27,13 @@ export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[],
 
   const response = await threadApi.getFileBasedThreads(organizationId, projectId, activeFilePath);
   const payload = response?.data;
-  let threads = payload?.threads;
+  let threads: Thread[] = payload?.threads;
 
   for (const thread of threads) {
-    await compareSnippetWithActiveEditor(thread);
+    await compareSnippetsWithActiveEditor(thread.snippets);
   };
 
-  threads.forEach(fillUpThreadMessageWithSnippet);
+  threads.forEach(fillUpThreadOrReplyMessageWithSnippet);
 
   return { threads, activeFilePath };
 };
@@ -49,42 +49,64 @@ export const getAllThreads = async (): Promise<Thread[] | undefined> => {
   let threads: Thread[] = payload?.threads;
 
   for (const thread of threads) {
-    await compareSnippetWithActiveEditor(thread);
+    await compareSnippetsWithActiveEditor(thread.snippets);
   };
 
-  threads.forEach(fillUpThreadMessageWithSnippet);
+  threads.forEach(fillUpThreadOrReplyMessageWithSnippet);
 
   return threads;
 };
 
-export const postThread = async({ threadMessage, anonymous }: { threadMessage: string, anonymous: boolean }): Promise<Thread | undefined> => {
+export const postThread = async({ threadMessage, delta, snippets, anonymous }: PostThread): Promise<Thread | undefined> => {
   const organizationId = await getCurrentOrganizationId();
   const projectId = await getCurrentProjectId();
   const activeFilePath = await getActiveEditorFilePath();
 
   if (!organizationId || !projectId) return;
 
-  const response = await threadApi.postThread(organizationId, projectId, threadMessage, activeFilePath, anonymous);
-  let thread = response?.data?.thread;
+  const response = await threadApi.postThread(
+    organizationId, 
+    projectId, 
+    threadMessage, 
+    delta, 
+    snippets, 
+    activeFilePath, 
+    anonymous
+  );
 
-  await compareSnippetWithActiveEditor(thread);
-  fillUpThreadMessageWithSnippet(thread);
+  const thread: Thread = response?.data?.thread;
+
+  await compareSnippetsWithActiveEditor(thread.snippets);
+  fillUpThreadOrReplyMessageWithSnippet(thread);
 
   return thread;
 };
 
-export const updateThread = async({threadMessage, threadId}: {threadMessage: string, threadId: number}): Promise<Thread | undefined> => {
+export const updateThread = async({ threadMessage, threadId, snippets, delta }: UpdateThread): Promise<Thread | undefined> => {
   const organizationId = await getCurrentOrganizationId();
   const projectId = await getCurrentProjectId();
   const activeFilePath = await getActiveEditorFilePath();
 
-  if (!organizationId || !projectId || !activeFilePath) return;
+  if (!organizationId || !projectId) return;
 
-  const response = await threadApi.updateThread(organizationId, projectId, threadId, threadMessage, activeFilePath);
-  let thread = response?.data?.thread;
+  const response = await threadApi.updateThread(
+    organizationId, 
+    projectId, 
+    threadId, 
+    threadMessage,
+    delta,
+    snippets,
+    activeFilePath
+  );
 
-  await compareSnippetWithActiveEditor(thread);
-  fillUpThreadMessageWithSnippet(thread);
+  const thread: Thread = response?.data?.thread;
+
+  console.log(thread);
+
+  await compareSnippetsWithActiveEditor(thread.snippets);
+  fillUpThreadOrReplyMessageWithSnippet(thread);
+
+  console.log(thread);
 
   return thread;
 };
@@ -92,9 +114,8 @@ export const updateThread = async({threadMessage, threadId}: {threadMessage: str
 export const deleteThread = async({ threadId }: { threadId: number }) => {
   const organizationId = await getCurrentOrganizationId();
   const projectId = await getCurrentProjectId();
-  const activeFilePath = await getActiveEditorFilePath();
 
-  if (!organizationId || !projectId || !activeFilePath) return;
+  if (!organizationId || !projectId) return;
   
   const response = await threadApi.deleteThread(organizationId, projectId, threadId);
   const thread = response?.data?.thread;

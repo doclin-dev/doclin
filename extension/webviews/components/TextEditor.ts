@@ -42,24 +42,25 @@ export class TextEditor {
     }
 
     setContents(delta: any): void {
-        console.log(delta)
-        this.quillInstance.setContents(JSON.parse(delta));
-        console.log(this.quillInstance.getContents());
+        this.quillInstance.setContents(delta);
     };
 
     setText(text: string): void {
         this.quillInstance.setText(text);
     }
 
-    getStructuredText(): {threadMessage: string, snippets: any} {
+    getStructuredText(): { delta: any, threadMessage: string, snippets: any } {
         const delta = this.quillInstance.getContents();
         const snippets: any[] = [];
+        let count = 0;
 
         const newDelta = delta.map((op: any) => {
             const snippetblot = op.insert?.snippetblot;
+
             if (snippetblot) {
+                snippetblot['index'] = count;
                 snippets.push(snippetblot);
-                return { insert: "[snippet]" };
+                return { insert: this.getSnippetTag(count++) };
             }
 
             return op;
@@ -67,7 +68,11 @@ export class TextEditor {
 
         const threadMessage = this.getHtmlFromDelta(newDelta);
 
-        return { threadMessage, snippets};
+        return { delta, threadMessage, snippets};
+    }
+
+    private getSnippetTag(index: number) {
+        return `[snippet_${index}]`;
     }
 
     private getHtmlFromDelta(delta: any): string {

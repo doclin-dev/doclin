@@ -16,7 +16,7 @@ export class QuillSnippetBlot extends BlockEmbed {
 
     static value(node: any) {
         return {
-            'content': node.innerHTML,
+            'displaySnippet': node.innerHTML,
             'filePath': node.getAttribute('data-filepath'),
             'lineStart': node.getAttribute('data-linestart'),
             'originalSnippet': node.getAttribute('data-originalsnippet'),

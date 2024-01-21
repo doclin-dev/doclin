@@ -19,10 +19,15 @@
         replyCreationTime = moment.utc(reply?.replyCreationTime).fromNow();
     }, 60000);
 
-    async function updateReplyMessage(message: string) {
+    async function updateReplyMessage(message: string, snippets: any[], delta: any) {
         tsvscode.postMessage({
             type: "updateReply",
-            value: { replyId: reply.id, replyMessage: message }
+            value: { 
+                replyId: reply.id, 
+                replyMessage: message,
+                snippets: snippets,
+                delta: delta
+            }
         });
     }
 
@@ -43,9 +48,9 @@
             return;
         }
 
-        const { threadMessage, snippets } = quillReplyCardEditor.getStructuredText();
+        const { threadMessage, snippets, delta } = quillReplyCardEditor.getStructuredText();
 
-        updateReplyMessage(threadMessage);
+        updateReplyMessage(threadMessage, snippets, delta);
         editedReplyId.set(null);
     }
     
@@ -108,13 +113,13 @@
     </div>
     <div class='creation-time'>{replyCreationTime}</div>
     {#if $editedReplyId === reply.id}
-        <div id="reply-card-editor">{@html reply.message}</div> 
+        <div id="reply-card-editor"></div> 
         <div class='reply-card-footer'>
             <Button variant='secondary' onClick={onCancel} title="Cancel"/>
             <Button variant='secondary' onClick={handleOnSubmit} title="Submit"/>
         </div>
     {:else}
-        <div>{@html reply.message}</div>
+        <div>{@html reply.displayMessage}</div>
     {/if}
 
 </div>

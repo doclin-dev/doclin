@@ -5,10 +5,12 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  CreateDateColumn
+  CreateDateColumn,
+  OneToMany
 } from "typeorm";
 import { User } from "./User";
 import { Thread } from "./Thread";
+import { ReplySnippet } from "./ReplySnippet";
 
 @Entity()
 export class Reply extends BaseEntity {
@@ -37,4 +39,10 @@ export class Reply extends BaseEntity {
   @ManyToOne(() => Thread, (thread) => thread.replies, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "threadId" })
   thread: Thread;
+
+  @OneToMany(() => ReplySnippet, (snippet) => snippet.reply, { cascade: true })
+  snippets: ReplySnippet[];
+
+  @Column({ type: 'json', nullable: true })
+  delta: any;
 }

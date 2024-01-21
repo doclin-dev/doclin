@@ -13,7 +13,7 @@
     justify-content: space-between;
     align-items: center;
 }
-  
+
 .thread-card {
     display: flex;
     flex-direction: column;
@@ -23,6 +23,10 @@
     border: 2px;
     margin: 0.5rem 0;
     border: 1px solid var(--vscode-input-border);
+}
+
+.thread-card p {
+    margin: 0px auto;
 }
 
 .thread-editor-footer {

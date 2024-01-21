@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import hljs from 'highlight.js';
-import { Snippet, Thread } from "../types";
+import { Reply, Snippet, Thread } from "../types";
 
 hljs.configure({
     languages: ['javascript', 'python', 'cpp', 'ruby', 'php', 'html']
@@ -8,43 +8,19 @@ hljs.configure({
 
 const PRE_TAG_START: string = `<pre class="ql-syntax" spellcheck="false" contenteditable="false">`;
 const PRE_TAG_END: string = `</pre>`;
-const FILE_PATH_PREFIX: string = "File Path: ";
-const LINE_START_PREFIX: string = "Line Start: ";
 const OUTDATED_LABEL: string = `<label class="outdated-label">Outdated</label>`;
 
 const fileContentMap = new Map<vscode.Uri, string>();
 
-export const fillUpThreadMessageWithSnippet = (thread: Thread): void => {
-    thread.originalMessage = thread.message;
-    thread.displayMessage = thread.message;
+export const fillUpThreadOrReplyMessageWithSnippet = (threadOrReply: Thread | Reply): void => {
+    threadOrReply.displayMessage = threadOrReply.message;
 
-    for (const snippet of thread.snippets) {
-        thread.originalMessage = thread.originalMessage.replace(
-            getSnippetTag(snippet.id), 
-            getOriginalCodeBlock(snippet.filePath, snippet.lineStart, snippet.text)
-        );
-
-        thread.displayMessage = thread.displayMessage.replace(
+    for (const snippet of threadOrReply.snippets) {
+        threadOrReply.displayMessage = threadOrReply.displayMessage.replace(
             getSnippetTag(snippet.id), 
             getReadableCodeBlock(snippet.filePath, snippet.lineStart, snippet.text, snippet.outdated)
         );
     }
-}
-
-const getOriginalCodeBlock = (filePath: string, lineStart: number, snippetText: string) => {
-    let output = `${PRE_TAG_START}`;
-    
-    if (filePath) {
-        output += `${FILE_PATH_PREFIX}${filePath}\n`;
-    }
-
-    if (lineStart) {
-        output += `${LINE_START_PREFIX}${lineStart}\n`;
-    }
-    
-    output += `${snippetText}${PRE_TAG_END}`;
-
-    return output;
 }
 
 export const getReadableCodeBlock = (filePath: string, lineStart: number, snippetText: string, outdated: boolean) => {
@@ -106,8 +82,8 @@ const removeLineBreaks = (text: string) => {
     return text.replace(/\n/g, ' ');
 }
 
-export const compareSnippetWithActiveEditor = async (thread: Thread): Promise<void> => {
-    for(const snippet of thread.snippets) {
+export const compareSnippetsWithActiveEditor = async (snippets: Snippet[]): Promise<void> => {
+    for(const snippet of snippets) {
         if (isSnippetNotFromFile(snippet)) {
             snippet.outdated = false;
             continue;
