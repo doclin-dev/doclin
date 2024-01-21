@@ -11,10 +11,10 @@ export const AppDataSource = new DataSource({
     database: DB_NAME,
     entities: [join(__dirname, "/entities/*.*")],
     synchronize: !PRODUCTION,
-    ssl: true,
-    extra: {
+    ssl: PRODUCTION,
+    extra: PRODUCTION ? {
         ssl: {
             rejectUnauthorized: false
         }
-    },
+    } : null,
 });
