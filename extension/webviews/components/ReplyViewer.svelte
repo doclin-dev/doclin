@@ -28,7 +28,7 @@
         WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ReplyViewerTextEditor);
         quillReplyViewer.setActiveEditor(ActiveTextEditor.ReplyViewerTextEditor);
         const message = WebviewStateManager.getState(WebviewStateManager.type.REPLY_MESSAGE) || "";
-        quillReplyViewer.setText(message);
+        quillReplyViewer.setContents(message);
 
     }
 
