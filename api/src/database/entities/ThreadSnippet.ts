@@ -3,16 +3,14 @@ import {
   Column,
   Entity,
   JoinColumn,
-  OneToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   CreateDateColumn
 } from "typeorm";
 import { Thread } from "./Thread";
-import { SnippetFilePath } from "./SnippetFilePath";
 
 @Entity()
-export class Snippet extends BaseEntity {
+export class ThreadSnippet extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -22,13 +20,15 @@ export class Snippet extends BaseEntity {
   @Column("text")
   text: string;
 
-
   @ManyToOne(() => Thread, (t) => t.snippets, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: "threadId" })
   thread: Thread;
 
-  threadId: number;
+  @Column({ type: "varchar", nullable: true })
+  filePath: string | null;
 
-  @OneToMany(() => SnippetFilePath, (sfp) => sfp.snippet, { cascade: true })
-  snippetFilePaths: SnippetFilePath[];
+  @Column({ type: "integer", nullable: true })
+  lineStart: number | null;
+
+  threadId: number;
 }

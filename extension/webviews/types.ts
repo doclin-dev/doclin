@@ -25,3 +25,10 @@ export type Organization = {
   id: string;
   name: string;
 };
+
+export type TextEditorInsertSnippet = { 
+  filePath: string, 
+  lineStart: number, 
+  displaySnippet: string, 
+  originalSnippet: string 
+}

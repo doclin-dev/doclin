@@ -14,7 +14,7 @@
     export let username: string;
     export let page: Page;
 
-    let quillReplyViewer: any;
+    let quillReplyViewer: TextEditor;
     let replies : Array<{message: string, id: number}> = [];
     let anonymousCheck: boolean = false;
 
@@ -22,20 +22,26 @@
         quillReplyViewer = new TextEditor('#replyViewerEditor')
 
         quillReplyViewer.onTextChange(() => {
-            WebviewStateManager.setState(WebviewStateManager.type.REPLY_MESSAGE, quillReplyViewer.getText());
+            WebviewStateManager.setState(WebviewStateManager.type.REPLY_MESSAGE, quillReplyViewer.getContents());
         });
         
         WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ReplyViewerTextEditor);
         quillReplyViewer.setActiveEditor(ActiveTextEditor.ReplyViewerTextEditor);
         const message = WebviewStateManager.getState(WebviewStateManager.type.REPLY_MESSAGE) || "";
-        quillReplyViewer.setText(message);
+        quillReplyViewer.setContents(message);
 
     }
 
-    async function postReplyMessage(message: string) {
+    async function postReplyMessage(message: string, snippets: any[], delta: any) {
         tsvscode.postMessage({
             type: "postReply",
-            value: { threadId: thread.id, replyMessage: message, anonymous: anonymousCheck ? true : false }
+            value: { 
+                threadId: thread.id, 
+                replyMessage: message, 
+                anonymous: anonymousCheck ? true : false,
+                snippets: snippets,
+                delta: delta
+            }
         });
     }
 
@@ -53,7 +59,8 @@
     }
 
     const onSubmit= () => {
-        postReplyMessage(quillReplyViewer.getText());
+        const { threadMessage, snippets, delta } = quillReplyViewer.getStructuredText();
+        postReplyMessage(threadMessage, snippets, delta);
         quillReplyViewer.setText("");
         WebviewStateManager.setState(WebviewStateManager.type.REPLY_MESSAGE, "");
     }

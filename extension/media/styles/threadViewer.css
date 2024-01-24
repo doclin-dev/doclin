@@ -13,7 +13,7 @@
     justify-content: space-between;
     align-items: center;
 }
-  
+
 .thread-card {
     display: flex;
     flex-direction: column;
@@ -23,6 +23,10 @@
     border: 2px;
     margin: 0.5rem 0;
     border: 1px solid var(--vscode-input-border);
+}
+
+.thread-card p {
+    margin: 0px auto;
 }
 
 .thread-editor-footer {
@@ -104,3 +108,26 @@
     padding-bottom: 0.75rem;
 }
 
+.outdated-label {
+    border: 1px solid rgba(226, 226, 0, 0.614);
+    border-radius: 0.5em;
+    font-size: 10px;
+    padding: 2px 5px;
+    color: rgba(226, 226, 0, 0.614);
+}
+
+.thread-file-path {
+    font-size: 12px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem; 
+}
+
+.thread-file-path-text {
+    white-space: nowrap;
+    overflow: hidden;  
+    text-overflow: ellipsis;
+}

@@ -10,10 +10,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:doclin.helloWorld",
-    "onCommand:doclin.askQuestion",
-    "onCommand:doclin.refresh",
-    "onCommand:doclin.addTodo",
+    "onCommand:doclin.addComment",
     "onCommand:doclin.authenticate",
     "onView:doclin-sidebar",
     "onStartupFinished"
@@ -42,23 +39,9 @@
     },
     "commands": [
       {
-        "command": "doclin.helloWorld",
-        "title": "Hello World"
-      },
-      {
-        "command": "doclin.askQuestion",
+        "command": "doclin.addComment",
         "category": "doclin",
-        "title": "Ask Question"
-      },
-      {
-        "command": "doclin.refresh",
-        "category": "doclin",
-        "title": "Refresh"
-      },
-      {
-        "command": "doclin.addTodo",
-        "category": "doclin",
-        "title": "Add Todo From Selection"
+        "title": "Add Comment"
       },
       {
         "command": "doclin.authenticate",

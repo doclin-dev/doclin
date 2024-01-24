@@ -4,6 +4,9 @@ import threadApi from "../api/threadApi";
 import { executeShellCommand } from "./providerHelperUtils";
 import { getCurrentOrganizationId } from "./organizationProviderHelper";
 import { getCurrentProjectId } from "./projectProviderHelper";
+import { getReadableCodeBlock, compareSnippetsWithActiveEditor, fillUpThreadOrReplyMessageWithSnippet, highlightCode, addLineNumbers } from "../utils/snippetComparisonUtil";
+import { PostThread, Thread, UpdateThread } from "../types";
+import { SidebarProvider } from "../SidebarProvider";
 
 let lastActiveFilePath: string | null = null;
 
@@ -13,21 +16,29 @@ vscode.window.onDidChangeActiveTextEditor((editor) => {
   }
 });
 
-export const getThreadsByActiveFilePath = async (): Promise<any> => {
+export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[], activeFilePath: string }> => {
   const activeFilePath = await getActiveEditorFilePath();
   const organizationId = await getCurrentOrganizationId();
   const projectId = await getCurrentProjectId();
 
-  if (!organizationId || !projectId || !activeFilePath) return;
+  if (!organizationId || !projectId || !activeFilePath) {
+    return { threads: [], activeFilePath: "" };
+  }
 
   const response = await threadApi.getFileBasedThreads(organizationId, projectId, activeFilePath);
   const payload = response?.data;
-  const threads = payload?.threads;
+  let threads: Thread[] = payload?.threads;
 
-  return {threads, activeFilePath};
+  for (const thread of threads) {
+    await compareSnippetsWithActiveEditor(thread.snippets);
+  };
+
+  threads.forEach(fillUpThreadOrReplyMessageWithSnippet);
+
+  return { threads, activeFilePath };
 };
 
-export const getAllThreads = async (): Promise<any> => {
+export const getAllThreads = async (): Promise<Thread[] | undefined> => {
   const organizationId = await getCurrentOrganizationId();
   const projectId = await getCurrentProjectId();
 
@@ -35,33 +46,63 @@ export const getAllThreads = async (): Promise<any> => {
 
   const response = await threadApi.getAllThreads(organizationId, projectId);
   const payload = response?.data;
-  const threads = payload?.threads;
+  let threads: Thread[] = payload?.threads;
+
+  for (const thread of threads) {
+    await compareSnippetsWithActiveEditor(thread.snippets);
+  };
+
+  threads.forEach(fillUpThreadOrReplyMessageWithSnippet);
 
   return threads;
 };
 
-export const postThread = async({ threadMessage, anonymous }: { threadMessage: string, anonymous: boolean }): Promise<any> => {
+export const postThread = async({ threadMessage, delta, snippets, anonymous }: PostThread): Promise<Thread | undefined> => {
   const organizationId = await getCurrentOrganizationId();
   const projectId = await getCurrentProjectId();
   const activeFilePath = await getActiveEditorFilePath();
 
-  if (!organizationId || !projectId || !activeFilePath) return;
+  if (!organizationId || !projectId) return;
 
-  const response = await threadApi.postThread(organizationId, projectId, threadMessage, activeFilePath, anonymous);
-  const thread = response?.data?.thread;
+  const response = await threadApi.postThread(
+    organizationId, 
+    projectId, 
+    threadMessage, 
+    delta, 
+    snippets, 
+    activeFilePath, 
+    anonymous
+  );
+
+  const thread: Thread = response?.data?.thread;
+
+  await compareSnippetsWithActiveEditor(thread.snippets);
+  fillUpThreadOrReplyMessageWithSnippet(thread);
 
   return thread;
 };
 
-export const updateThread = async({threadMessage, threadId}: {threadMessage: string, threadId: number}): Promise<any> => {
+export const updateThread = async({ threadMessage, threadId, snippets, delta }: UpdateThread): Promise<Thread | undefined> => {
   const organizationId = await getCurrentOrganizationId();
   const projectId = await getCurrentProjectId();
   const activeFilePath = await getActiveEditorFilePath();
 
-  if (!organizationId || !projectId || !activeFilePath) return;
+  if (!organizationId || !projectId) return;
 
-  const response = await threadApi.updateThread(organizationId, projectId, threadId, threadMessage, activeFilePath);
-  const thread = response?.data?.thread;
+  const response = await threadApi.updateThread(
+    organizationId, 
+    projectId, 
+    threadId, 
+    threadMessage,
+    delta,
+    snippets,
+    activeFilePath
+  );
+
+  const thread: Thread = response?.data?.thread;
+
+  await compareSnippetsWithActiveEditor(thread.snippets);
+  fillUpThreadOrReplyMessageWithSnippet(thread);
 
   return thread;
 };
@@ -69,9 +110,8 @@ export const updateThread = async({threadMessage, threadId}: {threadMessage: str
 export const deleteThread = async({ threadId }: { threadId: number }) => {
   const organizationId = await getCurrentOrganizationId();
   const projectId = await getCurrentProjectId();
-  const activeFilePath = await getActiveEditorFilePath();
 
-  if (!organizationId || !projectId || !activeFilePath) return;
+  if (!organizationId || !projectId) return;
   
   const response = await threadApi.deleteThread(organizationId, projectId, threadId);
   const thread = response?.data?.thread;
@@ -104,7 +144,7 @@ const getActiveEditorFilePath = async () : Promise<string> => {
   return stdout.split('\n')[0] + activeFileName;
 };
 
-export const addCodeSnippet = async (sidebarProvider: any) => {
+export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
   const { activeTextEditor } = vscode.window;
 
   if (!activeTextEditor) {
@@ -115,35 +155,31 @@ export const addCodeSnippet = async (sidebarProvider: any) => {
   vscode.commands.executeCommand('workbench.view.extension.doclin-sidebar-view');
 
   const filePath = await getActiveEditorFilePath();
+  const lineStart = getLineStart(activeTextEditor);
+  const originalSnippet = activeTextEditor.document.getText(activeTextEditor.selection);
+  const displaySnippet = addLineNumbers(lineStart, highlightCode(originalSnippet));
 
-  const threadMessage = activeTextEditor.document.getText(
-    activeTextEditor.selection
-  );
-
-  // Provdies the line numbers of selected text in active editor. 
-  // const selection = activeTextEditor.selection;
-  // console.log(selection);
-  // if (!selection.isEmpty) {
-  //   const startLine = selection.start.line + 1; // Line numbers are zero-based, so add 1
-  //   const endLine = selection.end.line + 1;
-
-  //   console.log(`Selected text lines: ${startLine}-${endLine}`);
-  // } else {
-  //     console.log('No text selected');
-  // }
-
-  const pauseExecution = () => {
-    return new Promise((resolve) => {
-      setTimeout(resolve, 500); // Resolves the promise after 2 seconds
-    });
-  }
-
-  await pauseExecution(); 
   // TODO: bug - not the most ideal way to fix this!!
-  // Need to check when the sidebar is loaded and then add the textSelection to sidebar
+  await pauseExecution(); 
 
   sidebarProvider._view?.webview.postMessage({
     type: "populateCodeSnippet",
-    value: {filePath, threadMessage},
+    value: { filePath, lineStart, originalSnippet, displaySnippet },
+  });
+}
+
+const getLineStart = (activeTextEditor: vscode.TextEditor): number => {
+  const selection = activeTextEditor.selection;
+
+  if (!selection.isEmpty) {
+    return selection.start.line + 1;
+  }
+
+  return 1;
+}
+
+const pauseExecution = () => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 500);
   });
 }

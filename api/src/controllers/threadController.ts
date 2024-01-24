@@ -1,111 +1,55 @@
-import { SnippetFilePath } from "../database/entities/SnippetFilePath";
 import { Thread } from "../database/entities/Thread";
-import { Snippet } from "../database/entities/Snippet";
+import { ThreadSnippet } from "../database/entities/ThreadSnippet";
 import { ThreadRepository } from "../database/repositories/ThreadRepository";
-
-const ANONYMOUS_USER: string = "Anonymous User";
+import { mapThreadResponse } from "./utils/mapperUtils";
+import { MULTIPLE_LINE_BREAK_REGEX, SINGLE_LINE_BREAK, getSnippetTag } from "./utils/snippetUtils";
 
 export const postThread = async (req: any, res: any) => {
     const threadMessage: string = req.body.threadMessage;
+    const snippets: any[] = req.body.snippets;
+    const delta: any = req.body.delta;
     const userId: number = req.userId;
     const projectId: number = req.body.projectId;
-    const activeEditorFilePath: string = req.body.activeEditorFilePath;
     const anonymousPost: boolean = req.body.anonymous;
     
-    const { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage, activeEditorFilePath);
+    const { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage, snippets);
 
     const thread = await Thread.create({
         message: updatedThreadMessage,
         userId: userId,
         projectId: projectId,
         snippets: snippetEntities,
-        anonymous: anonymousPost
+        anonymous: anonymousPost,
+        delta: delta
     }).save();
 
-    let responseThread = await ThreadRepository.findThreadWithPropertiesByThreadId(thread.id);
+    const threadResponse = await ThreadRepository.findThreadWithPropertiesByThreadId(thread.id);
 
-    responseThread = fillUpThreadMessageWithSnippet(responseThread);
-    const username = responseThread.anonymous ? ANONYMOUS_USER : responseThread.user?.name;
-    
-    const response = {
-        id: responseThread.id,
-        message: responseThread.message,
-        projectId: responseThread.projectId,
-        username: username
-    }
+    const response = threadResponse ? mapThreadResponse(threadResponse) : null;
 
     res.send({ thread: response });
 }
 
-const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, activeEditorFilePath: string) => {
-    const snippetsMatcher: RegExp = /<pre\b[^>]*>([\s\S]*?)<\/pre>/g;
-    const filePaths: string[] = [];
-    const snippets: string[] = [];
-
-    let count = -1;
+const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, snippetblots: any[]) => {
     let updatedThreadMessage: string = "";
 
-    updatedThreadMessage = threadMessage.replace(/(<p><br><\/p>)+/gi, '<p><br></p>')
-
-    updatedThreadMessage = updatedThreadMessage.replace(snippetsMatcher, (_match: string, content: string) => {
-        const codeBlockLines: string[] = content.split("\n");
-        
-        if (codeBlockLines.length > 0) {
-            let filePath: string;
-            const filePathPrefix = "File Path: ";
-
-            if (codeBlockLines[0]?.startsWith(filePathPrefix)) {
-                filePath = codeBlockLines.shift()?.substring(filePathPrefix.length) || "";
-            } else {
-                filePath = activeEditorFilePath;
-            }
-
-            filePaths.push(filePath);
-            
-            const snippetText: string = codeBlockLines.join("\n");
-            snippets.push(snippetText);
-
-            count += 1;
-
-            return getSnippetTag(count);
-        }
-
-        return content;
-    });
+    updatedThreadMessage = threadMessage.replace(MULTIPLE_LINE_BREAK_REGEX, SINGLE_LINE_BREAK)
 
     const snippetEntities = [];
 
-    for (let i = 0; i < snippets.length; i++) {
-        const snippetFilePath = new SnippetFilePath();
-        snippetFilePath.filePath = filePaths[i];
-
-        const snippet: Snippet = new Snippet();
-        snippet.text = snippets[i];
-        snippet.snippetFilePaths = [snippetFilePath];
-        
-        await snippet.save();
+    for (const snippetblot of snippetblots) {
+        const snippet: ThreadSnippet = await ThreadSnippet.create({
+            text: snippetblot.originalSnippet,
+            filePath: snippetblot.filePath,
+            lineStart: snippetblot.lineStart
+        }).save();
 
         snippetEntities.push(snippet);
 
-        updatedThreadMessage = updatedThreadMessage.replace(getSnippetTag(i), getSnippetTag(snippet.id));
+        updatedThreadMessage = updatedThreadMessage.replace(getSnippetTag(snippetblot.index), getSnippetTag(snippet.id));
     }
 
     return { updatedThreadMessage, snippetEntities }; 
-}
-
-const fillUpThreadMessageWithSnippet = (thread: Thread): Thread => {
-    for (const snippet of thread.snippets) {
-        const snippetFilePaths = snippet.snippetFilePaths;
-        const firstSnippetFilePath = snippetFilePaths[0];
-        const codeBlock = `<pre class="ql-syntax" spellcheck="false">File Path: ${firstSnippetFilePath.filePath}<hr>\n${snippet.text}</pre>`;
-        thread.message = thread.message.replace(getSnippetTag(snippet.id), codeBlock);
-    }
-
-    return thread;
-}
-
-const getSnippetTag = (snippetId: number) => {
-    return `[snippet_${snippetId}]`;
 }
 
 export const getThreads = async (req: any, res: any) => {
@@ -114,58 +58,40 @@ export const getThreads = async (req: any, res: any) => {
     let threads: Thread[];
 
     if (filePath) {
-         threads = await ThreadRepository.findThreadByFilePathAndProjectId(filePath, projectId);
+        threads = await ThreadRepository.findThreadByFilePathAndProjectId(filePath, projectId);
     } else {
         threads = await ThreadRepository.findAllThreadsByProjectId(projectId);
     }
 
-    for (let thread of threads) {
-        thread = fillUpThreadMessageWithSnippet(thread);
-    };
-
-    const response = threads.map((thread) => ({
-            id: thread.id,
-            message: thread.message,
-            username: thread.anonymous ? ANONYMOUS_USER : thread.user?.name,
-            replyCount: thread.replyCount,
-            threadCreationTime : thread.createdAt,
-            lastReplied: thread.replies.length > 0 ? thread.replies[0].createdAt : null,
-        })
-    );
+    const response = threads.map(mapThreadResponse);
 
     res.send({ threads: response });
 }
 
 export const updateThread = async (req: any, res: any) => {
-    const threadId = req.params.id;
-    const threadMessage = req.body.message;
-    const activeEditorFilePath = req.body.activeEditorFilePath;
+    const threadId: number = req.params.id;
+    const threadMessage: string = req.body.message;
+    const snippets: any[] = req.body.snippets;
+    const delta: any = req.body.delta;
 
-    const thread = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
+    const thread: Thread | null = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
 
     if (!thread) {
-        res.send({thread: null});
+        res.send({ thread: null });
         return;
     }
 
     thread.snippets.forEach(snippet => snippet.remove());
 
-    const { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage, activeEditorFilePath);
+    const { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage, snippets);
 
     thread.message = updatedThreadMessage;
     thread.snippets = snippetEntities;
-
+    thread.delta = delta;
     await thread.save();
 
-    let responseThread = fillUpThreadMessageWithSnippet(thread);
-    const username = responseThread.anonymous ? ANONYMOUS_USER : responseThread.user?.name;
-
-    const response = {
-        id: responseThread.id,
-        message: responseThread.message,
-        projectId: responseThread.projectId,
-        username: username
-    }
+    const threadResponse = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
+    const response = threadResponse ? mapThreadResponse(threadResponse) : null;
 
     res.send({ thread: response });
 }

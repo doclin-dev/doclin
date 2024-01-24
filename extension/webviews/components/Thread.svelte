@@ -14,6 +14,7 @@
     export let showReplyButton: boolean = true;
     let lastEdited : string | null = thread?.lastReplied ? moment.utc(thread.lastReplied).fromNow() : null;
     let threadCreationTime : string = moment.utc(thread?.threadCreationTime).fromNow();
+    let quillThreadEditor: TextEditor | null;
 
     const replyCountText = thread?.replyCount + ` ${thread?.replyCount === 1 ? 'reply': 'replies'}`
 
@@ -22,13 +23,13 @@
         threadCreationTime = moment.utc(thread?.threadCreationTime).fromNow();
     }, 60000);
 
-    let quillThreadEditor: any;
         
     const handleEditButtonClick = async () => {
         if ($editedThreadId === null && $editedReplyId === null) {
             editedThreadId.set(thread.id);
             await tick();
             quillThreadEditor = new TextEditor('#thread-editor');
+            quillThreadEditor.setContents(thread.delta);
             WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ThreadTextEditor);
             quillThreadEditor.setActiveEditor(ActiveTextEditor.ThreadTextEditor);
         }
@@ -36,17 +37,28 @@
 
     const handleOnSubmit = async () => {
         await tick();
-        const threadMessage = quillThreadEditor.getText();
 
-        tsvscode.postMessage({ type: "updateThread", value: { threadId: thread.id, threadMessage: threadMessage }});
+        if (quillThreadEditor) {
+            const { threadMessage, snippets, delta } = quillThreadEditor.getStructuredText();
 
-        quillThreadEditor.removeToolbarTheme();
-        quillThreadEditor = null;
-        editedThreadId.set(null);
+            tsvscode.postMessage({ 
+                type: "updateThread", 
+                value: { 
+                    threadId: thread.id, 
+                    threadMessage: threadMessage,
+                    snippets: snippets,
+                    delta: delta
+                }
+            });
+
+            quillThreadEditor?.removeToolbarTheme();
+            quillThreadEditor = null;
+            editedThreadId.set(null);
+        }
     }
 
     const onCancel = () => {
-        quillThreadEditor.removeToolbarTheme();
+        quillThreadEditor?.removeToolbarTheme();
         quillThreadEditor = null;
         editedThreadId.set(null);
         if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === null){
@@ -81,7 +93,7 @@
         switch(message.type) {
             case "populateCodeSnippet":
                 if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === ActiveTextEditor.ThreadTextEditor && $editedThreadId === thread.id) {
-                    quillThreadEditor.insertCodeSnippet(message.value);
+                    quillThreadEditor?.insertCodeSnippet(message.value);
                 };
                 break;
             case "deleteThread":
@@ -91,7 +103,9 @@
                 break;
             case "updateThread":
                 const updatedThread = message.value;
-                if (thread.id == updatedThread.id) thread.message = updatedThread.message;
+                if (thread.id == updatedThread.id) {
+                    thread = updatedThread;
+                }
                 break;
         }
     }
@@ -119,13 +133,13 @@
         </div>
         <div class='creation-time'>{threadCreationTime}</div>
         {#if $editedThreadId === thread?.id}
-            <div id="thread-editor">{@html thread?.message}</div> 
+            <div id="thread-editor"></div> 
             <div class='thread-editor-footer'>
                 <Button variant='secondary' onClick={onCancel} title="Cancel"/>
                 <Button variant='secondary' onClick={handleOnSubmit} title="Submit"/>
             </div>
         {:else}
-            <div>{@html thread?.message}</div>
+            <div>{@html thread?.displayMessage}</div>
             {#if thread?.replyCount &&  WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ThreadsViewer}
                 <div class="number-of-replies-button">
                     <Button 

@@ -11,7 +11,7 @@
     export let reply: any;
     export let reloadReplies: () => void = () => {};
 
-    let quillReplyCardEditor: any;
+    let quillReplyCardEditor: TextEditor | null;
     let replyCardMessage: string;
     let replyCreationTime : string = moment.utc(reply?.replyCreationTime).fromNow();
 
@@ -19,10 +19,15 @@
         replyCreationTime = moment.utc(reply?.replyCreationTime).fromNow();
     }, 60000);
 
-    async function updateReplyMessage(message: string) {
+    async function updateReplyMessage(message: string, snippets: any[], delta: any) {
         tsvscode.postMessage({
             type: "updateReply",
-            value: { replyId: reply.id, replyMessage: message }
+            value: { 
+                replyId: reply.id, 
+                replyMessage: message,
+                snippets: snippets,
+                delta: delta
+            }
         });
     }
 
@@ -31,6 +36,7 @@
             editedReplyId.set(reply.id);
             await tick();
             quillReplyCardEditor = new TextEditor('#reply-card-editor');
+            quillReplyCardEditor.setContents(reply.delta);
             WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ReplyTextEditor);
             quillReplyCardEditor.setActiveEditor(ActiveTextEditor.ReplyTextEditor);
         }
@@ -38,12 +44,22 @@
 
     const handleOnSubmit = async () => {
         await tick();
-        replyCardMessage = quillReplyCardEditor.getText();
-        updateReplyMessage(replyCardMessage);
+
+        if (!quillReplyCardEditor) {
+            return;
+        }
+
+        const { threadMessage, snippets, delta } = quillReplyCardEditor.getStructuredText();
+
+        updateReplyMessage(threadMessage, snippets, delta);
         editedReplyId.set(null);
     }
     
     const onCancel = () => {
+        if (!quillReplyCardEditor) {
+            return;
+        }
+
         quillReplyCardEditor.removeToolbarTheme();
         quillReplyCardEditor = null;
         editedReplyId.set(null);
@@ -62,13 +78,14 @@
         switch(message.type) {
             case "populateCodeSnippet":
                 if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === ActiveTextEditor.ReplyTextEditor && $editedReplyId === reply.id) {
-                    quillReplyCardEditor.insertCodeSnippet(message.value);
+                    quillReplyCardEditor?.insertCodeSnippet(message.value);
                 }
                 break;
             case "updateReply":
-                if (reply.id === message.value?.id) {
-                    reply.message = message.value?.message;
-                    quillReplyCardEditor.removeToolbarTheme();
+                const updatedReply = message.value;
+                if (reply.id === updatedReply?.id) {
+                    reply = updatedReply;
+                    quillReplyCardEditor?.removeToolbarTheme();
                     quillReplyCardEditor = null;
                     editedReplyId.set(null);
                 }
@@ -97,13 +114,13 @@
     </div>
     <div class='creation-time'>{replyCreationTime}</div>
     {#if $editedReplyId === reply.id}
-        <div id="reply-card-editor">{@html reply.message}</div> 
+        <div id="reply-card-editor"></div> 
         <div class='reply-card-footer'>
             <Button variant='secondary' onClick={onCancel} title="Cancel"/>
             <Button variant='secondary' onClick={handleOnSubmit} title="Submit"/>
         </div>
     {:else}
-        <div>{@html reply.message}</div>
+        <div>{@html reply.displayMessage}</div>
     {/if}
 
 </div>
