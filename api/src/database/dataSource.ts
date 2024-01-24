@@ -10,7 +10,7 @@ export const AppDataSource = new DataSource({
     password: DB_PASS,
     database: DB_NAME,
     entities: [join(__dirname, "/entities/*.*")],
-    synchronize: !PRODUCTION,
+    synchronize: true,
     ssl: PRODUCTION,
     extra: PRODUCTION ? {
         ssl: {
