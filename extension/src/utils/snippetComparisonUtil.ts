@@ -84,11 +84,6 @@ const removeLineBreaks = (text: string) => {
 
 export const compareSnippetsWithActiveEditor = async (snippets: Snippet[]): Promise<void> => {
     for(const snippet of snippets) {
-        if (isSnippetNotFromFile(snippet)) {
-            snippet.outdated = false;
-            continue;
-        }
-
         let content = await readFileContent(snippet.filePath);
 
         if (!content) {
@@ -104,10 +99,6 @@ export const compareSnippetsWithActiveEditor = async (snippets: Snippet[]): Prom
     };
 
     fileContentMap.clear();
-}
-
-const isSnippetNotFromFile = (snippet: Snippet) => {
-    return !snippet.lineStart;
 }
 
 const readFileContent = async (workspaceRelativePath: string): Promise<string | null> => {

@@ -44,6 +44,7 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
                     .leftJoinAndSelect('thread.user', 'user')
                     .leftJoinAndSelect('thread.replies', 'reply')
                     .andWhere('thread.id = :threadId', { threadId })
+                    .loadRelationCountAndMap("thread.replyCount", "thread.replies")
                     .getOne();
     },
 
