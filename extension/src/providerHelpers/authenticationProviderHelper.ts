@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { apiBaseUrl } from "../constants";
+import { API_BASE_URL } from "../envConstants";
 import * as polka from "polka";
 import { GlobalStateManager } from "../GlobalStateManager";
 import authApi from "../api/authApi";
@@ -34,7 +34,7 @@ export const authenticate = (fn?: () => void) => {
     } else {
       vscode.commands.executeCommand(
         "vscode.open",
-        vscode.Uri.parse(`${apiBaseUrl}/auth/github`)
+        vscode.Uri.parse(`${API_BASE_URL}/auth/github`)
       );
     }
   });

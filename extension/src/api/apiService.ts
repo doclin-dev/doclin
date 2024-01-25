@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { apiBaseUrl as baseURL } from '../constants';
+import { API_BASE_URL as baseURL } from '../envConstants';
 import * as vscode from "vscode";
 import { GlobalStateManager } from '../GlobalStateManager';
 
