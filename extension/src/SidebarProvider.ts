@@ -34,6 +34,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           break;
         case "authenticate":
           authenticate(async () => {
+            console.log(await getExtensionState());
             webviewView.webview.postMessage({
               type: "getExtensionState",
               value: await getExtensionState(),

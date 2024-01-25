@@ -66,7 +66,7 @@
 
         WebviewStateManager.setState(WebviewStateManager.type.CURRENT_PROJECT, project);
 
-        if (page == Page.InitializeOrganization || page == Page.InitializeProject) {
+        if (page != Page.ThreadsViewer && page != Page.ReplyViewer) {
             page = Page.ThreadsViewer;
             WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
         }
@@ -78,6 +78,7 @@
         const message = event.data;
         switch (message.type) {
             case "getExtensionState":
+                console.log(message.value);
                 handleGetExtensionState(message.value);
                 break;
         }
