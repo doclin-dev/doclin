@@ -1,6 +1,7 @@
 {
   "name": "doclin",
   "displayName": "doclin",
+  "publisher": "Doclin",
   "description": "Comment on your code",
   "version": "0.0.1",
   "engines": {
@@ -54,7 +55,7 @@
     "vscode:prepublish": "npm run package",
     "compile": "webpack --config ./build/node-extension.webpack.config.js",
     "watch": "concurrently \"rollup -c -w\" \"webpack --watch --config ./build/node-extension.webpack.config.js\"",
-    "package": "webpack --mode production --devtool hidden-source-map --config ./build/node-extension.webpack.config.js",
+    "package": "NODE_ENV=production webpack --mode production --devtool hidden-source-map --config ./build/node-extension.webpack.config.js",
     "test-compile": "tsc -p ./",
     "test-watch": "tsc -watch -p ./",
     "pretest": "npm run test-compile && npm run lint",
