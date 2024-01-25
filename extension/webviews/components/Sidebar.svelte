@@ -78,7 +78,6 @@
         const message = event.data;
         switch (message.type) {
             case "getExtensionState":
-                console.log(message.value);
                 handleGetExtensionState(message.value);
                 break;
         }
