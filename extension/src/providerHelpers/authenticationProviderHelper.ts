@@ -1,8 +1,9 @@
 import * as vscode from "vscode";
-import { API_BASE_URL } from "../envConstants";
+import { API_BASE_URL, PRODUCTION } from "../envConstants";
 import * as polka from "polka";
-import { GlobalStateManager } from "../GlobalStateManager";
+import { SecretStorageManager } from "../SecretStorageManager";
 import authApi from "../api/authApi";
+import { SecretStorageType } from "../enums";
 
 const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github`);
 
@@ -24,7 +25,7 @@ const getToken = async (req: any, res: any, fn?: () => void) => {
     return;
   }
 
-  await GlobalStateManager.setState(GlobalStateManager.type.AUTH_TOKEN, token);
+  await setTokenToStorage(token);
 
   if (fn) {
     fn();
@@ -49,4 +50,16 @@ export const getAuthenticatedUser = async () => {
   const user = payload?.user;
 
   return user;
+}
+
+const setTokenToStorage = async (token: string|null) => {
+  if (PRODUCTION) {
+    await SecretStorageManager.store(SecretStorageType.PROD_AUTH_TOKEN, token);
+  } else {
+    await SecretStorageManager.store(SecretStorageType.DEV_AUTH_TOKEN, token);
+  }
+}
+
+export const logout = async () => {
+  await setTokenToStorage(null);
 }

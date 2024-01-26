@@ -11,7 +11,7 @@ const inviteUser = async (projectId: number, organizationId: string, email: stri
         email: email
     };
 
-    const apiService = createAxiosInstance();
+    const apiService = await createAxiosInstance();
     const invitationUrl = `${getBaseProjectUrl(organizationId)}/${projectId}/invite`;
 
     const response = await apiService.post(invitationUrl, data);
@@ -24,7 +24,7 @@ const redeemInvitation = async (invitationCode: string) => {
         invitationCode: invitationCode
     };
 
-    const apiService = createAxiosInstance();
+    const apiService = await createAxiosInstance();
     const response = await apiService.post(REDEEM_INVITATION_URL, data);
 
     return response;

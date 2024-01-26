@@ -7,7 +7,7 @@ const getBaseReplyUrl = async (organizationId: string,
 }
 
 const getReplies = async (organizationId: string, projectId: number, threadId: number) => {
-    const apiService = createAxiosInstance();
+    const apiService = await createAxiosInstance();
     const baseReplyUrl = await getBaseReplyUrl(organizationId, projectId, threadId);
     const response = await apiService.get(baseReplyUrl);
 
@@ -28,7 +28,7 @@ const postReply = async (organizationId: string,
         delta: delta
     };
 
-    const apiService = createAxiosInstance();
+    const apiService = await createAxiosInstance();
     const baseReplyUrl = await getBaseReplyUrl(organizationId, projectId, threadId);
     const response = await apiService.post(baseReplyUrl, data);
 
@@ -47,7 +47,7 @@ const updateReply = async (organizationId: string,
         delta: delta
     };
 
-    const apiService = createAxiosInstance();
+    const apiService = await createAxiosInstance();
     const baseReplyUrl = await getBaseReplyUrl(organizationId, projectId);
     const response = await apiService.put(`${baseReplyUrl}/${replyId}`, data);
 
@@ -55,7 +55,7 @@ const updateReply = async (organizationId: string,
 }
 
 const deleteReply = async (organizationId: string, projectId: number, replyId: number) => {
-    const apiService = createAxiosInstance();
+    const apiService = await createAxiosInstance();
     const baseReplyUrl = await getBaseReplyUrl(organizationId, projectId);
     const response = await apiService.delete(`${baseReplyUrl}/${replyId}`);
 

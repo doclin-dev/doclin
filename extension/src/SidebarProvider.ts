@@ -1,8 +1,7 @@
 import * as vscode from "vscode";
-import { authenticate } from "./providerHelpers/authenticationProviderHelper";
+import { authenticate, logout } from "./providerHelpers/authenticationProviderHelper";
 import { API_BASE_URL } from "./envConstants";
 import { getNonce } from "./providerHelpers/getNonce";
-import { GlobalStateManager } from "./GlobalStateManager";
 import { postThread, deleteThread, getThreadsByActiveFilePath, updateThread, getAllThreads } from "./providerHelpers/threadProviderHelper";
 import { getGithubUrl, storeProjectId } from "./providerHelpers/projectProviderHelper";
 import { getExistingProjects, postProject } from "./providerHelpers/projectProviderHelper";
@@ -30,7 +29,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     webviewView.webview.onDidReceiveMessage(async (message: { type: any, value: any }) => {
       switch (message.type) {
         case "logout":
-          GlobalStateManager.setState(GlobalStateManager.type.AUTH_TOKEN, "");
+          logout();
           break;
         case "authenticate":
           authenticate(async () => {
