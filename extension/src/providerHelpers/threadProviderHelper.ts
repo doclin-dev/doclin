@@ -152,14 +152,13 @@ export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
     return;
   }
 
-  vscode.commands.executeCommand('workbench.view.extension.doclin-sidebar-view');
+  vscode.commands.executeCommand('workbench.view.extension.doclinSidebarView');
 
   const filePath = await getActiveEditorFilePath();
   const lineStart = getLineStart(activeTextEditor);
   const originalSnippet = activeTextEditor.document.getText(activeTextEditor.selection);
   const displaySnippet = addLineNumbers(lineStart, highlightCode(originalSnippet));
 
-  // TODO: bug - not the most ideal way to fix this!!
   await pauseExecution(); 
 
   sidebarProvider._view?.webview.postMessage({
