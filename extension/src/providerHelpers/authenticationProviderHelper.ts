@@ -12,16 +12,17 @@ const app = polka();
 export const authenticate = (fn?: () => void) => {
   app.server?.close();
 
-  app.get(`/auth/:token`, (req, res) => getToken(req, res, fn));
+  app.get(`/auth`, (req, res) => getToken(req, res, fn));
 
   app.listen(54321, openApiUrl);
 };
 
 const getToken = async (req: any, res: any, fn?: () => void) => {
-  const { token } = req.params;
-  
+  const token = req.query.token;
+
   if (!token) {
-    res.end(`<h1>Something went wrong!</h1>`);
+    res.end(`Authentication unsuccessful. Please try again later.`);
+    app.server?.close();
     return;
   }
 
@@ -31,7 +32,7 @@ const getToken = async (req: any, res: any, fn?: () => void) => {
     fn();
   }
 
-  res.end(`<h1>Authentication was successful, you can close this now!</h1>`);
+  res.end(`Authentication successful. You can close this now!`);
 
   app.server?.close();
 }
@@ -61,5 +62,5 @@ const setTokenToStorage = async (token: string|null) => {
 }
 
 export const logout = async () => {
-  await setTokenToStorage(null);
+  await setTokenToStorage("");
 }

@@ -12,7 +12,7 @@ import {
 const SERVER_URL = PRODUCTION ? PRODUCTION_SERVER_URL : DEVELOPMENT_SERVER_URL;
 
 export const githubCallback = (req: any, res: any) => {
-    res.redirect(`http://localhost:54321/auth/${req.user.accessToken}`);
+    res.redirect(`http://localhost:54321/auth?token=${req.user.accessToken}`);
 }
 
 export const githubLogin = async (_accessToken: any, _refreshToken: any, profile: any, cb: any) => {
