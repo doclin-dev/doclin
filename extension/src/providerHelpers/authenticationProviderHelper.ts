@@ -4,24 +4,27 @@ import * as polka from "polka";
 import { SecretStorageManager } from "../SecretStorageManager";
 import authApi from "../api/authApi";
 import { SecretStorageType } from "../enums";
+import * as bodyParser from "body-parser";
 
 const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github`);
 
 const app = polka();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 export const authenticate = (fn?: () => void) => {
   app.server?.close();
 
-  app.get(`/auth/:token`, (req, res) => getToken(req, res, fn));
+  app.post(`/auth/`, (req, res) => getToken(req, res, fn));
 
   app.listen(54321, openApiUrl);
 };
 
 const getToken = async (req: any, res: any, fn?: () => void) => {
-  const { token } = req.params;
+  const { token } = req.body;
   
   if (!token) {
-    res.end(`<h1>Something went wrong!</h1>`);
+    res.status(400).end("authentication failed!");
     return;
   }
 
@@ -31,7 +34,7 @@ const getToken = async (req: any, res: any, fn?: () => void) => {
     fn();
   }
 
-  res.end(`<h1>Authentication was successful, you can close this now!</h1>`);
+  res.end("authentication successful!");
 
   app.server?.close();
 }
@@ -61,5 +64,5 @@ const setTokenToStorage = async (token: string|null) => {
 }
 
 export const logout = async () => {
-  await setTokenToStorage(null);
+  await setTokenToStorage("");
 }
