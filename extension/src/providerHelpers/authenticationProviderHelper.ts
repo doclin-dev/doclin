@@ -4,27 +4,25 @@ import * as polka from "polka";
 import { SecretStorageManager } from "../SecretStorageManager";
 import authApi from "../api/authApi";
 import { SecretStorageType } from "../enums";
-import * as bodyParser from "body-parser";
 
 const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github`);
 
 const app = polka();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 export const authenticate = (fn?: () => void) => {
   app.server?.close();
 
-  app.post(`/auth/`, (req, res) => getToken(req, res, fn));
+  app.get(`/auth`, (req, res) => getToken(req, res, fn));
 
   app.listen(54321, openApiUrl);
 };
 
 const getToken = async (req: any, res: any, fn?: () => void) => {
-  const { token } = req.body;
-  
+  const token = req.query.token;
+
   if (!token) {
-    res.status(400).end("authentication failed!");
+    res.end(`Authentication unsuccessful. Please try again later.`);
+    app.server?.close();
     return;
   }
 
@@ -34,7 +32,7 @@ const getToken = async (req: any, res: any, fn?: () => void) => {
     fn();
   }
 
-  res.end("authentication successful!");
+  res.end(`Authentication successful. You can close this now!`);
 
   app.server?.close();
 }

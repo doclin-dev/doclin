@@ -8,7 +8,7 @@ import cors from "cors";
 import router from "./routes/router";
 import session from "express-session";
 import { AppDataSource } from "./database/dataSource";
-import { GITHUB_OAUTH_CONFIG, githubLogin } from "./controllers/githubAuthController";
+import { githubOAuthConfig, githubLogin } from "./controllers/githubAuthController";
 import fs from 'fs';
 import { 
   PRODUCTION, 
@@ -66,7 +66,7 @@ const initializePassportAuthentication = (app: Application) => {
   });
 
   app.use(passport.initialize());
-  passport.use(new GitHubStrategy(GITHUB_OAUTH_CONFIG, githubLogin));
+  passport.use(new GitHubStrategy(githubOAuthConfig, githubLogin));
 }
 
 const initializeJsonCommunication = (app: Application) => {
