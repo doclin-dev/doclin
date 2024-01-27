@@ -2,12 +2,24 @@ import Quill from 'quill';
 import { WebviewStateManager } from '../WebviewStateManager';
 import { QuillSnippetBlot } from './QuillSnippetBlot';
 import type { TextEditorInsertSnippet } from '../types';
+import "quill-mention";
 
 Quill.register({
     'formats/snippet': QuillSnippetBlot,
 });
 
 const Delta = Quill.import('delta');
+
+const atValues = [
+    { id: 1, value: "Fredrik Sundqvist" },
+    { id: 2, value: "Patrik Sjölin" },
+    { id: 3, value: 'Shawon'},
+    { id: 4, value: "Prottooy"},
+  ];
+const hashValues = [
+    { id: 3, value: "Fredrik Sundqvist 2" },
+    { id: 4, value: "Patrik Sjölin 2" }
+];
 
 export class TextEditor {
     private quillInstance: any;
@@ -17,7 +29,32 @@ export class TextEditor {
             modules: {
                 toolbar: [
                     ['bold', 'italic', 'link', 'code-block', { list: 'ordered' }, { list: 'bullet' }, { color: [] }]
-                ]
+                ],
+                mention: {
+                    allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
+                    mentionDenotationChars: ["@", "#"],
+                    source: function(searchTerm: string, renderList: any, mentionChar:string) {
+                      let values;
+              
+                      if (mentionChar === "@") {
+                        values = atValues;
+                      } else {
+                        values = hashValues;
+                      }
+              
+                      if (searchTerm.length === 0) {
+                        renderList(values, searchTerm);
+                      } else {
+                        const matches = [];
+                        for (let i = 0; i < values.length; i++)
+                          if (
+                            ~values[i].value.toLowerCase().indexOf(searchTerm.toLowerCase())
+                          )
+                            matches.push(values[i]);
+                        renderList(matches, searchTerm);
+                      }
+                    },
+                }
             },
             theme: 'snow'
         };
