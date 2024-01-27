@@ -1,44 +1,40 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-
 import * as vscode from "vscode";
 import { authenticate } from "./providerHelpers/authenticationProviderHelper";
 import { SidebarProvider } from "./SidebarProvider";
-import { GlobalStateManager } from "./GlobalStateManager";
+import { SecretStorageManager } from "./SecretStorageManager";
 import { addCodeSnippet } from "./providerHelpers/threadProviderHelper";
 
+const DOCLIN_SIDEBAR = "doclin.sidebar";
+const DOCLIN_AUTHENTICATE = "doclin.authenticate";
+const DOCLIN_ADD_COMMENT = "doclin.addComment";
+
 export function activate(context: vscode.ExtensionContext) {
-  GlobalStateManager.globalState = context.globalState;
+  createStatusBarItem();
+
+  SecretStorageManager.secretStorage = context.secrets;
 
   const sidebarProvider = new SidebarProvider(context.extensionUri);
 
-  const item = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Right
-  );
-  item.text = "$(beaker) Add Doc";
-  item.command = "doclin.addComment";
-  item.show();
-
   context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider("doclin-sidebar", sidebarProvider)
+    vscode.window.registerWebviewViewProvider(DOCLIN_SIDEBAR, sidebarProvider)
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("doclin.addComment", () => {
-      addCodeSnippet(sidebarProvider);
-    })
+    vscode.commands.registerCommand(DOCLIN_ADD_COMMENT, () => addCodeSnippet(sidebarProvider))
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("doclin.authenticate", () => {
-      try {
-        authenticate();
-      } catch (err) {
-        console.error(err);
-      }
-    })
+    vscode.commands.registerCommand(DOCLIN_AUTHENTICATE, () => authenticate())
   );
 }
 
-// this method is called when your extension is deactivated
+const createStatusBarItem = () => {
+  const item = vscode.window.createStatusBarItem(
+    vscode.StatusBarAlignment.Right
+  );
+  item.text = "$(comments-view-icon) Add Comment";
+  item.command = DOCLIN_ADD_COMMENT;
+  item.show();
+}
+
 export function deactivate() {}

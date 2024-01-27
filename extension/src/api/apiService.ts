@@ -1,10 +1,11 @@
 import axios, { AxiosInstance } from 'axios';
-import { API_BASE_URL as baseURL } from '../envConstants';
+import { PRODUCTION, API_BASE_URL as baseURL } from '../envConstants';
 import * as vscode from "vscode";
-import { GlobalStateManager } from '../GlobalStateManager';
+import { SecretStorageManager } from '../SecretStorageManager';
+import { SecretStorageType } from '../enums';
 
-export const createAxiosInstance = () => {
-	const token: string | null = GlobalStateManager.getState(GlobalStateManager.type.AUTH_TOKEN);
+export const createAxiosInstance = async () => {
+	const token: string | null = await getToken();
 
     const instance: AxiosInstance = axios.create({ baseURL });
 
@@ -27,3 +28,11 @@ export const createAxiosInstance = () => {
   
     return instance;
 };
+
+const getToken = async () => {
+    if (PRODUCTION) {
+        return await SecretStorageManager.get(SecretStorageType.PROD_AUTH_TOKEN);
+    } else {
+        return await SecretStorageManager.get(SecretStorageType.DEV_AUTH_TOKEN);
+    }
+}

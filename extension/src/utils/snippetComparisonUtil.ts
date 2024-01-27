@@ -114,7 +114,6 @@ const readFileContent = async (workspaceRelativePath: string): Promise<string | 
 
         return fileContent;
     } catch (error) {
-        console.error('Error reading file:', error);
         return null;
     }
 }
@@ -123,7 +122,6 @@ const getCurrentWorkspaceRootPath = (): string | null => {
     const workspaceFolders = vscode.workspace.workspaceFolders;
 
     if (!workspaceFolders || workspaceFolders.length === 0) {
-        console.error('No workspace opened.');
         return null;
     }
 

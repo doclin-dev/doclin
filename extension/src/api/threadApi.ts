@@ -10,7 +10,7 @@ const getFileBasedThreads = async (organizationId: string, projectId: number, fi
         filePath: filePath
     };
 
-    const apiService = createAxiosInstance();
+    const apiService = await createAxiosInstance();
     const baseThreadUrl = getBaseThreadUrl(organizationId, projectId);
     const response = await apiService.get(baseThreadUrl, { params });
 
@@ -22,7 +22,7 @@ const getAllThreads = async (organizationId: string, projectId: number) => {
         projectId: projectId,
     };
 
-    const apiService = createAxiosInstance();
+    const apiService = await createAxiosInstance();
     const baseThreadUrl = getBaseThreadUrl(organizationId, projectId);
     const response = await apiService.get(baseThreadUrl, { params });
 
@@ -45,7 +45,7 @@ const postThread = async (organizationId: string,
         anonymous: anonymous
     };
 
-    const apiService = createAxiosInstance();
+    const apiService = await createAxiosInstance();
     const baseThreadUrl = getBaseThreadUrl(organizationId, projectId);
     const response = await apiService.post(baseThreadUrl, data);
 
@@ -66,7 +66,7 @@ const updateThread = async (organizationId: string,
         snippets: snippets
     };
 
-    const apiService = createAxiosInstance();
+    const apiService = await createAxiosInstance();
     const baseThreadUrl = getBaseThreadUrl(organizationId, projectId);
     const response = await apiService.put(`${baseThreadUrl}/${threadId}`, data);
 
@@ -74,7 +74,7 @@ const updateThread = async (organizationId: string,
 }
 
 const deleteThread = async(organizationId: string, projectId: number, threadId: number) => {
-    const apiService = createAxiosInstance();
+    const apiService = await createAxiosInstance();
     const baseThreadUrl = getBaseThreadUrl(organizationId, projectId);
     const response = await apiService.delete(`${baseThreadUrl}/${threadId}`);
 

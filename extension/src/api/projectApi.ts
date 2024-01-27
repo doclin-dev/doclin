@@ -5,7 +5,7 @@ const getBaseProjectUrl = (organizationId: string) => {
 }
 
 const getProjects = async (organizationId: string) => {
-    const apiService = createAxiosInstance();
+    const apiService = await createAxiosInstance();
     const baseProjectUrl = getBaseProjectUrl(organizationId);
 
     const response = await apiService.get(baseProjectUrl);
@@ -19,7 +19,7 @@ const postProject = async(organizationId: string, name: string, githubUrl: strin
         url: githubUrl
     };
 
-    const apiService = createAxiosInstance();
+    const apiService = await createAxiosInstance();
     const baseProjectUrl = getBaseProjectUrl(organizationId);
     const response = await apiService.post(baseProjectUrl, data);
 
@@ -27,7 +27,7 @@ const postProject = async(organizationId: string, name: string, githubUrl: strin
 }
 
 const getProject = async (projectId: number, organizationId: string) => {
-    const apiService = createAxiosInstance();
+    const apiService = await createAxiosInstance();
     const baseProjectUrl = getBaseProjectUrl(organizationId);
 
     const response = await apiService.get(`${baseProjectUrl}/${projectId}`);

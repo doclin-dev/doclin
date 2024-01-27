@@ -1,6 +1,6 @@
 {
   "name": "doclin",
-  "displayName": "doclin",
+  "displayName": "Doclin",
   "publisher": "Doclin",
   "description": "Comment on your code",
   "version": "0.0.1",
@@ -13,40 +13,39 @@
   "activationEvents": [
     "onCommand:doclin.addComment",
     "onCommand:doclin.authenticate",
-    "onView:doclin-sidebar",
-    "onStartupFinished"
+    "onView:doclin.sidebar"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "doclin-sidebar-view",
-          "title": "doclin",
+          "id": "doclinSidebarView",
+          "title": "Doclin",
           "icon": "media/doclinLogo.svg"
         }
       ]
     },
     "views": {
-      "doclin-sidebar-view": [
+      "doclinSidebarView": [
         {
           "type": "webview",
-          "id": "doclin-sidebar",
-          "name": "doclin",
+          "id": "doclin.sidebar",
+          "name": "Doclin",
           "icon": "media/doclinLogo.svg",
-          "contextualTitle": "doclin"
+          "contextualTitle": "Doclin"
         }
       ]
     },
     "commands": [
       {
         "command": "doclin.addComment",
-        "category": "doclin",
+        "category": "Doclin",
         "title": "Add Comment"
       },
       {
         "command": "doclin.authenticate",
-        "category": "doclin",
+        "category": "Doclin",
         "title": "Authenticate"
       }
     ]
@@ -80,7 +79,6 @@
     "concurrently": "^5.3.0",
     "eslint": "^7.15.0",
     "glob": "^7.1.6",
-    "highlight.js": "^11.8.0",
     "mocha": "^10.2.0",
     "rollup": "^2.3.4",
     "rollup-plugin-svelte": "^6.0.0",
@@ -99,6 +97,7 @@
     "bootstrap": "^5.3.1",
     "moment": "^2.30.1",
     "polka": "^0.5.2",
-    "quill": "^1.3.7"
+    "quill": "^1.3.7",
+    "highlight.js": "^11.8.0"
   }
 }
