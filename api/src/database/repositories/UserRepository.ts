@@ -11,5 +11,9 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
                     .leftJoin('user.organizations', 'organization')
                     .where('organization.id = :organizationId', { organizationId })
                     .getMany();
+    },
+
+    findUserByGithubId(githubId: string) {
+        return this.findOneBy({ githubId: githubId });
     }
 });
