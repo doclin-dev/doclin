@@ -36,6 +36,7 @@ export const githubCallback = async (req: Request, res: Response) => {
         await axios.post(VSCODE_AUTH_URL, data, header);
         res.send("Authentication complete! You can close this now.");
     } catch (error) {
+        console.error(error);
         res.status(400).send("Unable to authenticate!");
     }
 
