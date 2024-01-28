@@ -17,9 +17,10 @@
     let currentOrganization: Organization;
     let anonymousCheck: boolean = false;
     let activeFilePath: string;
+    let organizationUsers: User[];
 
     async function submitThreadMessage() {
-        const { delta, threadMessage, snippets } = quillEditor.getStructuredText();
+        const { delta, message: threadMessage, snippets, mentionedUserIds } = quillEditor.getStructuredText();
         currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
 
         if (threadMessage) {
@@ -30,6 +31,7 @@
                     threadMessage: threadMessage,
                     snippets: snippets,
                     projectId: currentProject?.id,
+                    mentionedUserIds: mentionedUserIds,
                     anonymous: anonymousCheck ? true : false
                 }
             });
@@ -39,8 +41,12 @@
         WebviewStateManager.setState(WebviewStateManager.type.THREAD_CONTENTS, null);
     }
 
+    const getCurrentOrganizationUsers = () => {
+        tsvscode.postMessage({ type: "getCurrentOrganizationUsers", value: "" });
+    }
+
     async function initializeQuillEditor() {
-        quillEditor = new TextEditor('#textEditor');
+        quillEditor = new TextEditor('#textEditor', organizationUsers);
 
         quillEditor.onTextChange(() => {
             WebviewStateManager.setState(WebviewStateManager.type.THREAD_CONTENTS, quillEditor.getContents());
@@ -83,6 +89,10 @@
             case "postThread":
                 threads = [message.value, ...threads];
                 break;
+            case "getCurrentOrganizationUsers":
+                organizationUsers = message.value;
+                console.log('hah', organizationUsers);
+                break;
             case "switchActiveEditor":
                 if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_VIEW) === ActiveView.CurrentFileThreads){
                     loadCurrentFileThreads();
@@ -90,6 +100,7 @@
                 break;
         }
     }
+    // console.log('outsidemount', organizationUsers);
 
     onMount(async () => {
         currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
@@ -101,9 +112,11 @@
         }
 
         window.addEventListener("message", messageEventListener);
+        getCurrentOrganizationUsers();
 
         WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_VIEW) === ActiveView.CurrentFileThreads ? loadCurrentFileThreads() : loadAllThreads();
         initializeQuillEditor();
+        console.log(organizationUsers);
     });
 
     onDestroy(() => {

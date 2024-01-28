@@ -64,5 +64,6 @@ const createUser = async (profile: any) => {
     return await User.create({
         name: profile.displayName,
         githubId: profile.id,
+        email: profile.email,
     }).save();
 }

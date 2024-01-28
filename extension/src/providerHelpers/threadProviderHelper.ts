@@ -57,7 +57,7 @@ export const getAllThreads = async (): Promise<Thread[] | undefined> => {
   return threads;
 };
 
-export const postThread = async({ threadMessage, delta, snippets, anonymous }: PostThread): Promise<Thread | undefined> => {
+export const postThread = async({ threadMessage, delta, snippets, mentionedUserIds, anonymous }: PostThread): Promise<Thread | undefined> => {
   const organizationId = await getCurrentOrganizationId();
   const projectId = await getCurrentProjectId();
   const activeFilePath = await getActiveEditorFilePath();
@@ -71,9 +71,10 @@ export const postThread = async({ threadMessage, delta, snippets, anonymous }: P
     delta, 
     snippets, 
     activeFilePath, 
+    mentionedUserIds,
     anonymous
   );
-
+  
   const thread: Thread = response?.data?.thread;
 
   await compareSnippetsWithActiveEditor(thread.snippets);

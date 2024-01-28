@@ -11,20 +11,20 @@ Quill.register({
 const Delta = Quill.import('delta');
 
 const atValues = [
-    { id: 1, value: "Fredrik Sundqvist" },
-    { id: 2, value: "Patrik Sjölin" },
-    { id: 3, value: 'Shawon'},
-    { id: 4, value: "Prottooy"},
+    { id: 1, name: "Fredrik Sundqvist" },
+    { id: 2, name: "Patrik Sjölin" },
+    { id: 3, name: 'Shawon'},
+    { id: 4, name: "Prottooy"},
   ];
 const hashValues = [
-    { id: 3, value: "Fredrik Sundqvist 2" },
-    { id: 4, value: "Patrik Sjölin 2" }
+    { id: 3, name: "Fredrik Sundqvist 2" },
+    { id: 4, name: "Patrik Sjölin 2" }
 ];
 
 export class TextEditor {
     private quillInstance: any;
     
-    constructor(selector: string, customOptions?: object) {
+    constructor(selector: string, userListAtMentions: any[]=[], customOptions?: object) {
         const defaultOptions: object = {
             modules: {
                 toolbar: [
@@ -42,6 +42,10 @@ export class TextEditor {
                         values = hashValues;
                       }
               
+                      values = values.map(({id, name})=> {
+                        return {id: id, value: name};
+                      })
+
                       if (searchTerm.length === 0) {
                         renderList(values, searchTerm);
                       } else {
@@ -62,6 +66,8 @@ export class TextEditor {
         const options = { ...defaultOptions, ...customOptions };
         
         this.quillInstance = new Quill(selector, options);
+
+        console.log('quil', userListAtMentions);
         
         if (this.quillInstance.theme && this.quillInstance.theme.modules.toolbar) {
             this.quillInstance.theme.modules.toolbar.container.style.background = '#f1f1f1';
@@ -87,15 +93,31 @@ export class TextEditor {
         this.quillInstance.setText(text);
     }
 
-    getStructuredText(): { delta: any, threadMessage: string, snippets: any } {
+    getStructuredText(): { delta: any, message: string, snippets: any, mentionedUserIds: number[] } {
         const delta = this.quillInstance.getContents();
 
-        const { newDelta, snippets } = this.seperateSnippetBlotsFromDelta(delta);
+        const {sanitizedDelta, mentionedUserIds} = this.sanitizeMentionDelta(delta);
+        const { newDelta, snippets } = this.seperateSnippetBlotsFromDelta(sanitizedDelta);
 
-        const threadMessage = this.getHtmlFromDelta(newDelta);
+        const message = this.getHtmlFromDelta(newDelta);
 
-        return { delta, threadMessage, snippets};
+        return { delta: sanitizedDelta, message, snippets, mentionedUserIds};
     }
+
+    private sanitizeMentionDelta(delta:any) {
+        const mentionedUserIds: any[] = [];
+        const sanitizedDelta = delta.map((op:any)=>{
+            const mention = op.insert?.mention;
+            if (mention) {
+                const mentionedUserId = mention.id;
+                mentionedUserIds.push(mentionedUserId);
+                return {insert: {mention : JSON.parse(JSON.stringify(mention))}};
+            } 
+            return op;
+        })
+      
+        return {sanitizedDelta, mentionedUserIds};
+      }
 
     private seperateSnippetBlotsFromDelta(delta: any) {
         const snippets: any[] = [];

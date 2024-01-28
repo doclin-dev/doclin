@@ -20,12 +20,14 @@ const postReply = async (organizationId: string,
                          threadId: number,
                          anonymous: boolean,
                          snippets: any[],
-                         delta: any[]) => {
+                         delta: any[],
+                         mentionedUserIds: number[]) => {
     const data = {
         replyMessage: replyMessage,
         anonymous: anonymous,
         snippets: snippets,
-        delta: delta
+        delta: delta,
+        mentionedUserIds: mentionedUserIds,
     };
 
     const apiService = await createAxiosInstance();

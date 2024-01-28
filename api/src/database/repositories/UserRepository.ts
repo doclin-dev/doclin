@@ -3,7 +3,7 @@ import { User } from "../entities/User";
 
 export const UserRepository = AppDataSource.getRepository(User).extend({
     findUserById(id: number) {
-        return this.findOneBy({ id: id });
+        return this.findOneBy({ id });
     },
 
     findUsersByOrganizationId(organizationId: string) {
@@ -24,4 +24,11 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
                     .andWhere('thread.projectId = :projectId', { projectId })
                     .getMany();
     }
+
+    // findUsersByUserIds(userIds: User[]){
+    //     return  this.createQueryBuilder('user')
+    //                 .leftJoin('user.organizations', 'organization')
+    //                 .where('user.id = :organizationId', { organizationId })
+    //                 .getMany();
+    // }
 });
