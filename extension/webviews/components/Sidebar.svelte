@@ -13,6 +13,7 @@
     let accessToken = "";
     let loading = true;
     let user: User | null = null;
+    let error: any;
     let page: Page = WebviewStateManager.getState(WebviewStateManager.type.PAGE) ?? Page.InitializeOrganization;
     const ACCESS_REQUIRED = "accessRequired";
 
@@ -27,6 +28,7 @@
     }
 
     const handleGetExtensionState = (extensionState: any) => {
+        error = extensionState?.error;
         user = extensionState?.user;
         const organization = extensionState?.organization;
         const project = extensionState?.project;
@@ -74,6 +76,10 @@
         loading = false;
     }
 
+    const getExtensionState = () => {
+        tsvscode.postMessage({ type: "getExtensionState", value: undefined });
+    }
+
     const messageEventListener = async (event: any) => {
         const message = event.data;
         switch (message.type) {
@@ -86,7 +92,7 @@
     onMount(async () => {
         window.addEventListener("message", messageEventListener);
 
-        tsvscode.postMessage({ type: "getExtensionState", value: undefined });
+        getExtensionState();
     });
 
     onDestroy(() => {
@@ -96,6 +102,9 @@
 
 {#if loading}
     <div>loading...</div>
+{:else if error}
+    <div>Server is down temporarily. Please try again later!</div>
+    <button on:click={getExtensionState}>Reload</button>
 {:else if user}
     {#if page === Page.NotGitRepo}
         <div>Workspace folder is not a github repository.</div>
@@ -112,6 +121,7 @@
     {:else if page === Page.InviteUser}
         <InviteUser bind:page={page}/>
     {/if}
+    
     <button on:click={logout}>Logout</button>
 {:else}
     <button on:click={authenticate}>Login with GitHub</button>
