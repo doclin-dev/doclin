@@ -36,11 +36,6 @@ export const sendEmailFromDoclin = (recipientEmails: string[], subject: string, 
 };
 
 export const sendMentionEmailNotification = async (senderId: number, targetUserIds: number[], projectId: number, message: string) => {
-	if (!SENDGRID_API_KEY) {
-		throw new Error("Sendgrid API key not set");
-	}
-
-	sgMail.setApiKey(SENDGRID_API_KEY);
 
 	const sender = await UserRepository.findUserById(senderId);
     const senderName = sender?.name;
