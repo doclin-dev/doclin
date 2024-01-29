@@ -38,7 +38,6 @@ const postThread = async (organizationId: string,
                           mentionedUserIds: number[],
                           anonymous: boolean) => {
 
-    console.log('api', mentionedUserIds);
     const data = {
         delta: delta,
         threadMessage: threadMessage,

@@ -41,7 +41,6 @@
         WebviewStateManager.setState(WebviewStateManager.type.THREAD_CONTENTS, null);
     }
 
-    console.log(organizationUsers);
     async function initializeQuillEditor() {
         quillEditor = new TextEditor('#textEditor', organizationUsers);
 
