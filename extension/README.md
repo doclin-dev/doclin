@@ -2,18 +2,19 @@
 
 Doclin is a modern way of commenting on codebase.
 
-![image](https://github.com/doclin-dev/landingpage-build/assets/24940719/684ab646-a1af-4b3b-a330-1c02951b9dd9)
-
 ## Features
 
-### 1. You can ask questions to your teammates about existing code.
-![image](https://github.com/doclin-dev/landingpage-build/assets/24940719/aaaf9abf-2fef-4c86-9e44-3df436cf1975)
+To include a snippet to a thread, select a code snippet and click on the "Add Comment" button.
+![image](https://github.com/doclin-dev/landingpage-build/assets/24940719/59187116-ee19-4ed1-aa3d-bdd2be5af993)
 
-### 2. You can explain difficult parts of code, and your comment will show up whenever any developer opens up a file.
-![image](https://github.com/doclin-dev/landingpage-build/assets/24940719/2b7d4878-0742-4abd-ab49-e95c59ef76d9)
+You can mention your teammate to ask any question about any code snippet.  Mentioned users will receive an email notification and they can respond to your thread.
+![image](https://github.com/doclin-dev/landingpage-build/assets/24940719/f8287401-4d0b-43de-940c-1d050cbf9b74)
 
-### 3. You can review codebase to prevent bade code from repeating in the future.
-![image](https://github.com/doclin-dev/landingpage-build/assets/24940719/88fc15da-1a26-4993-8c85-dd6fee806abd)
+Your discussion stays coupled with the file. Therefore, anytime a user opens the file, the relevant discussions show up in the extension.
+![image](https://github.com/doclin-dev/landingpage-build/assets/24940719/59e414ed-3676-41f5-97f5-a928483f1366)
+
+Any changes made to submitted code snippet, Doclin will mark the snippet as outdated.
+![image](https://github.com/doclin-dev/landingpage-build/assets/24940719/7af86509-567d-411a-a8e5-ce72c675f291)
 
 
 ## Release Notes
