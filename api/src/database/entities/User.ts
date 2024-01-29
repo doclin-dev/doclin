@@ -25,7 +25,7 @@ export class User extends BaseEntity {
   @Column("text", { unique: false })
   githubId: string;
 
-  @Column("text", { nullable: false })
+  @Column("text", { nullable: true })
   email: string;
 
   @OneToMany(() => Thread, (thread) => thread.user)

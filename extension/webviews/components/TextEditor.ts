@@ -1,7 +1,7 @@
 import Quill from 'quill';
 import { WebviewStateManager } from '../WebviewStateManager';
 import { QuillSnippetBlot } from './QuillSnippetBlot';
-import type { TextEditorInsertSnippet } from '../types';
+import type { TextEditorInsertSnippet, User } from '../types';
 import "quill-mention";
 
 Quill.register({
@@ -10,21 +10,10 @@ Quill.register({
 
 const Delta = Quill.import('delta');
 
-const atValues = [
-    { id: 1, name: "Fredrik Sundqvist" },
-    { id: 2, name: "Patrik Sjölin" },
-    { id: 3, name: 'Shawon'},
-    { id: 4, name: "Prottooy"},
-  ];
-const hashValues = [
-    { id: 3, name: "Fredrik Sundqvist 2" },
-    { id: 4, name: "Patrik Sjölin 2" }
-];
-
 export class TextEditor {
     private quillInstance: any;
     
-    constructor(selector: string, userListAtMentions: any[]=[], customOptions?: object) {
+    constructor(selector: string, suggestedUsersList: User[]=[], customOptions?: object) {
         const defaultOptions: object = {
             modules: {
                 toolbar: [
@@ -32,31 +21,24 @@ export class TextEditor {
                 ],
                 mention: {
                     allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
-                    mentionDenotationChars: ["@", "#"],
+                    mentionDenotationChars: ["@"],
                     source: function(searchTerm: string, renderList: any, mentionChar:string) {
-                      let values;
-              
-                      if (mentionChar === "@") {
-                        values = atValues;
-                      } else {
-                        values = hashValues;
-                      }
-              
-                      values = values.map(({id, name})=> {
-                        return {id: id, value: name};
-                      })
+                    
+                        const values = suggestedUsersList.map(({id, name})=> {
+                            return {id: id, value: name};
+                        })
 
-                      if (searchTerm.length === 0) {
-                        renderList(values, searchTerm);
-                      } else {
-                        const matches = [];
-                        for (let i = 0; i < values.length; i++)
-                          if (
-                            ~values[i].value.toLowerCase().indexOf(searchTerm.toLowerCase())
-                          )
-                            matches.push(values[i]);
-                        renderList(matches, searchTerm);
-                      }
+                        if (searchTerm.length === 0) {
+                            renderList(values, searchTerm);
+                        } else {
+                            const matches = [];
+                            for (let i = 0; i < values.length; i++)
+                            if (
+                                ~values[i].value.toLowerCase().indexOf(searchTerm.toLowerCase())
+                            )
+                                matches.push(values[i]);
+                            renderList(matches, searchTerm);
+                        }
                     },
                 }
             },
@@ -66,8 +48,6 @@ export class TextEditor {
         const options = { ...defaultOptions, ...customOptions };
         
         this.quillInstance = new Quill(selector, options);
-
-        console.log('quil', userListAtMentions);
         
         if (this.quillInstance.theme && this.quillInstance.theme.modules.toolbar) {
             this.quillInstance.theme.modules.toolbar.container.style.background = '#f1f1f1';

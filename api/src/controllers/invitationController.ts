@@ -50,7 +50,7 @@ const saveUniqueInvitationCode = (email: string, invitationCode: string, project
 
 const sendInvitationEmail = (recipientEmail: string, invitationCode: string) => {
     const message = `Here's your invitation code for Doclin: ${invitationCode}`;
-    sendEmailFromDoclin(recipientEmail, INVITATION_EMAIL_SUBJECT, message);
+    sendEmailFromDoclin([recipientEmail], INVITATION_EMAIL_SUBJECT, message);
 }
 
 const generateRandomToken = (length: number): string => {

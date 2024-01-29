@@ -31,6 +31,7 @@ export const postReply = async (req: any, res: any) => {
         snippets: snippetEntities
     }).save();
 
+    const projectId = thread.projectId;
     const replyResponse = await ReplyRepository.findReplyWithPropertiesById(reply.id);
 
     sendMentionEmailNotification(req.userId, mentionedUserIds, projectId, updatedReplyMessage);

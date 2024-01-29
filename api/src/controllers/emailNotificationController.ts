@@ -7,7 +7,7 @@ const SENDER_EMAIL: string = 'noreply@doclin.dev';
 const SENDER_NAME: string = 'Doclin';
 const MENTION_EMAIL_SUBJECT = 'has mentioned you in doclin.';
 
-export const sendEmailFromDoclin = (recipientEmail: string, subject: string, message: string) => {
+export const sendEmailFromDoclin = (recipientEmails: string[], subject: string, message: string, sender?:string) => {
 	if (!SENDGRID_API_KEY) {
 		throw new Error("Sendgrid API key not set");
 	}
@@ -15,10 +15,10 @@ export const sendEmailFromDoclin = (recipientEmail: string, subject: string, mes
 	sgMail.setApiKey(SENDGRID_API_KEY);
 
 	const msg = {
-  		to: recipientEmail,
+  		to: recipientEmails,
   		from: {
 			email: SENDER_EMAIL,
-			name: SENDER_NAME
+			name: sender ?? SENDER_NAME,
   		},
   		subject: subject,
   		text: message,
@@ -28,7 +28,7 @@ export const sendEmailFromDoclin = (recipientEmail: string, subject: string, mes
 	sgMail
 		.send(msg)
 		.then(() => {
-			console.debug(`Invitation email sent to ${recipientEmail}`);
+			console.debug(`Invitation email has been successfully sent.`);
 		})
 		.catch((error) => {
 			console.error(error);
@@ -49,7 +49,7 @@ export const sendMentionEmailNotification = async (senderId: number, targetUserI
         return user ? user.email : null;
     });
 
-	const resolvedTargetUserEmails = (await Promise.all(targetUsers)).filter((email) => email !== null) as string[];
+	const targetUserEmails = (await Promise.all(targetUsers)).filter((email) => email !== null) as string[];
 
     const project = await ProjectRepository.findProjectById(projectId);
     const projectName = project?.name;
@@ -58,24 +58,5 @@ export const sendMentionEmailNotification = async (senderId: number, targetUserI
     const emailMessage = `${senderName} has mentioned you on a thread in project ${projectName}. 
 					${message}`
 
-	const msg = {
-  		to: resolvedTargetUserEmails,
-  		from: {
-			email: SENDER_EMAIL,
-			name: senderName,
-  		},
-  		subject: emailSubject,
-  		text: emailMessage,
-  		html: message,
-	};
-
-	sgMail
-		.send(msg)
-		.then(() => {
-			console.debug(msg.to);
-			console.debug('Mentioned users have been notified via email.');
-		})
-		.catch((error) => {
-			console.error(error);
-		});
+	sendEmailFromDoclin(targetUserEmails, emailSubject, emailMessage, senderName);
 }

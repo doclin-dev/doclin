@@ -17,9 +17,10 @@
     let quillReplyViewer: TextEditor;
     let replies : Array<{message: string, id: number}> = [];
     let anonymousCheck: boolean = false;
+    let organizationUsers = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_ORGANIZATION).members;
 
     async function initializeQuillEditor() {
-        quillReplyViewer = new TextEditor('#replyViewerEditor')
+        quillReplyViewer = new TextEditor('#replyViewerEditor', organizationUsers);
 
         quillReplyViewer.onTextChange(() => {
             WebviewStateManager.setState(WebviewStateManager.type.REPLY_MESSAGE, quillReplyViewer.getContents());

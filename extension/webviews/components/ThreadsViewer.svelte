@@ -17,7 +17,7 @@
     let currentOrganization: Organization;
     let anonymousCheck: boolean = false;
     let activeFilePath: string;
-    let organizationUsers: User[];
+    let organizationUsers: User[] = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_ORGANIZATION).members;
 
     async function submitThreadMessage() {
         const { delta, message: threadMessage, snippets, mentionedUserIds } = quillEditor.getStructuredText();
@@ -41,10 +41,7 @@
         WebviewStateManager.setState(WebviewStateManager.type.THREAD_CONTENTS, null);
     }
 
-    const getCurrentOrganizationUsers = () => {
-        tsvscode.postMessage({ type: "getCurrentOrganizationUsers", value: "" });
-    }
-
+    console.log(organizationUsers);
     async function initializeQuillEditor() {
         quillEditor = new TextEditor('#textEditor', organizationUsers);
 
@@ -89,10 +86,6 @@
             case "postThread":
                 threads = [message.value, ...threads];
                 break;
-            case "getCurrentOrganizationUsers":
-                organizationUsers = message.value;
-                console.log('hah', organizationUsers);
-                break;
             case "switchActiveEditor":
                 if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_VIEW) === ActiveView.CurrentFileThreads){
                     loadCurrentFileThreads();
@@ -100,7 +93,6 @@
                 break;
         }
     }
-    // console.log('outsidemount', organizationUsers);
 
     onMount(async () => {
         currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
@@ -112,11 +104,9 @@
         }
 
         window.addEventListener("message", messageEventListener);
-        getCurrentOrganizationUsers();
 
         WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_VIEW) === ActiveView.CurrentFileThreads ? loadCurrentFileThreads() : loadAllThreads();
         initializeQuillEditor();
-        console.log(organizationUsers);
     });
 
     onDestroy(() => {
@@ -141,7 +131,7 @@
 <div id='viewer'>
     {#if threads}
         {#each threads as thread (thread.id)}
-            <Thread thread={thread} bind:page={page} reloadThreads={loadCurrentFileThreads}/>
+            <Thread thread={thread} bind:page={page} reloadThreads={WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_VIEW) === ActiveView.CurrentFileThreads ? loadCurrentFileThreads : loadAllThreads}/>
         {/each}
     {/if}
 </div>
