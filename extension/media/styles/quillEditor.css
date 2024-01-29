@@ -18,3 +18,20 @@ pre.ql-syntax .line-number {
 pre.ql-syntax hr {
     background-color: var(--vscode-editor-foreground);
 }
+
+.ql-toolbar.ql-snow {
+    background-color: var(--vscode-input-background);
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    border-bottom: 1px solid var(--vscode-editor-foreground);
+    padding: 2px;
+}
+
+.ql-snow .ql-stroke {
+    stroke: var(--vscode-input-foreground);
+}
+
+.ql-editor {
+    padding: 10px;
+}
