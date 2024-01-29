@@ -1,7 +1,8 @@
 import Quill from 'quill';
 import { WebviewStateManager } from '../WebviewStateManager';
 import { QuillSnippetBlot } from './QuillSnippetBlot';
-import type { TextEditorInsertSnippet } from '../types';
+import type { TextEditorInsertSnippet, User } from '../types';
+import "quill-mention";
 
 Quill.register({
     'formats/snippet': QuillSnippetBlot,
@@ -12,12 +13,34 @@ const Delta = Quill.import('delta');
 export class TextEditor {
     private quillInstance: any;
     
-    constructor(selector: string, customOptions?: object) {
+    constructor(selector: string, suggestedUsersList: User[]=[], customOptions?: object) {
         const defaultOptions: object = {
             modules: {
                 toolbar: [
                     ['bold', 'italic', 'link', 'code-block', { list: 'ordered' }, { list: 'bullet' }, { color: [] }]
-                ]
+                ],
+                mention: {
+                    allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
+                    mentionDenotationChars: ["@"],
+                    source: function(searchTerm: string, renderList: any, mentionChar:string) {
+                    
+                        const values = suggestedUsersList.map(({id, name})=> {
+                            return {id: id, value: name};
+                        })
+
+                        if (searchTerm.length === 0) {
+                            renderList(values, searchTerm);
+                        } else {
+                            const matches = [];
+                            for (let i = 0; i < values.length; i++)
+                            if (
+                                ~values[i].value.toLowerCase().indexOf(searchTerm.toLowerCase())
+                            )
+                                matches.push(values[i]);
+                            renderList(matches, searchTerm);
+                        }
+                    },
+                }
             },
             theme: 'snow'
         };
@@ -50,15 +73,31 @@ export class TextEditor {
         this.quillInstance.setText(text);
     }
 
-    getStructuredText(): { delta: any, threadMessage: string, snippets: any } {
+    getStructuredText(): { delta: any, message: string, snippets: any, mentionedUserIds: number[] } {
         const delta = this.quillInstance.getContents();
 
-        const { newDelta, snippets } = this.seperateSnippetBlotsFromDelta(delta);
+        const {sanitizedDelta, mentionedUserIds} = this.sanitizeMentionDelta(delta);
+        const { newDelta, snippets } = this.seperateSnippetBlotsFromDelta(sanitizedDelta);
 
-        const threadMessage = this.getHtmlFromDelta(newDelta);
+        const message = this.getHtmlFromDelta(newDelta);
 
-        return { delta, threadMessage, snippets};
+        return { delta: sanitizedDelta, message, snippets, mentionedUserIds};
     }
+
+    private sanitizeMentionDelta(delta:any) {
+        const mentionedUserIds: any[] = [];
+        const sanitizedDelta = delta.map((op:any)=>{
+            const mention = op.insert?.mention;
+            if (mention) {
+                const mentionedUserId = mention.id;
+                mentionedUserIds.push(mentionedUserId);
+                return {insert: {mention : JSON.parse(JSON.stringify(mention))}};
+            } 
+            return op;
+        })
+      
+        return {sanitizedDelta, mentionedUserIds};
+      }
 
     private seperateSnippetBlotsFromDelta(delta: any) {
         const snippets: any[] = [];

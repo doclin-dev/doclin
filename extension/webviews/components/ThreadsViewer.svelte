@@ -17,9 +17,10 @@
     let currentOrganization: Organization;
     let anonymousCheck: boolean = false;
     let activeFilePath: string;
+    let organizationUsers: User[] = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_ORGANIZATION).members;
 
     async function submitThreadMessage() {
-        const { delta, threadMessage, snippets } = quillEditor.getStructuredText();
+        const { delta, message: threadMessage, snippets, mentionedUserIds } = quillEditor.getStructuredText();
         currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
 
         if (threadMessage) {
@@ -30,6 +31,7 @@
                     threadMessage: threadMessage,
                     snippets: snippets,
                     projectId: currentProject?.id,
+                    mentionedUserIds: mentionedUserIds,
                     anonymous: anonymousCheck ? true : false
                 }
             });
@@ -40,7 +42,7 @@
     }
 
     async function initializeQuillEditor() {
-        quillEditor = new TextEditor('#textEditor');
+        quillEditor = new TextEditor('#textEditor', organizationUsers);
 
         quillEditor.onTextChange(() => {
             WebviewStateManager.setState(WebviewStateManager.type.THREAD_CONTENTS, quillEditor.getContents());
@@ -128,7 +130,7 @@
 <div id='viewer'>
     {#if threads}
         {#each threads as thread (thread.id)}
-            <Thread thread={thread} bind:page={page} reloadThreads={loadCurrentFileThreads}/>
+            <Thread thread={thread} bind:page={page} reloadThreads={WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_VIEW) === ActiveView.CurrentFileThreads ? loadCurrentFileThreads : loadAllThreads}/>
         {/each}
     {/if}
 </div>

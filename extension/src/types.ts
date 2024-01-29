@@ -37,6 +37,7 @@ export type PostThread = {
     threadMessage: string, 
     delta: any, 
     snippets: any[], 
+    mentionedUserIds: number[],
     anonymous: boolean 
 };
 
@@ -52,7 +53,8 @@ export type PostReply = {
     threadId: number, 
     anonymous: boolean,
     snippets: any[],
-    delta: any
+    delta: any,
+    mentionedUserIds: number[]
 }
 
 export type UpdateReply = {

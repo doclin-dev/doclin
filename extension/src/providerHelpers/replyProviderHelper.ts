@@ -22,7 +22,7 @@ export const getRepliesByThreadId = async ({ threadId }: { threadId: number }): 
   return replies;
 }
 
-export const postReply = async ({ replyMessage, threadId, anonymous, snippets, delta }: PostReply): Promise<any> => {
+export const postReply = async ({ replyMessage, threadId, anonymous, snippets, delta, mentionedUserIds }: PostReply): Promise<any> => {
   const organizationId = await getCurrentOrganizationId();
   const projectId = await getCurrentProjectId();
 
@@ -35,7 +35,8 @@ export const postReply = async ({ replyMessage, threadId, anonymous, snippets, d
     threadId, 
     anonymous,
     snippets,
-    delta
+    delta,
+    mentionedUserIds
   );
   
   const reply: Reply = response?.data?.reply;

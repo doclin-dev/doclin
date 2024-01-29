@@ -39,7 +39,7 @@
         await tick();
 
         if (quillThreadEditor) {
-            const { threadMessage, snippets, delta } = quillThreadEditor.getStructuredText();
+            const { message:threadMessage, snippets, delta } = quillThreadEditor.getStructuredText();
 
             tsvscode.postMessage({ 
                 type: "updateThread", 

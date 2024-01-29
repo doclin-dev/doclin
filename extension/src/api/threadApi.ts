@@ -35,13 +35,16 @@ const postThread = async (organizationId: string,
                           delta: any,
                           snippets: any[],
                           activeEditorFilePath: string,
+                          mentionedUserIds: number[],
                           anonymous: boolean) => {
+
     const data = {
         delta: delta,
         threadMessage: threadMessage,
         snippets: snippets,
         projectId: projectId,
         activeEditorFilePath: activeEditorFilePath,
+        mentionedUserIds: mentionedUserIds,
         anonymous: anonymous
     };
 

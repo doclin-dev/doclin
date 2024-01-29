@@ -4,6 +4,7 @@ import { ReplyRepository } from "../database/repositories/ReplyRepository";
 import { ThreadRepository } from "../database/repositories/ThreadRepository";
 import { MULTIPLE_LINE_BREAK_REGEX, SINGLE_LINE_BREAK, getSnippetTag } from "./utils/snippetUtils";
 import { mapReplyResponse } from "./utils/mapperUtils";
+import { sendMentionEmailNotification } from "./emailNotificationController";
 
 export const postReply = async (req: any, res: any) => {
     const threadId = req.params.threadId;
@@ -12,6 +13,7 @@ export const postReply = async (req: any, res: any) => {
     const anonymous = req.body.anonymous;
     const snippets = req.body.snippets;
     const delta = req.body.delta;
+    const mentionedUserIds: number[] = req.body.mentionedUserIds;
 
     if(!thread) {
         res.send({ reply: null });
@@ -29,7 +31,10 @@ export const postReply = async (req: any, res: any) => {
         snippets: snippetEntities
     }).save();
 
+    const projectId = thread.projectId;
     const replyResponse = await ReplyRepository.findReplyWithPropertiesById(reply.id);
+
+    sendMentionEmailNotification(req.userId, mentionedUserIds, projectId, updatedReplyMessage);
 
     const response = replyResponse ? mapReplyResponse(replyResponse) : null;
  

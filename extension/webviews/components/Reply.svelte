@@ -12,7 +12,6 @@
     export let reloadReplies: () => void = () => {};
 
     let quillReplyCardEditor: TextEditor | null;
-    let replyCardMessage: string;
     let replyCreationTime : string = moment.utc(reply?.replyCreationTime).fromNow();
 
     setInterval(()=>{
@@ -49,9 +48,9 @@
             return;
         }
 
-        const { threadMessage, snippets, delta } = quillReplyCardEditor.getStructuredText();
+        const { message: replyMessage, snippets, delta } = quillReplyCardEditor.getStructuredText();
 
-        updateReplyMessage(threadMessage, snippets, delta);
+        updateReplyMessage(replyMessage, snippets, delta);
         editedReplyId.set(null);
     }
     

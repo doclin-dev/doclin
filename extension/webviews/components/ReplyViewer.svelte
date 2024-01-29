@@ -17,9 +17,10 @@
     let quillReplyViewer: TextEditor;
     let replies : Array<{message: string, id: number}> = [];
     let anonymousCheck: boolean = false;
+    let organizationUsers = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_ORGANIZATION).members;
 
     async function initializeQuillEditor() {
-        quillReplyViewer = new TextEditor('#replyViewerEditor')
+        quillReplyViewer = new TextEditor('#replyViewerEditor', organizationUsers);
 
         quillReplyViewer.onTextChange(() => {
             WebviewStateManager.setState(WebviewStateManager.type.REPLY_MESSAGE, quillReplyViewer.getContents());
@@ -32,15 +33,16 @@
 
     }
 
-    async function postReplyMessage(message: string, snippets: any[], delta: any) {
+    async function postReplyMessage(message: string, snippets: any[], delta: any, mentionedUserIds: number[]) {
         tsvscode.postMessage({
             type: "postReply",
             value: { 
                 threadId: thread.id, 
                 replyMessage: message, 
                 anonymous: anonymousCheck ? true : false,
-                snippets: snippets,
-                delta: delta
+                snippets,
+                delta,
+                mentionedUserIds
             }
         });
     }
@@ -59,8 +61,8 @@
     }
 
     const onSubmit= () => {
-        const { threadMessage, snippets, delta } = quillReplyViewer.getStructuredText();
-        postReplyMessage(threadMessage, snippets, delta);
+        const { message: replyMessage, snippets, delta, mentionedUserIds } = quillReplyViewer.getStructuredText();
+        postReplyMessage(replyMessage, snippets, delta, mentionedUserIds);
         quillReplyViewer.setText("");
         WebviewStateManager.setState(WebviewStateManager.type.REPLY_MESSAGE, "");
     }

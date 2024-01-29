@@ -19,11 +19,14 @@ export class User extends BaseEntity {
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column("text", { nullable: true })
+  @Column("text", { nullable: false })
   name: string;
 
-  @Column("text", { unique: true })
+  @Column("text", { unique: false })
   githubId: string;
+
+  @Column("text", { nullable: true })
+  email: string;
 
   @OneToMany(() => Thread, (thread) => thread.user)
   threads: Thread[];

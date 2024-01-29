@@ -25,6 +25,7 @@ export const githubLogin = async (_accessToken: any, _refreshToken: any, profile
         user = await User.create({
             name: profile.displayName,
             githubId: profile.id,
+            email: profile.email,
         }).save();
     }
     

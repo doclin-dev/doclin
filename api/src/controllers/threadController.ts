@@ -1,6 +1,7 @@
 import { Thread } from "../database/entities/Thread";
 import { ThreadSnippet } from "../database/entities/ThreadSnippet";
 import { ThreadRepository } from "../database/repositories/ThreadRepository";
+import { sendMentionEmailNotification } from "./emailNotificationController";
 import { mapThreadResponse } from "./utils/mapperUtils";
 import { MULTIPLE_LINE_BREAK_REGEX, SINGLE_LINE_BREAK, getSnippetTag } from "./utils/snippetUtils";
 
@@ -11,9 +12,9 @@ export const postThread = async (req: any, res: any) => {
     const userId: number = req.userId;
     const projectId: number = req.body.projectId;
     const anonymousPost: boolean = req.body.anonymous;
+    const mentionedUserIds: number[] = req.body.mentionedUserIds;
     
     const { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage, snippets);
-
     const thread = await Thread.create({
         message: updatedThreadMessage,
         userId: userId,
@@ -24,6 +25,8 @@ export const postThread = async (req: any, res: any) => {
     }).save();
 
     const threadResponse = await ThreadRepository.findThreadWithPropertiesByThreadId(thread.id);
+    
+    sendMentionEmailNotification(userId, mentionedUserIds, projectId, updatedThreadMessage);
 
     const response = threadResponse ? mapThreadResponse(threadResponse) : null;
 
