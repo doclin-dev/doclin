@@ -28,10 +28,23 @@ pre.ql-syntax hr {
     padding: 2px;
 }
 
+.ql-container.ql-snow {
+    border: none;
+}
+
 .ql-snow .ql-stroke {
     stroke: var(--vscode-input-foreground);
 }
 
 .ql-editor {
     padding: 10px;
+}
+
+.thread-card .ql-toolbar {
+    border: 1px solid var(--vscode-input-foreground);
+}
+
+.thread-card .ql-editor {
+    border: 1px solid var(--vscode-input-foreground);
+    border-top: none;
 }
