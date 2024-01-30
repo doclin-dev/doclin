@@ -115,11 +115,6 @@
     <div style="padding-bottom: 0.5rem">
         <Thread thread={thread} bind:page={page} showReplyButton={false}/>
     </div>
-    <div>
-        {#each replies as reply (reply.id)}
-            <Reply reply={reply} reloadReplies={loadReplies}/>
-        {/each}
-    </div>
     <form>
         <div id="replyViewerEditor"></div>
         <label class="checkbox">
@@ -128,5 +123,9 @@
         </label>
         <button on:click|preventDefault={onSubmit}>Submit</button>
     </form>
-
+    <div>
+        {#each replies as reply (reply.id)}
+            <Reply reply={reply} reloadReplies={loadReplies}/>
+        {/each}
+    </div>
 </div>

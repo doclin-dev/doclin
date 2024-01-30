@@ -16,7 +16,7 @@
     let threadCreationTime : string = moment.utc(thread?.threadCreationTime).fromNow();
     let quillThreadEditor: TextEditor | null;
 
-    const replyCountText = thread?.replyCount + ` ${thread?.replyCount === 1 ? 'reply': 'replies'}`
+    const replyCountText = thread?.replyCount + ` ${thread?.replyCount > 1 ? 'replies': 'reply'}`
 
     setInterval(()=>{
         lastEdited = thread?.lastReplied ? moment.utc(thread.lastReplied).fromNow() : null;
@@ -154,7 +154,7 @@
             {/if}
         {/if}
     </div>
-    {#if thread?.replyCount && WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ReplyViewer}
+    {#if WebviewStateManager.getState(WebviewStateManager.type.PAGE) === Page.ReplyViewer}
         <div class="reply-count-line">
             <div class="reply-count-divider"></div>
             <p>{replyCountText}</p>
