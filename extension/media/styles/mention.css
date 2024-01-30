@@ -44,8 +44,8 @@
     height: 24px;
     width: 65px;
     border-radius: 6px;
-    background-color: #65590778;
-    color: #e7d24c;
+    background-color: #7f784d24;
+    color: var(--vscode-inputValidation-warningBorder);
     padding: 3px 0;
     margin-right: 2px;
     user-select: all;

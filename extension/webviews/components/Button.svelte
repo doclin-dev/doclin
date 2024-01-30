@@ -42,7 +42,7 @@
     {/if}
     <span>{title}</span>
     {#if children}
-        <span class="{childrenClassName}">{children}</span>
+        <span class="buttonChild {childrenClassName}">{children}</span>
     {/if}
 </div>
   

@@ -48,11 +48,6 @@ export class TextEditor {
         const options = { ...defaultOptions, ...customOptions };
         
         this.quillInstance = new Quill(selector, options);
-        
-        if (this.quillInstance.theme && this.quillInstance.theme.modules.toolbar) {
-            this.quillInstance.theme.modules.toolbar.container.style.background = '#f1f1f1';
-            this.quillInstance.theme.modules.toolbar.container.style.border = 'none';
-        }
     };
 
     setActiveEditor(activeEditor: Number): void {

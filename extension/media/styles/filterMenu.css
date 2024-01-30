@@ -18,8 +18,8 @@
     text-overflow: ellipsis; 
     cursor: pointer;
     border-radius: 0.25rem;
-    background-color: var(--vscode-list-focusOutline);
-    color: var(--vscode-list-activeSelectionForeground);
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
     padding: 0 0.5rem;
 }
 

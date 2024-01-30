@@ -1,7 +1,11 @@
 :root {
-    --segmented-control-color-dark: var(--vscode-minimap-foregroundOpacity);
-	--segmented-control-color-light-dark: var(--vscode-input-placeholderForeground);
-    --segmented-control-color-light: var(--vscode-menu-selectionForeground);
+    --segmented-control-color-dark: var(--vscode-foreground);
+
+	--primary-background: grey;
+    --primary-foreground: #ccc;
+
+	--selected-item-background: var(--vscode-input-background);
+	--selected-item-foreground: var(--vscode-input-foreground);
   }
 
 .segmented-control {
@@ -15,7 +19,7 @@
 	border-radius: 8px;
 	-webkit-backdrop-filter: blur(14px);
 	backdrop-filter: blur(14px);
-	background-color: var(--segmented-control-color-light-dark);
+	background-color: var(--primary-background);
 	z-index: 1;
 }
 
@@ -28,7 +32,7 @@
 	margin: 0;
 	padding: 0;
 	border-radius: 6px;
-	background-color: var(--segmented-control-color-light);
+	background-color: var(--selected-item-background);
 	transition: width 300ms, transform 300ms;
 	z-index: 1;
 }
@@ -53,13 +57,13 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 
-	color: var(--segmented-control-color-light);
+	color: var(--primary-foreground);
 	transition: color 275ms;
 	background-color: transparent;
 	cursor: pointer;
 }
 .segmented-control-item[aria-selected='true'] {
-	color: var(--segmented-control-color-dark);
+	color: var(--selected-item-foreground);
 	cursor: default;
 }
 .segmented-control-item[aria-disabled='true'] {

@@ -38,9 +38,10 @@
 }
 
 .number-of-replies-button {
-    margin-bottom: 0.5rem;
-    background-color: var(--vscode-textSeparator-foreground);
-    color: var(--vscode-focusBorder);
+    border: 1px solid var(--vscode-editorGroup-border);
+    margin: 0.5rem 0rem 0.5rem 0rem;
+    background-color: var(--vscode-secondaryBackground);
+    color: var(--vscode-textLink-foreground);
     font-weight: 500;
     border-radius: 0.25rem;
 }
@@ -68,7 +69,6 @@
     padding-top: 0.5rem;
     gap: 0.5rem;
     text-align: center;
-    font-size: 14px;
     cursor: pointer;
 }
 
@@ -99,7 +99,7 @@
 }
 
 .card-name-header {
-    font-size: 1.125rem;
+    font-size: 1rem;
     font-weight: 500;
 }
 
@@ -109,11 +109,12 @@
 }
 
 .outdated-label {
-    border: 1px solid rgba(226, 226, 0, 0.614);
+    border: 1.5px solid var(--vscode-inputValidation-warningBorder);
     border-radius: 0.5em;
     font-size: 10px;
+    font-weight: bold;
     padding: 2px 5px;
-    color: rgba(226, 226, 0, 0.614);
+    color: var(--vscode-inputValidation-warningBorder);
 }
 
 .thread-file-path {
