@@ -24,7 +24,7 @@ export const getGithubUrl = async() : Promise<string|undefined> => {
 export const getCurrentProjectId = async (): Promise<number|undefined> => {
 	const fileJSON = await readDoclinFile();
 
-		return fileJSON?.projectId;
+	return fileJSON?.projectId;
 }
 
 export const getCurrentProject = async () => {

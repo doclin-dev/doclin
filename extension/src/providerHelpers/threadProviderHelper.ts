@@ -8,14 +8,6 @@ import { getReadableCodeBlock, compareSnippetsWithActiveEditor, fillUpThreadOrRe
 import { PostThread, Thread, UpdateThread } from "../types";
 import { SidebarProvider } from "../SidebarProvider";
 
-let lastActiveFilePath: string | null = null;
-
-vscode.window.onDidChangeActiveTextEditor((editor) => {
-  if (editor && editor.document.uri.scheme === 'file') {
-    lastActiveFilePath = editor.document.uri.fsPath;
-  }
-});
-
 export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[], activeFilePath: string }> => {
   const activeFilePath = await getActiveEditorFilePath();
   const organizationId = await getCurrentOrganizationId();
@@ -120,29 +112,31 @@ export const deleteThread = async({ threadId }: { threadId: number }) => {
   return thread;
 };
 
-const getActiveEditorFilePath = async () : Promise<string> => {
-  let activeFilePath: string | null;
-  const { activeTextEditor } = vscode.window;
+const getActiveEditorFilePath = async (): Promise<string> => {
+  try {
+    const activeEditor = vscode.window.activeTextEditor;
 
-  if (!activeTextEditor) {
+    if (activeEditor) {
+      let activeUri: vscode.Uri | null = activeEditor.document.uri;
+
+      const workspaceFolder = vscode.workspace.getWorkspaceFolder(activeUri);
+
+      if (workspaceFolder) {
+        const relativePath = vscode.workspace.asRelativePath(activeUri);
+
+        return relativePath;
+      } else {
+        console.error('No workspace folder found.');
+      }
+    } else {
+      console.error('No active text editor.');
+    }
+
+    return "";
+  } catch (error) {
+    console.error(error);
     return "";
   }
-
-  if (activeTextEditor.document.uri.scheme === 'file'){
-    activeFilePath = activeTextEditor.document.uri.fsPath;
-  } else {
-    activeFilePath = lastActiveFilePath;
-  }
-
-  if (!activeFilePath){
-    return "";
-  }
-
-  const activeDirectory: string = path.dirname(activeFilePath);
-  const activeFileName = path.basename(activeFilePath);
-
-  let { stdout }: {stdout: string} = await executeShellCommand(`cd ${activeDirectory} && git rev-parse --show-prefix ${activeFileName}`);
-  return stdout.split('\n')[0] + activeFileName;
 };
 
 export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
