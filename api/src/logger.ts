@@ -1,28 +1,35 @@
 import { Log } from "./database/entities/Log";
+import { PRODUCTION } from "./envConstants";
 import { LogType } from "./types/enums";
 
 const info = async (message: string, userId?: number): Promise<void> => {
-    console.log(message);
+    if (!PRODUCTION) {
+        console.log(message);
+    }
     await Log.create({
-        type: LogType.info,
+        type: LogType.INFO,
         message: message,
         userId: userId
     }).save();
 }
 
 const warning = async (message: string, userId?: number): Promise<void> => {
-    console.warn(message);
+    if (!PRODUCTION) {
+        console.log(message);
+    }
     await Log.create({
-        type: LogType.warning,
+        type: LogType.WARNING,
         message: message,
         userId: userId
     }).save();
 }
 
 const error = async (message: string, userId?: number): Promise<void> => {
-    console.error(message);
+    if (!PRODUCTION) {
+        console.log(message);
+    }
     await Log.create({
-        type: LogType.error,
+        type: LogType.ERROR,
         message: message,
         userId: userId
     }).save();

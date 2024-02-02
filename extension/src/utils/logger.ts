@@ -1,23 +1,21 @@
 import loggerApi from "../api/loggerApi";
 import { LogType } from "../enums";
 import * as vscode from "vscode";
+import { PRODUCTION } from "../envConstants";
 
 const info = async (message: string): Promise<void> => {
-    console.log(message);
     vscode.window.showInformationMessage("Doclin: " + message);
-    await loggerApi.postLog(LogType.info, message);
+    await loggerApi.postLog(LogType.INFO, message);
 }
 
 const warning = async (message: string): Promise<void> => {
-    console.warn(message);
     vscode.window.showWarningMessage("Doclin: " + message);
-    await loggerApi.postLog(LogType.warning, message);
+    await loggerApi.postLog(LogType.WARNING, message);
 }
 
 const error = async (message: string): Promise<void> => {
-    console.error(message);
     vscode.window.showErrorMessage("Doclin: " + message);
-    await loggerApi.postLog(LogType.error, message);
+    await loggerApi.postLog(LogType.ERROR, message);
 }
 
 export default {
