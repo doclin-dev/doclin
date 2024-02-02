@@ -1,10 +1,8 @@
 import * as vscode from "vscode";
-import * as path from "path";
 import threadApi from "../api/threadApi";
-import { executeShellCommand } from "./providerHelperUtils";
 import { getCurrentOrganizationId } from "./organizationProviderHelper";
 import { getCurrentProjectId } from "./projectProviderHelper";
-import { getReadableCodeBlock, compareSnippetsWithActiveEditor, fillUpThreadOrReplyMessageWithSnippet, highlightCode, addLineNumbers } from "../utils/snippetComparisonUtil";
+import { compareSnippetsWithActiveEditor, fillUpThreadOrReplyMessageWithSnippet, highlightCode, addLineNumbers } from "../utils/snippetComparisonUtil";
 import { PostThread, Thread, UpdateThread } from "../types";
 import { SidebarProvider } from "../SidebarProvider";
 import { getAuthenticatedUser } from "./authenticationProviderHelper";

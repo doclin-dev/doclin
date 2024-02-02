@@ -3,44 +3,56 @@ import { DoclinFile } from "../types";
 
 const doclinFileName = ".doclin";
 
-export const readDoclinFile = async (): Promise<DoclinFile | undefined> => {
-    const filePath = getFilePath();
+export const readDoclinFile = async (): Promise<DoclinFile | null> => {
+    try {
+        const filePath = getFilePath();
 
-    if (!filePath) return;
+        if (!filePath) {
+            return null;
+        }
 
-    const fileExists = await vscode.workspace.fs.stat(filePath).then(
-        () => true,
-        () => false
-    );
+        const fileExists = await vscode.workspace.fs.stat(filePath).then(
+            () => true,
+            () => false
+        );
 
-    let fileJSON;
-
-    if (fileExists) {
-        const fileContent = await vscode.workspace.fs.readFile(filePath);
-        fileJSON = JSON.parse(fileContent.toString());
-    } else {
-        fileJSON = {};
+        if (fileExists) {
+            const fileContent = await vscode.workspace.fs.readFile(filePath);
+            return JSON.parse(fileContent.toString());
+        }
+        
+        return null;
+    } catch (error) {
+        console.error(error);
+        vscode.window.showErrorMessage("Doclin: Error while reading .doclin file " + error);
+        return null;
     }
-
-    return fileJSON;
 }
 
 export const writeDoclinFile = async (fileJSON: DoclinFile) => {
-    const filePath = getFilePath();
+    try {
+        const filePath = getFilePath();
 
-    if (!filePath) return;
-    
-    const utf8Buffer = Buffer.from(JSON.stringify(fileJSON), 'utf-8');
-    const utf8Array = new Uint8Array(utf8Buffer);
+        if (!filePath) {
+            vscode.window.showErrorMessage("Doclin: Could not compute write file path for .doclin.")
+            return;
+        }
+        
+        const utf8Buffer = Buffer.from(JSON.stringify(fileJSON), 'utf-8');
+        const utf8Array = new Uint8Array(utf8Buffer);
 
-    await vscode.workspace.fs.writeFile(filePath, utf8Array);
+        await vscode.workspace.fs.writeFile(filePath, utf8Array);
+    } catch (error) {
+        console.error(error);
+        vscode.window.showErrorMessage("Doclin: Error while creating .doclin file " + error);
+    }
 }
 
-const getFilePath = (): vscode.Uri | undefined => {
+const getFilePath = (): vscode.Uri | null => {
     const workspaceFolders = vscode.workspace.workspaceFolders;
 
     if (!workspaceFolders || workspaceFolders.length === 0) {
-        return;
+        return null;
     }
 
     const workspaceFolder = workspaceFolders[0];

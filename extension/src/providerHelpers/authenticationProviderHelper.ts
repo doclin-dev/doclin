@@ -28,6 +28,7 @@ const getToken = async (req: any, res: any, fn?: () => void) => {
 
     if (!token) {
       res.end(`Authentication unsuccessful. Please try again later.`);
+      vscode.window.showInformationMessage("Doclin: Authentication unsuccessful.");
       app.server?.close();
       return;
     }
@@ -39,6 +40,7 @@ const getToken = async (req: any, res: any, fn?: () => void) => {
     }
 
     res.end(`Authentication successful. You can close this now!`);
+    vscode.window.showInformationMessage("Doclin: Authentication successful.");
 
     app.server?.close();
   } catch (error) {
