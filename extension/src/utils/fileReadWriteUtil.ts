@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { DoclinFile } from "../types";
+import logger from "./logger";
 
 const doclinFileName = ".doclin";
 
@@ -23,8 +24,7 @@ export const readDoclinFile = async (): Promise<DoclinFile | null> => {
         
         return null;
     } catch (error) {
-        console.error(error);
-        vscode.window.showErrorMessage("Doclin: Error while reading .doclin file " + error);
+        logger.error("Error while reading .doclin file " + error);
         return null;
     }
 }
@@ -34,7 +34,7 @@ export const writeDoclinFile = async (fileJSON: DoclinFile) => {
         const filePath = getFilePath();
 
         if (!filePath) {
-            vscode.window.showErrorMessage("Doclin: Could not compute write file path for .doclin.")
+            logger.error("Could not compute write file path for .doclin.")
             return;
         }
         
@@ -43,8 +43,7 @@ export const writeDoclinFile = async (fileJSON: DoclinFile) => {
 
         await vscode.workspace.fs.writeFile(filePath, utf8Array);
     } catch (error) {
-        console.error(error);
-        vscode.window.showErrorMessage("Doclin: Error while creating .doclin file " + error);
+        logger.error("Error while creating .doclin file " + error);
     }
 }
 

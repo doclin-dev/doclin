@@ -1,4 +1,3 @@
-import logger from "../logger";
 import { Thread } from "../database/entities/Thread";
 import { ThreadSnippet } from "../database/entities/ThreadSnippet";
 import { ThreadRepository } from "../database/repositories/ThreadRepository";

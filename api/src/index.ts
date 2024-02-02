@@ -23,7 +23,7 @@ import logger from "./logger";
 const main = async () => {
   await initializeDatabase();
 
-  logUncaughtExceptions
+  logUncaughtExceptions();
   const app: Application = express();
   initializeCors(app);
   initializeSession(app);

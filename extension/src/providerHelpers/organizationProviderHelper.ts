@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import organizationApi from "../api/organizationApi";
 import { readDoclinFile, writeDoclinFile } from "../utils/fileReadWriteUtil";
+import logger from "../utils/logger";
 
 const ACCESS_REQUIRED = "accessRequired";
 
@@ -22,10 +23,10 @@ export const postOrganization = async({ name }: { name: string }) => {
     return organization;
 }
 
-export const getCurrentOrganizationId = async (): Promise<string|undefined> => {
+export const getCurrentOrganizationId = async (): Promise<string|null> => {
     const fileJSON = await readDoclinFile();
 
-    return fileJSON?.organizationId;
+    return fileJSON?.organizationId ?? null;
 }
 
 export const getCurrentOrganization = async () => {
@@ -56,7 +57,7 @@ export const storeOrganizationId = async (organizationId: string) => {
             writeDoclinFile(fileJSON);
         }
     } catch (error: any) {
-        vscode.window.showErrorMessage(`An error occurred: ${error.message}`);
+        logger.error(`An error occurred: ${error.message}`);
     }
 }
 

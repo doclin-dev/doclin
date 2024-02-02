@@ -19,7 +19,7 @@ export const createAxiosInstance = async () => {
         response => response,
         error => {
             if (error?.response?.status != 403) {
-                vscode.window.showInformationMessage("Unexpected error occured!");
+                vscode.window.showInformationMessage("Doclin: Error occured while connecting to server!");
             }
 
             return Promise.reject(error);

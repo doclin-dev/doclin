@@ -9,6 +9,7 @@ import { deleteReply, getRepliesByThreadId, postReply, updateReply } from "./pro
 import { postOrganization, getExistingOrganizations, storeOrganizationId, getCurrentOrganizationUsers } from "./providerHelpers/organizationProviderHelper";
 import { getExtensionState } from "./utils/sidebarProviderUtil";
 import { inviteUser, redeemInvitation } from "./providerHelpers/invitationProviderHelper";
+import logger from "./utils/logger";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -46,16 +47,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           });
           break;
         case "onInfo":
-          if (!message.value) {
-            return;
-          }
-          vscode.window.showInformationMessage(message.value);
+          logger.info(message.value);
           break;
         case "onError":
-          if (!message.value) {
-            return;
-          }
-          vscode.window.showErrorMessage(message.value);
+          logger.error(message.value);
           break;
         case "getGithubUrl":
           webviewView.webview.postMessage({

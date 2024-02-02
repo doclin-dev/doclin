@@ -4,6 +4,7 @@ import * as polka from "polka";
 import { SecretStorageManager } from "../SecretStorageManager";
 import authApi from "../api/authApi";
 import { SecretStorageType } from "../enums";
+import logger from "../utils/logger";
 
 const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github`);
 
@@ -17,8 +18,7 @@ export const authenticate = (fn?: () => void) => {
 
     app.listen(54321, openApiUrl);
   } catch (error) {
-    console.error(error);
-    vscode.window.showErrorMessage("Doclin: An error occured when listening for authentication response");
+    logger.error("An error occured when listening for authentication response" + error);
   }
 };
 
@@ -28,7 +28,7 @@ const getToken = async (req: any, res: any, fn?: () => void) => {
 
     if (!token) {
       res.end(`Authentication unsuccessful. Please try again later.`);
-      vscode.window.showInformationMessage("Doclin: Authentication unsuccessful.");
+      logger.info("Authentication unsuccessful.");
       app.server?.close();
       return;
     }
@@ -40,18 +40,17 @@ const getToken = async (req: any, res: any, fn?: () => void) => {
     }
 
     res.end(`Authentication successful. You can close this now!`);
-    vscode.window.showInformationMessage("Doclin: Authentication successful.");
+    logger.info("Authentication successful.");
 
     app.server?.close();
   } catch (error) {
-    console.error(error);
-    vscode.window.showErrorMessage(`Doclin: An error occured when receiving token`);
+    logger.error("An error occured when receiving token" + error);
   }
 }
 
 const openApiUrl = (err: Error) => {
   if (err) {
-    vscode.window.showErrorMessage(err.message);
+    logger.error(err.message);
   }
   
   vscode.commands.executeCommand("vscode.open", AUTH_URL);

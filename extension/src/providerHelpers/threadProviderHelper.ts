@@ -6,6 +6,7 @@ import { compareSnippetsWithActiveEditor, fillUpThreadOrReplyMessageWithSnippet,
 import { PostThread, Thread, UpdateThread } from "../types";
 import { SidebarProvider } from "../SidebarProvider";
 import { getAuthenticatedUser } from "./authenticationProviderHelper";
+import logger from "../utils/logger";
 
 export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[], activeFilePath: string }> => {
   const activeFilePath = await getActiveEditorFilePath();
@@ -125,18 +126,15 @@ const getActiveEditorFilePath = async (): Promise<string> => {
 
         return relativePath;
       } else {
-        console.error('No workspace folder found.');
-        vscode.window.showInformationMessage('Doclin: No workspace folder found.');
+        logger.error('No workspace folder found.');
       }
     } else {
-      console.error('No active text editor.');
-      vscode.window.showErrorMessage('Doclin: No active text editor.');
+      logger.error('No active text editor.');
     }
 
     return "";
   } catch (error) {
-    console.error(error);
-    vscode.window.showErrorMessage("Doclin: Exception occured:" + error);
+    logger.error("Exception occured:" + error);
     return "";
   }
 };
@@ -165,8 +163,7 @@ export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
       });
     }
   } catch (error) {
-    console.error(error);
-    vscode.window.showErrorMessage("Doclin: Exception occured." + error);
+    logger.error("Exception occured. " + error);
   }
 }
 
@@ -174,14 +171,14 @@ const isExtensionReadyForComment = async (): Promise<boolean> => {
   const activeTextEditor = vscode.window.activeTextEditor;
   
   if (!activeTextEditor) {
-    vscode.window.showErrorMessage("Doclin: No File Selected");
+    logger.error("No File Selected");
     return false;
   }
 
   const user = await getAuthenticatedUser();
 
   if (!user) {
-    vscode.window.showErrorMessage("Doclin: Need to login before adding any comment.");
+    logger.error("Need to login before adding any comment.");
     return false;
   }
 
@@ -189,7 +186,7 @@ const isExtensionReadyForComment = async (): Promise<boolean> => {
   const projectId = await getCurrentProjectId();
 
   if (!organizationId || !projectId) {
-    vscode.window.showErrorMessage("Doclin: Need to complete organization and project setup before adding any comment.");
+    logger.error("Need to complete organization and project setup before adding any comment.");
     return false;
   }
 

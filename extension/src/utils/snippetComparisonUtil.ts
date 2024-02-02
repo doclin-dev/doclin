@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import hljs from 'highlight.js';
 import { Reply, Snippet, Thread } from "../types";
+import logger from "./logger";
 
 hljs.configure({
     languages: ['javascript', 'python', 'cpp', 'ruby', 'php', 'html']
@@ -114,8 +115,7 @@ const readFileContent = async (workspaceRelativePath: string): Promise<string | 
 
         return fileContent;
     } catch (error) {
-        console.error(error);
-        vscode.window.showErrorMessage("Doclin: exception occured " + error);
+        logger.error("Error occured while reading code file " + error);
         return null;
     }
 }
