@@ -126,17 +126,17 @@ const getActiveEditorFilePath = async (): Promise<string> => {
         return relativePath;
       } else {
         console.error('No workspace folder found.');
-        vscode.window.showInformationMessage('No workspace folder found.');
+        vscode.window.showInformationMessage('Doclin: No workspace folder found.');
       }
     } else {
       console.error('No active text editor.');
-      vscode.window.showErrorMessage('No active text editor.');
+      vscode.window.showErrorMessage('Doclin: No active text editor.');
     }
 
     return "";
   } catch (error) {
     console.error(error);
-    vscode.window.showErrorMessage("Exception occured:" + error);
+    vscode.window.showErrorMessage("Doclin: Exception occured:" + error);
     return "";
   }
 };

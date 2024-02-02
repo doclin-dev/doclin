@@ -8,6 +8,7 @@ import {
     GITHUB_CLIENT_ID, 
     GITHUB_CLIENT_SECRET 
 } from "../envConstants";
+import logger from "../logger";
 
 const SERVER_URL = PRODUCTION ? PRODUCTION_SERVER_URL : DEVELOPMENT_SERVER_URL;
 
@@ -16,26 +17,30 @@ export const githubCallback = (req: any, res: any) => {
 }
 
 export const githubLogin = async (_accessToken: any, _refreshToken: any, profile: any, cb: any) => {
-    let user = await User.findOne({ where: { githubId: profile.id } });
+    try {
+        let user = await User.findOne({ where: { githubId: profile.id } });
 
-    if (user) {
-        user.name = profile.displayName;
-        await user.save();
-    } else {
-        user = await User.create({
-            name: profile.displayName,
-            githubId: profile.id,
-            email: profile.email,
-        }).save();
+        if (user) {
+            user.name = profile.displayName;
+            await user.save();
+        } else {
+            user = await User.create({
+                name: profile.displayName,
+                githubId: profile.id,
+                email: profile.email,
+            }).save();
+        }
+        
+        cb(null, {
+            accessToken: jwt.sign(
+                { userId: user.id },
+                ACCESS_TOKEN_SECRET,
+                { expiresIn: "1y" }
+            ),
+        });
+    } catch (error) {
+        logger.error("Error during github login" + error);
     }
-    
-    cb(null, {
-        accessToken: jwt.sign(
-            { userId: user.id },
-            ACCESS_TOKEN_SECRET,
-            { expiresIn: "1y" }
-        ),
-    });
 }
 
 export const githubOAuthConfig = {
