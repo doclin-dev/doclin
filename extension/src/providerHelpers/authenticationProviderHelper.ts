@@ -10,31 +10,41 @@ const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github`);
 const app = polka();
 
 export const authenticate = (fn?: () => void) => {
-  app.server?.close();
+  try {
+    app.server?.close();
 
-  app.get(`/auth`, (req, res) => getToken(req, res, fn));
+    app.get(`/auth`, (req, res) => getToken(req, res, fn));
 
-  app.listen(54321, openApiUrl);
+    app.listen(54321, openApiUrl);
+  } catch (error) {
+    console.error(error);
+    vscode.window.showErrorMessage("Doclin: An error occured when listening for authentication response");
+  }
 };
 
 const getToken = async (req: any, res: any, fn?: () => void) => {
-  const token = req.query.token;
+  try {
+    const token = req.query.token;
 
-  if (!token) {
-    res.end(`Authentication unsuccessful. Please try again later.`);
+    if (!token) {
+      res.end(`Authentication unsuccessful. Please try again later.`);
+      app.server?.close();
+      return;
+    }
+
+    await setTokenToStorage(token);
+
+    if (fn) {
+      fn();
+    }
+
+    res.end(`Authentication successful. You can close this now!`);
+
     app.server?.close();
-    return;
+  } catch (error) {
+    console.error(error);
+    vscode.window.showErrorMessage(`Doclin: An error occured when receiving token`);
   }
-
-  await setTokenToStorage(token);
-
-  if (fn) {
-    fn();
-  }
-
-  res.end(`Authentication successful. You can close this now!`);
-
-  app.server?.close();
 }
 
 const openApiUrl = (err: Error) => {

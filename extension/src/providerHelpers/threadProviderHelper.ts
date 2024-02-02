@@ -7,6 +7,7 @@ import { getCurrentProjectId } from "./projectProviderHelper";
 import { getReadableCodeBlock, compareSnippetsWithActiveEditor, fillUpThreadOrReplyMessageWithSnippet, highlightCode, addLineNumbers } from "../utils/snippetComparisonUtil";
 import { PostThread, Thread, UpdateThread } from "../types";
 import { SidebarProvider } from "../SidebarProvider";
+import { getAuthenticatedUser } from "./authenticationProviderHelper";
 
 export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[], activeFilePath: string }> => {
   const activeFilePath = await getActiveEditorFilePath();
@@ -127,39 +128,74 @@ const getActiveEditorFilePath = async (): Promise<string> => {
         return relativePath;
       } else {
         console.error('No workspace folder found.');
+        vscode.window.showInformationMessage('No workspace folder found.');
       }
     } else {
       console.error('No active text editor.');
+      vscode.window.showErrorMessage('No active text editor.');
     }
 
     return "";
   } catch (error) {
     console.error(error);
+    vscode.window.showErrorMessage("Exception occured:" + error);
     return "";
   }
 };
 
 export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
-  const { activeTextEditor } = vscode.window;
+  try {
+    vscode.commands.executeCommand('workbench.view.extension.doclinSidebarView');
 
+    const activeTextEditor = vscode.window.activeTextEditor;
+
+    if (!isExtensionReadyForComment()) {
+      return;
+    }
+
+    if (activeTextEditor) {
+      const filePath = await getActiveEditorFilePath();
+      const lineStart = getLineStart(activeTextEditor);
+      const originalSnippet = activeTextEditor.document.getText(activeTextEditor.selection);
+      const displaySnippet = addLineNumbers(lineStart, highlightCode(originalSnippet));
+
+      await pauseExecution(); 
+
+      sidebarProvider._view?.webview.postMessage({
+        type: "populateCodeSnippet",
+        value: { filePath, lineStart, originalSnippet, displaySnippet },
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    vscode.window.showErrorMessage("Doclin: Exception occured." + error);
+  }
+}
+
+const isExtensionReadyForComment = async (): Promise<boolean> => {
+  const activeTextEditor = vscode.window.activeTextEditor;
+  
   if (!activeTextEditor) {
-    vscode.window.showInformationMessage("No active text editor");
-    return;
+    vscode.window.showErrorMessage("Doclin: No File Selected");
+    return false;
   }
 
-  vscode.commands.executeCommand('workbench.view.extension.doclinSidebarView');
+  const user = await getAuthenticatedUser();
 
-  const filePath = await getActiveEditorFilePath();
-  const lineStart = getLineStart(activeTextEditor);
-  const originalSnippet = activeTextEditor.document.getText(activeTextEditor.selection);
-  const displaySnippet = addLineNumbers(lineStart, highlightCode(originalSnippet));
+  if (!user) {
+    vscode.window.showErrorMessage("Doclin: Need to login before adding any comment.");
+    return false;
+  }
 
-  await pauseExecution(); 
+  const organizationId = await getCurrentOrganizationId();
+  const projectId = await getCurrentProjectId();
 
-  sidebarProvider._view?.webview.postMessage({
-    type: "populateCodeSnippet",
-    value: { filePath, lineStart, originalSnippet, displaySnippet },
-  });
+  if (!organizationId || !projectId) {
+    vscode.window.showErrorMessage("Doclin: Need to complete organization and project setup before adding any comment.");
+    return false;
+  }
+
+  return true;
 }
 
 const getLineStart = (activeTextEditor: vscode.TextEditor): number => {

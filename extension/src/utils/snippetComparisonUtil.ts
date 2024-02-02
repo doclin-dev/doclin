@@ -114,6 +114,8 @@ const readFileContent = async (workspaceRelativePath: string): Promise<string | 
 
         return fileContent;
     } catch (error) {
+        console.error(error);
+        vscode.window.showErrorMessage("Doclin: exception occured " + error);
         return null;
     }
 }
