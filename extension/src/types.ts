@@ -1,6 +1,6 @@
 export type DoclinFile = {
-    organizationId: string | undefined;
-    projectId: number | undefined;
+    organizationId: string | null;
+    projectId: number | null;
 };
 
 export type Thread = {

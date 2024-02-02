@@ -18,11 +18,13 @@ import {
   SSL_PRIV_KEY_PATH, 
   ACCESS_TOKEN_SECRET
 } from "./envConstants";
+import logger from "./logger";
 
 const main = async () => {
-  const app: Application = express();
+  await initializeDatabase();
 
-  initializeDatabase();
+  logUncaughtExceptions();
+  const app: Application = express();
   initializeCors(app);
   initializeSession(app);
   initializePassportAuthentication(app);
@@ -36,11 +38,18 @@ const main = async () => {
   }
 };
 
-const initializeDatabase = () => {
-  AppDataSource.initialize().then(() => {
-    console.debug("Data Source has been initialized!");
-  }).catch((err) => {
-    console.error("Error during Data Source initialization", err);
+const initializeDatabase = async () => {
+  try {
+    await AppDataSource.initialize();
+    logger.info("Data Source has been initialized!");
+  } catch (error) {
+    logger.error("Error during Data Source initialization" + error);
+  }
+}
+
+const logUncaughtExceptions = () => {
+  process.on('uncaughtException', (error) => {
+    logger.error("Uncaught Exception: " + error.message);
   });
 }
 
@@ -84,20 +93,24 @@ const initializeRouter = (app: Application) => {
 }
 
 const listenToProductionPort = (app: Application) => {
-  const key = fs.readFileSync(SSL_PRIV_KEY_PATH, 'utf8');
-  const cert = fs.readFileSync(SSL_CERT_PATH, 'utf8');
-  const credentials = { key, cert };
-  
-  const httpsServer = https.createServer(credentials, app);
+  try {
+    const key = fs.readFileSync(SSL_PRIV_KEY_PATH, 'utf8');
+    const cert = fs.readFileSync(SSL_CERT_PATH, 'utf8');
+    const credentials = { key, cert };
+    
+    const httpsServer = https.createServer(credentials, app);
 
-  httpsServer.listen(PRODUCTION_PORT, () => {
-    console.debug(`Listening on https://localhost:${PRODUCTION_PORT}`);
-  });
+    httpsServer.listen(PRODUCTION_PORT, () => {
+      logger.info(`Listening on https://localhost:${PRODUCTION_PORT}`);
+    });
+  } catch (error) {
+    logger.error(error);
+  }
 }
 
 const listenToDevelopmentPort = (app: Application) => {
   app.listen(DEVELOPMENT_PORT, () => {
-    console.debug(`Listening on localhost:${DEVELOPMENT_PORT}`)
+    logger.info(`Listening on localhost:${DEVELOPMENT_PORT}`)
   });
 }
 

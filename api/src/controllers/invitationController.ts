@@ -6,6 +6,7 @@ import { Invitation } from "../database/entities/Invitation";
 import { User } from "../database/entities/User";
 import { UserRepository } from "../database/repositories/UserRepository";
 import { OrganizationRepository } from "../database/repositories/OrganizationRepository";
+import logger from "../logger";
 
 const INVITATION_EMAIL_SUBJECT: string = "Doclin Invitation Code";
 const INVITATION_EXPIRED_MSG: string = "Invitation expired!";
@@ -74,7 +75,7 @@ export const redeemInvitation = async (req: Request, res: Response) => {
     try {
         await OrganizationRepository.addAuthorizedUser(invitation.organization, user);
     } catch {
-        console.error("User already added");
+        logger.error("User already added");
     }
 
     await invitation.remove();

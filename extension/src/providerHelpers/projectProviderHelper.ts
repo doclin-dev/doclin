@@ -3,6 +3,8 @@ import { executeShellCommand } from "./providerHelperUtils";
 import projectApi from "../api/projectApi";
 import { getCurrentOrganizationId } from "./organizationProviderHelper";
 import { readDoclinFile, writeDoclinFile } from "../utils/fileReadWriteUtil";
+import logger from "../utils/logger";
+import { DoclinFile } from "../types";
 
 const ACCESS_REQUIRED = "accessRequired";
 
@@ -21,10 +23,10 @@ export const getGithubUrl = async() : Promise<string|undefined> => {
 	}
 }
 
-export const getCurrentProjectId = async (): Promise<number|undefined> => {
+export const getCurrentProjectId = async (): Promise<number|null> => {
 	const fileJSON = await readDoclinFile();
 
-		return fileJSON?.projectId;
+	return fileJSON?.projectId ?? null;
 }
 
 export const getCurrentProject = async () => {
@@ -74,7 +76,7 @@ export const postProject = async({ name }: { name: string }) => {
 
 export const storeProjectId = async (projectId: number) => {
 	try {
-		const fileJSON = await readDoclinFile();
+		const fileJSON: DoclinFile | null = await readDoclinFile();
 
 		if (fileJSON) {
 			fileJSON["projectId"] = projectId;
@@ -82,6 +84,6 @@ export const storeProjectId = async (projectId: number) => {
 			writeDoclinFile(fileJSON);
 		}
 	} catch (error: any) {
-		vscode.window.showErrorMessage(`An error occurred: ${error.message}`);
+		logger.error(`An error occurred: ${error.message}`);
 	}
 }

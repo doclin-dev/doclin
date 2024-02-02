@@ -2,6 +2,7 @@ import sgMail from '@sendgrid/mail';
 import { SENDGRID_API_KEY } from '../envConstants';
 import { UserRepository } from "../database/repositories/UserRepository";
 import { ProjectRepository } from '../database/repositories/ProjectRepository';
+import logger from '../logger';
 
 const SENDER_EMAIL: string = 'noreply@doclin.dev';
 const SENDER_NAME: string = 'Doclin';
@@ -28,10 +29,10 @@ export const sendEmailFromDoclin = (recipientEmails: string[], subject: string, 
 	sgMail
 		.send(msg)
 		.then(() => {
-			console.debug(`Invitation email has been successfully sent.`);
+			logger.info(`Invitation email has been successfully sent to ${recipientEmails.join(",")}.`);
 		})
 		.catch((error) => {
-			console.error(error);
+			logger.error(error);
 		});
 };
 

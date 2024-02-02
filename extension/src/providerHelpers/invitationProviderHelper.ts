@@ -1,4 +1,5 @@
 import invitationApi from "../api/invitationApi";
+import logger from "../utils/logger";
 import { getCurrentOrganizationId, storeOrganizationId } from "./organizationProviderHelper";
 import { getCurrentProjectId, storeProjectId } from "./projectProviderHelper";
 import * as vscode from "vscode";
@@ -19,14 +20,14 @@ export const inviteUser = async({ email }: { email: string }) => {
     const response = await invitationApi.inviteUser(projectId, organizationId, email);
     const payload = response?.data;
 
-    vscode.window.showInformationMessage(`${EMAIL_SENT_MSG} ${email}`);
+    logger.info(`${EMAIL_SENT_MSG} ${email}`);
 	
     return payload;
 }
 
 const validateEmail = (email: string) : boolean => {
     if (isEmailNotValid(email)) {
-        vscode.window.showInformationMessage(EMAIL_INVALID_MSG);
+        logger.info(`${EMAIL_INVALID_MSG} ${email}`);
         return false;
     }
 
@@ -51,7 +52,7 @@ export const redeemInvitation = async ({ invitationCode } : { invitationCode: st
 
         return payload;
     } catch {
-        vscode.window.showInformationMessage(INVITATION_EXPIRED_MSG);
+        logger.info(INVITATION_EXPIRED_MSG);
         return INVITATION_EXPIRED;
     }
 }

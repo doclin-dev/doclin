@@ -1,20 +1,12 @@
 import * as vscode from "vscode";
-import * as path from "path";
 import threadApi from "../api/threadApi";
-import { executeShellCommand } from "./providerHelperUtils";
 import { getCurrentOrganizationId } from "./organizationProviderHelper";
 import { getCurrentProjectId } from "./projectProviderHelper";
-import { getReadableCodeBlock, compareSnippetsWithActiveEditor, fillUpThreadOrReplyMessageWithSnippet, highlightCode, addLineNumbers } from "../utils/snippetComparisonUtil";
+import { compareSnippetsWithActiveEditor, fillUpThreadOrReplyMessageWithSnippet, highlightCode, addLineNumbers } from "../utils/snippetComparisonUtil";
 import { PostThread, Thread, UpdateThread } from "../types";
 import { SidebarProvider } from "../SidebarProvider";
-
-let lastActiveFilePath: string | null = null;
-
-vscode.window.onDidChangeActiveTextEditor((editor) => {
-  if (editor && editor.document.uri.scheme === 'file') {
-    lastActiveFilePath = editor.document.uri.fsPath;
-  }
-});
+import { getAuthenticatedUser } from "./authenticationProviderHelper";
+import logger from "../utils/logger";
 
 export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[], activeFilePath: string }> => {
   const activeFilePath = await getActiveEditorFilePath();
@@ -120,52 +112,85 @@ export const deleteThread = async({ threadId }: { threadId: number }) => {
   return thread;
 };
 
-const getActiveEditorFilePath = async () : Promise<string> => {
-  let activeFilePath: string | null;
-  const { activeTextEditor } = vscode.window;
+const getActiveEditorFilePath = async (): Promise<string> => {
+  try {
+    const activeEditor = vscode.window.activeTextEditor;
 
-  if (!activeTextEditor) {
+    if (activeEditor) {
+      let activeUri: vscode.Uri | null = activeEditor.document.uri;
+
+      const workspaceFolder = vscode.workspace.getWorkspaceFolder(activeUri);
+
+      if (workspaceFolder) {
+        const relativePath = vscode.workspace.asRelativePath(activeUri);
+
+        return relativePath;
+      } else {
+        logger.error('No workspace folder found.');
+      }
+    } else {
+      logger.error('No active text editor.');
+    }
+
+    return "";
+  } catch (error) {
+    logger.error("Exception occured:" + error);
     return "";
   }
-
-  if (activeTextEditor.document.uri.scheme === 'file'){
-    activeFilePath = activeTextEditor.document.uri.fsPath;
-  } else {
-    activeFilePath = lastActiveFilePath;
-  }
-
-  if (!activeFilePath){
-    return "";
-  }
-
-  const activeDirectory: string = path.dirname(activeFilePath);
-  const activeFileName = path.basename(activeFilePath);
-
-  let { stdout }: {stdout: string} = await executeShellCommand(`cd ${activeDirectory} && git rev-parse --show-prefix ${activeFileName}`);
-  return stdout.split('\n')[0] + activeFileName;
 };
 
 export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
-  const { activeTextEditor } = vscode.window;
+  try {
+    vscode.commands.executeCommand('workbench.view.extension.doclinSidebarView');
 
+    const activeTextEditor = vscode.window.activeTextEditor;
+
+    if (!isExtensionReadyForComment()) {
+      return;
+    }
+
+    if (activeTextEditor) {
+      const filePath = await getActiveEditorFilePath();
+      const lineStart = getLineStart(activeTextEditor);
+      const originalSnippet = activeTextEditor.document.getText(activeTextEditor.selection);
+      const displaySnippet = addLineNumbers(lineStart, highlightCode(originalSnippet));
+
+      await pauseExecution(); 
+
+      sidebarProvider._view?.webview.postMessage({
+        type: "populateCodeSnippet",
+        value: { filePath, lineStart, originalSnippet, displaySnippet },
+      });
+    }
+  } catch (error) {
+    logger.error("Exception occured. " + error);
+  }
+}
+
+const isExtensionReadyForComment = async (): Promise<boolean> => {
+  const activeTextEditor = vscode.window.activeTextEditor;
+  
   if (!activeTextEditor) {
-    vscode.window.showInformationMessage("No active text editor");
-    return;
+    logger.error("No File Selected");
+    return false;
   }
 
-  vscode.commands.executeCommand('workbench.view.extension.doclinSidebarView');
+  const user = await getAuthenticatedUser();
 
-  const filePath = await getActiveEditorFilePath();
-  const lineStart = getLineStart(activeTextEditor);
-  const originalSnippet = activeTextEditor.document.getText(activeTextEditor.selection);
-  const displaySnippet = addLineNumbers(lineStart, highlightCode(originalSnippet));
+  if (!user) {
+    logger.error("Need to login before adding any comment.");
+    return false;
+  }
 
-  await pauseExecution(); 
+  const organizationId = await getCurrentOrganizationId();
+  const projectId = await getCurrentProjectId();
 
-  sidebarProvider._view?.webview.postMessage({
-    type: "populateCodeSnippet",
-    value: { filePath, lineStart, originalSnippet, displaySnippet },
-  });
+  if (!organizationId || !projectId) {
+    logger.error("Need to complete organization and project setup before adding any comment.");
+    return false;
+  }
+
+  return true;
 }
 
 const getLineStart = (activeTextEditor: vscode.TextEditor): number => {

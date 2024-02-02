@@ -103,7 +103,7 @@
 {#if loading}
     <div>loading...</div>
 {:else if error}
-    <div>Server is down temporarily. Please try again later!</div>
+    <div>Could not reach server. Please try again later!</div>
     <button on:click={getExtensionState}>Reload</button>
 {:else if user}
     {#if page === Page.NotGitRepo}

@@ -4,42 +4,53 @@ import * as polka from "polka";
 import { SecretStorageManager } from "../SecretStorageManager";
 import authApi from "../api/authApi";
 import { SecretStorageType } from "../enums";
+import logger from "../utils/logger";
 
 const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github`);
 
 const app = polka();
 
 export const authenticate = (fn?: () => void) => {
-  app.server?.close();
+  try {
+    app.server?.close();
 
-  app.get(`/auth`, (req, res) => getToken(req, res, fn));
+    app.get(`/auth`, (req, res) => getToken(req, res, fn));
 
-  app.listen(54321, openApiUrl);
+    app.listen(54321, openApiUrl);
+  } catch (error) {
+    logger.error("An error occured when listening for authentication response" + error);
+  }
 };
 
 const getToken = async (req: any, res: any, fn?: () => void) => {
-  const token = req.query.token;
+  try {
+    const token = req.query.token;
 
-  if (!token) {
-    res.end(`Authentication unsuccessful. Please try again later.`);
+    if (!token) {
+      res.end(`Authentication unsuccessful. Please try again later.`);
+      logger.info("Authentication unsuccessful.");
+      app.server?.close();
+      return;
+    }
+
+    await setTokenToStorage(token);
+
+    if (fn) {
+      fn();
+    }
+
+    res.end(`Authentication successful. You can close this now!`);
+    logger.info("Authentication successful.");
+
     app.server?.close();
-    return;
+  } catch (error) {
+    logger.error("An error occured when receiving token" + error);
   }
-
-  await setTokenToStorage(token);
-
-  if (fn) {
-    fn();
-  }
-
-  res.end(`Authentication successful. You can close this now!`);
-
-  app.server?.close();
 }
 
 const openApiUrl = (err: Error) => {
   if (err) {
-    vscode.window.showErrorMessage(err.message);
+    logger.error(err.message);
   }
   
   vscode.commands.executeCommand("vscode.open", AUTH_URL);
