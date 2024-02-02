@@ -2,14 +2,14 @@ import * as vscode from "vscode";
 import { DoclinFile } from "../types";
 import logger from "./logger";
 
-const doclinFileName = ".doclin";
+const DOCLIN_FILE_NAME = ".doclin";
 
 export const readDoclinFile = async (): Promise<DoclinFile | null> => {
     try {
         const filePath = getFilePath();
 
         if (!filePath) {
-            return null;
+            throw Error("Could not compute .doclin filepath");
         }
 
         const fileExists = await vscode.workspace.fs.stat(filePath).then(
@@ -22,7 +22,10 @@ export const readDoclinFile = async (): Promise<DoclinFile | null> => {
             return JSON.parse(fileContent.toString());
         }
         
-        return null;
+        return {
+            organizationId: null,
+            projectId: null
+        };
     } catch (error) {
         logger.error("Error while reading .doclin file " + error);
         return null;
@@ -55,5 +58,5 @@ const getFilePath = (): vscode.Uri | null => {
     }
 
     const workspaceFolder = workspaceFolders[0];
-    return vscode.Uri.joinPath(workspaceFolder.uri, doclinFileName);
+    return vscode.Uri.joinPath(workspaceFolder.uri, DOCLIN_FILE_NAME);
 }

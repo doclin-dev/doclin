@@ -1,7 +1,7 @@
-import * as vscode from "vscode";
 import organizationApi from "../api/organizationApi";
 import { readDoclinFile, writeDoclinFile } from "../utils/fileReadWriteUtil";
 import logger from "../utils/logger";
+import { DoclinFile } from "../types";
 
 const ACCESS_REQUIRED = "accessRequired";
 
@@ -49,7 +49,7 @@ export const getCurrentOrganization = async () => {
 
 export const storeOrganizationId = async (organizationId: string) => {
     try {
-        const fileJSON = await readDoclinFile();
+        const fileJSON: DoclinFile | null = await readDoclinFile();
 
         if (fileJSON) {
             fileJSON["organizationId"] = organizationId;

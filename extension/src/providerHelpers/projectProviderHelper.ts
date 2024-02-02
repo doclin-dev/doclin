@@ -4,6 +4,7 @@ import projectApi from "../api/projectApi";
 import { getCurrentOrganizationId } from "./organizationProviderHelper";
 import { readDoclinFile, writeDoclinFile } from "../utils/fileReadWriteUtil";
 import logger from "../utils/logger";
+import { DoclinFile } from "../types";
 
 const ACCESS_REQUIRED = "accessRequired";
 
@@ -75,7 +76,7 @@ export const postProject = async({ name }: { name: string }) => {
 
 export const storeProjectId = async (projectId: number) => {
 	try {
-		const fileJSON = await readDoclinFile();
+		const fileJSON: DoclinFile | null = await readDoclinFile();
 
 		if (fileJSON) {
 			fileJSON["projectId"] = projectId;
