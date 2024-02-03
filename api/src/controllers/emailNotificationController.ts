@@ -46,7 +46,7 @@ export const sendMentionEmailNotification = async (senderId: number, targetUserI
     });
 
 	const targetUserEmails = (await Promise.all(targetUsers)).filter((email) => email !== null) as string[];
-	
+
     const project = await ProjectRepository.findProjectById(projectId);
     const projectName = project?.name;
 
