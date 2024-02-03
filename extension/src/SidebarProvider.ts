@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { authenticate, logout } from "./providerHelpers/authenticationProviderHelper";
+import { authenticate, logout, postUserEmail } from "./providerHelpers/authenticationProviderHelper";
 import { API_BASE_URL } from "./envConstants";
 import { getNonce } from "./providerHelpers/getNonce";
 import { postThread, deleteThread, getThreadsByActiveFilePath, updateThread, getAllThreads } from "./providerHelpers/threadProviderHelper";
@@ -172,6 +172,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           webviewView.webview.postMessage({
             type: "getCurrentOrganizationUsers",
             value: await getCurrentOrganizationUsers()
+          });
+          break;
+        case "postUserEmail":
+          webviewView.webview.postMessage({
+            type: "postUserEmail",
+            value: await postUserEmail(message.value)
           });
           break;
       }

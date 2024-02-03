@@ -7,6 +7,7 @@
     import { ActiveTextEditor, ActiveView, Page } from "../enums";
     import { WebviewStateManager } from "../WebviewStateManager";
     import FilterMenu from "./FilterMenu.svelte";
+  import RegisterEmail from "./RegisterEmail.svelte";
 
     export let user: User;
     export let page: Page;
@@ -116,6 +117,7 @@
 <ViewerTopBar username={user?.name} bind:page={page}/>
 
 <FilterMenu organizationName={currentOrganization?.name} projectName={currentProject?.name} filePath= {activeFilePath} onFirstSegmentClick={loadAllThreads} onSecondSegmentClick={loadCurrentFileThreads}/>
+<!-- <RegisterEmail/> -->
 
 <form
     on:submit|preventDefault={submitThreadMessage}>

@@ -9,6 +9,7 @@
     import InitializeOrganization from "./InitializeOrganization.svelte";
     import InviteUser from "./InviteUser.svelte";
     import AccessRequired from "./AccessRequired.svelte";
+  import RegisterEmail from "./RegisterEmail.svelte";
 
     let accessToken = "";
     let loading = true;
@@ -36,6 +37,13 @@
 
         if (organization == ACCESS_REQUIRED || project == ACCESS_REQUIRED) {
             page = Page.AccessRequired;
+            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+            loading = false;
+            return;
+        }
+
+        if (!user?.email) {
+            page = Page.RegisterEmail;
             WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
             loading = false;
             return;
@@ -110,6 +118,8 @@
         <div>Workspace folder is not a github repository.</div>
     {:else if page === Page.AccessRequired}
         <AccessRequired bind:page={page}/>
+    {:else if page === Page.RegisterEmail}
+        <RegisterEmail bind:page={page}/>
     {:else if page === Page.InitializeOrganization}
         <InitializeOrganization bind:page={page}/>
     {:else if page === Page.InitializeProject}
