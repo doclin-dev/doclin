@@ -55,6 +55,7 @@ jobs:
             node-version: '20'
         - name: Build and push Docker image
           run: |
+            cd extension
             npm install
             npm install -g vsce
             vsce publish -p ${{ secrets.VSCE_TOKEN }}
