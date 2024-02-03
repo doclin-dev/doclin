@@ -2,6 +2,7 @@ export type User = {
   id: string;
   name: string;
   githubId: string;
+  email: string;
 };
 
 export type Project = {

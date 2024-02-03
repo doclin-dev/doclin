@@ -9,6 +9,7 @@
     import InitializeOrganization from "./InitializeOrganization.svelte";
     import InviteUser from "./InviteUser.svelte";
     import AccessRequired from "./AccessRequired.svelte";
+    import RegisterEmail from "./RegisterEmail.svelte";
 
     let accessToken = "";
     let loading = true;
@@ -33,6 +34,13 @@
         const organization = extensionState?.organization;
         const project = extensionState?.project;
         const githubUrl = extensionState?.githubUrl;
+
+        if (!user?.email) {
+            page = Page.RegisterEmail;
+            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+            loading = false;
+            return;
+        }
 
         if (organization == ACCESS_REQUIRED || project == ACCESS_REQUIRED) {
             page = Page.AccessRequired;
@@ -106,7 +114,9 @@
     <div>Could not reach server. Please try again later!</div>
     <button on:click={getExtensionState}>Reload</button>
 {:else if user}
-    {#if page === Page.NotGitRepo}
+    {#if page === Page.RegisterEmail}
+        <RegisterEmail/>
+    {:else if page === Page.NotGitRepo}
         <div>Workspace folder is not a github repository.</div>
     {:else if page === Page.AccessRequired}
         <AccessRequired bind:page={page}/>

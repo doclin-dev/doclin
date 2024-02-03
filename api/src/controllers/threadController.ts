@@ -26,7 +26,9 @@ export const postThread = async (req: any, res: any) => {
 
     const threadResponse = await ThreadRepository.findThreadWithPropertiesByThreadId(thread.id);
     
-    sendMentionEmailNotification(userId, mentionedUserIds, projectId, updatedThreadMessage);
+    if (mentionedUserIds.length > 0){
+        sendMentionEmailNotification(req.userId, mentionedUserIds, projectId, updatedThreadMessage);
+    }
 
     const response = threadResponse ? mapThreadResponse(threadResponse) : null;
 
