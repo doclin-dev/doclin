@@ -125,16 +125,13 @@ const getActiveEditorFilePath = async (): Promise<string> => {
         const relativePath = vscode.workspace.asRelativePath(activeUri);
 
         return relativePath;
-      } else {
-        logger.error('No workspace folder found.');
       }
-    } else {
-      logger.error('No active text editor.');
     }
 
     return "";
+
   } catch (error) {
-    logger.error("Exception occured:" + error);
+    logger.error("Error while fetching active editor filepath: " + error);
     return "";
   }
 };

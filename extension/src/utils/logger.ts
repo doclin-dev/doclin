@@ -1,7 +1,6 @@
 import loggerApi from "../api/loggerApi";
 import { LogType } from "../enums";
 import * as vscode from "vscode";
-import { PRODUCTION } from "../envConstants";
 
 const info = async (message: string): Promise<void> => {
     vscode.window.showInformationMessage("Doclin: " + message);
