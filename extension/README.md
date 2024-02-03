@@ -15,10 +15,3 @@ Your discussion stays coupled with the file. Therefore, anytime a user opens the
 
 Any changes made to submitted code snippet, Doclin will mark the snippet as outdated.
 ![image](https://github.com/doclin-dev/landingpage-build/assets/24940719/7af86509-567d-411a-a8e5-ce72c675f291)
-
-
-## Release Notes
-
-### 0.0.1
-
-Initial release of Doclin

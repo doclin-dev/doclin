@@ -3,7 +3,7 @@
   "displayName": "Doclin",
   "publisher": "Doclin",
   "description": "Doclin is a modern way of commenting on codebase.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "engines": {
     "vscode": "^1.52.0"
   },
@@ -52,9 +52,13 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
-    "compile": "webpack --config ./build/node-extension.webpack.config.js",
-    "watch": "concurrently \"rollup -c -w\" \"webpack --watch --config ./build/node-extension.webpack.config.js\"",
-    "package": "NODE_ENV=production webpack --mode production --devtool hidden-source-map --config ./build/node-extension.webpack.config.js",
+    "webpack": "webpack --config ./build/node-extension.webpack.config.js",
+    "webpack-watch": "webpack --watch --config ./build/node-extension.webpack.config.js",
+    "webpack-prod": "webpack --mode production --devtool hidden-source-map --config ./build/node-extension.webpack.config.js",
+    "rollup": "rollup -c",
+    "rollup-watch": "rollup -c -w",
+    "watch": "concurrently \"npm run rollup-watch\" \"npm run webpack-watch\"",
+    "package": "npm run rollup && npm run webpack-prod",
     "test-compile": "tsc -p ./",
     "test-watch": "tsc -watch -p ./",
     "pretest": "npm run test-compile && npm run lint",
