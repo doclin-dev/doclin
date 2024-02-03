@@ -4,23 +4,23 @@ on:
     branches:
       - prod
 jobs:
-  deploy:
+  deploy-server:
     runs-on: ubuntu-latest
     steps:
         - name: Checkout code
           uses: actions/checkout@v3
         - name: Set up Node.js
-          uses: actions/setup-node@v3
+          uses: actions/setup-node@v4
           with:
-            node-version: '16'
-        - name: Build and push Docker image
+            node-version: '20'
+        - name: Build and push docker image
           run: |
             cd api
             docker build --tag doclin-api .
             docker tag doclin-api:latest ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
             docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
             docker push ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
-        - name: SSH into EC2 instance and deploy
+        - name: SSH into EC2 instance and pull docker image
           uses: appleboy/ssh-action@master
           with:
             host: ${{secrets.EC2_HOST}}
@@ -44,3 +44,17 @@ jobs:
                 --env DB_PASS=${{secrets.DB_PASS}} \
                 --detach \
                 ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
+  deploy-extension:
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout code
+          uses: actions/checkout@v3
+        - name: Set up Node.js
+          uses: actions/setup-node@v4
+          with:
+            node-version: '20'
+        - name: Build and push Docker image
+          run: |
+            npm install
+            npm install -g vsce
+            vsce publish -p ${{ secrets.VSCE_TOKEN }}
