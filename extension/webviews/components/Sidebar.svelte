@@ -35,15 +35,15 @@
         const project = extensionState?.project;
         const githubUrl = extensionState?.githubUrl;
 
-        if (organization == ACCESS_REQUIRED || project == ACCESS_REQUIRED) {
-            page = Page.AccessRequired;
+        if (!user?.email) {
+            page = Page.RegisterEmail;
             WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
             loading = false;
             return;
         }
 
-        if (!user?.email) {
-            page = Page.RegisterEmail;
+        if (organization == ACCESS_REQUIRED || project == ACCESS_REQUIRED) {
+            page = Page.AccessRequired;
             WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
             loading = false;
             return;
@@ -116,10 +116,10 @@
 {:else if user}
     {#if page === Page.NotGitRepo}
         <div>Workspace folder is not a github repository.</div>
-    {:else if page === Page.AccessRequired}
-        <AccessRequired bind:page={page}/>
     {:else if page === Page.RegisterEmail}
         <RegisterEmail bind:page={page}/>
+    {:else if page === Page.AccessRequired}
+        <AccessRequired bind:page={page}/>
     {:else if page === Page.InitializeOrganization}
         <InitializeOrganization bind:page={page}/>
     {:else if page === Page.InitializeProject}

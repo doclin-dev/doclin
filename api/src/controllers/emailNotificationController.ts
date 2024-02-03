@@ -46,6 +46,7 @@ export const sendMentionEmailNotification = async (senderId: number, targetUserI
     });
 
 	const targetUserEmails = (await Promise.all(targetUsers)).filter((email) => email !== null) as string[];
+	
     const project = await ProjectRepository.findProjectById(projectId);
     const projectName = project?.name;
 
@@ -53,9 +54,5 @@ export const sendMentionEmailNotification = async (senderId: number, targetUserI
     const emailMessage = `${senderName} has mentioned you on a thread in project ${projectName}. 
 					${message}`
 
-	if (targetUserEmails.length > 0){
-		sendEmailFromDoclin(targetUserEmails, emailSubject, emailMessage, senderName);
-	} else {
-		return;
-	}
+	sendEmailFromDoclin(targetUserEmails, emailSubject, emailMessage, senderName);
 }

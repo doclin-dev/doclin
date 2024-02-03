@@ -28,7 +28,7 @@
         switch (message.type) {
             case "postUserEmail":
                 if (message.value === 200){
-                    page = Page.ThreadsViewer;
+                    page = Page.AccessRequired;
                     WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
                 }
                 break;
