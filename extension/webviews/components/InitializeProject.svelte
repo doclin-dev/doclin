@@ -15,6 +15,7 @@
     const EMPTY_STRING_ERROR: string = "Project name cannot be empty!";
     const CREATE_NEW_PROJECT: string = "Create New project";
     const JOIN_EXISTING_PROJECT: string = "Join Existing Project";
+    const INITIALIZE_MESSAGE: string = "This will update your '.doclin' file with your project details."
 
     const switchPageToThreadsViewer = () => {
         page = Page.ThreadsViewer;
@@ -97,7 +98,7 @@
 
 <div>
     {#if newProjectView === true}
-        <h3>Join Project</h3>
+        <h3>{CREATE_NEW_PROJECT}</h3>
 
         <form>
             <input class="my-1" placeholder="Enter project name" bind:value={postProjectName} />
@@ -106,7 +107,12 @@
             <div class="text-danger">{error}</div>
         </form>
 
+        <div class="mt-2">
+            <i>{INITIALIZE_MESSAGE}</i>
+        </div>
+
         <hr/>
+
         {#if existingProjects.length > 0}
             <button on:click|preventDefault={setViewToJoinExistingProject}>{JOIN_EXISTING_PROJECT}</button>
         {/if}
@@ -114,7 +120,7 @@
 
     {#if newProjectView === false}
         <div class="my-2">
-            <h3>Select an existing project:</h3>
+            <h3>{JOIN_EXISTING_PROJECT}</h3>
 
             <ul>
                 {#each existingProjects as project (project.id)}
@@ -125,7 +131,12 @@
             </ul>
         </div>
 
+        <div class="mt-2">
+            <i>{INITIALIZE_MESSAGE}</i>
+        </div>
+
         <hr/>
+
         <button on:click|preventDefault={setViewToCreateProject}>{CREATE_NEW_PROJECT}</button>
     {/if}
 

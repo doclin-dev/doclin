@@ -4,7 +4,6 @@
     import { IntializeOrganizationView, Page } from "../enums";
     import { WebviewStateManager } from "../WebviewStateManager";
     import RedeemInvitation from "./RedeemInvitation.svelte";
-    import InviteUser from "./InviteUser.svelte";
 
     export let page: Page;
     let postOrganizationName: string = "";
@@ -17,6 +16,8 @@
     const ENTER_INVITATION: string = "Enter Invitation Code";
     const CREATE_NEW_ORGANIZATION: string = "Create New Organization";
     const SUBMIT: string = "Submit";
+    const INITIALIZE_MESSAGE: string = "This will create a '.doclin' file in your directory.\
+     Push it to your git repository to enable your team members to join your organization.";
 
     const switchPageToProject = () => {
         page = Page.InitializeProject;
@@ -105,6 +106,10 @@
                 <div class="text-danger">{error}</div>
             </form>
 
+            <div class="mt-2">
+                <i>{INITIALIZE_MESSAGE}</i>
+            </div>
+
             <hr />
 
             {#if existingOrganizations.length > 0}
@@ -119,6 +124,10 @@
             <h3>{ENTER_INVITATION}:</h3>
             <RedeemInvitation bind:page={page}/>
 
+            <div class="mt-2">
+                <i>{INITIALIZE_MESSAGE}</i>
+            </div>
+
             <hr />
 
             <button on:click|preventDefault={setViewToCreateOrganization}>{CREATE_NEW_ORGANIZATION}</button>
@@ -130,7 +139,7 @@
     
     {#if view === IntializeOrganizationView.JoinOrganization}
         <div>
-            <h3>Login into existing organization:</h3>
+            <h3>{JOIN_ORGANIZATION}</h3>
 
             <ul>
                 {#each existingOrganizations as organization (organization.id)}
@@ -141,6 +150,10 @@
                     </li>
                 {/each}
             </ul>
+
+            <div class="mt-2">
+                <i>{INITIALIZE_MESSAGE}</i>
+            </div>
 
             <hr />
 

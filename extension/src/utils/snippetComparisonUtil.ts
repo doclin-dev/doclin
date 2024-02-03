@@ -110,10 +110,20 @@ const readFileContent = async (workspaceRelativePath: string): Promise<string | 
             return fileContentMap.get(fileUri) ?? null;
         }
         
-        const fileContentUint8 = await vscode.workspace.fs.readFile(fileUri);
-        const fileContent = Buffer.from(fileContentUint8).toString('utf-8');
+        const fileExists = await vscode.workspace.fs.stat(fileUri).then(
+            () => true,
+            () => false
+        );
 
-        return fileContent;
+        if (fileExists) {
+            const fileContentUint8 = await vscode.workspace.fs.readFile(fileUri);
+            const fileContent = Buffer.from(fileContentUint8).toString('utf-8');
+    
+            return fileContent;
+        }
+
+        return null;
+        
     } catch (error) {
         logger.error("Error occured while reading code file " + error);
         return null;
