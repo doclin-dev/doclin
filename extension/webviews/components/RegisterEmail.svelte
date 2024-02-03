@@ -1,9 +1,5 @@
 <script lang='ts'>
     import { onMount, onDestroy } from "svelte";
-    import { WebviewStateManager } from "../WebviewStateManager";
-    import { Page } from "../enums";
-
-    export let page: Page;
     let email: string = "";
     let errorMessage: string = "";
 
@@ -23,13 +19,16 @@
         return emailRegex.test(email);
     }
 
+    const getExtensionState = () => {
+        tsvscode.postMessage({ type: "getExtensionState", value: undefined });
+    }
+
     const messageEventListener = async (event: any) => {
         const message = event.data;
         switch (message.type) {
             case "postUserEmail":
                 if (message.value === 200){
-                    page = Page.AccessRequired;
-                    WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+                    getExtensionState();
                 }
                 break;
         }

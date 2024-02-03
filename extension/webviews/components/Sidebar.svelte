@@ -114,10 +114,10 @@
     <div>Could not reach server. Please try again later!</div>
     <button on:click={getExtensionState}>Reload</button>
 {:else if user}
-    {#if page === Page.NotGitRepo}
+    {#if page === Page.RegisterEmail}
+        <RegisterEmail/>
+    {:else if page === Page.NotGitRepo}
         <div>Workspace folder is not a github repository.</div>
-    {:else if page === Page.RegisterEmail}
-        <RegisterEmail bind:page={page}/>
     {:else if page === Page.AccessRequired}
         <AccessRequired bind:page={page}/>
     {:else if page === Page.InitializeOrganization}
