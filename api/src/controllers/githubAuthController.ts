@@ -21,14 +21,13 @@ export const githubLogin = async (_accessToken: any, _refreshToken: any, profile
         let user = await User.findOne({ where: { githubId: profile.id } });
 
         if (user) {
-            user.name = profile.displayName;
+            user.name = profile.displayName ?? profile.username;
             await user.save();
         } else {
             user = await User.create({
                 name: profile.displayName,
                 githubId: profile.id,
-                email: profile.email,
-            }).save();
+                }).save();
         }
         
         cb(null, {

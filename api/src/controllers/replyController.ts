@@ -34,7 +34,9 @@ export const postReply = async (req: any, res: any) => {
     const projectId = thread.projectId;
     const replyResponse = await ReplyRepository.findReplyWithPropertiesById(reply.id);
 
-    sendMentionEmailNotification(req.userId, mentionedUserIds, projectId, updatedReplyMessage);
+    if (mentionedUserIds.length > 0){
+        sendMentionEmailNotification(req.userId, mentionedUserIds, projectId, updatedReplyMessage);
+    }
 
     const response = replyResponse ? mapReplyResponse(replyResponse) : null;
  

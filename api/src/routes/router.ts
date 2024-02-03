@@ -1,6 +1,6 @@
 import express from "express";
 import passport from "passport";
-import { getCurrentUser } from "../controllers/userController";
+import { getCurrentUser, postUserEmail } from "../controllers/userController";
 import { verifyAuthentication } from "../middlewares/auth";
 import { githubCallback } from "../controllers/githubAuthController";
 import organizationRouter from "./organizationRouter";
@@ -15,6 +15,7 @@ router.get("/", (_req, res) => res.send("doclin-api"));
 router.get("/auth/github", passport.authenticate("github", { session: false }));
 router.get("/auth/github/callback", passport.authenticate("github", { session: false }), githubCallback);
 router.get("/auth/user", getCurrentUser);
+router.post("/auth/user", postUserEmail);
 router.post("/redeemInvitation", verifyAuthentication, redeemInvitation);
 router.post("/log", log);
 

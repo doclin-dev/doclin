@@ -50,6 +50,7 @@ const initializeDatabase = async () => {
 const logUncaughtExceptions = () => {
   process.on('uncaughtException', (error) => {
     logger.error("Uncaught Exception: " + error.message);
+    process.exit(1);
   });
 }
 

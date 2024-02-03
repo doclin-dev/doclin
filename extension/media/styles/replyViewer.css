@@ -57,3 +57,7 @@
     gap: 0.5rem;
     text-align: center;
 }
+
+.reply-card p {
+    margin: 0px auto;
+}
