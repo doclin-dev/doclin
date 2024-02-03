@@ -2,7 +2,7 @@
   "name": "doclin",
   "displayName": "Doclin",
   "publisher": "Doclin",
-  "description": "Comment on your code",
+  "description": "Doclin is a modern way of commenting on codebase.",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.52.0"
