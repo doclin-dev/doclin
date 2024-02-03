@@ -9,7 +9,7 @@
     import InitializeOrganization from "./InitializeOrganization.svelte";
     import InviteUser from "./InviteUser.svelte";
     import AccessRequired from "./AccessRequired.svelte";
-  import RegisterEmail from "./RegisterEmail.svelte";
+    import RegisterEmail from "./RegisterEmail.svelte";
 
     let accessToken = "";
     let loading = true;
