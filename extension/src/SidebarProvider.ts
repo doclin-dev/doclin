@@ -7,7 +7,7 @@ import { storeProjectId } from "./providerHelpers/projectProviderHelper";
 import { getExistingProjects, postProject } from "./providerHelpers/projectProviderHelper";
 import { deleteReply, getRepliesByThreadId, postReply, updateReply } from "./providerHelpers/replyProviderHelper";
 import { postOrganization, getExistingOrganizations, storeOrganizationId, getCurrentOrganizationUsers } from "./providerHelpers/organizationProviderHelper";
-import { getExtensionState } from "./utils/sidebarProviderUtil";
+import { getExtensionState, isDoclinProjectChanged } from "./utils/sidebarProviderUtil";
 import { inviteUser, redeemInvitation } from "./providerHelpers/invitationProviderHelper";
 import logger from "./utils/logger";
 import { getGithubUrl } from "./utils/doclinFileReadWriteUtil";
@@ -186,9 +186,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
     vscode.window.onDidChangeActiveTextEditor(async (editor) => {
       if (editor) {
-        webviewView.webview.postMessage({
-          type: "switchActiveEditor"
-        });
+        if (await isDoclinProjectChanged()) {
+          webviewView.webview.postMessage({
+            type: "getExtensionState",
+            value: await getExtensionState(),
+          });
+        } else {
+          webviewView.webview.postMessage({
+            type: "switchActiveEditor"
+          });
+        }
       }
     });
   }

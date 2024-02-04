@@ -3,6 +3,10 @@ export enum SecretStorageType {
     DEV_AUTH_TOKEN = "devToken"
 }
 
+export enum GlobalStateType {
+    DOCLIN_FOLDER = "doclinFolder"
+}
+
 export enum LogType {
     INFO = "info",
     WARNING = "warning",

@@ -116,27 +116,27 @@ export const deleteThread = async({ threadId }: { threadId: number }) => {
 
 const getActiveEditorFilePath = async (): Promise<string> => {
   try {
-      const editor = vscode.window.activeTextEditor;
+    const editor = vscode.window.activeTextEditor;
 
-      if (editor) {
-          const activeEditorFilePath: string = editor.document.uri.fsPath;
-          const doclinFilePath = await getExistingDoclinFilePath();
+    if (editor) {
+      const activeEditorFilePath: string = editor.document.uri.fsPath;
+      const doclinFilePath = await getExistingDoclinFilePath();
 
-          if (!doclinFilePath) {
-              logger.error("Doclin file does not exist");
-              return "";
-          }
-
-          const doclinFolder = path.dirname(doclinFilePath.fsPath);
-
-          return path.relative(doclinFolder, activeEditorFilePath);
+      if (!doclinFilePath) {
+        logger.error("Doclin file does not exist");
+        return "";
       }
 
-      return "";
+      const doclinFolder = path.dirname(doclinFilePath.fsPath);
+
+      return path.relative(doclinFolder, activeEditorFilePath);
+    }
+
+    return "";
 
   } catch (error) {
-      logger.error("Error while fetching active editor filepath: " + error);
-      return "";
+    logger.error("Error while fetching active editor filepath: " + error);
+    return "";
   }
 };
 

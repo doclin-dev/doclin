@@ -12,20 +12,11 @@ export const readDoclinFile = async (): Promise<DoclinFile> => {
     try {
         const filePath = await getExistingDoclinFilePath();
 
-        if (!filePath) {
-            return newDoclinFile();
-        }
-
-        const fileExists = await vscode.workspace.fs.stat(filePath).then(
-            () => true,
-            () => false
-        );
-
-        if (fileExists) {
+        if (filePath) {
             const fileContent = await vscode.workspace.fs.readFile(filePath);
             return JSON.parse(fileContent.toString()) as DoclinFile;
         }
-        
+
         return newDoclinFile();
         
     } catch (error) {
@@ -45,10 +36,8 @@ export const writeDoclinFile = async (fileJSON: DoclinFile) => {
     try {
         const filePath = await getExistingDoclinFilePath() ?? await computeNewDoclinFilePath();
 
-        console.log("write path", filePath?.fsPath);
-
         if (!filePath) {
-            logger.error("Could not compute write file path for .doclin.");
+            logger.error("Could not compute write file path for doclin file.");
             return;
         }
         
@@ -56,6 +45,7 @@ export const writeDoclinFile = async (fileJSON: DoclinFile) => {
         const utf8Array = new Uint8Array(utf8Buffer);
 
         await vscode.workspace.fs.writeFile(filePath, utf8Array);
+
     } catch (error) {
         logger.error("Error while creating .doclin file " + error);
     }
@@ -97,7 +87,7 @@ const getWorkspaceFolder = (): vscode.Uri | null => {
     }
 }
 
-const getActiveEditorFolder = (): vscode.Uri | null => {
+export const getActiveEditorFolder = (): vscode.Uri | null => {
     const editor = vscode.window.activeTextEditor;
 
     if (editor) {
@@ -113,15 +103,15 @@ const findFileInCurrentAndParentFolders = async (fileName: string, startFolder: 
     let currentFolder = startFolder;
   
     while (currentFolder !== path.dirname(currentFolder)) {
-      const filePath = path.join(currentFolder, fileName);
+        const filePath = path.join(currentFolder, fileName);
   
-      try {
-        await fs.promises.access(filePath);
-        return filePath;
-        
-      } catch (error) {
-        currentFolder = path.dirname(currentFolder);
-      }
+        try {
+            await fs.promises.access(filePath);
+            return filePath;
+
+        } catch (error) {
+            currentFolder = path.dirname(currentFolder);
+        }
     }
   
     return null;
@@ -220,7 +210,6 @@ export const getGithubUrl = async () : Promise<string> => {
         return stdout;
 
     } catch (error) {
-        logger.error(`Error during getting github url ${error}`);
         return "";
     }
 }
