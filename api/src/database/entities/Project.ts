@@ -23,7 +23,7 @@ export class Project extends BaseEntity {
   @Column("text")
   name: string;
 
-  @Column("text")
+  @Column({ type: "text", nullable: true })
   url: string;
 
   @Column()

@@ -65,6 +65,7 @@
         }
 
         WebviewStateManager.setState(WebviewStateManager.type.CURRENT_ORGANIZATION, organization);
+        WebviewStateManager.setState(WebviewStateManager.type.GITHUB_URL, githubUrl);
 
         if (!project) {
             page = Page.InitializeProject;
@@ -74,7 +75,6 @@
         }
 
         WebviewStateManager.setState(WebviewStateManager.type.CURRENT_PROJECT, project);
-        WebviewStateManager.setState(WebviewStateManager.type.GITHUB_URL, githubUrl);
 
         if (page != Page.ThreadsViewer && page != Page.ReplyViewer) {
             page = Page.ThreadsViewer;

@@ -43,11 +43,12 @@ export const getExistingProjects = async () => {
 	return projects;
 }
 
-export const postProject = async({ name }: { name: string }) => {
-	const githubUrl = await getGithubUrl();
+export const postProject = async({ name, githubUrl }: { name: string, githubUrl: string }) => {
 	const organizationId = await getCurrentOrganizationId();
 
-	if (!githubUrl || !organizationId) return { project: null };
+	if (!organizationId) return { 
+		project: null 
+	};
 
 	const response = await projectApi.postProject(organizationId, name, githubUrl);
 	const payload = response?.data;
@@ -61,6 +62,8 @@ export const postProject = async({ name }: { name: string }) => {
 export const storeProjectId = async (projectId: number) => {
 	try {
 		const fileJSON: DoclinFile = await readDoclinFile();
+
+		console.log(fileJSON);
 
 		if (fileJSON) {
 			fileJSON["projectId"] = projectId;

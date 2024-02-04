@@ -37,7 +37,7 @@
             return;
         }
 
-        tsvscode.postMessage({ type: 'postProject', value: { name: postProjectName } });
+        tsvscode.postMessage({ type: 'postProject', value: { name: postProjectName, githubUrl: githubUrl } });
     }
 
     const fetchExistingProjects = async () => {
@@ -102,7 +102,7 @@
 
         <form>
             <input class="my-1" placeholder="Enter project name" bind:value={postProjectName} />
-            <input class="my-1" placeholder="Github repo url" value={githubUrl} />
+            <input class="my-1" placeholder="Github repo url" bind:value={githubUrl} />
             <button on:click|preventDefault={createNewProject}>Submit</button>
             <div class="text-danger">{error}</div>
         </form>
