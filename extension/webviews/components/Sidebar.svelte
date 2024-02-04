@@ -57,6 +57,7 @@
             return;
         }
 
+        console.log(organization);
 
         if (!organization) {
             page = Page.InitializeOrganization;

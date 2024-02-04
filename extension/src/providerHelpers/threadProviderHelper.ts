@@ -129,7 +129,14 @@ const getActiveEditorFilePath = async (): Promise<string> => {
 
       const doclinFolder = path.dirname(doclinFilePath.fsPath);
 
-      return path.relative(doclinFolder, activeEditorFilePath);
+      const relativePath = path.relative(doclinFolder, activeEditorFilePath);
+
+      if (isActiveEditorOutsideDoclinFolder(relativePath)) {
+        logger.error("Active file path does not belong in this project");
+        return "";
+      }
+
+      return relativePath;
     }
 
     return "";
@@ -139,6 +146,10 @@ const getActiveEditorFilePath = async (): Promise<string> => {
     return "";
   }
 };
+
+const isActiveEditorOutsideDoclinFolder = (relativePath: string) => {
+  return relativePath.startsWith('..');
+}
 
 export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
   try {

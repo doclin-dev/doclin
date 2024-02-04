@@ -53,7 +53,7 @@ export const writeDoclinFile = async (fileJSON: DoclinFile) => {
 
 export const getExistingDoclinFilePath = async (): Promise<vscode.Uri | null> => {
     try {
-        const folderPath = getWorkspaceFolder() ?? getActiveEditorFolder();
+        const folderPath = getActiveEditorFolder() ?? getWorkspaceFolder();
 
         if (!folderPath) {
             logger.error("No folder or file is opened");
@@ -188,7 +188,7 @@ const computeNewDoclinFilePathFromWorkspace = async (): Promise<vscode.Uri | nul
 }
 
 export const isFolderOrFileOpened = (): boolean => {
-    const folderPath = getWorkspaceFolder() ?? getActiveEditorFolder();
+    const folderPath = getActiveEditorFolder() ?? getWorkspaceFolder();
 
     if (folderPath) {
         return true;
@@ -199,7 +199,7 @@ export const isFolderOrFileOpened = (): boolean => {
 
 export const getGithubUrl = async () : Promise<string> => {
     try {
-        const directory = getWorkspaceFolder() ?? getActiveEditorFolder();
+        const directory = getActiveEditorFolder() ?? getWorkspaceFolder();
 
         if (!directory) {
             logger.error("No folder or file is opened.");
