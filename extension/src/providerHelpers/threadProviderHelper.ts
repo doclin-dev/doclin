@@ -7,6 +7,8 @@ import { PostThread, Thread, UpdateThread } from "../types";
 import { SidebarProvider } from "../SidebarProvider";
 import { getAuthenticatedUser } from "./authenticationProviderHelper";
 import logger from "../utils/logger";
+import * as path from 'path';
+import { getExistingDoclinFilePath } from "../utils/doclinFileReadWriteUtil";
 
 export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[], activeFilePath: string }> => {
   const activeFilePath = await getActiveEditorFilePath();
@@ -114,25 +116,27 @@ export const deleteThread = async({ threadId }: { threadId: number }) => {
 
 const getActiveEditorFilePath = async (): Promise<string> => {
   try {
-    const activeEditor = vscode.window.activeTextEditor;
+      const editor = vscode.window.activeTextEditor;
 
-    if (activeEditor) {
-      let activeUri: vscode.Uri | null = activeEditor.document.uri;
+      if (editor) {
+          const activeEditorFilePath: string = editor.document.uri.fsPath;
+          const doclinFilePath = await getExistingDoclinFilePath();
 
-      const workspaceFolder = vscode.workspace.getWorkspaceFolder(activeUri);
+          if (!doclinFilePath) {
+              logger.error("Doclin file does not exist");
+              return "";
+          }
 
-      if (workspaceFolder) {
-        const relativePath = vscode.workspace.asRelativePath(activeUri);
+          const doclinFolder = path.dirname(doclinFilePath.fsPath);
 
-        return relativePath;
+          return path.relative(doclinFolder, activeEditorFilePath);
       }
-    }
 
-    return "";
+      return "";
 
   } catch (error) {
-    logger.error("Error while fetching active editor filepath: " + error);
-    return "";
+      logger.error("Error while fetching active editor filepath: " + error);
+      return "";
   }
 };
 

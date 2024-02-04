@@ -5,7 +5,7 @@ export enum Page {
   Contact = "contact",
   InitializeOrganization = "initializeOrganization",
   Login = "login",
-  NotGitRepo = "notGitRepo",
+  NoFolderOrFile = "noFolderOrFileOpened",
   AccessRequired = "accessRequired",
   InviteUser = "inviteUser",
   RegisterEmail = "registerEmail"

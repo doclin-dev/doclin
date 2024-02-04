@@ -34,9 +34,17 @@
         const organization = extensionState?.organization;
         const project = extensionState?.project;
         const githubUrl = extensionState?.githubUrl;
+        const isFolderOrFileOpened = extensionState?.isFolderOrFileOpened;
 
         if (!user?.email) {
             page = Page.RegisterEmail;
+            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+            loading = false;
+            return;
+        }
+
+        if (!isFolderOrFileOpened) {
+            page = Page.NoFolderOrFile;
             WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
             loading = false;
             return;
@@ -49,14 +57,6 @@
             return;
         }
 
-        if (!githubUrl) {
-            page = Page.NotGitRepo;
-            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
-            loading = false;
-            return;
-        }
-
-        WebviewStateManager.setState(WebviewStateManager.type.GITHUB_URL, githubUrl);
 
         if (!organization) {
             page = Page.InitializeOrganization;
@@ -75,6 +75,7 @@
         }
 
         WebviewStateManager.setState(WebviewStateManager.type.CURRENT_PROJECT, project);
+        WebviewStateManager.setState(WebviewStateManager.type.GITHUB_URL, githubUrl);
 
         if (page != Page.ThreadsViewer && page != Page.ReplyViewer) {
             page = Page.ThreadsViewer;
@@ -116,8 +117,8 @@
 {:else if user}
     {#if page === Page.RegisterEmail}
         <RegisterEmail/>
-    {:else if page === Page.NotGitRepo}
-        <div>Workspace folder is not a github repository.</div>
+    {:else if page === Page.NoFolderOrFile}
+        <div>No folder or file is opened.</div>
     {:else if page === Page.AccessRequired}
         <AccessRequired bind:page={page}/>
     {:else if page === Page.InitializeOrganization}

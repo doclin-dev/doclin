@@ -3,13 +3,14 @@ import { authenticate, logout, postUserEmail } from "./providerHelpers/authentic
 import { API_BASE_URL } from "./envConstants";
 import { getNonce } from "./providerHelpers/getNonce";
 import { postThread, deleteThread, getThreadsByActiveFilePath, updateThread, getAllThreads } from "./providerHelpers/threadProviderHelper";
-import { getGithubUrl, storeProjectId } from "./providerHelpers/projectProviderHelper";
+import { storeProjectId } from "./providerHelpers/projectProviderHelper";
 import { getExistingProjects, postProject } from "./providerHelpers/projectProviderHelper";
 import { deleteReply, getRepliesByThreadId, postReply, updateReply } from "./providerHelpers/replyProviderHelper";
 import { postOrganization, getExistingOrganizations, storeOrganizationId, getCurrentOrganizationUsers } from "./providerHelpers/organizationProviderHelper";
 import { getExtensionState } from "./utils/sidebarProviderUtil";
 import { inviteUser, redeemInvitation } from "./providerHelpers/invitationProviderHelper";
 import logger from "./utils/logger";
+import { getGithubUrl } from "./utils/doclinFileReadWriteUtil";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;

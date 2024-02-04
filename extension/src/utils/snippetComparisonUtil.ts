@@ -2,6 +2,8 @@ import * as vscode from "vscode";
 import hljs from 'highlight.js';
 import { Reply, Snippet, Thread } from "../types";
 import logger from "./logger";
+import { getExistingDoclinFilePath } from "./doclinFileReadWriteUtil";
+import * as path from 'path';
 
 hljs.configure({
     languages: ['javascript', 'python', 'cpp', 'ruby', 'php', 'html']
@@ -102,9 +104,18 @@ export const compareSnippetsWithActiveEditor = async (snippets: Snippet[]): Prom
     fileContentMap.clear();
 }
 
-const readFileContent = async (workspaceRelativePath: string): Promise<string | null> => {
+const readFileContent = async (filePath: string): Promise<string | null> => {
     try {
-        const fileUri = vscode.Uri.file(`${getCurrentWorkspaceRootPath()}/${workspaceRelativePath}`);
+        const doclinFilePath = await getExistingDoclinFilePath();
+
+        if (!doclinFilePath) {
+            logger.error("Could not find doclin file path");
+            return null;
+        }
+
+        const doclinFolder = vscode.Uri.parse(path.dirname(doclinFilePath.fsPath));
+
+        const fileUri = vscode.Uri.joinPath(doclinFolder, filePath);
 
         if (fileContentMap.has(fileUri)) {
             return fileContentMap.get(fileUri) ?? null;

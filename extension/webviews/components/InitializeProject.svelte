@@ -102,7 +102,7 @@
 
         <form>
             <input class="my-1" placeholder="Enter project name" bind:value={postProjectName} />
-            <input class="my-1" placeholder="Github repo url" value={githubUrl} disabled/>
+            <input class="my-1" placeholder="Github repo url" value={githubUrl} />
             <button on:click|preventDefault={createNewProject}>Submit</button>
             <div class="text-danger">{error}</div>
         </form>
