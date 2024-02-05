@@ -9,6 +9,7 @@
     import InitializeOrganization from "./InitializeOrganization.svelte";
     import InviteUser from "./InviteUser.svelte";
     import AccessRequired from "./AccessRequired.svelte";
+    import ViewerTopBar from "./ViewerTopBar.svelte";
     import RegisterEmail from "./RegisterEmail.svelte";
 
     let accessToken = "";
@@ -114,6 +115,8 @@
     <div>Could not reach server. Please try again later!</div>
     <button on:click={getExtensionState}>Reload</button>
 {:else if user}
+    <ViewerTopBar username={user?.name} reload={getExtensionState} logout={logout} bind:page={page}/>
+
     {#if page === Page.RegisterEmail}
         <RegisterEmail/>
     {:else if page === Page.NoFolderOrFile}
@@ -125,14 +128,12 @@
     {:else if page === Page.InitializeProject}
         <InitializeProject bind:page={page}/>
     {:else if page === Page.ThreadsViewer}
-        <ThreadsViewer {user} bind:page={page} />
+        <ThreadsViewer bind:page={page} />
     {:else if page === Page.ReplyViewer}
-        <ReplyViewer username={user.name} bind:page={page}/>
+        <ReplyViewer bind:page={page}/>
     {:else if page === Page.InviteUser}
         <InviteUser bind:page={page}/>
     {/if}
-    
-    <button on:click={logout}>Logout</button>
 {:else}
     <button on:click={authenticate}>Login with GitHub</button>
 {/if}

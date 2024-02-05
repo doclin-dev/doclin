@@ -95,7 +95,7 @@
     });
 </script>
 
-<div>
+<div class="pt-2">
     {#if view === IntializeOrganizationView.CreateOrganization}
         <div>
             <h3>{CREATE_NEW_ORGANIZATION}:</h3>
@@ -139,7 +139,7 @@
     
     {#if view === IntializeOrganizationView.JoinOrganization}
         <div>
-            <h3>{JOIN_ORGANIZATION}</h3>
+            <h3>{JOIN_ORGANIZATION}:</h3>
 
             <ul>
                 {#each existingOrganizations as organization (organization.id)}
