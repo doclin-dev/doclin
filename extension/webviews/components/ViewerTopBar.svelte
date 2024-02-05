@@ -7,6 +7,8 @@
     
     export let username: string;
     export let page: Page;
+    export let reload: () => void;
+    export let logout: () => void;
     
     let currentProject: Project | null; 
 
@@ -22,7 +24,11 @@
 
 <div class='header'>
     <div>Welcome <span class="name-header">{username}</span></div>
+
     <div class='icon-container'>
+        <Button icon="reload" type='text' onClick={reload}/>
         <Button icon="invite" type='text' onClick={switchToInvitePage}/>
+        <Button icon="logout" type='text' onClick={logout}/>
     </div>
+
 </div>

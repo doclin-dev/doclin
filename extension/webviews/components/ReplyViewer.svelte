@@ -1,6 +1,4 @@
 <script type="ts">
-    import OverlayCard from "./OverlayCard.svelte";
-    import ViewerTopBar from "./ViewerTopBar.svelte";
     import Button from "./Button.svelte";
     import { ActiveTextEditor, Page } from "../enums";
     import Thread from "./Thread.svelte";
@@ -11,7 +9,6 @@
     import { TextEditor } from "./TextEditor";
 
     let thread: ThreadType = WebviewStateManager.getState(WebviewStateManager.type.THREAD_SELECTED);
-    export let username: string;
     export let page: Page;
 
     let quillReplyViewer: TextEditor;
@@ -103,8 +100,6 @@
     });
 
 </script>
-
-<ViewerTopBar username={username} page={page}/>
 
 <div class='reply-viewer'>
     <div class='topbar'>
