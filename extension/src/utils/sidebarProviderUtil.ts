@@ -29,20 +29,15 @@ export const isDoclinProjectChanged = async (): Promise<boolean> => {
       return true;
     }
 
-    const storedDoclinFolder: string | undefined = await GlobalStateManager.getState(GlobalStateType.DOCLIN_FOLDER) ?? "";
+    let storedDoclinFolder: string | null | undefined = await GlobalStateManager.getState(GlobalStateType.DOCLIN_FOLDER);
 
     if (storedDoclinFolder && activeEditorFolder.fsPath.startsWith(storedDoclinFolder)) {
       return false;
     }
 
     const doclinFilePath = await getExistingDoclinFilePath();
+    const doclinFolder = doclinFilePath ? path.dirname(doclinFilePath.fsPath) : null;
 
-    if (!doclinFilePath) {
-      GlobalStateManager.setState(GlobalStateType.DOCLIN_FOLDER, "");
-      return true;
-    }
-
-    const doclinFolder = path.dirname(doclinFilePath.fsPath);
     GlobalStateManager.setState(GlobalStateType.DOCLIN_FOLDER, doclinFolder);
     return true;
 
