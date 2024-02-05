@@ -2,13 +2,11 @@
     import { onMount, onDestroy } from "svelte";
     import type { Project, User, Thread as ThreadType, Organization } from "../types";
     import Thread from './Thread.svelte';
-    import ViewerTopBar from "./ViewerTopBar.svelte";
     import { TextEditor } from "./TextEditor";
     import { ActiveTextEditor, ActiveView, Page } from "../enums";
     import { WebviewStateManager } from "../WebviewStateManager";
     import FilterMenu from "./FilterMenu.svelte";
 
-    export let user: User;
     export let page: Page;
     
     let quillEditor: TextEditor;
@@ -113,7 +111,6 @@
     });
 </script>
 
-<ViewerTopBar username={user?.name} bind:page={page}/>
 
 <FilterMenu organizationName={currentOrganization?.name} projectName={currentProject?.name} filePath= {activeFilePath} onFirstSegmentClick={loadAllThreads} onSecondSegmentClick={loadCurrentFileThreads}/>
 

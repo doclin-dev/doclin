@@ -96,9 +96,9 @@
     });
 </script>
 
-<div>
+<div class="pt-2">
     {#if newProjectView === true}
-        <h3>{CREATE_NEW_PROJECT}</h3>
+        <h3>{CREATE_NEW_PROJECT}:</h3>
 
         <form>
             <input class="my-1" placeholder="Enter project name" bind:value={postProjectName} />
@@ -120,7 +120,7 @@
 
     {#if newProjectView === false}
         <div class="my-2">
-            <h3>{JOIN_EXISTING_PROJECT}</h3>
+            <h3>{JOIN_EXISTING_PROJECT}:</h3>
 
             <ul>
                 {#each existingProjects as project (project.id)}
