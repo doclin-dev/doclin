@@ -63,8 +63,6 @@ export const storeProjectId = async (projectId: number) => {
 	try {
 		const fileJSON: DoclinFile = await readDoclinFile();
 
-		console.log(fileJSON);
-
 		if (fileJSON) {
 			fileJSON["projectId"] = projectId;
 

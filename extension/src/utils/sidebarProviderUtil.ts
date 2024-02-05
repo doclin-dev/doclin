@@ -23,12 +23,13 @@ export const getExtensionState = async () => {
 
 export const isDoclinProjectChanged = async (): Promise<boolean> => {
   try {
-    const storedDoclinFolder: string | undefined = await GlobalStateManager.getState(GlobalStateType.DOCLIN_FOLDER) ?? "";
     const activeEditorFolder = getActiveEditorFolder();
 
     if (!activeEditorFolder) {
       return true;
     }
+
+    const storedDoclinFolder: string | undefined = await GlobalStateManager.getState(GlobalStateType.DOCLIN_FOLDER) ?? "";
 
     if (storedDoclinFolder && activeEditorFolder.fsPath.startsWith(storedDoclinFolder)) {
       return false;

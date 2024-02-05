@@ -78,13 +78,10 @@ const getWorkspaceFolder = (): vscode.Uri | null => {
     const workspaceFolders = vscode.workspace.workspaceFolders;
 
     if (workspaceFolders && workspaceFolders.length > 0) {
-        const workspaceFolder = workspaceFolders[0];
-        const workspaceFolderPath = workspaceFolder.uri;
-
-        return workspaceFolderPath;
-    } else {
-        return null;
+        return workspaceFolders[0].uri;
     }
+
+    return null;
 }
 
 export const getActiveEditorFolder = (): vscode.Uri | null => {
