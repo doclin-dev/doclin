@@ -1,8 +1,9 @@
 import Quill from 'quill';
-import { WebviewStateManager } from '../WebviewStateManager';
 import { QuillSnippetBlot } from './QuillSnippetBlot';
 import type { TextEditorInsertSnippet, User } from '../types';
 import "quill-mention";
+import { activeTextEditor } from './store';
+import type { ActiveTextEditor } from '../enums';
 
 Quill.register({
     'formats/snippet': QuillSnippetBlot,
@@ -50,9 +51,9 @@ export class TextEditor {
         this.quillInstance = new Quill(selector, options);
     };
 
-    setActiveEditor(activeEditor: Number): void {
+    setActiveEditor(activeEditor: ActiveTextEditor): void {
         this.quillInstance.container.addEventListener('mousedown', () => {
-            WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, activeEditor);
+            activeTextEditor.set(activeEditor);
         });
     };
 
@@ -61,7 +62,7 @@ export class TextEditor {
     }
 
     setContents(delta: any): void {
-        this.quillInstance.setContents(delta);
+        this.quillInstance.setContents(this.parseJSON(delta));
     };
 
     setText(text: string): void {
@@ -153,4 +154,19 @@ export class TextEditor {
             )
         );
     };
+
+    private parseJSON(data: any) {
+        try {
+            if (typeof data === 'string') {
+                return JSON.parse(data);
+            } else if (typeof data === 'object') {
+                return JSON.parse(JSON.stringify(data));
+            } else {
+                throw new Error('Invalid data type. Expected string or object.');
+            }
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
+          return null;
+        }
+      }
 }

@@ -4,71 +4,70 @@
     import Thread from "./Thread.svelte";
     import { onMount, onDestroy } from "svelte";
     import Reply from "./Reply.svelte";
-    import { WebviewStateManager } from "../WebviewStateManager";
-    import type { Thread as ThreadType } from "../types";
     import { TextEditor } from "./TextEditor";
-
-    let thread: ThreadType = WebviewStateManager.getState(WebviewStateManager.type.THREAD_SELECTED);
-    export let page: Page;
+    import { activeTextEditor, currentOrganization, page, replyContents, threadSelected } from "./store";
 
     let quillReplyViewer: TextEditor;
     let replies : Array<{message: string, id: number}> = [];
     let anonymousCheck: boolean = false;
-    let organizationUsers = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_ORGANIZATION).members;
+    let organizationUsers = $currentOrganization?.members;
 
     async function initializeQuillEditor() {
         quillReplyViewer = new TextEditor('#replyViewerEditor', organizationUsers);
 
         quillReplyViewer.onTextChange(() => {
-            WebviewStateManager.setState(WebviewStateManager.type.REPLY_MESSAGE, quillReplyViewer.getContents());
+            $replyContents = quillReplyViewer.getContents();
         });
         
-        WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ReplyViewerTextEditor);
+        $activeTextEditor = ActiveTextEditor.ReplyViewerTextEditor;
         quillReplyViewer.setActiveEditor(ActiveTextEditor.ReplyViewerTextEditor);
-        const message = WebviewStateManager.getState(WebviewStateManager.type.REPLY_MESSAGE) || "";
-        quillReplyViewer.setContents(message);
-
+        quillReplyViewer.setContents($replyContents);
     }
 
     async function postReplyMessage(message: string, snippets: any[], delta: any, mentionedUserIds: number[]) {
-        tsvscode.postMessage({
-            type: "postReply",
-            value: { 
-                threadId: thread.id, 
-                replyMessage: message, 
-                anonymous: anonymousCheck ? true : false,
-                snippets,
-                delta,
-                mentionedUserIds
-            }
-        });
+        if ($threadSelected) {
+            tsvscode.postMessage({
+                type: "postReply",
+                value: { 
+                    threadId: $threadSelected.id, 
+                    replyMessage: message, 
+                    anonymous: anonymousCheck ? true : false,
+                    snippets,
+                    delta,
+                    mentionedUserIds
+                }
+            });
+        }
     }
 
     async function loadReplies () {
-        tsvscode.postMessage({
-            type: "getRepliesByThreadId",
-            value: { threadId: thread.id }
-        });
+        if ($threadSelected) {
+            tsvscode.postMessage({
+                type: "getRepliesByThreadId",
+                value: { threadId: $threadSelected.id }
+            });
+        }
     }
 
     const handleBackClick = () => {
-        WebviewStateManager.setState(WebviewStateManager.type.THREAD_SELECTED, null);
-        page = Page.ThreadsViewer;
-        WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+        $threadSelected = null;
+        $page = Page.ThreadsViewer;
     }
 
     const onSubmit= () => {
         const { message: replyMessage, snippets, delta, mentionedUserIds } = quillReplyViewer.getStructuredText();
         postReplyMessage(replyMessage, snippets, delta, mentionedUserIds);
         quillReplyViewer.setText("");
-        WebviewStateManager.setState(WebviewStateManager.type.REPLY_MESSAGE, "");
+        $replyContents = "";
     }
 
     const messageEventListener = async (event: any) => {
         const message = event.data;
         switch (message.type) {
             case "populateCodeSnippet":
-            if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === ActiveTextEditor.ReplyViewerTextEditor) quillReplyViewer.insertCodeSnippet(message.value);
+                if ($activeTextEditor === ActiveTextEditor.ReplyViewerTextEditor) {
+                    quillReplyViewer.insertCodeSnippet(message.value);
+                }
                 break;
             case "getRepliesByThreadId":
                 replies = message.value;
@@ -81,11 +80,8 @@
     };
 
     onMount(async () => {
-        thread = WebviewStateManager.getState(WebviewStateManager.type.THREAD_SELECTED);
-
-        if (thread == null) {
-            page = Page.ThreadsViewer;
-            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+        if ($threadSelected == null) {
+            $page = Page.ThreadsViewer;
             return;
         }
 
@@ -108,7 +104,7 @@
         </div>
     </div>
     <div style="padding-bottom: 0.5rem">
-        <Thread thread={thread} bind:page={page} showReplyButton={false}/>
+        <Thread thread={$threadSelected} showReplyButton={false}/>
     </div>
     <form>
         <div id="replyViewerEditor"></div>

@@ -1,33 +1,32 @@
 <script lang="ts">
     import Segment from "./Segment.svelte";
     import SegmentedControl from "./SegmentedControl.svelte";
-    import { WebviewStateManager } from "../WebviewStateManager";
     import { ActiveView } from "../enums";
+    import { activeView, currentOrganization, currentProject } from "./store";
 
-    export let organizationName: string | null;
-    export let projectName: string | null;
     export let filePath: string | null;
     export let onFirstSegmentClick: () => void;
     export let onSecondSegmentClick: () => void;
 
-    let isCurrentFileView: Boolean = WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_VIEW) === ActiveView.CurrentFileThreads;
-    let selectedIndex: number = WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_VIEW) ?? 0;
+    let isCurrentFileView: boolean;
+    let selectedIndex: number;
+
+    $: {
+        isCurrentFileView = $activeView === ActiveView.CurrentFileThreads;
+        selectedIndex = $activeView ?? 0;
+    }
 
     const handleFirstSegmentClick = () => {
         onFirstSegmentClick();
-        const activeView = ActiveView.AllThreads;
-        WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_VIEW, activeView);
-        isCurrentFileView = false;
+        $activeView = ActiveView.AllThreads;
     }
 
     const handleSecondSegmentClick = () => {
         onSecondSegmentClick();
-        const activeView = ActiveView.CurrentFileThreads;
-        WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_VIEW, activeView);
-        isCurrentFileView = true;
+        $activeView = ActiveView.CurrentFileThreads;
     }
     
-    const getOrganizationAndProjectName = (organizationName: string | null, projectName: string | null) => {
+    const getOrganizationAndProjectName = (organizationName: string | undefined, projectName: string | undefined) => {
         const orgName = organizationName?.split(' ').join('');
         return `${orgName} / ${projectName}`
     }
@@ -41,7 +40,7 @@
         </SegmentedControl>
     </div>
     <form class="label-holder">
-        <label class="filter-menu-label project-label" for="project">{getOrganizationAndProjectName(organizationName, projectName)}</label>
+        <label class="filter-menu-label project-label" for="project">{getOrganizationAndProjectName($currentOrganization?.name, $currentProject?.name)}</label>
         {#if isCurrentFileView}
             <label class="filter-menu-label file-label" for="file">File: {filePath}</label>
         {/if}

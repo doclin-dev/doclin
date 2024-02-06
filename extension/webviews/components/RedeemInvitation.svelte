@@ -1,9 +1,8 @@
 <script type="ts">
     import { onMount, onDestroy } from "svelte";
-    import { WebviewStateManager } from "../WebviewStateManager";
     import { Page } from "../enums";
+    import { page } from "./store";
 
-    export let page: Page;
     let invitationCodeValue: string = "";
     const INVITATION_EXPIRED: string = "invitationExpired";
 
@@ -12,8 +11,7 @@
     }
 
     const switchPageToThreadsViewer = () => {
-        page = Page.ThreadsViewer;
-        WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+        $page = Page.ThreadsViewer;
     }
 
     onMount(async () => {

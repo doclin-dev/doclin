@@ -3,8 +3,7 @@
     import Button from './Button.svelte'
     import { TextEditor } from "./TextEditor";
     import { onMount, tick, onDestroy } from 'svelte';
-    import { editedReplyId, editedThreadId } from './store.js';
-    import { WebviewStateManager } from '../WebviewStateManager';
+    import { activeTextEditor, editedReplyId, editedThreadId } from './store';
     import { ActiveTextEditor } from '../enums';
     import moment from 'moment';
 
@@ -32,11 +31,11 @@
 
     const handleEditButtonClick = async () => {
         if ($editedReplyId == null && $editedThreadId === null) {
-            editedReplyId.set(reply.id);
+            $editedReplyId = reply.id;
             await tick();
             quillReplyCardEditor = new TextEditor('#reply-card-editor');
             quillReplyCardEditor.setContents(reply.delta);
-            WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ReplyTextEditor);
+            $activeTextEditor = ActiveTextEditor.ReplyTextEditor;
             quillReplyCardEditor.setActiveEditor(ActiveTextEditor.ReplyTextEditor);
         }
     }
@@ -62,7 +61,7 @@
         quillReplyCardEditor.removeToolbarTheme();
         quillReplyCardEditor = null;
         editedReplyId.set(null);
-        WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ReplyViewerTextEditor);
+        $activeTextEditor = ActiveTextEditor.ReplyViewerTextEditor;
     }
 
     const handleDeleteButtonClick = async () => {
@@ -76,7 +75,7 @@
         const message = event.data;
         switch(message.type) {
             case "populateCodeSnippet":
-                if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === ActiveTextEditor.ReplyTextEditor && $editedReplyId === reply.id) {
+                if ($activeTextEditor === ActiveTextEditor.ReplyTextEditor && $editedReplyId === reply.id) {
                     quillReplyCardEditor?.insertCodeSnippet(message.value);
                 }
                 break;

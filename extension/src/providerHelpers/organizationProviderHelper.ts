@@ -3,7 +3,9 @@ import { readDoclinFile, writeDoclinFile } from "../utils/fileReadWriteUtil";
 import logger from "../utils/logger";
 import { DoclinFile } from "../types";
 
-const ACCESS_REQUIRED = "accessRequired";
+const UNAUTHORIZED = {
+    unauthorized: true
+};
 
 export const getExistingOrganizations = async () => {
     const response = await organizationApi.getOrganizations();
@@ -40,7 +42,7 @@ export const getCurrentOrganization = async () => {
 
             return organization;
         } catch {
-            return ACCESS_REQUIRED;
+            return UNAUTHORIZED;
         }
     }
 
