@@ -13,13 +13,15 @@
             "warn",
             {
                 "selector": "variable",
-                "format": ["camelCase", "Uppercase", "PascalCase"]
+                "format": ["camelCase", "UPPER_CASE", "PascalCase"]
             }
         ],
-        "@typescript-eslint/semi": "autoFixOnSave",
+        "@typescript-eslint/semi": 1,
         "curly": "warn",
         "eqeqeq": "warn",
         "no-throw-literal": "warn",
-        "semi": "warn"
+        "semi": "warn",
+        "object-curly-spacing": ["warn", "always"],
+        "indent": ["warn", "tab"]
     }
 }
