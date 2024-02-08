@@ -7,32 +7,32 @@ import { SecretStorageType } from '../enums';
 export const createAxiosInstance = async () => {
 	const token: string | null = await getToken();
 
-    const instance: AxiosInstance = axios.create({ baseURL });
+	const instance: AxiosInstance = axios.create({ baseURL });
 
-    if (token) {
+	if (token) {
     	instance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    } else {
+	} else {
     	delete instance.defaults.headers.common['Authorization'];
-    }
+	}
 
-    instance.interceptors.response.use(
-        response => response,
-        error => {
-            if (error?.response?.status != 403) {
-                vscode.window.showInformationMessage("Doclin: Error occured while connecting to server!");
-            }
+	instance.interceptors.response.use(
+		response => response,
+		error => {
+			if (error?.response?.status !== 403) {
+				vscode.window.showInformationMessage("Doclin: Error occured while connecting to server!");
+			}
 
-            return Promise.reject(error);
-        }
-    );
+			return Promise.reject(error);
+		}
+	);
   
-    return instance;
+	return instance;
 };
 
 const getToken = async () => {
-    if (PRODUCTION) {
-        return await SecretStorageManager.get(SecretStorageType.PROD_AUTH_TOKEN);
-    } else {
-        return await SecretStorageManager.get(SecretStorageType.DEV_AUTH_TOKEN);
-    }
-}
+	if (PRODUCTION) {
+		return await SecretStorageManager.get(SecretStorageType.PROD_AUTH_TOKEN);
+	} else {
+		return await SecretStorageManager.get(SecretStorageType.DEV_AUTH_TOKEN);
+	}
+};

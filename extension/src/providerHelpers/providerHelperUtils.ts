@@ -6,13 +6,13 @@ interface ShellOutput {
 }
 
 export const executeShellCommand = async(cmd: string): Promise<ShellOutput> => {
-  return new Promise(function (resolve, reject) {
-    exec(cmd, (err, stdout, stderr) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve({ stdout, stderr });
-      }
-    });
-  });
-}
+	return new Promise(function (resolve, reject) {
+		exec(cmd, (err, stdout, stderr) => {
+			if (err) {
+				reject(err);
+			} else {
+				resolve({ stdout, stderr });
+			}
+		});
+	});
+};

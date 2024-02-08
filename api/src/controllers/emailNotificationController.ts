@@ -39,20 +39,20 @@ export const sendEmailFromDoclin = (recipientEmails: string[], subject: string, 
 export const sendMentionEmailNotification = async (senderId: number, targetUserIds: number[], projectId: number, message: string) => {
 
 	const sender = await UserRepository.findUserById(senderId);
-    const senderName = sender?.name;
-    const targetUsers = targetUserIds.map(async (mentionedUserId) => {
-        const user = await UserRepository.findUserById(mentionedUserId);
-        return user ? user.email : null;
-    });
+	const senderName = sender?.name;
+	const targetUsers = targetUserIds.map(async (mentionedUserId) => {
+		const user = await UserRepository.findUserById(mentionedUserId);
+		return user ? user.email : null;
+	});
 
 	const targetUserEmails = (await Promise.all(targetUsers)).filter((email) => email !== null) as string[];
 
-    const project = await ProjectRepository.findProjectById(projectId);
-    const projectName = project?.name;
+	const project = await ProjectRepository.findProjectById(projectId);
+	const projectName = project?.name;
 
-	const emailSubject = `${senderName} ${MENTION_EMAIL_SUBJECT}`
-    const emailMessage = `${senderName} has mentioned you on a thread in project ${projectName}. 
-					${message}`
+	const emailSubject = `${senderName} ${MENTION_EMAIL_SUBJECT}`;
+	const emailMessage = `${senderName} has mentioned you on a thread in project ${projectName}. 
+					${message}`;
 
 	sendEmailFromDoclin(targetUserEmails, emailSubject, emailMessage, senderName);
-}
+};

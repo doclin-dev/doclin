@@ -1,11 +1,11 @@
 import {
-  BaseEntity,
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  CreateDateColumn
+	BaseEntity,
+	Column,
+	Entity,
+	JoinColumn,
+	ManyToOne,
+	PrimaryGeneratedColumn,
+	CreateDateColumn
 } from "typeorm";
 import { Thread } from "./Thread";
 

@@ -17,42 +17,42 @@ export const inviteUser = async({ email }: { email: string }) => {
 		return;
 	}
 
-    const response = await invitationApi.inviteUser(projectId, organizationId, email);
-    const payload = response?.data;
+	const response = await invitationApi.inviteUser(projectId, organizationId, email);
+	const payload = response?.data;
 
-    logger.info(`${EMAIL_SENT_MSG} ${email}`);
+	logger.info(`${EMAIL_SENT_MSG} ${email}`);
 	
-    return payload;
-}
+	return payload;
+};
 
 const validateEmail = (email: string) : boolean => {
-    if (isEmailNotValid(email)) {
-        logger.info(`${EMAIL_INVALID_MSG} ${email}`);
-        return false;
-    }
+	if (isEmailNotValid(email)) {
+		logger.info(`${EMAIL_INVALID_MSG} ${email}`);
+		return false;
+	}
 
-    return true;
-}
+	return true;
+};
 
 const isEmailNotValid = (email: string) => {
-    return !String(email)
-        .toLowerCase()
-        .match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+	return !String(email)
+		.toLowerCase()
+		.match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
 };
 
 export const redeemInvitation = async ({ invitationCode } : { invitationCode: string }) => {
-    try {
-        const response = await invitationApi.redeemInvitation(invitationCode);
-        const payload = response?.data;
-        const organizationId = payload?.organizationId;
-        const projectId = payload?.projectId;
+	try {
+		const response = await invitationApi.redeemInvitation(invitationCode);
+		const payload = response?.data;
+		const organizationId = payload?.organizationId;
+		const projectId = payload?.projectId;
 
-        await storeOrganizationId(organizationId);
-        await storeProjectId(projectId);
+		await storeOrganizationId(organizationId);
+		await storeProjectId(projectId);
 
-        return payload;
-    } catch {
-        logger.info(INVITATION_EXPIRED_MSG);
-        return INVITATION_EXPIRED;
-    }
-}
+		return payload;
+	} catch {
+		logger.info(INVITATION_EXPIRED_MSG);
+		return INVITATION_EXPIRED;
+	}
+};
