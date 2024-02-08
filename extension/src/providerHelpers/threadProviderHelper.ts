@@ -11,107 +11,107 @@ import * as path from 'path';
 import { getExistingDoclinFilePath } from "../utils/doclinFileReadWriteUtil";
 
 export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[], activeFilePath: string }> => {
-  const activeFilePath = await getActiveEditorFilePath();
-  const organizationId = await getCurrentOrganizationId();
-  const projectId = await getCurrentProjectId();
+	const activeFilePath = await getActiveEditorFilePath();
+	const organizationId = await getCurrentOrganizationId();
+	const projectId = await getCurrentProjectId();
 
-  if (!organizationId || !projectId || !activeFilePath) {
-    return { threads: [], activeFilePath: "" };
-  }
+	if (!organizationId || !projectId || !activeFilePath) {
+		return { threads: [], activeFilePath: "" };
+	}
 
-  const response = await threadApi.getFileBasedThreads(organizationId, projectId, activeFilePath);
-  const payload = response?.data;
-  let threads: Thread[] = payload?.threads;
+	const response = await threadApi.getFileBasedThreads(organizationId, projectId, activeFilePath);
+	const payload = response?.data;
+	let threads: Thread[] = payload?.threads;
 
-  for (const thread of threads) {
-    await compareSnippetsWithActiveEditor(thread.snippets);
-  };
+	for (const thread of threads) {
+		await compareSnippetsWithActiveEditor(thread.snippets);
+	};
 
-  threads.forEach(fillUpThreadOrReplyMessageWithSnippet);
+	threads.forEach(fillUpThreadOrReplyMessageWithSnippet);
 
-  return { threads, activeFilePath };
+	return { threads, activeFilePath };
 };
 
 export const getAllThreads = async (): Promise<Thread[] | undefined> => {
-  const organizationId = await getCurrentOrganizationId();
-  const projectId = await getCurrentProjectId();
+	const organizationId = await getCurrentOrganizationId();
+	const projectId = await getCurrentProjectId();
 
-  if (!organizationId || !projectId) return;
+	if (!organizationId || !projectId) {return;}
 
-  const response = await threadApi.getAllThreads(organizationId, projectId);
-  const payload = response?.data;
-  let threads: Thread[] = payload?.threads;
+	const response = await threadApi.getAllThreads(organizationId, projectId);
+	const payload = response?.data;
+	let threads: Thread[] = payload?.threads;
 
-  for (const thread of threads) {
-    await compareSnippetsWithActiveEditor(thread.snippets);
-  };
+	for (const thread of threads) {
+		await compareSnippetsWithActiveEditor(thread.snippets);
+	};
 
-  threads.forEach(fillUpThreadOrReplyMessageWithSnippet);
+	threads.forEach(fillUpThreadOrReplyMessageWithSnippet);
 
-  return threads;
+	return threads;
 };
 
 export const postThread = async({ threadMessage, delta, snippets, mentionedUserIds, anonymous }: PostThread): Promise<Thread | undefined> => {
-  const organizationId = await getCurrentOrganizationId();
-  const projectId = await getCurrentProjectId();
-  const activeFilePath = await getActiveEditorFilePath();
+	const organizationId = await getCurrentOrganizationId();
+	const projectId = await getCurrentProjectId();
+	const activeFilePath = await getActiveEditorFilePath();
 
-  if (!organizationId || !projectId) return;
+	if (!organizationId || !projectId) {return;}
 
-  const response = await threadApi.postThread(
-    organizationId, 
-    projectId, 
-    threadMessage, 
-    delta, 
-    snippets, 
-    activeFilePath, 
-    mentionedUserIds,
-    anonymous
-  );
+	const response = await threadApi.postThread(
+		organizationId, 
+		projectId, 
+		threadMessage, 
+		delta, 
+		snippets, 
+		activeFilePath, 
+		mentionedUserIds,
+		anonymous
+	);
   
-  const thread: Thread = response?.data?.thread;
+	const thread: Thread = response?.data?.thread;
 
-  await compareSnippetsWithActiveEditor(thread.snippets);
-  fillUpThreadOrReplyMessageWithSnippet(thread);
+	await compareSnippetsWithActiveEditor(thread.snippets);
+	fillUpThreadOrReplyMessageWithSnippet(thread);
 
-  return thread;
+	return thread;
 };
 
 export const updateThread = async({ threadMessage, threadId, snippets, delta }: UpdateThread): Promise<Thread | undefined> => {
-  const organizationId = await getCurrentOrganizationId();
-  const projectId = await getCurrentProjectId();
-  const activeFilePath = await getActiveEditorFilePath();
+	const organizationId = await getCurrentOrganizationId();
+	const projectId = await getCurrentProjectId();
+	const activeFilePath = await getActiveEditorFilePath();
 
-  if (!organizationId || !projectId) return;
+	if (!organizationId || !projectId) {return;}
 
-  const response = await threadApi.updateThread(
-    organizationId, 
-    projectId, 
-    threadId, 
-    threadMessage,
-    delta,
-    snippets,
-    activeFilePath
-  );
+	const response = await threadApi.updateThread(
+		organizationId, 
+		projectId, 
+		threadId, 
+		threadMessage,
+		delta,
+		snippets,
+		activeFilePath
+	);
 
-  const thread: Thread = response?.data?.thread;
+	const thread: Thread = response?.data?.thread;
 
-  await compareSnippetsWithActiveEditor(thread.snippets);
-  fillUpThreadOrReplyMessageWithSnippet(thread);
+	await compareSnippetsWithActiveEditor(thread.snippets);
+	fillUpThreadOrReplyMessageWithSnippet(thread);
 
-  return thread;
+	return thread;
 };
 
 export const deleteThread = async({ threadId }: { threadId: number }) => {
-  const organizationId = await getCurrentOrganizationId();
-  const projectId = await getCurrentProjectId();
+	const organizationId = await getCurrentOrganizationId();
+	const projectId = await getCurrentProjectId();
 
-  if (!organizationId || !projectId) return;
+	if (!organizationId || !projectId) {return;}
   
-  const response = await threadApi.deleteThread(organizationId, projectId, threadId);
-  const thread = response?.data?.thread;
+	const response = await threadApi.deleteThread(organizationId, projectId, threadId);
+	const thread = response?.data?.thread;
 
-  return thread;
+	return thread;
 };
 
 const getActiveEditorFilePath = async (): Promise<string> => {
@@ -139,12 +139,12 @@ const getActiveEditorFilePath = async (): Promise<string> => {
       return relativePath;
     }
 
-    return "";
+		return "";
 
-  } catch (error) {
-    logger.error("Error while fetching active editor filepath: " + error);
-    return "";
-  }
+	} catch (error) {
+		logger.error("Error while fetching active editor filepath: " + error);
+		return "";
+	}
 };
 
 const isActiveEditorOutsideDoclinFolder = (relativePath: string) => {
@@ -152,71 +152,71 @@ const isActiveEditorOutsideDoclinFolder = (relativePath: string) => {
 }
 
 export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
-  try {
-    vscode.commands.executeCommand('workbench.view.extension.doclinSidebarView');
+	try {
+		vscode.commands.executeCommand('workbench.view.extension.doclinSidebarView');
 
-    const activeTextEditor = vscode.window.activeTextEditor;
+		const activeTextEditor = vscode.window.activeTextEditor;
 
-    if (!isExtensionReadyForComment()) {
-      return;
-    }
+		if (!isExtensionReadyForComment()) {
+			return;
+		}
 
-    if (activeTextEditor) {
-      const filePath = await getActiveEditorFilePath();
-      const lineStart = getLineStart(activeTextEditor);
-      const originalSnippet = activeTextEditor.document.getText(activeTextEditor.selection);
-      const displaySnippet = addLineNumbers(lineStart, highlightCode(originalSnippet));
+		if (activeTextEditor) {
+			const filePath = await getActiveEditorFilePath();
+			const lineStart = getLineStart(activeTextEditor);
+			const originalSnippet = activeTextEditor.document.getText(activeTextEditor.selection);
+			const displaySnippet = addLineNumbers(lineStart, highlightCode(originalSnippet));
 
-      await pauseExecution(); 
+			await pauseExecution(); 
 
-      sidebarProvider._view?.webview.postMessage({
-        type: "populateCodeSnippet",
-        value: { filePath, lineStart, originalSnippet, displaySnippet },
-      });
-    }
-  } catch (error) {
-    logger.error("Exception occured. " + error);
-  }
-}
+			sidebarProvider._view?.webview.postMessage({
+				type: "populateCodeSnippet",
+				value: { filePath, lineStart, originalSnippet, displaySnippet },
+			});
+		}
+	} catch (error) {
+		logger.error("Exception occured. " + error);
+	}
+};
 
 const isExtensionReadyForComment = async (): Promise<boolean> => {
-  const activeTextEditor = vscode.window.activeTextEditor;
+	const activeTextEditor = vscode.window.activeTextEditor;
   
-  if (!activeTextEditor) {
-    logger.error("No File Selected");
-    return false;
-  }
+	if (!activeTextEditor) {
+		logger.error("No File Selected");
+		return false;
+	}
 
-  const user = await getAuthenticatedUser();
+	const user = await getAuthenticatedUser();
 
-  if (!user) {
-    logger.error("Need to login before adding any comment.");
-    return false;
-  }
+	if (!user) {
+		logger.error("Need to login before adding any comment.");
+		return false;
+	}
 
-  const organizationId = await getCurrentOrganizationId();
-  const projectId = await getCurrentProjectId();
+	const organizationId = await getCurrentOrganizationId();
+	const projectId = await getCurrentProjectId();
 
-  if (!organizationId || !projectId) {
-    logger.error("Need to complete organization and project setup before adding any comment.");
-    return false;
-  }
+	if (!organizationId || !projectId) {
+		logger.error("Need to complete organization and project setup before adding any comment.");
+		return false;
+	}
 
-  return true;
-}
+	return true;
+};
 
 const getLineStart = (activeTextEditor: vscode.TextEditor): number => {
-  const selection = activeTextEditor.selection;
+	const selection = activeTextEditor.selection;
 
-  if (!selection.isEmpty) {
-    return selection.start.line + 1;
-  }
+	if (!selection.isEmpty) {
+		return selection.start.line + 1;
+	}
 
-  return 1;
-}
+	return 1;
+};
 
 const pauseExecution = () => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, 500);
-  });
-}
+	return new Promise((resolve) => {
+		setTimeout(resolve, 500);
+	});
+};

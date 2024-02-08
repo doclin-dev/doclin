@@ -28,3 +28,15 @@ export enum ActiveView {
   AllThreads = 0,
   CurrentFileThreads = 1,
 }
+
+export enum WebviewStateType {
+  PAGE = "page",
+  CURRENT_ORGANIZATION = "currentOrganization",
+  CURRENT_PROJECT = "currentProject",
+  THREAD_CONTENTS = "threadContents",
+  REPLY_CONTENTS = "replyContents",
+  THREAD_SELECTED = "threadSelected",
+  GITHUB_URL = "githubUrl",
+  ACTIVE_TEXT_EDITOR = "activeTextEditor",
+  ACTIVE_VIEW = "activeView",
+}

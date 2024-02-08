@@ -11,78 +11,78 @@ const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github`);
 const app = polka();
 
 export const authenticate = (fn?: () => void) => {
-  try {
-    app.server?.close();
+	try {
+		app.server?.close();
 
-    app.get(`/auth`, (req, res) => getToken(req, res, fn));
+		app.get(`/auth`, (req, res) => getToken(req, res, fn));
 
-    app.listen(54321, openApiUrl);
-  } catch (error) {
-    logger.error("An error occured when listening for authentication response" + error);
-  }
+		app.listen(54321, openApiUrl);
+	} catch (error) {
+		logger.error("An error occured when listening for authentication response" + error);
+	}
 };
 
 const getToken = async (req: any, res: any, fn?: () => void) => {
-  try {
-    const token = req.query.token;
+	try {
+		const token = req.query.token;
 
-    if (!token) {
-      res.end(`Authentication unsuccessful. Please try again later.`);
-      logger.info("Authentication unsuccessful.");
-      app.server?.close();
-      return;
-    }
+		if (!token) {
+			res.end(`Authentication unsuccessful. Please try again later.`);
+			logger.info("Authentication unsuccessful.");
+			app.server?.close();
+			return;
+		}
 
-    await setTokenToStorage(token);
+		await setTokenToStorage(token);
 
-    if (fn) {
-      fn();
-    }
+		if (fn) {
+			fn();
+		}
 
-    res.end(`Authentication successful. You can close this now!`);
-    logger.info("Authentication successful.");
+		res.end(`Authentication successful. You can close this now!`);
+		logger.info("Authentication successful.");
 
-    app.server?.close();
-  } catch (error) {
-    logger.error("An error occured when receiving token" + error);
-  }
-}
+		app.server?.close();
+	} catch (error) {
+		logger.error("An error occured when receiving token" + error);
+	}
+};
 
 const openApiUrl = (err: Error) => {
-  if (err) {
-    logger.error(err.message);
-  }
+	if (err) {
+		logger.error(err.message);
+	}
   
-  vscode.commands.executeCommand("vscode.open", AUTH_URL);
-}
+	vscode.commands.executeCommand("vscode.open", AUTH_URL);
+};
 
 export const getAuthenticatedUser = async () => {
-  const response = await authApi.getAuthenticatedUser();
-  const payload = response?.data;
-  const user = payload?.user;
+	const response = await authApi.getAuthenticatedUser();
+	const payload = response?.data;
+	const user = payload?.user;
 
-  return user;
-}
+	return user;
+};
 
 const setTokenToStorage = async (token: string|null) => {
-  if (PRODUCTION) {
-    await SecretStorageManager.store(SecretStorageType.PROD_AUTH_TOKEN, token);
-  } else {
-    await SecretStorageManager.store(SecretStorageType.DEV_AUTH_TOKEN, token);
-  }
-}
+	if (PRODUCTION) {
+		await SecretStorageManager.store(SecretStorageType.PROD_AUTH_TOKEN, token);
+	} else {
+		await SecretStorageManager.store(SecretStorageType.DEV_AUTH_TOKEN, token);
+	}
+};
 
 export const logout = async () => {
-  await setTokenToStorage("");
-}
+	await setTokenToStorage("");
+};
 
 export const postUserEmail = async(email:string) => {
-  try{
-    const response = await authApi.postUserEmail(email);
-    const status = response?.status;
-    logger.info('Email has been successfully registered.');
-    return status;
-  } catch(error) {
-    logger.error(`An error occured when registering your email. ${error}`);
-  }
-}
+	try{
+		const response = await authApi.postUserEmail(email);
+		const status = response?.status;
+		logger.info('Email has been successfully registered.');
+		return status;
+	} catch(error) {
+		logger.error(`An error occured when registering your email. ${error}`);
+	}
+};

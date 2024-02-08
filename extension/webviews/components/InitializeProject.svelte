@@ -2,13 +2,10 @@
     import type { Organization, Project } from "../types";
     import { onMount, onDestroy } from "svelte";
     import { Page } from "../enums";
-    import { WebviewStateManager } from "../WebviewStateManager";
+    import { currentOrganization, currentProject, githubUrl, page } from "../state/store";
 
-    export let page: Page;
     let postProjectName: string = "";
-    let githubUrl: string = "";
     let existingProjects: Project[] = [];
-    let currentOrganization: Organization | null;
     let error: string = "";
     let newProjectView: boolean;
     
@@ -17,18 +14,9 @@
     const JOIN_EXISTING_PROJECT: string = "Join Existing Project";
     const INITIALIZE_MESSAGE: string = "This will update your '.doclin' file with your project details."
 
-    const switchPageToThreadsViewer = () => {
-        page = Page.ThreadsViewer;
-        WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
-    }
-
-    const addCurrentProjectToState = (project: Project) => {
-        WebviewStateManager.setState(WebviewStateManager.type.CURRENT_PROJECT, project);
-    }
-
     const setCurrentProject = (project: Project) => {
         tsvscode.postMessage({ type: 'setCurrentProject', value: project.id });
-        addCurrentProjectToState(project)
+        $currentProject = project;
     }
 
     const createNewProject = async () => {
@@ -64,30 +52,27 @@
         const message = event.data;
         switch (message.type) {
             case "postProject":
-                addCurrentProjectToState(message.value);
-                switchPageToThreadsViewer();
+                $currentProject = message.value;
+                $page = Page.ThreadsViewer;
                 break;
             case "getExistingProjects":
                 existingProjects = message.value;
                 setView(existingProjects);
                 break;
             case "setCurrentProject":
-                switchPageToThreadsViewer();
+                $page = Page.ThreadsViewer;
                 break;
         }
     }
 
     const chooseAnotherOrganization = () => {
-        WebviewStateManager.setState(WebviewStateManager.type.CURRENT_ORGANIZATION, null);
-        page = Page.InitializeOrganization;
-        WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+        $currentOrganization = null;
+        $page = Page.InitializeOrganization;
     }
 
     onMount(async () => {
         window.addEventListener("message", messageEventListener);
 
-        githubUrl = WebviewStateManager.getState(WebviewStateManager.type.GITHUB_URL);
-        currentOrganization = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_ORGANIZATION);
         fetchExistingProjects();
     });
 
@@ -102,7 +87,7 @@
 
         <form>
             <input class="my-1" placeholder="Enter project name" bind:value={postProjectName} />
-            <input class="my-1" placeholder="Github repo url" bind:value={githubUrl} />
+            <input class="my-1" placeholder="Github repo url" value={$githubUrl} disabled/>
             <button on:click|preventDefault={createNewProject}>Submit</button>
             <div class="text-danger">{error}</div>
         </form>
@@ -140,5 +125,5 @@
         <button on:click|preventDefault={setViewToCreateProject}>{CREATE_NEW_PROJECT}</button>
     {/if}
 
-    <button on:click={() => {chooseAnotherOrganization()}}>Change Organization: {currentOrganization?.name}</button>
+    <button on:click={() => {chooseAnotherOrganization()}}>Change Organization: {$currentOrganization?.name}</button>
 </div>

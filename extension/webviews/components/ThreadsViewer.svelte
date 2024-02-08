@@ -4,22 +4,17 @@
     import Thread from './Thread.svelte';
     import { TextEditor } from "./TextEditor";
     import { ActiveTextEditor, ActiveView, Page } from "../enums";
-    import { WebviewStateManager } from "../WebviewStateManager";
     import FilterMenu from "./FilterMenu.svelte";
-
-    export let page: Page;
+    import { activeTextEditor, activeView, currentOrganization, currentProject, page, threadContents } from "../state/store";
     
     let quillEditor: TextEditor;
     let threads: Array<ThreadType> = [];
-    let currentProject: Project; 
-    let currentOrganization: Organization;
     let anonymousCheck: boolean = false;
     let activeFilePath: string;
-    let organizationUsers: User[] = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_ORGANIZATION).members;
+    let organizationUsers: User[] | undefined = $currentOrganization?.members;
 
     async function submitThreadMessage() {
         const { delta, message: threadMessage, snippets, mentionedUserIds } = quillEditor.getStructuredText();
-        currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
 
         if (threadMessage) {
             tsvscode.postMessage({ 
@@ -28,7 +23,7 @@
                     delta: delta, 
                     threadMessage: threadMessage,
                     snippets: snippets,
-                    projectId: currentProject?.id,
+                    projectId: $currentProject?.id,
                     mentionedUserIds: mentionedUserIds,
                     anonymous: anonymousCheck ? true : false
                 }
@@ -36,33 +31,31 @@
         }
 
         quillEditor.setText("");
-        WebviewStateManager.setState(WebviewStateManager.type.THREAD_CONTENTS, null);
+        $threadContents = null;
     }
 
     async function initializeQuillEditor() {
         quillEditor = new TextEditor('#textEditor', organizationUsers);
+        $activeTextEditor = ActiveTextEditor.ThreadsViewerTextEditor;
+
+        quillEditor.setContents($threadContents);
+
+        quillEditor.setActiveEditor(ActiveTextEditor.ThreadsViewerTextEditor);
 
         quillEditor.onTextChange(() => {
-            WebviewStateManager.setState(WebviewStateManager.type.THREAD_CONTENTS, quillEditor.getContents());
+            $threadContents = quillEditor.getContents();
         });
-        
-        WebviewStateManager.setState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR, ActiveTextEditor.ThreadsViewerTextEditor);
-        const contents = WebviewStateManager.getState(WebviewStateManager.type.THREAD_CONTENTS);
-        quillEditor.setContents(contents);
-        quillEditor.setActiveEditor(ActiveTextEditor.ThreadsViewerTextEditor);
     }
 
     async function loadCurrentFileThreads() {
-        currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
-        if (currentProject) {
-            tsvscode.postMessage({ type: 'getThreadsByActiveFilePath', value: { currentProjectId: currentProject.id } });
+        if ($currentProject) {
+            tsvscode.postMessage({ type: 'getThreadsByActiveFilePath', value: { currentProjectId: $currentProject.id } });
         }
     }
 
     const loadAllThreads = () => {
-        currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
-        if (currentProject) {
-            tsvscode.postMessage({ type: 'getAllThreads', value: { currentProjectId: currentProject.id } });
+        if ($currentProject) {
+            tsvscode.postMessage({ type: 'getAllThreads', value: { currentProjectId: $currentProject.id } });
         }
     }
 
@@ -70,7 +63,9 @@
         const message = event.data;
         switch (message.type) {
             case "populateCodeSnippet":
-                if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_TEXT_EDITOR) === ActiveTextEditor.ThreadsViewerTextEditor) quillEditor.insertCodeSnippet(message.value);
+                if ($activeTextEditor === ActiveTextEditor.ThreadsViewerTextEditor) {
+                    quillEditor.insertCodeSnippet(message.value);
+                }
                 break;
             case "getThreadsByActiveFilePath":
                 const {threads: threadsByFile, activeFilePath: filePath} = message.value;
@@ -84,7 +79,7 @@
                 threads = [message.value, ...threads];
                 break;
             case "switchActiveEditor":
-                if (WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_VIEW) === ActiveView.CurrentFileThreads){
+                if ($activeView === ActiveView.CurrentFileThreads){
                     loadCurrentFileThreads();
                 }
                 break;
@@ -92,17 +87,13 @@
     }
 
     onMount(async () => {
-        currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
-        currentOrganization = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_ORGANIZATION);
-
-        if (currentProject === null) {
-            page = Page.InitializeProject;
-            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+        if ($currentProject === null) {
+            $page = Page.InitializeProject;
         }
 
         window.addEventListener("message", messageEventListener);
 
-        WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_VIEW) === ActiveView.CurrentFileThreads ? loadCurrentFileThreads() : loadAllThreads();
+        $activeView === ActiveView.CurrentFileThreads ? loadCurrentFileThreads() : loadAllThreads();
         initializeQuillEditor();
     });
 
@@ -111,8 +102,7 @@
     });
 </script>
 
-
-<FilterMenu organizationName={currentOrganization?.name} projectName={currentProject?.name} filePath= {activeFilePath} onFirstSegmentClick={loadAllThreads} onSecondSegmentClick={loadCurrentFileThreads}/>
+<FilterMenu filePath= {activeFilePath} onFirstSegmentClick={loadAllThreads} onSecondSegmentClick={loadCurrentFileThreads}/>
 
 <form
     on:submit|preventDefault={submitThreadMessage}>
@@ -127,7 +117,7 @@
 <div id='viewer'>
     {#if threads}
         {#each threads as thread (thread.id)}
-            <Thread thread={thread} bind:page={page} reloadThreads={WebviewStateManager.getState(WebviewStateManager.type.ACTIVE_VIEW) === ActiveView.CurrentFileThreads ? loadCurrentFileThreads : loadAllThreads}/>
+            <Thread thread={thread} reloadThreads={$activeView === ActiveView.CurrentFileThreads ? loadCurrentFileThreads : loadAllThreads}/>
         {/each}
     {/if}
 </div>

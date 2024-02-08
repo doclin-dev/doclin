@@ -8,15 +8,15 @@ export const getCurrentUser = async (req: Request, res: Response) => {
 	const authHeader = req.headers.authorization;
 	const userId = getUserIdFromAuthHeader(authHeader);
 
-    if (userId == null) {
-        res.send({ user: null});
-        return;
-    }
+	if (userId === null) {
+		res.send({ user: null });
+		return;
+	}
     
-    const user = await UserRepository.findUserById(userId);
+	const user = await UserRepository.findUserById(userId);
 
-    res.send({ user });
-}
+	res.send({ user });
+};
 
 export const getUserIdFromAuthHeader = (authHeader: string | undefined) => {
 	if (!authHeader) {
@@ -40,7 +40,7 @@ export const getUserIdFromAuthHeader = (authHeader: string | undefined) => {
 	} catch {
 		return null;
 	}
-}
+};
 
 export const postUserEmail = async (req: Request, res: Response) => {
 	try {
@@ -56,8 +56,8 @@ export const postUserEmail = async (req: Request, res: Response) => {
 		}
 		logger.info('User email has been successfully registered.');
 
-		res.send({email});
+		res.send({ email });
 	} catch(error) {
 		logger.error(`User email wasn't resgitered. error: ${error}`);
 	}
-}
+};

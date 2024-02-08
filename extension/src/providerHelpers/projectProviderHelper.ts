@@ -5,7 +5,24 @@ import { getGithubUrl, readDoclinFile, writeDoclinFile } from "../utils/doclinFi
 import logger from "../utils/logger";
 import { DoclinFile } from "../types";
 
-const ACCESS_REQUIRED = "accessRequired";
+const UNAUTHORIZED = {
+	unauthorized: true
+};
+
+export const getGithubUrl = async() : Promise<string|undefined> => {
+	if (vscode.workspace.workspaceFolders) {
+		const openedFolderUri: any = vscode.workspace.workspaceFolders[0]?.uri;
+		const openedFolderPath: string = openedFolderUri.fsPath;
+		try {
+			if (openedFolderPath) {
+				let { stdout }: {stdout: string} = await executeShellCommand(`cd ${openedFolderPath} && git config --get remote.origin.url`);
+				return stdout;
+			}
+		} catch {
+			return;
+		}
+	}
+};
 
 export const getCurrentProjectId = async (): Promise<number|null> => {
 	const fileJSON: DoclinFile = await readDoclinFile();
@@ -17,7 +34,7 @@ export const getCurrentProject = async () => {
 	const organizationId = await getCurrentOrganizationId();
 	const projectId = await getCurrentProjectId();
 
-	if (!organizationId || !projectId) return;
+	if (!organizationId || !projectId) {return;}
 
 	try {
 		const response = await projectApi.getProject(projectId, organizationId);
@@ -26,22 +43,22 @@ export const getCurrentProject = async () => {
 		
 		return project;
 	} catch {
-		return ACCESS_REQUIRED;
+		return UNAUTHORIZED;
 	}
 
-}
+};
 
 export const getExistingProjects = async () => {
 	const organizationId = await getCurrentOrganizationId();
 
-	if (!organizationId) return { projects: null };
+	if (!organizationId) {return { projects: null };}
 
 	const response = await projectApi.getProjects(organizationId);
 	const payload = response?.data;
 	const projects = payload?.projects;
 
 	return projects;
-}
+};
 
 export const postProject = async({ name, githubUrl }: { name: string, githubUrl: string }) => {
 	const organizationId = await getCurrentOrganizationId();
@@ -57,7 +74,7 @@ export const postProject = async({ name, githubUrl }: { name: string, githubUrl:
 	await storeProjectId(project.id);
 	
 	return project;
-}
+};
 
 export const storeProjectId = async (projectId: number) => {
 	try {
@@ -71,4 +88,4 @@ export const storeProjectId = async (projectId: number) => {
 	} catch (error: any) {
 		logger.error(`An error occurred: ${error.message}`);
 	}
-}
+};

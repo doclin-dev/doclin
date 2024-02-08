@@ -19,170 +19,170 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   constructor(private readonly _extensionUri: vscode.Uri) {}
 
   public resolveWebviewView(webviewView: vscode.WebviewView) {
-    this._view = webviewView;
+  	this._view = webviewView;
 
-    webviewView.webview.options = {
-      enableScripts: true,
-      localResourceRoots: [this._extensionUri],
-    };
+  	webviewView.webview.options = {
+  		enableScripts: true,
+  		localResourceRoots: [this._extensionUri],
+  	};
 
-    webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+  	webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
-    webviewView.webview.onDidReceiveMessage(async (message: { type: any, value: any }) => {
-      switch (message.type) {
-        case "logout":
-          logout();
-          break;
-        case "authenticate":
-          authenticate(async () => {
-            webviewView.webview.postMessage({
-              type: "getExtensionState",
-              value: await getExtensionState(),
-            });
-          });
-          break;
-        case "getExtensionState":
-          webviewView.webview.postMessage({
-            type: "getExtensionState",
-            value: await getExtensionState(),
-          });
-          break;
-        case "onInfo":
-          logger.info(message.value);
-          break;
-        case "onError":
-          logger.error(message.value);
-          break;
-        case "getGithubUrl":
-          webviewView.webview.postMessage({
-            type: "getGithubUrl",
-            value: await getGithubUrl(),
-          });
-          break;
-        case "getThreadsByActiveFilePath":
-          webviewView.webview.postMessage({
-            type: "getThreadsByActiveFilePath",
-            value: await getThreadsByActiveFilePath()
-          });
-          break;
-        case "getAllThreads":
-          webviewView.webview.postMessage({
-            type: "getAllThreads",
-            value: await getAllThreads()
-          });
-          break;
-        case "selectAThread":
-          break;
-        case "postThread":
-          webviewView.webview.postMessage({
-            type: "postThread",
-            value: await postThread(message.value)
-          });
-          break;
-        case "updateThread":
-          webviewView.webview.postMessage({
-            type: "updateThread",
-            value: await updateThread(message.value)
-          });
-          break;
-        case "deleteThread":
-          webviewView.webview.postMessage({
-            type: "deleteThread",
-            value: await deleteThread(message.value)
-          });
-          break;
-        case "getExistingProjects":
-          webviewView.webview.postMessage({
-            type: "getExistingProjects",
-            value: await getExistingProjects()
-          });
-          break;
-        case "postProject":
-          webviewView.webview.postMessage({
-            type: "postProject",
-            value: await postProject(message.value)
-          });
-          break;
-        case "setCurrentProject":
-          webviewView.webview.postMessage({
-            type: "setCurrentProject",
-            value: await storeProjectId(message.value)
-          });
-          break;
-        case "postReply":
-          webviewView.webview.postMessage({
-            type: "postReply",
-            value: await postReply(message.value)
-          });
-          break;
-        case "getRepliesByThreadId":
-          webviewView.webview.postMessage({
-            type: "getRepliesByThreadId",
-            value: await getRepliesByThreadId(message.value)
-          });
-          break;
-        case "getRepliesByThreadId":
-          webviewView.webview.postMessage({
-            type: "getRepliesByThreadId",
-            value: await getRepliesByThreadId(message.value)
-          });
-          break;
-        case "updateReply":
-          webviewView.webview.postMessage({
-            type: "updateReply",
-            value: await updateReply(message.value)
-          });
-          break;
-				case "deleteReply":
-					webviewView.webview.postMessage({
-            type: "deleteReply",
-            value: await deleteReply(message.value)
-          });
-          break;
-        case "postOrganization":
-          webviewView.webview.postMessage({
-            type: "postOrganization",
-            value: await postOrganization(message.value)
-          });
-          break;
-        case "getExistingOrganizations":
-          webviewView.webview.postMessage({
-            type: "getExistingOrganizations",
-            value: await getExistingOrganizations()
-          });
-          break;
-        case "setCurrentOrganization":
-          webviewView.webview.postMessage({
-            type: "setCurrentOrganization",
-            value: await storeOrganizationId(message.value)
-          });
-          break;
-        case "inviteUser":
-          webviewView.webview.postMessage({
-            type: "inviteUser",
-            value: await inviteUser(message.value)
-          });
-          break;
-        case "redeemInvitation":
-          webviewView.webview.postMessage({
-            type: "redeemInvitation",
-            value: await redeemInvitation(message.value)
-          });
-          break;
-        case "getCurrentOrganizationUsers":
-          webviewView.webview.postMessage({
-            type: "getCurrentOrganizationUsers",
-            value: await getCurrentOrganizationUsers()
-          });
-          break;
-        case "postUserEmail":
-          webviewView.webview.postMessage({
-            type: "postUserEmail",
-            value: await postUserEmail(message.value)
-          });
-          break;
-      }
-    });
+  	webviewView.webview.onDidReceiveMessage(async (message: { type: any, value: any }) => {
+  		switch (message.type) {
+  		case "logout":
+  			logout();
+  			break;
+  		case "authenticate":
+  			authenticate(async () => {
+  				webviewView.webview.postMessage({
+  					type: "getExtensionState",
+  					value: await getExtensionState(),
+  				});
+  			});
+  			break;
+  		case "getExtensionState":
+  			webviewView.webview.postMessage({
+  				type: "getExtensionState",
+  				value: await getExtensionState(),
+  			});
+  			break;
+  		case "onInfo":
+  			logger.info(message.value);
+  			break;
+  		case "onError":
+  			logger.error(message.value);
+  			break;
+  		case "getGithubUrl":
+  			webviewView.webview.postMessage({
+  				type: "getGithubUrl",
+  				value: await getGithubUrl(),
+  			});
+  			break;
+  		case "getThreadsByActiveFilePath":
+  			webviewView.webview.postMessage({
+  				type: "getThreadsByActiveFilePath",
+  				value: await getThreadsByActiveFilePath()
+  			});
+  			break;
+  		case "getAllThreads":
+  			webviewView.webview.postMessage({
+  				type: "getAllThreads",
+  				value: await getAllThreads()
+  			});
+  			break;
+  		case "selectAThread":
+  			break;
+  		case "postThread":
+  			webviewView.webview.postMessage({
+  				type: "postThread",
+  				value: await postThread(message.value)
+  			});
+  			break;
+  		case "updateThread":
+  			webviewView.webview.postMessage({
+  				type: "updateThread",
+  				value: await updateThread(message.value)
+  			});
+  			break;
+  		case "deleteThread":
+  			webviewView.webview.postMessage({
+  				type: "deleteThread",
+  				value: await deleteThread(message.value)
+  			});
+  			break;
+  		case "getExistingProjects":
+  			webviewView.webview.postMessage({
+  				type: "getExistingProjects",
+  				value: await getExistingProjects()
+  			});
+  			break;
+  		case "postProject":
+  			webviewView.webview.postMessage({
+  				type: "postProject",
+  				value: await postProject(message.value)
+  			});
+  			break;
+  		case "setCurrentProject":
+  			webviewView.webview.postMessage({
+  				type: "setCurrentProject",
+  				value: await storeProjectId(message.value)
+  			});
+  			break;
+  		case "postReply":
+  			webviewView.webview.postMessage({
+  				type: "postReply",
+  				value: await postReply(message.value)
+  			});
+  			break;
+  		case "getRepliesByThreadId":
+  			webviewView.webview.postMessage({
+  				type: "getRepliesByThreadId",
+  				value: await getRepliesByThreadId(message.value)
+  			});
+  			break;
+  		case "getRepliesByThreadId":
+  			webviewView.webview.postMessage({
+  				type: "getRepliesByThreadId",
+  				value: await getRepliesByThreadId(message.value)
+  			});
+  			break;
+  		case "updateReply":
+  			webviewView.webview.postMessage({
+  				type: "updateReply",
+  				value: await updateReply(message.value)
+  			});
+  			break;
+  		case "deleteReply":
+  			webviewView.webview.postMessage({
+  				type: "deleteReply",
+  				value: await deleteReply(message.value)
+  			});
+  			break;
+  		case "postOrganization":
+  			webviewView.webview.postMessage({
+  				type: "postOrganization",
+  				value: await postOrganization(message.value)
+  			});
+  			break;
+  		case "getExistingOrganizations":
+  			webviewView.webview.postMessage({
+  				type: "getExistingOrganizations",
+  				value: await getExistingOrganizations()
+  			});
+  			break;
+  		case "setCurrentOrganization":
+  			webviewView.webview.postMessage({
+  				type: "setCurrentOrganization",
+  				value: await storeOrganizationId(message.value)
+  			});
+  			break;
+  		case "inviteUser":
+  			webviewView.webview.postMessage({
+  				type: "inviteUser",
+  				value: await inviteUser(message.value)
+  			});
+  			break;
+  		case "redeemInvitation":
+  			webviewView.webview.postMessage({
+  				type: "redeemInvitation",
+  				value: await redeemInvitation(message.value)
+  			});
+  			break;
+  		case "getCurrentOrganizationUsers":
+  			webviewView.webview.postMessage({
+  				type: "getCurrentOrganizationUsers",
+  				value: await getCurrentOrganizationUsers()
+  			});
+  			break;
+  		case "postUserEmail":
+  			webviewView.webview.postMessage({
+  				type: "postUserEmail",
+  				value: await postUserEmail(message.value)
+  			});
+  			break;
+  		}
+  	});
 
     vscode.window.onDidChangeActiveTextEditor(async (editor) => {
       if (editor) {
@@ -201,26 +201,26 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   }
 
   public revive(panel: vscode.WebviewView) {
-    this._view = panel;
+  	this._view = panel;
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
-    const styleUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "styles", "main.css")
-    );
+  	const styleUri = webview.asWebviewUri(
+  		vscode.Uri.joinPath(this._extensionUri, "media", "styles", "main.css")
+  	);
 
-    const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "out", "compiled/sidebar.js")
-    );
+  	const scriptUri = webview.asWebviewUri(
+  		vscode.Uri.joinPath(this._extensionUri, "out", "compiled/sidebar.js")
+  	);
 
-    const styleMainUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "out", "compiled/sidebar.css")
-    );
+  	const styleMainUri = webview.asWebviewUri(
+  		vscode.Uri.joinPath(this._extensionUri, "out", "compiled/sidebar.css")
+  	);
 
-    // Use a nonce to only allow a specific script to be run.
-    const nonce = getNonce();
+  	// Use a nonce to only allow a specific script to be run.
+  	const nonce = getNonce();
 
-    return `<!DOCTYPE html>
+  	return `<!DOCTYPE html>
 			<html lang="en">
 			<head>
 				<meta charset="UTF-8">

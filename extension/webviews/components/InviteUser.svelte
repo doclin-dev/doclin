@@ -1,16 +1,12 @@
 <script type="ts">
-    import { WebviewStateManager } from "../WebviewStateManager";
     import { Page } from "../enums";
     import type { User } from "../types";
     import Button from "./Button.svelte";
     import { onMount, onDestroy } from "svelte";
-
-    export let page: Page;
+    import { currentOrganization, currentProject, page } from "../state/store";
 
     let emailValue: string;
     let organizationUsers: User[];
-    let organizationName: string;
-    let projectName: string;
 
     const submitInvite = () => {
         tsvscode.postMessage({
@@ -22,8 +18,7 @@
     };
 
     const switchPageToThreadsViewer = () => {
-        page = Page.ThreadsViewer;
-        WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+        $page = Page.ThreadsViewer;
     };
 
     const getCurrentOrganizationUsers = () => {
@@ -39,15 +34,9 @@
         }
     }
 
-    const getOrganizationAndProjectName = () => {
-        organizationName = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_ORGANIZATION)?.name;
-        projectName = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT)?.name;
-    }
-
     onMount(async () => {
         window.addEventListener("message", messageEventListener);
 
-        getOrganizationAndProjectName();
         getCurrentOrganizationUsers();
     });
 
@@ -63,7 +52,7 @@
         </div>
     </div>
     
-    <h3>Invite user to {organizationName}/{projectName}</h3>
+    <h3>Invite user to {$currentOrganization?.name}/{$currentProject?.name}</h3>
 
     <form class="mb-2">
         <input placeholder="Enter user email" bind:value={emailValue} />
