@@ -7,7 +7,8 @@
     "watch": "tsc -w",
     "build": "tsc",
     "dev": "nodemon dist/index.js",
-    "clean": "rm -rf node_modules && rm -rf dist && npm install"
+    "clean": "rm -rf node_modules && rm -rf dist && npm install",
+    "lint": "eslint src --ext ts"
   },
   "keywords": [],
   "author": "",
