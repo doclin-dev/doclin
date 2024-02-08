@@ -1,6 +1,7 @@
 import { getAuthenticatedUser } from "../providerHelpers/authenticationProviderHelper"
 import { getCurrentOrganization } from "../providerHelpers/organizationProviderHelper"
 import { getCurrentProject, getGithubUrl } from "../providerHelpers/projectProviderHelper"
+import logger from "./logger"
 
 export const getExtensionState = async () => {
   try {
@@ -11,6 +12,7 @@ export const getExtensionState = async () => {
       githubUrl: await getGithubUrl()
     }
   } catch (error) {
+    logger.error(`Error during get extension ${error}`);
     return { error }
   }
 }

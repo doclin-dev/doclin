@@ -5,18 +5,18 @@
     import ThreadsViewer from "./ThreadsViewer.svelte";
     import InitializeProject from "./InitializeProject.svelte";
     import ReplyViewer from "./ReplyViewer.svelte";
-    import { WebviewStateManager } from "../WebviewStateManager";
     import InitializeOrganization from "./InitializeOrganization.svelte";
     import InviteUser from "./InviteUser.svelte";
     import AccessRequired from "./AccessRequired.svelte";
     import ViewerTopBar from "./ViewerTopBar.svelte";
     import RegisterEmail from "./RegisterEmail.svelte";
+    import WebviewStateReactive from "./WebviewStateReactive.svelte";
+    import { currentOrganization, currentProject, githubUrl, page } from "../state/store";
 
     let accessToken = "";
     let loading = true;
     let user: User | null = null;
     let error: any;
-    let page: Page = WebviewStateManager.getState(WebviewStateManager.type.PAGE) ?? Page.InitializeOrganization;
     const ACCESS_REQUIRED = "accessRequired";
 
     const authenticate = () => {
@@ -32,54 +32,42 @@
     const handleGetExtensionState = (extensionState: any) => {
         error = extensionState?.error;
         user = extensionState?.user;
-        const organization = extensionState?.organization;
-        const project = extensionState?.project;
-        const githubUrl = extensionState?.githubUrl;
+        $currentOrganization = extensionState?.organization;
+        $currentProject = extensionState?.project;
+        $githubUrl = extensionState?.githubUrl;
 
         if (!user?.email) {
-            page = Page.RegisterEmail;
-            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+            $page = Page.RegisterEmail;
             loading = false;
             return;
         }
 
-        if (organization == ACCESS_REQUIRED || project == ACCESS_REQUIRED) {
-            page = Page.AccessRequired;
-            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+        if ($currentOrganization && $currentOrganization?.unauthorized) {
+            $page = Page.AccessRequired;
             loading = false;
             return;
         }
 
-        if (!githubUrl) {
-            page = Page.NotGitRepo;
-            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+        if (!$githubUrl) {
+            $page = Page.NotGitRepo;
             loading = false;
             return;
         }
 
-        WebviewStateManager.setState(WebviewStateManager.type.GITHUB_URL, githubUrl);
-
-        if (!organization) {
-            page = Page.InitializeOrganization;
-            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+        if (!$currentOrganization) {
+            $page = Page.InitializeOrganization;
             loading = false;
             return;
         }
 
-        WebviewStateManager.setState(WebviewStateManager.type.CURRENT_ORGANIZATION, organization);
-
-        if (!project) {
-            page = Page.InitializeProject;
-            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+        if (!$currentProject) {
+            $page = Page.InitializeProject;
             loading = false;
             return;
         }
 
-        WebviewStateManager.setState(WebviewStateManager.type.CURRENT_PROJECT, project);
-
-        if (page != Page.ThreadsViewer && page != Page.ReplyViewer) {
-            page = Page.ThreadsViewer;
-            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+        if ($page != Page.ThreadsViewer && $page != Page.ReplyViewer) {
+            $page = Page.ThreadsViewer;
         }
 
         loading = false;
@@ -115,24 +103,24 @@
     <div>Could not reach server. Please try again later!</div>
     <button on:click={getExtensionState}>Reload</button>
 {:else if user}
-    <ViewerTopBar username={user?.name} reload={getExtensionState} logout={logout} bind:page={page}/>
+    <ViewerTopBar username={user?.name} reload={getExtensionState} logout={logout}/>
 
-    {#if page === Page.RegisterEmail}
+    {#if $page === Page.RegisterEmail}
         <RegisterEmail/>
-    {:else if page === Page.NotGitRepo}
+    {:else if $page === Page.NotGitRepo}
         <div>Workspace folder is not a github repository.</div>
-    {:else if page === Page.AccessRequired}
-        <AccessRequired bind:page={page}/>
-    {:else if page === Page.InitializeOrganization}
-        <InitializeOrganization bind:page={page}/>
-    {:else if page === Page.InitializeProject}
-        <InitializeProject bind:page={page}/>
-    {:else if page === Page.ThreadsViewer}
-        <ThreadsViewer bind:page={page} />
-    {:else if page === Page.ReplyViewer}
-        <ReplyViewer bind:page={page}/>
-    {:else if page === Page.InviteUser}
-        <InviteUser bind:page={page}/>
+    {:else if $page === Page.AccessRequired}
+        <AccessRequired/>
+    {:else if $page === Page.InitializeOrganization}
+        <InitializeOrganization/>
+    {:else if $page === Page.InitializeProject}
+        <InitializeProject/>
+    {:else if $page === Page.ThreadsViewer}
+        <ThreadsViewer />
+    {:else if $page === Page.ReplyViewer}
+        <ReplyViewer/>
+    {:else if $page === Page.InviteUser}
+        <InviteUser/>
     {/if}
 {:else}
     <button on:click={authenticate}>Login with GitHub</button>

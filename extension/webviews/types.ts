@@ -10,6 +10,7 @@ export type Project = {
   name: string;
   url: string;
   userId: number;
+  unauthorized: boolean | undefined;
 };
 
 export type Thread = {
@@ -25,6 +26,8 @@ export type Thread = {
 export type Organization = {
   id: string;
   name: string;
+  members: User[];
+  unauthorized: boolean | undefined;
 };
 
 export type TextEditorInsertSnippet = { 

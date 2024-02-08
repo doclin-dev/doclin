@@ -6,7 +6,9 @@ import { readDoclinFile, writeDoclinFile } from "../utils/fileReadWriteUtil";
 import logger from "../utils/logger";
 import { DoclinFile } from "../types";
 
-const ACCESS_REQUIRED = "accessRequired";
+const UNAUTHORIZED = {
+    unauthorized: true
+};
 
 export const getGithubUrl = async() : Promise<string|undefined> => {
 	if (vscode.workspace.workspaceFolders) {
@@ -42,7 +44,7 @@ export const getCurrentProject = async () => {
 		
 		return project;
 	} catch {
-		return ACCESS_REQUIRED;
+		return UNAUTHORIZED;
 	}
 
 }
