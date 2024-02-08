@@ -97,8 +97,6 @@
     });
 </script>
 
-<WebviewStateReactive/>
-
 {#if loading}
     <div>loading...</div>
 {:else if error}
