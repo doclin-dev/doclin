@@ -12,9 +12,9 @@ Quill.register({
 const Delta = Quill.import('delta');
 
 export class TextEditor {
-    private quillInstance: any;
+	private quillInstance: any;
     
-    constructor(selector: string, suggestedUsersList: User[]=[], customOptions?: object) {
+	constructor(selector: string, suggestedUsersList: User[]=[], customOptions?: object) {
     	const defaultOptions: object = {
     		modules: {
     			toolbar: [
@@ -49,27 +49,27 @@ export class TextEditor {
     	const options = { ...defaultOptions, ...customOptions };
         
     	this.quillInstance = new Quill(selector, options);
-    };
+	};
 
-    setActiveEditor(activeEditor: ActiveTextEditor): void {
+	setActiveEditor(activeEditor: ActiveTextEditor): void {
     	this.quillInstance.container.addEventListener('mousedown', () => {
     		activeTextEditor.set(activeEditor);
     	});
-    };
+	};
 
-    getContents(): any {
+	getContents(): any {
     	return JSON.stringify(this.quillInstance.getContents());
-    }
+	}
 
-    setContents(delta: any): void {
+	setContents(delta: any): void {
     	this.quillInstance.setContents(this.parseJSON(delta));
-    };
+	};
 
-    setText(text: string): void {
+	setText(text: string): void {
     	this.quillInstance.setText(text);
-    }
+	}
 
-    getStructuredText(): { delta: any, message: string, snippets: any, mentionedUserIds: number[] } {
+	getStructuredText(): { delta: any, message: string, snippets: any, mentionedUserIds: number[] } {
     	const delta = this.quillInstance.getContents();
 
     	const { sanitizedDelta, mentionedUserIds } = this.sanitizeMentionDelta(delta);
@@ -78,9 +78,9 @@ export class TextEditor {
     	const message = this.getHtmlFromDelta(newDelta);
 
     	return { delta: sanitizedDelta, message, snippets, mentionedUserIds };
-    }
+	}
 
-    private sanitizeMentionDelta(delta:any) {
+	private sanitizeMentionDelta(delta:any) {
     	const mentionedUserIds: any[] = [];
     	const sanitizedDelta = delta.map((op:any)=>{
     		const mention = op.insert?.mention;
@@ -93,9 +93,9 @@ export class TextEditor {
     	});
       
     	return { sanitizedDelta, mentionedUserIds };
-    }
+	}
 
-    private seperateSnippetBlotsFromDelta(delta: any) {
+	private seperateSnippetBlotsFromDelta(delta: any) {
     	const snippets: any[] = [];
     	let count = 0;
 
@@ -112,27 +112,27 @@ export class TextEditor {
     	});
 
     	return { newDelta, snippets };
-    }
+	}
 
-    private getSnippetTag(index: number) {
+	private getSnippetTag(index: number) {
     	return `[snippet_${index}]`;
-    }
+	}
 
-    private getHtmlFromDelta(delta: any): string {
+	private getHtmlFromDelta(delta: any): string {
     	const newQuill = new Quill(document.createElement('div'));
     	newQuill.setContents(delta);
     	return newQuill.root.innerHTML;
-    }
+	}
 
-    onTextChange(callback: () => void): void {
+	onTextChange(callback: () => void): void {
     	this.quillInstance.on('text-change', callback);
-    };
+	};
 
-    removeToolbarTheme(): void {
+	removeToolbarTheme(): void {
     	this.quillInstance.theme.modules.toolbar.container.style.display = 'none';
-    };
+	};
 
-    insertCodeSnippet({ filePath, lineStart, displaySnippet, originalSnippet }: TextEditorInsertSnippet): void {
+	insertCodeSnippet({ filePath, lineStart, displaySnippet, originalSnippet }: TextEditorInsertSnippet): void {
     	const editor = this.quillInstance;
     	const selection = editor.getSelection(true);
     	const cursorPosition: number = selection ? selection.index : editor.getLength();
@@ -153,9 +153,9 @@ export class TextEditor {
     			}
     		)
     	);
-    };
+	};
 
-    private parseJSON(data: any) {
+	private parseJSON(data: any) {
     	try {
     		if (typeof data === 'string') {
     			return JSON.parse(data);
@@ -168,5 +168,5 @@ export class TextEditor {
     		console.error('Error parsing JSON:', error);
     		return null;
     	}
-    }
+	}
 }
