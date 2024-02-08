@@ -12,18 +12,15 @@
     import RegisterEmail from "./RegisterEmail.svelte";
     import { currentOrganization, currentProject, githubUrl, page } from "../state/store";
 
-    let accessToken = "";
     let loading = true;
     let user: User | null = null;
     let error: any;
-    const ACCESS_REQUIRED = "accessRequired";
 
     const authenticate = () => {
         tsvscode.postMessage({ type: 'authenticate', value: undefined });
     }
 
     const logout = () => {
-        accessToken = '';
         user = null;
         tsvscode.postMessage({ type: 'logout', value: undefined });
     }

@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte";
-    import type { Project, User, Thread as ThreadType, Organization } from "../types";
+    import type { User, Thread as ThreadType } from "../types";
     import Thread from './Thread.svelte';
     import { TextEditor } from "./TextEditor";
     import { ActiveTextEditor, ActiveView, Page } from "../enums";

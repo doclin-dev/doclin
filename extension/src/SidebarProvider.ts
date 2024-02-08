@@ -13,12 +13,12 @@ import logger from "./utils/logger";
 import { getGithubUrl } from "./utils/doclinFileReadWriteUtil";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
-  _view?: vscode.WebviewView;
-  _doc?: vscode.TextDocument;
+	_view?: vscode.WebviewView;
+	_doc?: vscode.TextDocument;
 
-  constructor(private readonly _extensionUri: vscode.Uri) {}
+	constructor(private readonly _extensionUri: vscode.Uri) {}
 
-  public resolveWebviewView(webviewView: vscode.WebviewView) {
+	public resolveWebviewView(webviewView: vscode.WebviewView) {
   	this._view = webviewView;
 
   	webviewView.webview.options = {
@@ -198,13 +198,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   			}
   		}
   	});
-  }
+	}
 
-  public revive(panel: vscode.WebviewView) {
+	public revive(panel: vscode.WebviewView) {
   	this._view = panel;
-  }
+	}
 
-  private _getHtmlForWebview(webview: vscode.Webview) {
+	private _getHtmlForWebview(webview: vscode.Webview) {
   	const styleUri = webview.asWebviewUri(
   		vscode.Uri.joinPath(this._extensionUri, "media", "styles", "main.css")
   	);
@@ -241,5 +241,5 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         <script nonce="${nonce}" src="${scriptUri}"></script>
     </body>
 			</html>`;
-  }
+	}
 }
