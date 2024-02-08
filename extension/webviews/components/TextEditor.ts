@@ -93,7 +93,7 @@ export class TextEditor {
         })
       
         return {sanitizedDelta, mentionedUserIds};
-      }
+    }
 
     private seperateSnippetBlotsFromDelta(delta: any) {
         const snippets: any[] = [];
@@ -165,8 +165,8 @@ export class TextEditor {
                 throw new Error('Invalid data type. Expected string or object.');
             }
         } catch (error) {
-          console.error('Error parsing JSON:', error);
-          return null;
+            console.error('Error parsing JSON:', error);
+            return null;
         }
-      }
+    }
 }
