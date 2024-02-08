@@ -1,7 +1,7 @@
 <script type="ts">
     import Button from "./Button.svelte";
     import { Page } from "../enums";
-    import { page } from "./store";
+    import { page } from "../state/store";
     
     export let username: string;
     export let reload: () => void;

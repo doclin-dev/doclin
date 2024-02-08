@@ -3,7 +3,7 @@
     import { onMount, onDestroy } from "svelte";
     import { IntializeOrganizationView, Page } from "../enums";
     import RedeemInvitation from "./RedeemInvitation.svelte";
-    import { currentOrganization, page } from "./store";
+    import { currentOrganization, page } from "../state/store";
 
     let postOrganizationName: string = "";
     let existingOrganizations: Organization[] = [];

@@ -2,7 +2,7 @@
     import type { Organization, Project } from "../types";
     import { onMount, onDestroy } from "svelte";
     import { Page } from "../enums";
-    import { currentOrganization, currentProject, githubUrl, page } from "./store";
+    import { currentOrganization, currentProject, githubUrl, page } from "../state/store";
 
     let postProjectName: string = "";
     let existingProjects: Project[] = [];

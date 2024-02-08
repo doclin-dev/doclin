@@ -1,7 +1,7 @@
 <script type="ts">
     import { onMount, onDestroy } from "svelte";
     import { Page } from "../enums";
-    import { page } from "./store";
+    import { page } from "../state/store";
 
     let invitationCodeValue: string = "";
     const INVITATION_EXPIRED: string = "invitationExpired";

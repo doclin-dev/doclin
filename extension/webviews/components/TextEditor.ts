@@ -2,7 +2,7 @@ import Quill from 'quill';
 import { QuillSnippetBlot } from './QuillSnippetBlot';
 import type { TextEditorInsertSnippet, User } from '../types';
 import "quill-mention";
-import { activeTextEditor } from './store';
+import { activeTextEditor } from '../state/store';
 import type { ActiveTextEditor } from '../enums';
 
 Quill.register({

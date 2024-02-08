@@ -5,7 +5,7 @@
     import { onMount, onDestroy } from "svelte";
     import Reply from "./Reply.svelte";
     import { TextEditor } from "./TextEditor";
-    import { activeTextEditor, currentOrganization, page, replyContents, threadSelected } from "./store";
+    import { activeTextEditor, currentOrganization, page, replyContents, threadSelected } from "../state/store";
 
     let quillReplyViewer: TextEditor;
     let replies : Array<{message: string, id: number}> = [];

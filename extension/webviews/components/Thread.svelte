@@ -2,7 +2,7 @@
     import OverlayCard from './OverlayCard.svelte';
     import Button from './Button.svelte'
     import { tick, onMount, onDestroy } from 'svelte';
-    import { activeTextEditor, editedReplyId, editedThreadId, page, threadSelected } from './store';
+    import { activeTextEditor, editedReplyId, editedThreadId, page, threadSelected } from '../state/store';
     import { ActiveTextEditor, Page } from '../enums';
     import { TextEditor } from './TextEditor';
     import moment from 'moment';

@@ -3,7 +3,7 @@
     import type { User } from "../types";
     import Button from "./Button.svelte";
     import { onMount, onDestroy } from "svelte";
-    import { currentOrganization, currentProject, page } from "./store";
+    import { currentOrganization, currentProject, page } from "../state/store";
 
     let emailValue: string;
     let organizationUsers: User[];

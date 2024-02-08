@@ -3,7 +3,7 @@
     import Button from './Button.svelte'
     import { TextEditor } from "./TextEditor";
     import { onMount, tick, onDestroy } from 'svelte';
-    import { activeTextEditor, editedReplyId, editedThreadId } from './store';
+    import { activeTextEditor, editedReplyId, editedThreadId } from '../state/store';
     import { ActiveTextEditor } from '../enums';
     import moment from 'moment';
 

@@ -11,7 +11,7 @@
     import ViewerTopBar from "./ViewerTopBar.svelte";
     import RegisterEmail from "./RegisterEmail.svelte";
     import WebviewStateReactive from "./WebviewStateReactive.svelte";
-    import { currentOrganization, currentProject, githubUrl, page } from "./store";
+    import { currentOrganization, currentProject, githubUrl, page } from "../state/store";
 
     let accessToken = "";
     let loading = true;

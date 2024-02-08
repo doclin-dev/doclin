@@ -2,7 +2,7 @@
     import Segment from "./Segment.svelte";
     import SegmentedControl from "./SegmentedControl.svelte";
     import { ActiveView } from "../enums";
-    import { activeView, currentOrganization, currentProject } from "./store";
+    import { activeView, currentOrganization, currentProject } from "../state/store";
 
     export let filePath: string | null;
     export let onFirstSegmentClick: () => void;
