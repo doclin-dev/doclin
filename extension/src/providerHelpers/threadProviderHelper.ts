@@ -115,29 +115,29 @@ export const deleteThread = async({ threadId }: { threadId: number }) => {
 };
 
 const getActiveEditorFilePath = async (): Promise<string> => {
-  try {
-    const editor = vscode.window.activeTextEditor;
+	try {
+		const editor = vscode.window.activeTextEditor;
 
-    if (editor) {
-      const activeEditorFilePath: string = editor.document.uri.fsPath;
-      const doclinFilePath = await getExistingDoclinFilePath();
+		if (editor) {
+			const activeEditorFilePath: string = editor.document.uri.fsPath;
+			const doclinFilePath = await getExistingDoclinFilePath();
 
-      if (!doclinFilePath) {
-        logger.error("Doclin file does not exist");
-        return "";
-      }
+			if (!doclinFilePath) {
+				logger.error("Doclin file does not exist");
+				return "";
+			}
 
-      const doclinFolder = path.dirname(doclinFilePath.fsPath);
+			const doclinFolder = path.dirname(doclinFilePath.fsPath);
 
-      const relativePath = path.relative(doclinFolder, activeEditorFilePath);
+			const relativePath = path.relative(doclinFolder, activeEditorFilePath);
 
-      if (isActiveEditorOutsideDoclinFolder(relativePath)) {
-        logger.error("Active file path does not belong in this project");
-        return "";
-      }
+			if (isActiveEditorOutsideDoclinFolder(relativePath)) {
+				logger.error("Active file path does not belong in this project");
+				return "";
+			}
 
-      return relativePath;
-    }
+			return relativePath;
+		}
 
 		return "";
 
@@ -148,8 +148,8 @@ const getActiveEditorFilePath = async (): Promise<string> => {
 };
 
 const isActiveEditorOutsideDoclinFolder = (relativePath: string) => {
-  return relativePath.startsWith('..');
-}
+	return relativePath.startsWith('..');
+};
 
 export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
 	try {

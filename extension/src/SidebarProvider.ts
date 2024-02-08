@@ -184,20 +184,20 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   		}
   	});
 
-    vscode.window.onDidChangeActiveTextEditor(async (editor) => {
-      if (editor) {
-        if (await isDoclinProjectChanged()) {
-          webviewView.webview.postMessage({
-            type: "getExtensionState",
-            value: await getExtensionState(),
-          });
-        } else {
-          webviewView.webview.postMessage({
-            type: "switchActiveEditor"
-          });
-        }
-      }
-    });
+  	vscode.window.onDidChangeActiveTextEditor(async (editor) => {
+  		if (editor) {
+  			if (await isDoclinProjectChanged()) {
+  				webviewView.webview.postMessage({
+  					type: "getExtensionState",
+  					value: await getExtensionState(),
+  				});
+  			} else {
+  				webviewView.webview.postMessage({
+  					type: "switchActiveEditor"
+  				});
+  			}
+  		}
+  	});
   }
 
   public revive(panel: vscode.WebviewView) {

@@ -10,7 +10,6 @@
     import AccessRequired from "./AccessRequired.svelte";
     import ViewerTopBar from "./ViewerTopBar.svelte";
     import RegisterEmail from "./RegisterEmail.svelte";
-    import WebviewStateReactive from "./WebviewStateReactive.svelte";
     import { currentOrganization, currentProject, githubUrl, page } from "../state/store";
 
     let accessToken = "";
@@ -43,17 +42,14 @@
             return;
         }
 
-        if ($currentOrganization && $currentOrganization?.unauthorized) {
-            $page = Page.AccessRequired;
         if (!isFolderOrFileOpened) {
-            page = Page.NoFolderOrFile;
-            WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+            $page = Page.NoFolderOrFile;
             loading = false;
             return;
         }
 
-        if (!$githubUrl) {
-            $page = Page.NotGitRepo;
+        if ($currentOrganization && $currentOrganization?.unauthorized) {
+            $page = Page.AccessRequired;
             loading = false;
             return;
         }

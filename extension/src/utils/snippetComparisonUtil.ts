@@ -105,17 +105,17 @@ export const compareSnippetsWithActiveEditor = async (snippets: Snippet[]): Prom
 };
 
 const readFileContent = async (filePath: string): Promise<string | null> => {
-    try {
-        const doclinFilePath = await getExistingDoclinFilePath();
+	try {
+		const doclinFilePath = await getExistingDoclinFilePath();
 
-        if (!doclinFilePath) {
-            logger.error("Could not find doclin file path");
-            return null;
-        }
+		if (!doclinFilePath) {
+			logger.error("Could not find doclin file path");
+			return null;
+		}
 
-        const doclinFolder = vscode.Uri.parse(path.dirname(doclinFilePath.fsPath));
+		const doclinFolder = vscode.Uri.parse(path.dirname(doclinFilePath.fsPath));
 
-        const fileUri = vscode.Uri.joinPath(doclinFolder, filePath);
+		const fileUri = vscode.Uri.joinPath(doclinFolder, filePath);
 
 		if (fileContentMap.has(fileUri)) {
 			return fileContentMap.get(fileUri) ?? null;
@@ -139,14 +139,4 @@ const readFileContent = async (filePath: string): Promise<string | null> => {
 		logger.error("Error occured while reading code file " + error);
 		return null;
 	}
-};
-
-const getCurrentWorkspaceRootPath = (): string | null => {
-	const workspaceFolders = vscode.workspace.workspaceFolders;
-
-	if (!workspaceFolders || workspaceFolders.length === 0) {
-		return null;
-	}
-
-	return workspaceFolders[0].uri.fsPath;
 };

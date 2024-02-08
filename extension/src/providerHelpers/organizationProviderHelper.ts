@@ -26,10 +26,10 @@ export const postOrganization = async({ name }: { name: string }) => {
 };
 
 export const getCurrentOrganizationId = async (): Promise<string|null> => {
-    const fileJSON: DoclinFile = await readDoclinFile();
+	const fileJSON: DoclinFile = await readDoclinFile();
 
-    return fileJSON?.organizationId;
-}
+	return fileJSON?.organizationId;
+};
 
 export const getCurrentOrganization = async () => {
 	const organizationId = await getCurrentOrganizationId();
@@ -50,8 +50,8 @@ export const getCurrentOrganization = async () => {
 };
 
 export const storeOrganizationId = async (organizationId: string) => {
-    try {
-        const fileJSON: DoclinFile = await readDoclinFile();
+	try {
+		const fileJSON: DoclinFile = await readDoclinFile();
 
 		if (fileJSON) {
 			fileJSON["organizationId"] = organizationId;
