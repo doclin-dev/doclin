@@ -23,3 +23,5 @@ export const githubUrl = createState<string>(WebviewStateType.GITHUB_URL);
 export const activeTextEditor = createState<ActiveTextEditor>(WebviewStateType.ACTIVE_TEXT_EDITOR);
 
 export const activeView = createState<ActiveView>(WebviewStateType.ACTIVE_VIEW);
+
+export const reload = createState<number>(null, 0);

@@ -5,13 +5,19 @@
     import { TextEditor } from "./TextEditor";
     import { ActiveTextEditor, ActiveView, Page } from "../enums";
     import FilterMenu from "./FilterMenu.svelte";
-    import { activeTextEditor, activeView, currentOrganization, currentProject, page, threadContents } from "../state/store";
+    import { activeTextEditor, activeView, currentOrganization, currentProject, page, reload, threadContents } from "../state/store";
     
     let quillEditor: TextEditor;
     let threads: Array<ThreadType> = [];
     let anonymousCheck: boolean = false;
     let activeFilePath: string;
     let organizationUsers: User[] | undefined = $currentOrganization?.members;
+
+    $: {
+        if ($reload) {
+            loadThreads();
+        }
+    }
 
     async function submitThreadMessage() {
         const { delta, message: threadMessage, snippets, mentionedUserIds } = quillEditor.getStructuredText();
@@ -47,7 +53,11 @@
         });
     }
 
-    async function loadCurrentFileThreads() {
+    const loadThreads = () => {
+        $activeView === ActiveView.CurrentFileThreads ? loadCurrentFileThreads() : loadAllThreads();
+    }
+
+    const loadCurrentFileThreads = () => {
         if ($currentProject) {
             tsvscode.postMessage({ type: 'getThreadsByActiveFilePath', value: { currentProjectId: $currentProject.id } });
         }
@@ -92,8 +102,7 @@
         }
 
         window.addEventListener("message", messageEventListener);
-
-        $activeView === ActiveView.CurrentFileThreads ? loadCurrentFileThreads() : loadAllThreads();
+        loadThreads();
         initializeQuillEditor();
     });
 

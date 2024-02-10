@@ -10,7 +10,7 @@
     import AccessRequired from "./AccessRequired.svelte";
     import ViewerTopBar from "./ViewerTopBar.svelte";
     import RegisterEmail from "./RegisterEmail.svelte";
-    import { currentOrganization, currentProject, githubUrl, page } from "../state/store";
+    import { currentOrganization, currentProject, githubUrl, page, reload } from "../state/store";
 
     let loading = true;
     let user: User | null = null;
@@ -68,6 +68,7 @@
         }
 
         loading = false;
+        $reload += 1;
     }
 
     const getExtensionState = () => {

@@ -11,6 +11,7 @@
     "Other"
   ],
   "activationEvents": [
+    "onStartupFinished",
     "onCommand:doclin.addComment",
     "onCommand:doclin.authenticate",
     "onView:doclin.sidebar"
