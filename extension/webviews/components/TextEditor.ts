@@ -165,7 +165,6 @@ export class TextEditor {
     			throw new Error('Invalid data type. Expected string or object.');
     		}
     	} catch (error) {
-    		console.error('Error parsing JSON:', error);
     		return null;
     	}
 	}
