@@ -26,6 +26,7 @@ const executeGitCommand = async (command: string) => {
 		return stdout.trim();;
 
 	} catch (error) {
+		logger.error(`Error during git command ${error}`);
 		return "";
 	}
 };
