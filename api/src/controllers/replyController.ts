@@ -54,7 +54,8 @@ const createSnippetEntitiesFromReplyMessage = async (replyMessage: string, snipp
 		const snippet: ReplySnippet = await ReplySnippet.create({
 			text: snippetblot.originalSnippet,
 			filePath: snippetblot.filePath,
-			lineStart: snippetblot.lineStart
+			lineStart: snippetblot.lineStart,
+			gitBranch: snippetblot.gitBranch
 		}).save();
 
 		snippetEntities.push(snippet);

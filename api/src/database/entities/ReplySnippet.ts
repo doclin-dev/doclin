@@ -31,4 +31,7 @@ export class ReplySnippet extends BaseEntity {
   lineStart: number | null;
 
   replyId: number;
+
+  @Column({ type: "varchar", nullable: true })
+  gitBranch: string;
 }

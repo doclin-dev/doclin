@@ -74,7 +74,6 @@ export class TextEditor {
 
     	const { sanitizedDelta, mentionedUserIds } = this.sanitizeMentionDelta(delta);
     	const { newDelta, snippets } = this.seperateSnippetBlotsFromDelta(sanitizedDelta);
-
     	const message = this.getHtmlFromDelta(newDelta);
 
     	return { delta: sanitizedDelta, message, snippets, mentionedUserIds };
@@ -132,7 +131,7 @@ export class TextEditor {
     	this.quillInstance.theme.modules.toolbar.container.style.display = 'none';
 	};
 
-	insertCodeSnippet({ filePath, lineStart, displaySnippet, originalSnippet }: TextEditorInsertSnippet): void {
+	insertCodeSnippet({ filePath, lineStart, displaySnippet, originalSnippet, gitBranch }: TextEditorInsertSnippet): void {
     	const editor = this.quillInstance;
     	const selection = editor.getSelection(true);
     	const cursorPosition: number = selection ? selection.index : editor.getLength();
@@ -145,7 +144,8 @@ export class TextEditor {
     					displaySnippet, 
     					filePath, 
     					lineStart, 
-    					originalSnippet 
+    					originalSnippet,
+						gitBranch
     				}
     			}, 
     			{ 

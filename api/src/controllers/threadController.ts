@@ -46,7 +46,8 @@ const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, sni
 		const snippet: ThreadSnippet = await ThreadSnippet.create({
 			text: snippetblot.originalSnippet,
 			filePath: snippetblot.filePath,
-			lineStart: snippetblot.lineStart
+			lineStart: snippetblot.lineStart,
+			gitBranch: snippetblot.gitBranch
 		}).save();
 
 		snippetEntities.push(snippet);

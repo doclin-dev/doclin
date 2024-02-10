@@ -74,7 +74,7 @@ export const getExistingDoclinFilePath = async (): Promise<vscode.Uri | null> =>
 	}
 };
 
-const getWorkspaceFolder = (): vscode.Uri | null => {
+export const getWorkspaceFolder = (): vscode.Uri | null => {
 	const workspaceFolders = vscode.workspace.workspaceFolders;
 
 	if (workspaceFolders && workspaceFolders.length > 0) {
@@ -192,21 +192,4 @@ export const isFolderOrFileOpened = (): boolean => {
 	}
 
 	return false;
-};
-
-export const getGithubUrl = async () : Promise<string> => {
-	try {
-		const directory = getActiveEditorFolder() ?? getWorkspaceFolder();
-
-		if (!directory) {
-			logger.error("No folder or file is opened.");
-			return "";
-		}
-
-		const { stdout }: {stdout: string} = await executeShellCommand(`cd ${directory.fsPath} && git config --get remote.origin.url`);
-		return stdout;
-
-	} catch (error) {
-		return "";
-	}
 };

@@ -9,6 +9,7 @@ import { getAuthenticatedUser } from "./authenticationProviderHelper";
 import logger from "../utils/logger";
 import * as path from 'path';
 import { getExistingDoclinFilePath } from "../utils/doclinFileReadWriteUtil";
+import { getGitBranch } from "../utils/gitProviderUtil";
 
 export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[], activeFilePath: string }> => {
 	const activeFilePath = await getActiveEditorFilePath();
@@ -166,12 +167,13 @@ export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
 			const lineStart = getLineStart(activeTextEditor);
 			const originalSnippet = activeTextEditor.document.getText(activeTextEditor.selection);
 			const displaySnippet = addLineNumbers(lineStart, highlightCode(originalSnippet));
+			const gitBranch = await getGitBranch();
 
 			await pauseExecution(); 
 
 			sidebarProvider._view?.webview.postMessage({
 				type: "populateCodeSnippet",
-				value: { filePath, lineStart, originalSnippet, displaySnippet },
+				value: { filePath, lineStart, originalSnippet, displaySnippet, gitBranch },
 			});
 		}
 	} catch (error) {

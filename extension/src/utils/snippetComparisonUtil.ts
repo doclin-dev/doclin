@@ -21,12 +21,24 @@ export const fillUpThreadOrReplyMessageWithSnippet = (threadOrReply: Thread | Re
 	for (const snippet of threadOrReply.snippets) {
 		threadOrReply.displayMessage = threadOrReply.displayMessage.replace(
 			getSnippetTag(snippet.id), 
-			getReadableCodeBlock(snippet.filePath, snippet.lineStart, snippet.text, snippet.outdated)
+			getReadableCodeBlock(
+				snippet.filePath, 
+				snippet.lineStart,
+				snippet.text, 
+				snippet.outdated,
+				snippet.gitBranch
+			)
 		);
 	}
 };
 
-export const getReadableCodeBlock = (filePath: string, lineStart: number, snippetText: string, outdated: boolean) => {
+export const getReadableCodeBlock = (
+	filePath: string,
+	lineStart: number,
+	snippetText: string,
+	outdated: boolean,
+	gitBranch: string
+) => {
 	const outdatedText = outdated ? OUTDATED_LABEL : "";
 
 	const highlight = hljs.highlightAuto(decodeHtmlEntities(snippetText));
@@ -35,12 +47,11 @@ export const getReadableCodeBlock = (filePath: string, lineStart: number, snippe
 
 	let output = ``;
 
-	if (filePath) {
-		output +=   `<div class="thread-file-path">
-                        <div class="thread-file-path-text">📁 ${filePath}</div> 
-                        <div>${outdatedText}</div>
-                    </div>\n`;
-	}
+	output += `<div class="thread-file-path">`;
+	output += gitBranch ? `<div class="thread-file-path-text">🌿 ${gitBranch}</div>`: ``;
+	output += `<div class="thread-file-path-text">📁 ${filePath}</div>`;
+	output += `<div>${outdatedText}</div>`;
+	output += `</div>\n`;
 
 	output += `${PRE_TAG_START}${snippetText}${PRE_TAG_END}`;
 

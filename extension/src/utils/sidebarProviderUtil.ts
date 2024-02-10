@@ -4,8 +4,9 @@ import { getAuthenticatedUser } from "../providerHelpers/authenticationProviderH
 import { getCurrentOrganization } from "../providerHelpers/organizationProviderHelper";
 import { getCurrentProject } from "../providerHelpers/projectProviderHelper";
 import logger from "./logger";
-import { getActiveEditorFolder, getExistingDoclinFilePath, getGithubUrl, isFolderOrFileOpened } from "./doclinFileReadWriteUtil";
+import { getActiveEditorFolder, getExistingDoclinFilePath, isFolderOrFileOpened } from "./doclinFileReadWriteUtil";
 import * as path from "path";
+import { getGithubUrl } from "./gitProviderUtil";
 
 export const getExtensionState = async () => {
 	try {

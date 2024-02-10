@@ -31,4 +31,7 @@ export class ThreadSnippet extends BaseEntity {
   lineStart: number | null;
 
   threadId: number;
+
+  @Column({ type: "varchar", nullable: true })
+  gitBranch: string;
 }

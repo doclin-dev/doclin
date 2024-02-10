@@ -10,7 +10,7 @@ import { postOrganization, getExistingOrganizations, storeOrganizationId, getCur
 import { getExtensionState, isDoclinProjectChanged } from "./utils/sidebarProviderUtil";
 import { inviteUser, redeemInvitation } from "./providerHelpers/invitationProviderHelper";
 import logger from "./utils/logger";
-import { getGithubUrl } from "./utils/doclinFileReadWriteUtil";
+import { getGithubUrl } from "./utils/gitProviderUtil";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
 	_view?: vscode.WebviewView;

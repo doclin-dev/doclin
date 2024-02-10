@@ -35,5 +35,6 @@ export const mapSnippetResponse = (snippet: ThreadSnippet | ReplySnippet) => {
 		text: snippet.text,
 		filePath: snippet.filePath,
 		lineStart: snippet.lineStart,
+		gitBranch: snippet.gitBranch
 	};
 };
