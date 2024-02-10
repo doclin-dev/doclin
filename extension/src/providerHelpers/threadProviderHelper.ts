@@ -10,6 +10,7 @@ import logger from "../utils/logger";
 import * as path from 'path';
 import { getExistingDoclinFilePath } from "../utils/doclinFileReadWriteUtil";
 import { getGitBranch } from "../utils/gitProviderUtil";
+import { clearThreadsCache, getCachedThreads, storeThreadsCache } from "../utils/threadCachingUtil";
 
 export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[], activeFilePath: string }> => {
 	const activeFilePath = await getActiveEditorFilePath();
@@ -20,9 +21,16 @@ export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[],
 		return { threads: [], activeFilePath: "" };
 	}
 
-	const response = await threadApi.getFileBasedThreads(organizationId, projectId, activeFilePath);
-	const payload = response?.data;
-	let threads: Thread[] = payload?.threads;
+	const cachedThreads = await getCachedThreads(activeFilePath);
+
+	let threads: Thread[];
+
+	if (cachedThreads) {
+		threads = cachedThreads;
+	} else {
+		threads = (await threadApi.getFileBasedThreads(organizationId, projectId, activeFilePath))?.data?.threads;
+		storeThreadsCache(activeFilePath, threads);
+	}
 
 	for (const thread of threads) {
 		await compareSnippetsWithActiveEditor(thread.snippets);
@@ -32,6 +40,7 @@ export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[],
 
 	return { threads, activeFilePath };
 };
+
 
 export const getAllThreads = async (): Promise<Thread[] | undefined> => {
 	const organizationId = await getCurrentOrganizationId();
@@ -75,6 +84,8 @@ export const postThread = async({ threadMessage, delta, snippets, mentionedUserI
 	await compareSnippetsWithActiveEditor(thread.snippets);
 	fillUpThreadOrReplyMessageWithSnippet(thread);
 
+	await clearThreadsCache(activeFilePath);
+
 	return thread;
 };
 
@@ -99,6 +110,8 @@ export const updateThread = async({ threadMessage, threadId, snippets, delta }: 
 
 	await compareSnippetsWithActiveEditor(thread.snippets);
 	fillUpThreadOrReplyMessageWithSnippet(thread);
+
+	await clearThreadsCache(activeFilePath);
 
 	return thread;
 };

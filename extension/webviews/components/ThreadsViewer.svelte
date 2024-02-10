@@ -14,7 +14,7 @@
     let organizationUsers: User[] | undefined = $currentOrganization?.members;
 
     $: {
-        if ($reload) {
+        if ($reload > 1) {
             loadThreads();
         }
     }
@@ -126,7 +126,7 @@
 <div id='viewer'>
     {#if threads}
         {#each threads as thread (thread.id)}
-            <Thread thread={thread} reloadThreads={$activeView === ActiveView.CurrentFileThreads ? loadCurrentFileThreads : loadAllThreads}/>
+            <Thread thread={thread} reloadThreads={loadThreads}/>
         {/each}
     {/if}
 </div>
