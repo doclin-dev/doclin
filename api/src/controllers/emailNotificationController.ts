@@ -29,7 +29,7 @@ export const sendEmailFromDoclin = (recipientEmails: string[], subject: string, 
 	sgMail
 		.send(msg)
 		.then(() => {
-			logger.info(`Invitation email has been successfully sent to ${recipientEmails.join(",")}.`);
+			logger.info(`Email has been successfully sent to ${recipientEmails.join(",")}.`);
 		})
 		.catch((error) => {
 			logger.error(error);
@@ -37,7 +37,6 @@ export const sendEmailFromDoclin = (recipientEmails: string[], subject: string, 
 };
 
 export const sendMentionEmailNotification = async (senderId: number, targetUserIds: number[], projectId: number, message: string) => {
-
 	const sender = await UserRepository.findUserById(senderId);
 	const senderName = sender?.name;
 	const targetUsers = targetUserIds.map(async (mentionedUserId) => {
