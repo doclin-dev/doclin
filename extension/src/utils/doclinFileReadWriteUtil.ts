@@ -75,6 +75,10 @@ export const getExistingDoclinFilePath = async (): Promise<vscode.Uri | null> =>
 };
 
 export const getWorkspaceFolder = (): vscode.Uri | null => {
+	if (vscode.window.activeTextEditor) {
+		return null;
+	}
+
 	const workspaceFolders = vscode.workspace.workspaceFolders;
 
 	if (workspaceFolders && workspaceFolders.length > 0) {
