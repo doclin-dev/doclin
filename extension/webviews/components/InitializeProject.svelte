@@ -25,7 +25,7 @@
             return;
         }
 
-        tsvscode.postMessage({ type: 'postProject', value: { name: postProjectName, githubUrl: githubUrl } });
+        tsvscode.postMessage({ type: 'postProject', value: { name: postProjectName, githubUrl: $githubUrl }});
     }
 
     const fetchExistingProjects = async () => {
