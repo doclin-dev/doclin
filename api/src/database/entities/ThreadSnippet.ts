@@ -11,24 +11,27 @@ import { Thread } from "./Thread";
 
 @Entity()
 export class ThreadSnippet extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn()
+  	id: number;
 
-  @CreateDateColumn()
-  createdAt: Date;
+    @CreateDateColumn()
+  	createdAt: Date;
 
-  @Column("text")
-  text: string;
+    @Column("text")
+  	text: string;
 
-  @ManyToOne(() => Thread, (t) => t.snippets, { nullable: true, onDelete: 'CASCADE' })
-  @JoinColumn({ name: "threadId" })
-  thread: Thread;
+    @ManyToOne(() => Thread, (t) => t.snippets, { nullable: true, onDelete: 'CASCADE' })
+    @JoinColumn({ name: "threadId" })
+  	thread: Thread;
 
-  @Column({ type: "varchar", nullable: true })
-  filePath: string | null;
+    @Column({ type: "varchar", nullable: true })
+  	filePath: string | null;
 
-  @Column({ type: "integer", nullable: true })
-  lineStart: number | null;
+    @Column({ type: "integer", nullable: true })
+  	lineStart: number | null;
 
-  threadId: number;
+    threadId: number;
+
+    @Column({ length: 150, nullable: true })
+  	gitBranch: string;
 }

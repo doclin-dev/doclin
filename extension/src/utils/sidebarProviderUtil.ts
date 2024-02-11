@@ -1,18 +1,53 @@
+import { GlobalStateManager } from "../GlobalStateManager";
+import { GlobalStateType } from "../enums";
 import { getAuthenticatedUser } from "../providerHelpers/authenticationProviderHelper";
 import { getCurrentOrganization } from "../providerHelpers/organizationProviderHelper";
-import { getCurrentProject, getGithubUrl } from "../providerHelpers/projectProviderHelper";
+import { getCurrentProject } from "../providerHelpers/projectProviderHelper";
 import logger from "./logger";
+import { getActiveEditorFolder, getExistingDoclinFilePath, isFolderOrFileOpened } from "./doclinFileReadWriteUtil";
+import * as path from "path";
+import { getGithubUrl } from "./gitProviderUtil";
+import { clearAllThreadsCache } from "./threadCachingUtil";
 
 export const getExtensionState = async () => {
 	try {
+		clearAllThreadsCache();
+		
 		return {
 			user: await getAuthenticatedUser(),
 			organization: await getCurrentOrganization(),
 			project: await getCurrentProject(),
-			githubUrl: await getGithubUrl()
+			githubUrl: await getGithubUrl(),
+			isFolderOrFileOpened: isFolderOrFileOpened()
 		};
 	} catch (error) {
 		logger.error(`Error during get extension ${error}`);
 		return { error };
+	}
+};
+
+export const isDoclinProjectChanged = async (): Promise<boolean> => {
+	try {
+		const activeEditorFolder = getActiveEditorFolder();
+
+		if (!activeEditorFolder) {
+			return true;
+		}
+
+		let storedDoclinFolder: string | null | undefined = await GlobalStateManager.getState(GlobalStateType.DOCLIN_FOLDER);
+
+		if (storedDoclinFolder && activeEditorFolder.fsPath.startsWith(storedDoclinFolder)) {
+			return false;
+		}
+
+		const doclinFilePath = await getExistingDoclinFilePath();
+		const doclinFolder = doclinFilePath ? path.dirname(doclinFilePath.fsPath) : null;
+
+		GlobalStateManager.setState(GlobalStateType.DOCLIN_FOLDER, doclinFolder);
+		return true;
+
+	} catch (error) {
+		logger.error(`Error during switching active editor`);
+		return true;
 	}
 };

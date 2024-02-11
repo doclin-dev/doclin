@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Organization, Project } from "../types";
+    import type { Project } from "../types";
     import { onMount, onDestroy } from "svelte";
     import { Page } from "../enums";
     import { currentOrganization, currentProject, githubUrl, page } from "../state/store";
@@ -25,7 +25,7 @@
             return;
         }
 
-        tsvscode.postMessage({ type: 'postProject', value: { name: postProjectName } });
+        tsvscode.postMessage({ type: 'postProject', value: { name: postProjectName, githubUrl: $githubUrl }});
     }
 
     const fetchExistingProjects = async () => {

@@ -1,5 +1,5 @@
 import organizationApi from "../api/organizationApi";
-import { readDoclinFile, writeDoclinFile } from "../utils/fileReadWriteUtil";
+import { readDoclinFile, writeDoclinFile } from "../utils/doclinFileReadWriteUtil";
 import logger from "../utils/logger";
 import { DoclinFile } from "../types";
 
@@ -26,9 +26,9 @@ export const postOrganization = async({ name }: { name: string }) => {
 };
 
 export const getCurrentOrganizationId = async (): Promise<string|null> => {
-	const fileJSON = await readDoclinFile();
+	const fileJSON: DoclinFile = await readDoclinFile();
 
-	return fileJSON?.organizationId ?? null;
+	return fileJSON?.organizationId;
 };
 
 export const getCurrentOrganization = async () => {
@@ -51,7 +51,7 @@ export const getCurrentOrganization = async () => {
 
 export const storeOrganizationId = async (organizationId: string) => {
 	try {
-		const fileJSON: DoclinFile | null = await readDoclinFile();
+		const fileJSON: DoclinFile = await readDoclinFile();
 
 		if (fileJSON) {
 			fileJSON["organizationId"] = organizationId;

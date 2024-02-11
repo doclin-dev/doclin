@@ -12,8 +12,8 @@ export const mapThreadResponse = (thread: Thread) => {
 		username: thread.anonymous ? ANONYMOUS_USER : thread.user?.name,
 		replyCount: thread.replyCount,
 		threadCreationTime : thread.createdAt,
-		lastReplied: thread.replies.length > 0 ? thread.replies[0].createdAt : null,
-		snippets: thread.snippets.map(mapSnippetResponse),
+		lastReplied: thread.replies?.length > 0 ? thread.replies[0].createdAt : null,
+		snippets: thread.snippets?.map(mapSnippetResponse),
 		delta: thread.delta
 	};
 };
@@ -35,5 +35,6 @@ export const mapSnippetResponse = (snippet: ThreadSnippet | ReplySnippet) => {
 		text: snippet.text,
 		filePath: snippet.filePath,
 		lineStart: snippet.lineStart,
+		gitBranch: snippet.gitBranch
 	};
 };

@@ -1,8 +1,7 @@
 import * as vscode from "vscode";
-import { executeShellCommand } from "./providerHelperUtils";
 import projectApi from "../api/projectApi";
 import { getCurrentOrganizationId } from "./organizationProviderHelper";
-import { readDoclinFile, writeDoclinFile } from "../utils/fileReadWriteUtil";
+import { readDoclinFile, writeDoclinFile } from "../utils/doclinFileReadWriteUtil";
 import logger from "../utils/logger";
 import { DoclinFile } from "../types";
 
@@ -10,25 +9,10 @@ const UNAUTHORIZED = {
 	unauthorized: true
 };
 
-export const getGithubUrl = async() : Promise<string|undefined> => {
-	if (vscode.workspace.workspaceFolders) {
-		const openedFolderUri: any = vscode.workspace.workspaceFolders[0]?.uri;
-		const openedFolderPath: string = openedFolderUri.fsPath;
-		try {
-			if (openedFolderPath) {
-				let { stdout }: {stdout: string} = await executeShellCommand(`cd ${openedFolderPath} && git config --get remote.origin.url`);
-				return stdout;
-			}
-		} catch {
-			return;
-		}
-	}
-};
-
 export const getCurrentProjectId = async (): Promise<number|null> => {
-	const fileJSON = await readDoclinFile();
+	const fileJSON: DoclinFile = await readDoclinFile();
 
-	return fileJSON?.projectId ?? null;
+	return fileJSON?.projectId;
 };
 
 export const getCurrentProject = async () => {
@@ -61,11 +45,12 @@ export const getExistingProjects = async () => {
 	return projects;
 };
 
-export const postProject = async({ name }: { name: string }) => {
-	const githubUrl = await getGithubUrl();
+export const postProject = async({ name, githubUrl }: { name: string, githubUrl: string }) => {
 	const organizationId = await getCurrentOrganizationId();
 
-	if (!githubUrl || !organizationId) {return { project: null };}
+	if (!organizationId) {return { 
+		project: null 
+	};}
 
 	const response = await projectApi.postProject(organizationId, name, githubUrl);
 	const payload = response?.data;
@@ -78,7 +63,7 @@ export const postProject = async({ name }: { name: string }) => {
 
 export const storeProjectId = async (projectId: number) => {
 	try {
-		const fileJSON: DoclinFile | null = await readDoclinFile();
+		const fileJSON: DoclinFile = await readDoclinFile();
 
 		if (fileJSON) {
 			fileJSON["projectId"] = projectId;

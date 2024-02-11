@@ -1,22 +1,22 @@
-import { Writable, writable } from 'svelte/store';
+import { type Writable, writable } from 'svelte/store';
 import type { WebviewStateType } from '../enums';
 import { WebviewStateManager } from './WebviewStateManager';
 
-export function createState<T>(type?: WebviewStateType, initialValue?: T): Writable<T> {
-    const vscodeStateValue = type ? WebviewStateManager.getState(type) : null;
+export function createState<T>(type?: WebviewStateType|null, initialValue?: T): Writable<T> {
+	const vscodeStateValue = type ? WebviewStateManager.getState(type) : null;
 
-    const store = writable<T>(vscodeStateValue ?? initialValue);
+	const store = writable<T>(vscodeStateValue ?? initialValue);
 
-    const set = (value: T): void => {
-        if (type) {
-            WebviewStateManager.setState(type, value);
-        }
+	const set = (value: T): void => {
+		if (type) {
+			WebviewStateManager.setState(type, value);
+		}
 
     	store.set(value);
-    }
+	};
 
-    return {
+	return {
     	...store,
     	set
-    };
+	};
 }

@@ -31,6 +31,7 @@ export type Snippet = {
     filePath: string;
     lineStart: number;
     outdated: boolean;
+    gitBranch: string;
 };
 
 export type PostThread = { 

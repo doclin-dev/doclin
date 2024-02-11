@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Organization, Project } from "../types";
+    import type { Organization } from "../types";
     import { onMount, onDestroy } from "svelte";
     import { IntializeOrganizationView, Page } from "../enums";
     import RedeemInvitation from "./RedeemInvitation.svelte";

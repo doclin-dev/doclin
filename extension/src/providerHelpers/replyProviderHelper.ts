@@ -66,7 +66,9 @@ export const deleteReply = async ({ replyId }: { replyId: number }) => {
 	const organizationId = await getCurrentOrganizationId();
 	const projectId = await getCurrentProjectId();
 
-	if (!organizationId || !projectId) {return;}
+	if (!organizationId || !projectId) {
+		return;
+	}
 
 	const response = await replyApi.deleteReply(organizationId, projectId, replyId);
 	const reply = response?.data?.reply;

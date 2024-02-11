@@ -2,6 +2,8 @@ import * as vscode from "vscode";
 import hljs from 'highlight.js';
 import { Reply, Snippet, Thread } from "../types";
 import logger from "./logger";
+import { getExistingDoclinFilePath } from "./doclinFileReadWriteUtil";
+import * as path from 'path';
 
 hljs.configure({
 	languages: ['javascript', 'python', 'cpp', 'ruby', 'php', 'html']
@@ -19,12 +21,24 @@ export const fillUpThreadOrReplyMessageWithSnippet = (threadOrReply: Thread | Re
 	for (const snippet of threadOrReply.snippets) {
 		threadOrReply.displayMessage = threadOrReply.displayMessage.replace(
 			getSnippetTag(snippet.id), 
-			getReadableCodeBlock(snippet.filePath, snippet.lineStart, snippet.text, snippet.outdated)
+			getReadableCodeBlock(
+				snippet.filePath, 
+				snippet.lineStart,
+				snippet.text, 
+				snippet.outdated,
+				snippet.gitBranch
+			)
 		);
 	}
 };
 
-export const getReadableCodeBlock = (filePath: string, lineStart: number, snippetText: string, outdated: boolean) => {
+export const getReadableCodeBlock = (
+	filePath: string,
+	lineStart: number,
+	snippetText: string,
+	outdated: boolean,
+	gitBranch: string
+) => {
 	const outdatedText = outdated ? OUTDATED_LABEL : "";
 
 	const highlight = hljs.highlightAuto(decodeHtmlEntities(snippetText));
@@ -33,12 +47,11 @@ export const getReadableCodeBlock = (filePath: string, lineStart: number, snippe
 
 	let output = ``;
 
-	if (filePath) {
-		output +=   `<div class="thread-file-path">
-                        <div class="thread-file-path-text">📁 ${filePath}</div> 
-                        <div>${outdatedText}</div>
-                    </div>\n`;
-	}
+	output += `<div class="thread-file-path">`;
+	output += gitBranch ? `<div class="thread-file-path-text">🌿 ${gitBranch}</div>`: ``;
+	output += `<div class="thread-file-path-text">📁 ${filePath}</div>`;
+	output += `<div>${outdatedText}</div>`;
+	output += `</div>\n`;
 
 	output += `${PRE_TAG_START}${snippetText}${PRE_TAG_END}`;
 
@@ -102,9 +115,18 @@ export const compareSnippetsWithActiveEditor = async (snippets: Snippet[]): Prom
 	fileContentMap.clear();
 };
 
-const readFileContent = async (workspaceRelativePath: string): Promise<string | null> => {
+const readFileContent = async (filePath: string): Promise<string | null> => {
 	try {
-		const fileUri = vscode.Uri.file(`${getCurrentWorkspaceRootPath()}/${workspaceRelativePath}`);
+		const doclinFilePath = await getExistingDoclinFilePath();
+
+		if (!doclinFilePath) {
+			logger.error("Could not find doclin file path");
+			return null;
+		}
+
+		const doclinFolder = vscode.Uri.parse(path.dirname(doclinFilePath.fsPath));
+
+		const fileUri = vscode.Uri.joinPath(doclinFolder, filePath);
 
 		if (fileContentMap.has(fileUri)) {
 			return fileContentMap.get(fileUri) ?? null;
@@ -128,14 +150,4 @@ const readFileContent = async (workspaceRelativePath: string): Promise<string | 
 		logger.error("Error occured while reading code file " + error);
 		return null;
 	}
-};
-
-const getCurrentWorkspaceRootPath = (): string | null => {
-	const workspaceFolders = vscode.workspace.workspaceFolders;
-
-	if (!workspaceFolders || workspaceFolders.length === 0) {
-		return null;
-	}
-
-	return workspaceFolders[0].uri.fsPath;
 };

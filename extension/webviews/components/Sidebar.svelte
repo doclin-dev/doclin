@@ -10,21 +10,17 @@
     import AccessRequired from "./AccessRequired.svelte";
     import ViewerTopBar from "./ViewerTopBar.svelte";
     import RegisterEmail from "./RegisterEmail.svelte";
-    import WebviewStateReactive from "./WebviewStateReactive.svelte";
-    import { currentOrganization, currentProject, githubUrl, page } from "../state/store";
+    import { currentOrganization, currentProject, githubUrl, page, reload } from "../state/store";
 
-    let accessToken = "";
     let loading = true;
     let user: User | null = null;
     let error: any;
-    const ACCESS_REQUIRED = "accessRequired";
 
     const authenticate = () => {
         tsvscode.postMessage({ type: 'authenticate', value: undefined });
     }
 
     const logout = () => {
-        accessToken = '';
         user = null;
         tsvscode.postMessage({ type: 'logout', value: undefined });
     }
@@ -35,6 +31,7 @@
         $currentOrganization = extensionState?.organization;
         $currentProject = extensionState?.project;
         $githubUrl = extensionState?.githubUrl;
+        const isFolderOrFileOpened = extensionState?.isFolderOrFileOpened;
 
         if (!user?.email) {
             $page = Page.RegisterEmail;
@@ -42,14 +39,14 @@
             return;
         }
 
-        if ($currentOrganization && $currentOrganization?.unauthorized) {
-            $page = Page.AccessRequired;
+        if (!isFolderOrFileOpened) {
+            $page = Page.NoFolderOrFile;
             loading = false;
             return;
         }
 
-        if (!$githubUrl) {
-            $page = Page.NotGitRepo;
+        if ($currentOrganization && $currentOrganization?.unauthorized) {
+            $page = Page.AccessRequired;
             loading = false;
             return;
         }
@@ -71,6 +68,7 @@
         }
 
         loading = false;
+        $reload += 1;
     }
 
     const getExtensionState = () => {
@@ -107,8 +105,8 @@
 
     {#if $page === Page.RegisterEmail}
         <RegisterEmail/>
-    {:else if $page === Page.NotGitRepo}
-        <div>Workspace folder is not a github repository.</div>
+    {:else if $page === Page.NoFolderOrFile}
+        <div>No folder or file is opened.</div>
     {:else if $page === Page.AccessRequired}
         <AccessRequired/>
     {:else if $page === Page.InitializeOrganization}

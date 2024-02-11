@@ -7,6 +7,10 @@ import { PostThread, Thread, UpdateThread } from "../types";
 import { SidebarProvider } from "../SidebarProvider";
 import { getAuthenticatedUser } from "./authenticationProviderHelper";
 import logger from "../utils/logger";
+import * as path from 'path';
+import { getExistingDoclinFilePath } from "../utils/doclinFileReadWriteUtil";
+import { getGitBranch } from "../utils/gitProviderUtil";
+import { clearThreadsCache, getCachedThreads, storeThreadsCache } from "../utils/threadCachingUtil";
 
 export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[], activeFilePath: string }> => {
 	const activeFilePath = await getActiveEditorFilePath();
@@ -17,9 +21,16 @@ export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[],
 		return { threads: [], activeFilePath: "" };
 	}
 
-	const response = await threadApi.getFileBasedThreads(organizationId, projectId, activeFilePath);
-	const payload = response?.data;
-	let threads: Thread[] = payload?.threads;
+	const cachedThreads = await getCachedThreads(activeFilePath);
+
+	let threads: Thread[];
+
+	if (cachedThreads) {
+		threads = cachedThreads;
+	} else {
+		threads = (await threadApi.getFileBasedThreads(organizationId, projectId, activeFilePath))?.data?.threads;
+		storeThreadsCache(activeFilePath, threads);
+	}
 
 	for (const thread of threads) {
 		await compareSnippetsWithActiveEditor(thread.snippets);
@@ -29,6 +40,7 @@ export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[],
 
 	return { threads, activeFilePath };
 };
+
 
 export const getAllThreads = async (): Promise<Thread[] | undefined> => {
 	const organizationId = await getCurrentOrganizationId();
@@ -72,6 +84,8 @@ export const postThread = async({ threadMessage, delta, snippets, mentionedUserI
 	await compareSnippetsWithActiveEditor(thread.snippets);
 	fillUpThreadOrReplyMessageWithSnippet(thread);
 
+	await clearThreadsCache(activeFilePath);
+
 	return thread;
 };
 
@@ -97,35 +111,49 @@ export const updateThread = async({ threadMessage, threadId, snippets, delta }: 
 	await compareSnippetsWithActiveEditor(thread.snippets);
 	fillUpThreadOrReplyMessageWithSnippet(thread);
 
+	await clearThreadsCache(activeFilePath);
+
 	return thread;
 };
 
 export const deleteThread = async({ threadId }: { threadId: number }) => {
 	const organizationId = await getCurrentOrganizationId();
 	const projectId = await getCurrentProjectId();
+	const activeFilePath = await getActiveEditorFilePath();
 
 	if (!organizationId || !projectId) {return;}
   
 	const response = await threadApi.deleteThread(organizationId, projectId, threadId);
 	const thread = response?.data?.thread;
 
+	await clearThreadsCache(activeFilePath);
+
 	return thread;
 };
 
 const getActiveEditorFilePath = async (): Promise<string> => {
 	try {
-		const activeEditor = vscode.window.activeTextEditor;
+		const editor = vscode.window.activeTextEditor;
 
-		if (activeEditor) {
-			let activeUri: vscode.Uri | null = activeEditor.document.uri;
+		if (editor) {
+			const activeEditorFilePath: string = editor.document.uri.fsPath;
+			const doclinFilePath = await getExistingDoclinFilePath();
 
-			const workspaceFolder = vscode.workspace.getWorkspaceFolder(activeUri);
-
-			if (workspaceFolder) {
-				const relativePath = vscode.workspace.asRelativePath(activeUri);
-
-				return relativePath;
+			if (!doclinFilePath) {
+				logger.error("Doclin file does not exist");
+				return "";
 			}
+
+			const doclinFolder = path.dirname(doclinFilePath.fsPath);
+
+			const relativePath = path.relative(doclinFolder, activeEditorFilePath);
+
+			if (isActiveEditorOutsideDoclinFolder(relativePath)) {
+				logger.error("Active file path does not belong in this project");
+				return "";
+			}
+
+			return relativePath;
 		}
 
 		return "";
@@ -134,6 +162,10 @@ const getActiveEditorFilePath = async (): Promise<string> => {
 		logger.error("Error while fetching active editor filepath: " + error);
 		return "";
 	}
+};
+
+const isActiveEditorOutsideDoclinFolder = (relativePath: string) => {
+	return relativePath.startsWith('..');
 };
 
 export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
@@ -151,12 +183,13 @@ export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
 			const lineStart = getLineStart(activeTextEditor);
 			const originalSnippet = activeTextEditor.document.getText(activeTextEditor.selection);
 			const displaySnippet = addLineNumbers(lineStart, highlightCode(originalSnippet));
+			const gitBranch = await getGitBranch();
 
 			await pauseExecution(); 
 
 			sidebarProvider._view?.webview.postMessage({
 				type: "populateCodeSnippet",
-				value: { filePath, lineStart, originalSnippet, displaySnippet },
+				value: { filePath, lineStart, originalSnippet, displaySnippet, gitBranch },
 			});
 		}
 	} catch (error) {

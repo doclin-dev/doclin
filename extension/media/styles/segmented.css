@@ -9,7 +9,8 @@
   }
 
 .segmented-control {
-	width: 20rem;
+	width: 17rem;
+	max-width: 100%;
 	height: 2.75rem;
 	position: relative;
 	box-sizing: border-box;
@@ -25,7 +26,6 @@
 
 .segmented-control-background {
 	position: absolute;
-	width: 10rem;
 	height: 2.25rem;
 	top: 3px;
 	left: 0;
@@ -40,7 +40,7 @@
 .segmented-control-item {
 	position: relative;
 	box-sizing: border-box;
-	width: 10rem;
+	width: 100%;
 	height: 2rem;
 	margin: 0;
 	border: 0;
