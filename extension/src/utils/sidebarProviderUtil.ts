@@ -7,9 +7,12 @@ import logger from "./logger";
 import { getActiveEditorFolder, getExistingDoclinFilePath, isFolderOrFileOpened } from "./doclinFileReadWriteUtil";
 import * as path from "path";
 import { getGithubUrl } from "./gitProviderUtil";
+import { clearAllThreadsCache } from "./threadCachingUtil";
 
 export const getExtensionState = async () => {
 	try {
+		clearAllThreadsCache();
+		
 		return {
 			user: await getAuthenticatedUser(),
 			organization: await getCurrentOrganization(),
