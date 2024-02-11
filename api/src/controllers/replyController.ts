@@ -116,5 +116,9 @@ export const deleteReply = async (req: any, res: any) => {
 
 	await reply.remove();
 
-	res.send("Reply sucessfully deleted");
+	res.send({ 
+		reply: {
+			id: replyId
+		}
+	});
 };

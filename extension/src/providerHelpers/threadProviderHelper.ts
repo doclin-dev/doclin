@@ -119,11 +119,14 @@ export const updateThread = async({ threadMessage, threadId, snippets, delta }: 
 export const deleteThread = async({ threadId }: { threadId: number }) => {
 	const organizationId = await getCurrentOrganizationId();
 	const projectId = await getCurrentProjectId();
+	const activeFilePath = await getActiveEditorFilePath();
 
 	if (!organizationId || !projectId) {return;}
   
 	const response = await threadApi.deleteThread(organizationId, projectId, threadId);
 	const thread = response?.data?.thread;
+
+	await clearThreadsCache(activeFilePath);
 
 	return thread;
 };

@@ -92,8 +92,11 @@
                 };
                 break;
             case "deleteThread":
-                $page = Page.ThreadsViewer;
-                reloadThreads();
+                const deletedThread = message.value;
+                if (thread.id == deletedThread.id) {
+                    $page = Page.ThreadsViewer;
+                    reloadThreads();
+                }
                 break;
             case "updateThread":
                 const updatedThread = message.value;

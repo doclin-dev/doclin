@@ -89,7 +89,11 @@
                 }
                 break;
             case "deleteReply":
-                reloadReplies();
+                const deletedReply = message.value;
+                console.log(deletedReply);
+                if (reply.id == deletedReply?.id) {
+                    reloadReplies();
+                }
                 break;
         }
     }

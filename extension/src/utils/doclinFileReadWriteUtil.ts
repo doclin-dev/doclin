@@ -1,12 +1,11 @@
 import * as vscode from "vscode";
 import { DoclinFile } from "../types";
 import logger from "./logger";
-import { executeShellCommand } from "./excecuteShellCommandUtil";
 import * as path from 'path';
 import * as fs from 'fs';
 
 const DOCLIN_FILE_NAME = ".doclin";
-const GIT_FILE_NAME = ".git";
+const GIT_FOLDER_NAME = ".git";
 
 export const readDoclinFile = async (): Promise<DoclinFile> => {
 	try {
@@ -53,7 +52,7 @@ export const writeDoclinFile = async (fileJSON: DoclinFile) => {
 
 export const getExistingDoclinFilePath = async (): Promise<vscode.Uri | null> => {
 	try {
-		const folderPath = getActiveEditorFolder() ?? getWorkspaceFolder();
+		const folderPath = getActiveEditorFolder() ?? getWorkspaceFolderIfNoActiveEditor();
 
 		if (!folderPath) {
 			logger.error("No folder or file is opened");
@@ -74,7 +73,7 @@ export const getExistingDoclinFilePath = async (): Promise<vscode.Uri | null> =>
 	}
 };
 
-export const getWorkspaceFolder = (): vscode.Uri | null => {
+export const getWorkspaceFolderIfNoActiveEditor = (): vscode.Uri | null => {
 	if (vscode.window.activeTextEditor) {
 		return null;
 	}
@@ -119,7 +118,7 @@ const findFileInCurrentAndParentFolders = async (fileName: string, startFolder: 
 };
 
 const computeNewDoclinFilePath = async (): Promise<vscode.Uri | null> => {
-	if (getWorkspaceFolder()) {
+	if (getWorkspaceFolderIfNoActiveEditor()) {
 		return computeNewDoclinFilePathFromWorkspace();
 	}
 
@@ -151,7 +150,7 @@ const computeNewDoclinFilePathFromNonWorkspace = async (): Promise<vscode.Uri | 
 
 const getGitRootDirectory = async (folderPath: vscode.Uri) : Promise<vscode.Uri | null> => {
 	try {
-		const gitFolderPath = await findFileInCurrentAndParentFolders(GIT_FILE_NAME, folderPath.fsPath);
+		const gitFolderPath = await findFileInCurrentAndParentFolders(GIT_FOLDER_NAME, folderPath.fsPath);
 
 		if (!gitFolderPath) {
 			return null;
@@ -167,7 +166,7 @@ const getGitRootDirectory = async (folderPath: vscode.Uri) : Promise<vscode.Uri 
 
 const computeNewDoclinFilePathFromWorkspace = async (): Promise<vscode.Uri | null> => {
 	try {
-		const workspaceFolder = getWorkspaceFolder();
+		const workspaceFolder = getWorkspaceFolderIfNoActiveEditor();
 
 		if (!workspaceFolder) {
 			logger.error(`Error during computing new doclin file path`);
@@ -189,7 +188,7 @@ const computeNewDoclinFilePathFromWorkspace = async (): Promise<vscode.Uri | nul
 };
 
 export const isFolderOrFileOpened = (): boolean => {
-	const folderPath = getActiveEditorFolder() ?? getWorkspaceFolder();
+	const folderPath = getActiveEditorFolder() ?? getWorkspaceFolderIfNoActiveEditor();
 
 	if (folderPath) {
 		return true;

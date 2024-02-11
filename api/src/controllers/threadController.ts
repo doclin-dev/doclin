@@ -114,5 +114,9 @@ export const deleteThread = async (req: any, res: any) => {
 
 	await thread.remove();
 
-	res.send("Thread sucessfully deleted");
+	res.send({ 
+		thread: {
+			id: threadId
+		}
+	});
 };
