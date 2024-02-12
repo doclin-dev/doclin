@@ -42,7 +42,7 @@
     <form class="label-holder">
         <label class="filter-menu-label project-label" for="project">{getOrganizationAndProjectName($currentOrganization?.name, $currentProject?.name)}</label>
         {#if isCurrentFileView}
-            <label class="filter-menu-label file-label" for="file">📁 {filePath}</label>
+            <label class="filter-menu-label file-label" for="file">File: {filePath}</label>
         {/if}
     </form>
 </div>
