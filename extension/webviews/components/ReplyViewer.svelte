@@ -117,7 +117,7 @@
             <Button icon='back-icon' type='text' onClick={handleBackClick}/>
         </div>
     </div>
-    <div style="padding-bottom: 0.5rem">
+    <div>
         <Thread thread={$threadSelected} showReplyButton={false}/>
         <div class="reply-count-line">
             <div class="reply-count-divider"></div>
@@ -125,6 +125,12 @@
             <div class="reply-count-divider"></div>
         </div>
     </div>
+    <div style="padding-bottom: 0.5rem">
+        {#each replies as reply (reply.id)}
+            <Reply reply={reply} reloadReplies={loadReplies}/>
+        {/each}
+    </div>
+    
     <form>
         <div id="replyViewerEditor"></div>
         <label class="checkbox">
@@ -133,9 +139,4 @@
         </label>
         <button on:click|preventDefault={onSubmit}>Submit</button>
     </form>
-    <div>
-        {#each replies as reply (reply.id)}
-            <Reply reply={reply} reloadReplies={loadReplies}/>
-        {/each}
-    </div>
 </div>
