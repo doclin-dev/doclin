@@ -5,12 +5,18 @@
     import { onMount, onDestroy } from "svelte";
     import Reply from "./Reply.svelte";
     import { TextEditor } from "./TextEditor";
-    import { activeTextEditor, currentOrganization, page, replyContents, threadSelected } from "../state/store";
+    import { activeTextEditor, currentOrganization, page, reload, replyContents, threadSelected } from "../state/store";
 
     let quillReplyViewer: TextEditor;
     let replies : Array<{message: string, id: number}> = [];
     let anonymousCheck: boolean = false;
     let organizationUsers = $currentOrganization?.members;
+
+    $: {
+        if ($reload > 1) {
+            loadReplies();
+        }
+    }
 
     async function initializeQuillEditor() {
         quillReplyViewer = new TextEditor('#replyViewerEditor', organizationUsers);
@@ -74,7 +80,7 @@
                 break;
             case "postReply":
                 const reply = message.value;
-                replies = [reply, ...replies];
+                replies = [...replies, reply];
                 break;
         }
     };
@@ -95,6 +101,14 @@
         window.removeEventListener("message", messageEventListener);
     });
 
+    const getReplyCountText = (count: number) => {
+        if (count > 1) {
+            return `${count} replies`;
+        } else {
+            return `${count} reply`;
+        }
+    }
+
 </script>
 
 <div class='reply-viewer'>
@@ -103,9 +117,20 @@
             <Button icon='back-icon' type='text' onClick={handleBackClick}/>
         </div>
     </div>
-    <div style="padding-bottom: 0.5rem">
+    <div>
         <Thread thread={$threadSelected} showReplyButton={false}/>
+        <div class="reply-count-line">
+            <div class="reply-count-divider"></div>
+            <p>{getReplyCountText(replies.length)}</p>
+            <div class="reply-count-divider"></div>
+        </div>
     </div>
+    <div style="padding-bottom: 0.5rem">
+        {#each replies as reply (reply.id)}
+            <Reply reply={reply} reloadReplies={loadReplies}/>
+        {/each}
+    </div>
+    
     <form>
         <div id="replyViewerEditor"></div>
         <label class="checkbox">
@@ -114,9 +139,4 @@
         </label>
         <button on:click|preventDefault={onSubmit}>Submit</button>
     </form>
-    <div>
-        {#each replies as reply (reply.id)}
-            <Reply reply={reply} reloadReplies={loadReplies}/>
-        {/each}
-    </div>
 </div>

@@ -7,7 +7,7 @@ export const ReplyRepository = AppDataSource.getRepository(Reply).extend({
 			.leftJoinAndSelect('reply.user', 'user')
 			.leftJoinAndSelect('reply.snippets', 'snippet')
 			.where('reply.threadId = :threadId', { threadId })
-			.orderBy('reply.id', 'DESC')
+			.orderBy('reply.id', 'ASC')
 			.getMany();
 	},
 

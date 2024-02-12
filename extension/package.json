@@ -3,6 +3,7 @@
   "displayName": "Doclin",
   "publisher": "Doclin",
   "description": "Doclin is a modern way of commenting on codebase.",
+  "icon": "media/doclinLogo.png",
   "version": "0.1.1",
   "engines": {
     "vscode": "^1.52.0"

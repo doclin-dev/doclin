@@ -31,12 +31,10 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 const createStatusBarItem = () => {
-	const item = vscode.window.createStatusBarItem(
-		vscode.StatusBarAlignment.Right
-	);
-	item.text = "$(comments-view-icon) Add Comment";
-	item.command = DOCLIN_ADD_COMMENT;
-	item.show();
+	const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+	statusBarItem.text = "$(comments-view-icon) Add Comment";
+	statusBarItem.command = DOCLIN_ADD_COMMENT;
+	statusBarItem.show();
 };
 
 export function deactivate() {}
