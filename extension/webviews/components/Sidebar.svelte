@@ -106,7 +106,7 @@
     {#if $page === Page.RegisterEmail}
         <RegisterEmail/>
     {:else if $page === Page.NoFolderOrFile}
-        <div>No folder or file is opened.</div>
+        <div>Open a file or a folder to use doclin features.</div>
     {:else if $page === Page.AccessRequired}
         <AccessRequired/>
     {:else if $page === Page.InitializeOrganization}
