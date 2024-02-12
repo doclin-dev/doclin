@@ -21,7 +21,7 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
 			.leftJoinAndSelect('thread.replies', 'reply')
 			.where('thread.projectId = :projectId', { projectId })
 			.andWhere("thread.id IN (:...threadIds)", { threadIds })
-			.orderBy({ 'thread.id': 'DESC', 'reply.id' : 'DESC' })
+			.orderBy({ 'thread.id': 'DESC', 'reply.id' : 'ASC' })
 			.loadRelationCountAndMap("thread.replyCount", "thread.replies")
 			.getMany();
 		return relevantThreadsWithAllInfoPopulated;
@@ -33,7 +33,7 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
 			.leftJoinAndSelect('thread.user', 'user')
 			.leftJoinAndSelect('thread.replies', 'reply')
 			.where('thread.projectId = :projectId', { projectId })
-			.orderBy({ 'thread.id': 'DESC', 'reply.id' : 'DESC' })
+			.orderBy({ 'thread.id': 'DESC', 'reply.id' : 'ASC' })
 			.loadRelationCountAndMap("thread.replyCount", "thread.replies")
 			.getMany();
 	},

@@ -151,11 +151,4 @@
             {/if}
         {/if}
     </div>
-    {#if $page === Page.ReplyViewer}
-        <div class="reply-count-line">
-            <div class="reply-count-divider"></div>
-            <p>{replyCountText}</p>
-            <div class="reply-count-divider"></div>
-        </div>
-    {/if}
 </div>
