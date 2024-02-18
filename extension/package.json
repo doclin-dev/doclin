@@ -4,7 +4,7 @@
   "publisher": "Doclin",
   "description": "Doclin is a modern way of commenting on codebase.",
   "icon": "media/doclinLogo.png",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "engines": {
     "vscode": "^1.52.0"
   },
