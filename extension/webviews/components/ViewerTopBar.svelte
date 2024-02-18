@@ -1,28 +1,24 @@
 <script type="ts">
-    import { onMount } from "svelte";
     import Button from "./Button.svelte";
-    import { WebviewStateManager } from "../WebviewStateManager";
     import { Page } from "../enums";
-    import type { Project } from "../types";
+    import { page } from "../state/store";
     
     export let username: string;
-    export let page: Page;
-    
-    let currentProject: Project | null; 
+    export let reload: () => void;
+    export let logout: () => void;
 
     const switchToInvitePage = () => {
-        page = Page.InviteUser;
-        WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
+        $page = Page.InviteUser;
     }
-
-    onMount(() => {
-        currentProject = WebviewStateManager.getState(WebviewStateManager.type.CURRENT_PROJECT);
-    });
 </script>
 
 <div class='header'>
     <div>Welcome <span class="name-header">{username}</span></div>
+
     <div class='icon-container'>
+        <Button icon="reload" type='text' onClick={reload}/>
         <Button icon="invite" type='text' onClick={switchToInvitePage}/>
+        <Button icon="logout" type='text' onClick={logout}/>
     </div>
+
 </div>

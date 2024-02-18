@@ -1,11 +1,11 @@
 import {
-  BaseEntity,
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  ManyToOne,
-  JoinColumn
+	BaseEntity,
+	Column,
+	Entity,
+	PrimaryGeneratedColumn,
+	CreateDateColumn,
+	ManyToOne,
+	JoinColumn
 } from "typeorm";
 import { Organization } from "./Organization";
 import { Project } from "./Project";

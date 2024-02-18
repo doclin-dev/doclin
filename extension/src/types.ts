@@ -23,7 +23,7 @@ export type Reply = {
     displayMessage: string;
     username: string;
     replyCreationTime: Date;
-}
+};
 
 export type Snippet = {
     id: number;
@@ -31,6 +31,7 @@ export type Snippet = {
     filePath: string;
     lineStart: number;
     outdated: boolean;
+    gitBranch: string;
 };
 
 export type PostThread = { 
@@ -55,7 +56,7 @@ export type PostReply = {
     snippets: any[],
     delta: any,
     mentionedUserIds: number[]
-}
+};
 
 export type UpdateReply = {
     replyMessage: string, 

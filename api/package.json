@@ -1,13 +1,14 @@
 {
   "name": "doclin-api",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "",
   "main": "index.js",
   "scripts": {
     "watch": "tsc -w",
     "build": "tsc",
     "dev": "nodemon dist/index.js",
-    "clean": "rm -rf node_modules && rm -rf dist && npm install"
+    "clean": "rm -rf node_modules && rm -rf dist && npm install",
+    "lint": "eslint src --ext ts"
   },
   "keywords": [],
   "author": "",
@@ -33,6 +34,9 @@
     "@types/node": "^14.14.14",
     "@types/passport": "^1.0.4",
     "@types/passport-github": "^1.1.5",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.56.0",
     "nodemon": "^2.0.6",
     "typescript": "^4.1.3"
   }

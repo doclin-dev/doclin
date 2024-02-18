@@ -1,12 +1,12 @@
 import {
-  BaseEntity,
-  Column,
-  Entity,
-  OneToMany,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  JoinColumn
+	BaseEntity,
+	Column,
+	Entity,
+	OneToMany,
+	ManyToOne,
+	PrimaryGeneratedColumn,
+	CreateDateColumn,
+	JoinColumn
 } from "typeorm";
 import { Organization } from "./Organization";
 import { Thread } from "./Thread";
@@ -23,7 +23,7 @@ export class Project extends BaseEntity {
   @Column("text")
   name: string;
 
-  @Column("text")
+  @Column({ type: "text", nullable: true })
   url: string;
 
   @Column()

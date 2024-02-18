@@ -5,7 +5,7 @@ export enum Page {
   Contact = "contact",
   InitializeOrganization = "initializeOrganization",
   Login = "login",
-  NotGitRepo = "notGitRepo",
+  NoFolderOrFile = "noFolderOrFileOpened",
   AccessRequired = "accessRequired",
   InviteUser = "inviteUser",
   RegisterEmail = "registerEmail"
@@ -27,4 +27,16 @@ export enum IntializeOrganizationView {
 export enum ActiveView {
   AllThreads = 0,
   CurrentFileThreads = 1,
+}
+
+export enum WebviewStateType {
+  PAGE = "page",
+  CURRENT_ORGANIZATION = "currentOrganization",
+  CURRENT_PROJECT = "currentProject",
+  THREAD_CONTENTS = "threadContents",
+  REPLY_CONTENTS = "replyContents",
+  THREAD_SELECTED = "threadSelected",
+  GITHUB_URL = "githubUrl",
+  ACTIVE_TEXT_EDITOR = "activeTextEditor",
+  ACTIVE_VIEW = "activeView",
 }

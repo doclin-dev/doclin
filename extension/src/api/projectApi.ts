@@ -1,42 +1,42 @@
 import { createAxiosInstance } from "./apiService";
 
 const getBaseProjectUrl = (organizationId: string) => {
-    return `/organizations/${organizationId}/projects`;
-}
+	return `/organizations/${organizationId}/projects`;
+};
 
 const getProjects = async (organizationId: string) => {
-    const apiService = await createAxiosInstance();
-    const baseProjectUrl = getBaseProjectUrl(organizationId);
+	const apiService = await createAxiosInstance();
+	const baseProjectUrl = getBaseProjectUrl(organizationId);
 
-    const response = await apiService.get(baseProjectUrl);
+	const response = await apiService.get(baseProjectUrl);
 
-    return response;
-}
+	return response;
+};
 
 const postProject = async(organizationId: string, name: string, githubUrl: string) => {
-    const data = {
-        name: name,
-        url: githubUrl
-    };
+	const data = {
+		name: name,
+		url: githubUrl
+	};
 
-    const apiService = await createAxiosInstance();
-    const baseProjectUrl = getBaseProjectUrl(organizationId);
-    const response = await apiService.post(baseProjectUrl, data);
+	const apiService = await createAxiosInstance();
+	const baseProjectUrl = getBaseProjectUrl(organizationId);
+	const response = await apiService.post(baseProjectUrl, data);
 
-    return response;
-}
+	return response;
+};
 
 const getProject = async (projectId: number, organizationId: string) => {
-    const apiService = await createAxiosInstance();
-    const baseProjectUrl = getBaseProjectUrl(organizationId);
+	const apiService = await createAxiosInstance();
+	const baseProjectUrl = getBaseProjectUrl(organizationId);
 
-    const response = await apiService.get(`${baseProjectUrl}/${projectId}`);
+	const response = await apiService.get(`${baseProjectUrl}/${projectId}`);
 
-    return response;
-}
+	return response;
+};
 
 export default {
-    getProjects,
-    postProject,
-    getProject
-}
+	getProjects,
+	postProject,
+	getProject
+};

@@ -5,13 +5,15 @@ import keyboardBackspace from '@iconify/icons-mdi/keyboard-backspace';
 import bellOutline from '@iconify/icons-mdi/bell-outline';
 import openInNew from '@iconify/icons-mdi/open-in-new';
 import accountPlusOutline from '@iconify/icons-mdi/account-plus-outline';
+import logout from '@iconify/icons-mdi/logout';
 
 export const iconsMap = {
     "reply": replyOutline,
-    "refresh": reloadIcon,
+    "reload": reloadIcon,
     "context-menu": dotsHorizontal,
     "back-icon": keyboardBackspace,
     "notification": bellOutline,
     "open-in-new-window": openInNew,
-    "invite": accountPlusOutline
+    "invite": accountPlusOutline,
+    "logout": logout
 }

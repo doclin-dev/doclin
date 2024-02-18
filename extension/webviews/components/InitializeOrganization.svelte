@@ -1,11 +1,10 @@
 <script lang="ts">
-    import type { Organization, Project } from "../types";
+    import type { Organization } from "../types";
     import { onMount, onDestroy } from "svelte";
     import { IntializeOrganizationView, Page } from "../enums";
-    import { WebviewStateManager } from "../WebviewStateManager";
     import RedeemInvitation from "./RedeemInvitation.svelte";
+    import { currentOrganization, page } from "../state/store";
 
-    export let page: Page;
     let postOrganizationName: string = "";
     let existingOrganizations: Organization[] = [];
     let error: string = "";
@@ -19,18 +18,9 @@
     const INITIALIZE_MESSAGE: string = "This will create a '.doclin' file in your directory.\
      Push it to your git repository to enable your team members to join your organization.";
 
-    const switchPageToProject = () => {
-        page = Page.InitializeProject;
-        WebviewStateManager.setState(WebviewStateManager.type.PAGE, page);
-    }
-
-    const addCurrentOrganizationToState = (organization: Organization) => {
-        WebviewStateManager.setState(WebviewStateManager.type.CURRENT_ORGANIZATION, organization);
-    }
-
     const setCurrentOrganization = (organization: Organization) => {
         tsvscode.postMessage({ type: 'setCurrentOrganization', value: organization?.id });
-        addCurrentOrganizationToState(organization);
+        $currentOrganization = organization;
     }
 
     const createNewOrganization = async () => {
@@ -70,17 +60,16 @@
         const message = event.data;
         switch (message.type) {
             case "postOrganization":
-                addCurrentOrganizationToState(message.value);
-                switchPageToProject();
+                $currentOrganization = message.value;
+                $page = Page.InitializeProject;
                 break;
             case "getExistingOrganizations":
                 existingOrganizations = message.value;
                 setView(existingOrganizations);
                 break;
             case "setCurrentOrganization":
-                switchPageToProject();
+                $page = Page.InitializeProject;
                 break;
-
         }
     }
 
@@ -95,7 +84,7 @@
     });
 </script>
 
-<div>
+<div class="pt-2">
     {#if view === IntializeOrganizationView.CreateOrganization}
         <div>
             <h3>{CREATE_NEW_ORGANIZATION}:</h3>
@@ -122,7 +111,7 @@
     {#if view === IntializeOrganizationView.EnterInvitation}
         <div>
             <h3>{ENTER_INVITATION}:</h3>
-            <RedeemInvitation bind:page={page}/>
+            <RedeemInvitation/>
 
             <div class="mt-2">
                 <i>{INITIALIZE_MESSAGE}</i>
@@ -139,7 +128,7 @@
     
     {#if view === IntializeOrganizationView.JoinOrganization}
         <div>
-            <h3>{JOIN_ORGANIZATION}</h3>
+            <h3>{JOIN_ORGANIZATION}:</h3>
 
             <ul>
                 {#each existingOrganizations as organization (organization.id)}

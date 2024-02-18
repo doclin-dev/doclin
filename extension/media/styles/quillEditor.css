@@ -48,3 +48,12 @@ pre.ql-syntax hr {
     border: 1px solid var(--vscode-input-foreground);
     border-top: none;
 }
+
+.reply-card .ql-toolbar {
+    border: 1px solid var(--vscode-input-foreground);
+}
+
+.reply-card .ql-editor {
+    border: 1px solid var(--vscode-input-foreground);
+    border-top: none;
+}
