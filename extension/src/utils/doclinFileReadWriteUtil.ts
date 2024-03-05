@@ -137,10 +137,18 @@ const computeNewDoclinFilePathFromNonWorkspace = async (): Promise<vscode.Uri | 
 		const gitRootDirectory = await getGitRootDirectory(fileDirectory);
 
 		if (gitRootDirectory) {
-			return vscode.Uri.joinPath(gitRootDirectory, DOCLIN_FILE_NAME);
+			console.log(gitRootDirectory);
+
+			const uri = vscode.Uri.joinPath(gitRootDirectory, DOCLIN_FILE_NAME);
+
+			console.log(uri.fsPath);
+
+			return uri;
 		}
         
-		return vscode.Uri.joinPath(fileDirectory, DOCLIN_FILE_NAME);
+		const otherUri = vscode.Uri.joinPath(fileDirectory, DOCLIN_FILE_NAME)
+		console.log(otherUri);
+		return otherUri;
 
 	} catch (error) {
 		logger.error(`Error computing new doclin file path from non workspace ${error}`);
