@@ -1,5 +1,7 @@
 node_modules
 dist
-extension/out/compiled/
+extension/out/
 .DS_Store
 testing-profile
+.env
+extension/.vscode-test/
