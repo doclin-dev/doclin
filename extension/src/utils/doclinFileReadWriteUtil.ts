@@ -65,7 +65,7 @@ export const getExistingDoclinFilePath = async (): Promise<vscode.Uri | null> =>
 			return null;
 		}
 
-		return vscode.Uri.parse(doclinFilePath);
+		return parseFileToUri(doclinFilePath);
 
 	} catch (error) {
 		logger.error(`Error during getting existing doclin file path`);
@@ -81,7 +81,7 @@ export const getWorkspaceFolderIfNoActiveEditor = (): vscode.Uri | null => {
 	const workspaceFolders = vscode.workspace.workspaceFolders;
 
 	if (workspaceFolders && workspaceFolders.length > 0) {
-		return workspaceFolders[0].uri;
+		return replaceBackwardSlashInUri(workspaceFolders[0].uri);
 	}
 
 	return null;
@@ -93,7 +93,7 @@ export const getActiveEditorFolder = (): vscode.Uri | null => {
 	if (editor) {
 		const filePath = editor.document.uri.fsPath;
 		const folderPath = path.dirname(filePath);
-		return vscode.Uri.parse(folderPath);
+		return parseFileToUri(folderPath);
 	}
 
 	return null;
@@ -107,7 +107,7 @@ const findFileInCurrentAndParentFolders = async (fileName: string, startFolder: 
   
 		try {
 			await fs.promises.access(filePath);
-			return filePath;
+			return replaceBackwardSlashInFilePath(filePath);
 
 		} catch (error) {
 			currentFolder = path.dirname(currentFolder);
@@ -157,7 +157,7 @@ const getGitRootDirectory = async (folderPath: vscode.Uri) : Promise<vscode.Uri 
 		}
 
 		const gitRepoPath = path.dirname(gitFolderPath);
-		return vscode.Uri.parse(gitRepoPath);
+		return parseFileToUri(gitRepoPath);
 
 	} catch (error) {
 		return null;
@@ -195,4 +195,18 @@ export const isFolderOrFileOpened = (): boolean => {
 	}
 
 	return false;
+};
+
+const parseFileToUri = (filePath: string): vscode.Uri => {
+	const newFilePath = replaceBackwardSlashInFilePath(filePath);
+	return vscode.Uri.parse(newFilePath);
+};
+
+const replaceBackwardSlashInUri = (uri: vscode.Uri): vscode.Uri => {
+	const filePath = replaceBackwardSlashInFilePath(uri.fsPath);
+	return vscode.Uri.parse(filePath);
+};
+
+const replaceBackwardSlashInFilePath = (filePath: string): string => {
+	return filePath?.replace(/\\/g, '/');
 };
