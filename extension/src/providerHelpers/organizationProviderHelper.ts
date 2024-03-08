@@ -1,5 +1,6 @@
 import organizationApi from "../api/organizationApi";
-import { readDoclinFile, writeDoclinFile } from "../utils/doclinFileReadWriteUtil";
+import { readDoclinFile } from "./readDoclinFile";
+import { writeDoclinFile } from "./writeDoclinFile";
 import logger from "../utils/logger";
 import { DoclinFile } from "../types";
 

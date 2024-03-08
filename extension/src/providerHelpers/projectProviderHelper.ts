@@ -1,7 +1,8 @@
 import * as vscode from "vscode";
 import projectApi from "../api/projectApi";
 import { getCurrentOrganizationId } from "./organizationProviderHelper";
-import { readDoclinFile, writeDoclinFile } from "../utils/doclinFileReadWriteUtil";
+import { readDoclinFile } from "./readDoclinFile";
+import { writeDoclinFile } from "./writeDoclinFile";
 import logger from "../utils/logger";
 import { DoclinFile } from "../types";
 

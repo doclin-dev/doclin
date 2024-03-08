@@ -124,7 +124,7 @@ const readFileContent = async (filePath: string): Promise<string | null> => {
 			return null;
 		}
 
-		const doclinFolder = vscode.Uri.parse(path.dirname(doclinFilePath.fsPath));
+		const doclinFolder = vscode.Uri.file(path.dirname(doclinFilePath.fsPath));
 
 		const fileUri = vscode.Uri.joinPath(doclinFolder, filePath);
 
