@@ -17,7 +17,7 @@
 	},
 	"exclude": [
 		"node_modules",
-		".vscode-test",
+		".vscode-test.js",
 		"webviews"
 	]
 }
