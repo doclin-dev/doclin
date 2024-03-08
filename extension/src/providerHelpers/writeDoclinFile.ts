@@ -17,10 +17,7 @@ export const writeDoclinFile = async (fileJSON: DoclinFile) => {
 			return;
 		}
         
-		const utf8Buffer = Buffer.from(JSON.stringify(fileJSON), 'utf-8');
-		const utf8Array = new Uint8Array(utf8Buffer);
-
-		await vscode.workspace.fs.writeFile(filePath, utf8Array);
+		await writeDoclinFileToPath(filePath, fileJSON);
 
 	} catch (error) {
 		logger.error("Error while creating .doclin file " + error);
@@ -95,4 +92,11 @@ const getGitRootDirectory = async (folderPath: vscode.Uri) : Promise<vscode.Uri 
 	} catch (error) {
 		return null;
 	}
+};
+
+const writeDoclinFileToPath = async (filePath: vscode.Uri, fileJSON: DoclinFile) => {
+	const utf8Buffer = Buffer.from(JSON.stringify(fileJSON), 'utf-8');
+	const utf8Array = new Uint8Array(utf8Buffer);
+
+	await vscode.workspace.fs.writeFile(filePath, utf8Array);
 };
