@@ -2,9 +2,8 @@ import * as vscode from "vscode";
 import { DoclinFile } from "../../types";
 import logger from "../../utils/logger";
 import * as path from 'path';
-import * as fs from 'fs';
 import { DOCLIN_FILE_NAME, getExistingDoclinFilePath } from "../../utils/doclinFileReadWriteUtil";
-import { findFileInCurrentAndParentFolders, getActiveEditorFolder, getWorkspaceFolder, parseFileToUri } from "../../utils/fileSystemUtil";
+import { findFileInCurrentAndParentFolders, getActiveEditorFolder, getWorkspaceFolder, parseFileToUri, writeToFilePath } from "../../utils/fileSystemUtil";
 
 const GIT_FOLDER_NAME = ".git";
 
@@ -17,7 +16,7 @@ export const writeDoclinFile = async (fileJSON: DoclinFile) => {
 			return;
 		}
         
-		await writeDoclinFileToPath(filePath, fileJSON);
+		await writeToFilePath(filePath, JSON.stringify(fileJSON));
 
 	} catch (error) {
 		logger.error("Error while creating .doclin file " + error);
@@ -92,11 +91,4 @@ const getGitRootDirectory = async (folderPath: vscode.Uri) : Promise<vscode.Uri 
 	} catch (error) {
 		return null;
 	}
-};
-
-const writeDoclinFileToPath = async (filePath: vscode.Uri, fileJSON: DoclinFile) => {
-	const utf8Buffer = Buffer.from(JSON.stringify(fileJSON), 'utf-8');
-	const utf8Array = new Uint8Array(utf8Buffer);
-
-	await vscode.workspace.fs.writeFile(filePath, utf8Array);
 };

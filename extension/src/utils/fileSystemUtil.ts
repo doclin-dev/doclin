@@ -56,3 +56,10 @@ const replaceBackwardSlashInUri = (uri: vscode.Uri): vscode.Uri => {
 const replaceBackwardSlashInFilePath = (filePath: string): string => {
 	return filePath?.replace(/\\/g, '/');
 };
+
+export const writeToFilePath = async (filePath: vscode.Uri, content: string) => {
+	const utf8Buffer = Buffer.from(content, 'utf-8');
+	const utf8Array = new Uint8Array(utf8Buffer);
+
+	await vscode.workspace.fs.writeFile(filePath, utf8Array);
+};

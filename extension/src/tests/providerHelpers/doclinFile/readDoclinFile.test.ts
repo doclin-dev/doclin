@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
 import { expect } from 'chai';
 import { SinonStub, stub, replace } from 'sinon';
-import { readDoclinFile } from '../../providerHelpers/doclinFile/readDoclinFile';
-import { DoclinFile } from '../../types';
+import { readDoclinFile } from '../../../providerHelpers/doclinFile/readDoclinFile';
+import { DoclinFile } from '../../../types';
 import { describe, it, beforeEach, afterEach } from 'mocha';
-import * as doclinFileReadWriteUtil from '../../utils/doclinFileReadWriteUtil';
+import * as doclinFileReadWriteUtil from '../../../utils/doclinFileReadWriteUtil';
 import * as path from 'path';
 
 describe('Testing readDoclinFile', () => {
@@ -19,7 +19,7 @@ describe('Testing readDoclinFile', () => {
 	});
 
 	it('should return DoclinFile from the existing doclin file path', async () => {
-		const mockFilePath = path.resolve(__dirname, '../../../testAssets/.doclinTest');
+		const mockFilePath = path.resolve(__dirname, '../../../../testAssets/.doclinTest');
 		const mockDoclinFileUri = vscode.Uri.file(mockFilePath);
 		getExistingDoclinFilePathStub.resolves(mockDoclinFileUri);
 
