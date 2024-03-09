@@ -99,7 +99,7 @@
     "@typescript-eslint/parser": "^6.21.0",
     "@vscode/test-cli": "^0.0.6",
     "@vscode/test-electron": "^2.3.9",
-    "chai": "^5.1.0",
+    "chai": "^4.2.0",
     "concurrently": "^5.3.0",
     "eslint": "^8.56.0",
     "glob": "^7.1.6",

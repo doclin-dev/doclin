@@ -7,13 +7,13 @@ export const DOCLIN_FILE_NAME = ".doclin";
 
 export const getExistingDoclinFilePath = async (): Promise<vscode.Uri | null> => {
 	try {
-		const doclinFolderPath = getExistingDoclinFolder();
+		const workingFolder = getActiveEditorFolder() ?? getWorkspaceFolder();
 
-		if (!doclinFolderPath) {
+		if (!workingFolder) {
 			return null;
 		}
 
-		const doclinFilePath: string | null = await findFileInCurrentAndParentFolders(DOCLIN_FILE_NAME, doclinFolderPath.fsPath);
+		const doclinFilePath: string | null = await findFileInCurrentAndParentFolders(DOCLIN_FILE_NAME, workingFolder.fsPath);
 
 		if (!doclinFilePath) {
 			return null;
@@ -25,9 +25,4 @@ export const getExistingDoclinFilePath = async (): Promise<vscode.Uri | null> =>
 		logger.error(`Error during getting existing doclin file path`);
 		return null;
 	}
-};
-
-
-const getExistingDoclinFolder = () => {
-	return getActiveEditorFolder() ?? getWorkspaceFolder();
 };

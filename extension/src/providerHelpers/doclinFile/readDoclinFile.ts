@@ -1,9 +1,7 @@
 import * as vscode from "vscode";
-import { DoclinFile } from "../types";
-import logger from "../utils/logger";
-import * as path from 'path';
-import * as fs from 'fs';
-import { getExistingDoclinFilePath } from "../utils/doclinFileReadWriteUtil";
+import { DoclinFile } from "../../types";
+import logger from "../../utils/logger";
+import { getExistingDoclinFilePath } from "../../utils/doclinFileReadWriteUtil";
 
 export const readDoclinFile = async (): Promise<DoclinFile> => {
 	try {

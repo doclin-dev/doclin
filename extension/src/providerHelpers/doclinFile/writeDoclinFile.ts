@@ -1,10 +1,10 @@
 import * as vscode from "vscode";
-import { DoclinFile } from "../types";
-import logger from "../utils/logger";
+import { DoclinFile } from "../../types";
+import logger from "../../utils/logger";
 import * as path from 'path';
 import * as fs from 'fs';
-import { DOCLIN_FILE_NAME, getExistingDoclinFilePath } from "../utils/doclinFileReadWriteUtil";
-import { findFileInCurrentAndParentFolders, getActiveEditorFolder, getWorkspaceFolder, parseFileToUri } from "../utils/fileSystemUtil";
+import { DOCLIN_FILE_NAME, getExistingDoclinFilePath } from "../../utils/doclinFileReadWriteUtil";
+import { findFileInCurrentAndParentFolders, getActiveEditorFolder, getWorkspaceFolder, parseFileToUri } from "../../utils/fileSystemUtil";
 
 const GIT_FOLDER_NAME = ".git";
 
@@ -34,20 +34,20 @@ const computeNewDoclinFilePath = async (): Promise<vscode.Uri | null> => {
 
 const computeNewDoclinFilePathFromActiveEditor = async (): Promise<vscode.Uri | null> => {
 	try {
-		const activeEditorDirectory = getActiveEditorFolder();
+		const activeEditorFolder = getActiveEditorFolder();
 
-		if (!activeEditorDirectory) {
+		if (!activeEditorFolder) {
 			logger.error(`No folder or file is opened`);
 			return null;
 		}
 
-		const gitRootDirectory = await getGitRootDirectory(activeEditorDirectory);
+		const gitRootDirectory = await getGitRootDirectory(activeEditorFolder);
 
 		if (gitRootDirectory) {
 			return vscode.Uri.joinPath(gitRootDirectory, DOCLIN_FILE_NAME);
 		}
         
-		return vscode.Uri.joinPath(activeEditorDirectory, DOCLIN_FILE_NAME);
+		return vscode.Uri.joinPath(activeEditorFolder, DOCLIN_FILE_NAME);
 
 	} catch (error) {
 		logger.error(`Error computing new doclin file path from non workspace ${error}`);
