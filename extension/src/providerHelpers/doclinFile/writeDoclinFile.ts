@@ -28,7 +28,7 @@ const computeNewDoclinFilePath = async (): Promise<vscode.Uri | null> => {
 		return await computeNewDoclinFilePathFromActiveEditor();
 	}
 
-	return computeNewDoclinFilePathFromWorkspace();
+	return await computeNewDoclinFilePathFromWorkspace();
 };
 
 const computeNewDoclinFilePathFromActiveEditor = async (): Promise<vscode.Uri | null> => {
@@ -40,7 +40,7 @@ const computeNewDoclinFilePathFromActiveEditor = async (): Promise<vscode.Uri | 
 			return null;
 		}
 
-		const gitRootDirectory = await getGitRootDirectory(activeEditorFolder);
+		const gitRootDirectory = await getGitRootFolder(activeEditorFolder);
 
 		if (gitRootDirectory) {
 			return vscode.Uri.joinPath(gitRootDirectory, DOCLIN_FILE_NAME);
@@ -55,6 +55,7 @@ const computeNewDoclinFilePathFromActiveEditor = async (): Promise<vscode.Uri | 
 };
 
 const computeNewDoclinFilePathFromWorkspace = async (): Promise<vscode.Uri | null> => {
+	console.log("compute new doclin file");
 	try {
 		const workspaceFolder = getWorkspaceFolder();
 
@@ -63,13 +64,13 @@ const computeNewDoclinFilePathFromWorkspace = async (): Promise<vscode.Uri | nul
 			return null;
 		}
 
-		const gitRootDirectory = await getGitRootDirectory(workspaceFolder);
+		const gitRootDirectory = await getGitRootFolder(workspaceFolder);
 
 		if (gitRootDirectory) {
 			return vscode.Uri.joinPath(gitRootDirectory, DOCLIN_FILE_NAME);
-		} else {
-			return vscode.Uri.joinPath(workspaceFolder, DOCLIN_FILE_NAME);
 		}
+		
+		return vscode.Uri.joinPath(workspaceFolder, DOCLIN_FILE_NAME);
         
 	} catch (error) {
 		logger.error(`Error computing new doclin file path from workspace ${error}`);
@@ -77,7 +78,7 @@ const computeNewDoclinFilePathFromWorkspace = async (): Promise<vscode.Uri | nul
 	}
 };
 
-const getGitRootDirectory = async (folderPath: vscode.Uri) : Promise<vscode.Uri | null> => {
+export const getGitRootFolder = async (folderPath: vscode.Uri) : Promise<vscode.Uri | null> => {
 	try {
 		const gitFolderPath = await findFileInCurrentAndParentFolders(GIT_FOLDER_NAME, folderPath.fsPath);
 
