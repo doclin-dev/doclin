@@ -11,6 +11,10 @@
   "categories": [
     "Other"
   ],
+  "capabilities": {
+    "virtualWorkspaces": false,
+    "description": "Doclin cannot be used in virtual workspaces currently."
+  },
   "activationEvents": [
     "onStartupFinished",
     "onCommand:doclin.addComment",
