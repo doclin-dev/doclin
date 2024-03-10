@@ -13,13 +13,9 @@ export const getExistingDoclinFilePath = async (): Promise<vscode.Uri | null> =>
 			return null;
 		}
 
-		const doclinFilePath: string | null = await findFileInCurrentAndParentFolders(DOCLIN_FILE_NAME, workingFolder.fsPath);
+		const doclinFilePath: vscode.Uri | null = await findFileInCurrentAndParentFolders(DOCLIN_FILE_NAME, workingFolder);
 
-		if (!doclinFilePath) {
-			return null;
-		}
-
-		return parseFileToUri(doclinFilePath);
+		return doclinFilePath;
 
 	} catch (error) {
 		logger.error(`Error during getting existing doclin file path`);

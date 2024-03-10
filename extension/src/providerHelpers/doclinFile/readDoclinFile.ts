@@ -8,7 +8,8 @@ export const readDoclinFile = async (): Promise<DoclinFile> => {
 		const filePath = await getExistingDoclinFilePath();
 
 		if (filePath) {
-			return readDoclinFileFromPath(filePath);
+			const doclinFile = readDoclinFileFromPath(filePath);
+			return doclinFile;
 		}
 
 		return createDoclinFile();

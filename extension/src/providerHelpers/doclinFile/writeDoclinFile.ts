@@ -3,7 +3,7 @@ import { DoclinFile } from "../../types";
 import logger from "../../utils/logger";
 import * as path from 'path';
 import { DOCLIN_FILE_NAME, getExistingDoclinFilePath } from "../../utils/doclinFileReadWriteUtil";
-import { findFileInCurrentAndParentFolders, getActiveEditorFolder, getWorkspaceFolder, parseFileToUri, writeToFilePath } from "../../utils/fileSystemUtil";
+import { findFolderInCurrentAndParentFolders, getActiveEditorFolder, getWorkspaceFolder, parseFileToUri, writeToFilePath } from "../../utils/fileSystemUtil";
 
 const GIT_FOLDER_NAME = ".git";
 
@@ -55,7 +55,6 @@ const computeNewDoclinFilePathFromActiveEditor = async (): Promise<vscode.Uri | 
 };
 
 const computeNewDoclinFilePathFromWorkspace = async (): Promise<vscode.Uri | null> => {
-	console.log("compute new doclin file");
 	try {
 		const workspaceFolder = getWorkspaceFolder();
 
@@ -80,14 +79,14 @@ const computeNewDoclinFilePathFromWorkspace = async (): Promise<vscode.Uri | nul
 
 export const getGitRootFolder = async (folderPath: vscode.Uri) : Promise<vscode.Uri | null> => {
 	try {
-		const gitFolderPath = await findFileInCurrentAndParentFolders(GIT_FOLDER_NAME, folderPath.fsPath);
+		const gitFolderPath = await findFolderInCurrentAndParentFolders(GIT_FOLDER_NAME, folderPath);
 
 		if (!gitFolderPath) {
 			return null;
 		}
 
-		const gitRepoPath = path.dirname(gitFolderPath);
-		return parseFileToUri(gitRepoPath);
+		const gitRepoPath = path.dirname(gitFolderPath.fsPath);
+		return parseFileToUri(gitRepoPath, gitFolderPath.scheme);
 
 	} catch (error) {
 		return null;
