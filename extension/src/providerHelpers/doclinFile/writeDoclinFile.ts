@@ -93,7 +93,7 @@ export const getGitRootFolder = async (folderPath: vscode.Uri) : Promise<vscode.
 		}
 
 		const gitRepoPath = path.dirname(gitFolderPath.fsPath);
-		return parseFileToUri(gitRepoPath, gitFolderPath.scheme);
+		return parseFileToUri(gitRepoPath);
 
 	} catch (error) {
 		return null;

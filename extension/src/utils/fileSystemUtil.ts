@@ -14,7 +14,7 @@ export const getActiveEditorFolder = (): vscode.Uri | null => {
 	if (editor) {
 		const filePath = editor.document.uri.fsPath;
 		const folderPath = path.dirname(filePath);
-		return parseFileToUri(folderPath, editor.document.uri.scheme);
+		return parseFileToUri(folderPath);
 	}
 
 	return null;
@@ -51,8 +51,8 @@ const findFileOrFolderInCurrentAndParentFolders = async (
 		const filePath = path.join(currentFolder, fileOrFolderName);
   
 		try {
-			await readFunction(parseFileToUri(filePath, startFolder.scheme));
-			return parseFileToUri(filePath, startFolder.scheme);
+			await readFunction(parseFileToUri(filePath));
+			return parseFileToUri(filePath);
 
 		} catch (error) {
 			currentFolder = path.dirname(currentFolder);
@@ -62,14 +62,14 @@ const findFileOrFolderInCurrentAndParentFolders = async (
 	return null;
 };
 
-export const parseFileToUri = (filePath: string, scheme: string): vscode.Uri => {
+export const parseFileToUri = (filePath: string): vscode.Uri => {
 	const newFilePath = replaceBackwardSlashInFilePath(filePath);
-	return vscode.Uri.parse(`${scheme}://${newFilePath}`);
+	return vscode.Uri.file(newFilePath);
 };
 
 const replaceBackwardSlashInUri = (uri: vscode.Uri): vscode.Uri => {
 	const filePath = replaceBackwardSlashInFilePath(uri.fsPath);
-	return vscode.Uri.parse(`${uri.scheme}://${filePath}`);
+	return vscode.Uri.file(filePath);
 };
 
 const replaceBackwardSlashInFilePath = (filePath: string): string => {
