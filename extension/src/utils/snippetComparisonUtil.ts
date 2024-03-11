@@ -98,9 +98,7 @@ const removeLineBreaks = (text: string) => {
 };
 
 export const compareSnippetsWithActiveEditor = async (snippets: Snippet[]): Promise<void> => {
-	const workingFolder = getActiveEditorFolder() ?? getWorkspaceFolder();
-	
-	if (workingFolder && !isLocalWorkspace(workingFolder)) {
+	if (!isLocalWorkspace()) {
 		return;
 	}
 

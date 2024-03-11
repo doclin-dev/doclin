@@ -5,10 +5,10 @@ import * as path from 'path';
 const FILE_SCHEME = "file";
 
 export const isLocalWorkspace = (): boolean => {
-	const workspaceFolders = vscode.workspace.workspaceFolders;
+	const workspaceFolder = getWorkspaceFolder();
 
-	if (workspaceFolders && workspaceFolders.length > 0) {
-		return workspaceFolders[0].uri.scheme === FILE_SCHEME;
+	if (workspaceFolder) {
+		return workspaceFolder.scheme === FILE_SCHEME;
 	}
 
 	return false;
@@ -30,7 +30,7 @@ export const getWorkspaceFolder = (): vscode.Uri | null => {
 	const workspaceFolders = vscode.workspace.workspaceFolders;
 
 	if (workspaceFolders && workspaceFolders.length > 0) {
-		return replaceBackwardSlashInUri(workspaceFolders[0].uri);
+		return workspaceFolders[0].uri;
 	}
 
 	return null;
@@ -69,17 +69,7 @@ const findFileOrFolderInCurrentAndParentFolders = async (
 };
 
 export const parseFileToUri = (filePath: string): vscode.Uri => {
-	const newFilePath = replaceBackwardSlashInFilePath(filePath);
-	return vscode.Uri.file(newFilePath);
-};
-
-const replaceBackwardSlashInUri = (uri: vscode.Uri): vscode.Uri => {
-	const filePath = replaceBackwardSlashInFilePath(uri.fsPath);
 	return vscode.Uri.file(filePath);
-};
-
-const replaceBackwardSlashInFilePath = (filePath: string): string => {
-	return filePath?.replace(/\\/g, '/');
 };
 
 export const writeToFilePath = async (filePath: vscode.Uri, content: string) => {
