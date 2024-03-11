@@ -4,8 +4,14 @@ import * as path from 'path';
 
 const FILE_SCHEME = "file";
 
-export const isLocal = (uri: vscode.Uri): boolean => {
-	return uri.scheme === FILE_SCHEME;
+export const isLocalWorkspace = (): boolean => {
+	const workspaceFolders = vscode.workspace.workspaceFolders;
+
+	if (workspaceFolders && workspaceFolders.length > 0) {
+		return workspaceFolders[0].uri.scheme === FILE_SCHEME;
+	}
+
+	return false;
 };
 
 export const getActiveEditorFolder = (): vscode.Uri | null => {

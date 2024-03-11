@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import logger from "./logger";
-import { findFileInCurrentAndParentFolders, getActiveEditorFolder, getWorkspaceFolder, isLocal } from "./fileSystemUtil";
+import { findFileInCurrentAndParentFolders, getActiveEditorFolder, getWorkspaceFolder, isLocalWorkspace } from "./fileSystemUtil";
 
 export const DOCLIN_FILE_NAME = ".doclin";
 
@@ -12,11 +12,11 @@ export const getExistingDoclinFile = async (): Promise<vscode.Uri | null> => {
 			return null;
 		}
 
-		if (isLocal(workingFolder)) {
+		if (isLocalWorkspace()) {
 			return getLocalDoclinFile(workingFolder);
 		}
 
-		return getRemoteDoclinFile();
+		return await getRemoteDoclinFile();
 
 	} catch (error) {
 		logger.error(`Error during getting existing doclin file path`);
