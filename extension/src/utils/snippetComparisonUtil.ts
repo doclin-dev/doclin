@@ -4,6 +4,7 @@ import { Reply, Snippet, Thread } from "../types";
 import logger from "./logger";
 import { getExistingDoclinFile } from "./doclinFileReadWriteUtil";
 import * as path from 'path';
+import { getActiveEditorFolder, getWorkspaceFolder, isLocal } from "./fileSystemUtil";
 
 hljs.configure({
 	languages: ['javascript', 'python', 'cpp', 'ruby', 'php', 'html']
@@ -97,6 +98,12 @@ const removeLineBreaks = (text: string) => {
 };
 
 export const compareSnippetsWithActiveEditor = async (snippets: Snippet[]): Promise<void> => {
+	const workingFolder = getActiveEditorFolder() ?? getWorkspaceFolder();
+	
+	if (workingFolder && !isLocal(workingFolder)) {
+		return;
+	}
+
 	for(const snippet of snippets) {
 		let content = await readFileContent(snippet.filePath);
 
