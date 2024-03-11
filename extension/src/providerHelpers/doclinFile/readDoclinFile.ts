@@ -1,15 +1,14 @@
 import * as vscode from "vscode";
 import { DoclinFile } from "../../types";
 import logger from "../../utils/logger";
-import { getExistingDoclinFilePath } from "../../utils/doclinFileReadWriteUtil";
+import { getExistingDoclinFile } from "../../utils/doclinFileReadWriteUtil";
 
 export const readDoclinFile = async (): Promise<DoclinFile> => {
 	try {
-		const filePath = await getExistingDoclinFilePath();
+		const fileUri = await getExistingDoclinFile();
 
-		if (filePath) {
-			const doclinFile = readDoclinFileFromPath(filePath);
-			return doclinFile;
+		if (fileUri) {
+			return readDoclinFileFromUri(fileUri);
 		}
 
 		return createDoclinFile();
@@ -20,7 +19,7 @@ export const readDoclinFile = async (): Promise<DoclinFile> => {
 	}
 };
 
-const readDoclinFileFromPath = async (fileUri: vscode.Uri): Promise<DoclinFile> => {
+const readDoclinFileFromUri = async (fileUri: vscode.Uri): Promise<DoclinFile> => {
 	const fileContent = await vscode.workspace.openTextDocument(fileUri);
 	return JSON.parse(fileContent.getText()) as DoclinFile;
 };

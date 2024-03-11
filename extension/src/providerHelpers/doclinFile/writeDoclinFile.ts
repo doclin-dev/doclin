@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { DoclinFile } from "../../types";
 import logger from "../../utils/logger";
 import * as path from 'path';
-import { DOCLIN_FILE_NAME, getExistingDoclinFilePath } from "../../utils/doclinFileReadWriteUtil";
+import { DOCLIN_FILE_NAME, getExistingDoclinFile } from "../../utils/doclinFileReadWriteUtil";
 import { findFolderInCurrentAndParentFolders, getActiveEditorFolder, getWorkspaceFolder, isLocal, parseFileToUri, writeToFilePath } from "../../utils/fileSystemUtil";
 
 const GIT_FOLDER_NAME = ".git";
@@ -16,7 +16,7 @@ export const writeDoclinFile = async (fileJSON: DoclinFile) => {
 			return;
 		}
 
-		const filePath = await getExistingDoclinFilePath() ?? await computeNewDoclinFilePath();
+		const filePath = await getExistingDoclinFile() ?? await computeNewDoclinFileUri();
 
 		if (!filePath) {
 			logger.error("Could not compute write file path for doclin file.");
@@ -30,15 +30,15 @@ export const writeDoclinFile = async (fileJSON: DoclinFile) => {
 	}
 };
 
-const computeNewDoclinFilePath = async (): Promise<vscode.Uri | null> => {
+const computeNewDoclinFileUri = async (): Promise<vscode.Uri | null> => {
 	if (vscode.window.activeTextEditor) {
-		return await computeNewDoclinFilePathFromActiveEditor();
+		return await computeNewDoclinFileUriFromActiveEditor();
 	}
 
-	return await computeNewDoclinFilePathFromWorkspace();
+	return await computeNewDoclinFileUriFromWorkspace();
 };
 
-const computeNewDoclinFilePathFromActiveEditor = async (): Promise<vscode.Uri | null> => {
+const computeNewDoclinFileUriFromActiveEditor = async (): Promise<vscode.Uri | null> => {
 	try {
 		const activeEditorFolder = getActiveEditorFolder();
 
@@ -61,7 +61,7 @@ const computeNewDoclinFilePathFromActiveEditor = async (): Promise<vscode.Uri | 
 	}
 };
 
-const computeNewDoclinFilePathFromWorkspace = async (): Promise<vscode.Uri | null> => {
+const computeNewDoclinFileUriFromWorkspace = async (): Promise<vscode.Uri | null> => {
 	try {
 		const workspaceFolder = getWorkspaceFolder();
 

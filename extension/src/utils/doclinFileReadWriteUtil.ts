@@ -4,7 +4,7 @@ import { findFileInCurrentAndParentFolders, getActiveEditorFolder, getWorkspaceF
 
 export const DOCLIN_FILE_NAME = ".doclin";
 
-export const getExistingDoclinFilePath = async (): Promise<vscode.Uri | null> => {
+export const getExistingDoclinFile = async (): Promise<vscode.Uri | null> => {
 	try {
 		const workingFolder = getActiveEditorFolder() ?? getWorkspaceFolder();
 

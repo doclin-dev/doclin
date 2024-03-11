@@ -12,8 +12,10 @@
     "Other"
   ],
   "capabilities": {
-    "virtualWorkspaces": false,
-    "description": "Doclin cannot be used in virtual workspaces currently."
+    "virtualWorkspaces": {
+      "supported": "limited",
+      "description": "In virtual workspaces, creating a doclin organization/project is not supported."
+    }
   },
   "activationEvents": [
     "onStartupFinished",

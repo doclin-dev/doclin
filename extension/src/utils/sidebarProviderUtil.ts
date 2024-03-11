@@ -4,7 +4,7 @@ import { getAuthenticatedUser } from "../providerHelpers/authenticationProviderH
 import { getCurrentOrganization } from "../providerHelpers/organizationProviderHelper";
 import { getCurrentProject } from "../providerHelpers/projectProviderHelper";
 import logger from "./logger";
-import { getExistingDoclinFilePath } from "./doclinFileReadWriteUtil";
+import { getExistingDoclinFile } from "./doclinFileReadWriteUtil";
 import * as path from "path";
 import { getGithubUrl } from "./gitProviderUtil";
 import { clearAllThreadsCache } from "./threadCachingUtil";
@@ -41,7 +41,7 @@ export const isDoclinProjectChanged = async (): Promise<boolean> => {
 			return false;
 		}
 
-		const doclinFilePath = await getExistingDoclinFilePath();
+		const doclinFilePath = await getExistingDoclinFile();
 		const doclinFolder = doclinFilePath ? path.dirname(doclinFilePath.fsPath) : null;
 
 		GlobalStateManager.setState(GlobalStateType.DOCLIN_FOLDER, doclinFolder);

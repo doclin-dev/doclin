@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import hljs from 'highlight.js';
 import { Reply, Snippet, Thread } from "../types";
 import logger from "./logger";
-import { getExistingDoclinFilePath } from "./doclinFileReadWriteUtil";
+import { getExistingDoclinFile } from "./doclinFileReadWriteUtil";
 import * as path from 'path';
 
 hljs.configure({
@@ -117,7 +117,7 @@ export const compareSnippetsWithActiveEditor = async (snippets: Snippet[]): Prom
 
 const readFileContent = async (filePath: string): Promise<string | null> => {
 	try {
-		const doclinFilePath = await getExistingDoclinFilePath();
+		const doclinFilePath = await getExistingDoclinFile();
 
 		if (!doclinFilePath) {
 			logger.error("Could not find doclin file path");
