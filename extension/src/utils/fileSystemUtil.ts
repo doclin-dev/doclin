@@ -31,31 +31,27 @@ export const getWorkspaceFolder = (): vscode.Uri | null => {
 };
 
 export const findFolderInCurrentAndParentFolders = async (folderName: string, startFolder: vscode.Uri): Promise<vscode.Uri | null> => {
-	let currentFolder = startFolder.fsPath;
-  
-	while (currentFolder !== path.dirname(currentFolder)) {
-		const folderPath = path.join(currentFolder, folderName);
-  
-		try {
-			await vscode.workspace.fs.readDirectory(parseFileToUri(folderPath, startFolder.scheme));
-			return parseFileToUri(folderPath, startFolder.scheme);
-
-		} catch (error) {
-			currentFolder = path.dirname(currentFolder);
-		}
-	}
-  
-	return null;
+	return findFileOrFolderInCurrentAndParentFolders(folderName, startFolder, vscode.workspace.fs.readDirectory);
 };
 
 export const findFileInCurrentAndParentFolders = async (fileName: string, startFolder: vscode.Uri): Promise<vscode.Uri | null> => {
+	return findFileOrFolderInCurrentAndParentFolders(fileName, startFolder, vscode.workspace.fs.readFile);
+};
+
+const findFileOrFolderInCurrentAndParentFolders = async (
+	fileOrFolderName: string, 
+	startFolder: vscode.Uri, 
+	readFunction: { (uri: vscode.Uri): any }
+	
+): Promise<vscode.Uri | null> => {
+
 	let currentFolder = startFolder.fsPath;
   
 	while (currentFolder !== path.dirname(currentFolder)) {
-		const filePath = path.join(currentFolder, fileName);
+		const filePath = path.join(currentFolder, fileOrFolderName);
   
 		try {
-			await vscode.workspace.fs.readFile(parseFileToUri(filePath, startFolder.scheme));
+			await readFunction(parseFileToUri(filePath, startFolder.scheme));
 			return parseFileToUri(filePath, startFolder.scheme);
 
 		} catch (error) {
