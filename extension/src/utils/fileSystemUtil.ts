@@ -1,7 +1,12 @@
 
 import * as vscode from "vscode";
 import * as path from 'path';
-import * as fs from 'fs';
+
+const FILE_SCHEME = "file";
+
+export const isLocal = (uri: vscode.Uri): boolean => {
+	return uri.scheme === FILE_SCHEME;
+};
 
 export const getActiveEditorFolder = (): vscode.Uri | null => {
 	const editor = vscode.window.activeTextEditor;

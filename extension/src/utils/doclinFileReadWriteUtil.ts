@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import logger from "./logger";
-import * as path from 'path';
-import { findFileInCurrentAndParentFolders, getActiveEditorFolder, getWorkspaceFolder, parseFileToUri } from "./fileSystemUtil";
+import { findFileInCurrentAndParentFolders, getActiveEditorFolder, getWorkspaceFolder, isLocal } from "./fileSystemUtil";
 
 export const DOCLIN_FILE_NAME = ".doclin";
 
@@ -13,12 +12,23 @@ export const getExistingDoclinFilePath = async (): Promise<vscode.Uri | null> =>
 			return null;
 		}
 
-		const doclinFilePath: vscode.Uri | null = await findFileInCurrentAndParentFolders(DOCLIN_FILE_NAME, workingFolder);
+		if (isLocal(workingFolder)) {
+			return getLocalDoclinFile(workingFolder);
+		}
 
-		return doclinFilePath;
+		return getRemoteDoclinFile();
 
 	} catch (error) {
 		logger.error(`Error during getting existing doclin file path`);
 		return null;
 	}
+};
+
+const getLocalDoclinFile = async (workingFolder: vscode.Uri): Promise<vscode.Uri | null> => {
+	return await findFileInCurrentAndParentFolders(DOCLIN_FILE_NAME, workingFolder);
+};
+
+const getRemoteDoclinFile = async (): Promise<vscode.Uri | null> => {
+	const files = await vscode.workspace.findFiles(DOCLIN_FILE_NAME);
+	return files.length > 0 ? files[0] : null;
 };

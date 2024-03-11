@@ -20,9 +20,9 @@ export const readDoclinFile = async (): Promise<DoclinFile> => {
 	}
 };
 
-const readDoclinFileFromPath = async (doclinFilePath: vscode.Uri): Promise<DoclinFile> => {
-	const fileContent = await vscode.workspace.fs.readFile(doclinFilePath);
-	return JSON.parse(fileContent.toString()) as DoclinFile;
+const readDoclinFileFromPath = async (fileUri: vscode.Uri): Promise<DoclinFile> => {
+	const fileContent = await vscode.workspace.openTextDocument(fileUri);
+	return JSON.parse(fileContent.getText()) as DoclinFile;
 };
 
 const createDoclinFile = (): DoclinFile => {

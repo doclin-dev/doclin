@@ -3,12 +3,19 @@ import { DoclinFile } from "../../types";
 import logger from "../../utils/logger";
 import * as path from 'path';
 import { DOCLIN_FILE_NAME, getExistingDoclinFilePath } from "../../utils/doclinFileReadWriteUtil";
-import { findFolderInCurrentAndParentFolders, getActiveEditorFolder, getWorkspaceFolder, parseFileToUri, writeToFilePath } from "../../utils/fileSystemUtil";
+import { findFolderInCurrentAndParentFolders, getActiveEditorFolder, getWorkspaceFolder, isLocal, parseFileToUri, writeToFilePath } from "../../utils/fileSystemUtil";
 
 const GIT_FOLDER_NAME = ".git";
 
 export const writeDoclinFile = async (fileJSON: DoclinFile) => {
 	try {
+		const workingFolder = getActiveEditorFolder() ?? getWorkspaceFolder();
+
+		if (workingFolder && !isLocal(workingFolder)) {
+			logger.error("Initializing doclin is not supported in virtual workspace.");
+			return;
+		}
+
 		const filePath = await getExistingDoclinFilePath() ?? await computeNewDoclinFilePath();
 
 		if (!filePath) {
