@@ -11,7 +11,7 @@ describe('Testing readDoclinFile', () => {
 	let getExistingDoclinFilePathStub: SinonStub;
 
 	beforeEach(() => {
-		getExistingDoclinFilePathStub = stub(doclinFileReadWriteUtil, 'getExistingDoclinFilePath');
+		getExistingDoclinFilePathStub = stub(doclinFileReadWriteUtil, 'getExistingDoclinFile');
 	});
 
 	afterEach(() => {

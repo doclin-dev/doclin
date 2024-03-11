@@ -6,7 +6,6 @@ import { DoclinFile } from '../../../types';
 import { describe, it, beforeEach, afterEach } from 'mocha';
 import * as doclinFileReadWriteUtil from '../../../utils/doclinFileReadWriteUtil';
 import * as fileSystemUtil from '../../../utils/fileSystemUtil';
-import * as path from 'path';
 
 const DOCLIN_FILE: DoclinFile = {
 	organizationId: "test-org-id",
@@ -28,7 +27,7 @@ describe('Testing writeDoclinFile', () => {
 
 	beforeEach(() => {
 		writeToFilePathStub = stub(fileSystemUtil, 'writeToFilePath').resolves();
-		getExistingDoclinFilePathStub = stub(doclinFileReadWriteUtil, 'getExistingDoclinFilePath');
+		getExistingDoclinFilePathStub = stub(doclinFileReadWriteUtil, 'getExistingDoclinFile');
 		getGitRootFolderStub = stub(writeDoclinFile, 'getGitRootFolder');
 		getActiveEditorFolderStub = stub(fileSystemUtil, 'getActiveEditorFolder');
 		getWorkspaceFolderStub = stub(fileSystemUtil, 'getWorkspaceFolder');
