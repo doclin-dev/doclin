@@ -2,8 +2,9 @@ import * as vscode from "vscode";
 import hljs from 'highlight.js';
 import { Reply, Snippet, Thread } from "../types";
 import logger from "./logger";
-import { getExistingDoclinFilePath } from "./doclinFileReadWriteUtil";
+import { getExistingDoclinFile } from "./doclinFileReadWriteUtil";
 import * as path from 'path';
+import { getActiveEditorFolder, getWorkspaceFolder, isLocalWorkspace } from "./fileSystemUtil";
 
 hljs.configure({
 	languages: ['javascript', 'python', 'cpp', 'ruby', 'php', 'html']
@@ -97,6 +98,10 @@ const removeLineBreaks = (text: string) => {
 };
 
 export const compareSnippetsWithActiveEditor = async (snippets: Snippet[]): Promise<void> => {
+	if (!isLocalWorkspace()) {
+		return;
+	}
+
 	for(const snippet of snippets) {
 		let content = await readFileContent(snippet.filePath);
 
@@ -117,14 +122,14 @@ export const compareSnippetsWithActiveEditor = async (snippets: Snippet[]): Prom
 
 const readFileContent = async (filePath: string): Promise<string | null> => {
 	try {
-		const doclinFilePath = await getExistingDoclinFilePath();
+		const doclinFilePath = await getExistingDoclinFile();
 
 		if (!doclinFilePath) {
 			logger.error("Could not find doclin file path");
 			return null;
 		}
 
-		const doclinFolder = vscode.Uri.parse(path.dirname(doclinFilePath.fsPath));
+		const doclinFolder = vscode.Uri.file(path.dirname(doclinFilePath.fsPath));
 
 		const fileUri = vscode.Uri.joinPath(doclinFolder, filePath);
 

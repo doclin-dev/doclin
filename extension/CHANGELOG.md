@@ -4,6 +4,11 @@ All notable changes to the "doclin" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.1.3]
+
+### Changed
+- Fixed reading/creating doclin file bug in Windows.
+
 ## [0.1.2]
 
 ### Added
