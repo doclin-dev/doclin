@@ -8,7 +8,7 @@ import { SidebarProvider } from "../SidebarProvider";
 import { getAuthenticatedUser } from "./authenticationProviderHelper";
 import logger from "../utils/logger";
 import * as path from 'path';
-import { getExistingDoclinFilePath } from "../utils/doclinFileReadWriteUtil";
+import { getExistingDoclinFile } from "../utils/doclinFileReadWriteUtil";
 import { getGitBranch } from "../utils/gitProviderUtil";
 import { clearThreadsCache, getCachedThreads, storeThreadsCache } from "../utils/threadCachingUtil";
 
@@ -137,7 +137,7 @@ const getActiveEditorFilePath = async (): Promise<string> => {
 
 		if (editor) {
 			const activeEditorFilePath: string = editor.document.uri.fsPath;
-			const doclinFilePath = await getExistingDoclinFilePath();
+			const doclinFilePath = await getExistingDoclinFile();
 
 			if (!doclinFilePath) {
 				logger.error("Doclin file does not exist");

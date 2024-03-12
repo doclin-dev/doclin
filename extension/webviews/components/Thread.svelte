@@ -14,8 +14,6 @@
     let threadCreationTime : string = moment.utc(thread?.threadCreationTime).fromNow();
     let quillThreadEditor: TextEditor | null;
 
-    const replyCountText = thread?.replyCount + ` ${thread?.replyCount > 1 ? 'replies': 'reply'}`
-
     setInterval(()=>{
         lastEdited = thread?.lastReplied ? moment.utc(thread.lastReplied).fromNow() : null;
         threadCreationTime = moment.utc(thread?.threadCreationTime).fromNow();
@@ -143,7 +141,7 @@
                         textAlignment="flex-start" 
                         variant='primary' 
                         onClick={handleReplyButtonClick} 
-                        title={replyCountText}
+                        title={thread?.replyCount + ` ${thread?.replyCount > 1 ? 'replies': 'reply'}`}
                         children={lastEdited ?? ""}
                         childrenClassName="last-reply"
                     />

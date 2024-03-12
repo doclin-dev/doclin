@@ -1,4 +1,4 @@
-import { getActiveEditorFolder, getWorkspaceFolderIfNoActiveEditor } from "./doclinFileReadWriteUtil";
+import { getActiveEditorFolder, getWorkspaceFolder } from "./fileSystemUtil";
 import { executeShellCommand } from "./excecuteShellCommandUtil";
 import logger from "./logger";
 
@@ -15,10 +15,9 @@ export const getGitBranch = async () : Promise<string> => {
 
 const executeGitCommand = async (command: string) => {
 	try {
-		const directory = getActiveEditorFolder() ?? getWorkspaceFolderIfNoActiveEditor();
+		const directory = getActiveEditorFolder() ?? getWorkspaceFolder();
 
 		if (!directory) {
-			logger.error("No folder or file is opened.");
 			return "";
 		}
 

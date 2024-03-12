@@ -4,10 +4,11 @@ import { getAuthenticatedUser } from "../providerHelpers/authenticationProviderH
 import { getCurrentOrganization } from "../providerHelpers/organizationProviderHelper";
 import { getCurrentProject } from "../providerHelpers/projectProviderHelper";
 import logger from "./logger";
-import { getActiveEditorFolder, getExistingDoclinFilePath, isFolderOrFileOpened } from "./doclinFileReadWriteUtil";
+import { getExistingDoclinFile } from "./doclinFileReadWriteUtil";
 import * as path from "path";
 import { getGithubUrl } from "./gitProviderUtil";
 import { clearAllThreadsCache } from "./threadCachingUtil";
+import { getActiveEditorFolder, getWorkspaceFolder } from "./fileSystemUtil";
 
 export const getExtensionState = async () => {
 	try {
@@ -40,7 +41,7 @@ export const isDoclinProjectChanged = async (): Promise<boolean> => {
 			return false;
 		}
 
-		const doclinFilePath = await getExistingDoclinFilePath();
+		const doclinFilePath = await getExistingDoclinFile();
 		const doclinFolder = doclinFilePath ? path.dirname(doclinFilePath.fsPath) : null;
 
 		GlobalStateManager.setState(GlobalStateType.DOCLIN_FOLDER, doclinFolder);
@@ -50,4 +51,14 @@ export const isDoclinProjectChanged = async (): Promise<boolean> => {
 		logger.error(`Error during switching active editor`);
 		return true;
 	}
+};
+
+const isFolderOrFileOpened = (): boolean => {
+	const folderPath = getActiveEditorFolder() ?? getWorkspaceFolder();
+
+	if (folderPath) {
+		return true;
+	}
+
+	return false;
 };
