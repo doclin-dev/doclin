@@ -19,7 +19,7 @@ describe('Testing readDoclinFile', () => {
 	});
 
 	it('should return DoclinFile from the existing doclin file path', async () => {
-		const mockFilePath = path.resolve(__dirname, '../../../../testAssets/.doclinTest');
+		const mockFilePath = path.resolve(__dirname, '../../../../testAssets/.doclin');
 		const mockDoclinFileUri = vscode.Uri.file(mockFilePath);
 		getExistingDoclinFilePathStub.resolves(mockDoclinFileUri);
 

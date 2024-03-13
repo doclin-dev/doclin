@@ -5,13 +5,17 @@ import * as path from 'path';
 const FILE_SCHEME = "file";
 
 export const isLocalWorkspace = (): boolean => {
-	const workspaceFolder = getWorkspaceFolder();
+	const workingFolder = getActiveEditorUri() ?? getWorkspaceFolder();
 
-	if (workspaceFolder) {
-		return workspaceFolder.scheme === FILE_SCHEME;
+	if (workingFolder) {
+		return workingFolder.scheme === FILE_SCHEME;
 	}
 
 	return false;
+};
+
+const getActiveEditorUri = (): vscode.Uri | undefined => {
+	return vscode.window.activeTextEditor?.document.uri;
 };
 
 export const getActiveEditorFolder = (): vscode.Uri | null => {

@@ -22,7 +22,7 @@ export const writeDoclinFile = async (fileJSON: DoclinFile) => {
 			logger.error("Could not compute write file path for doclin file.");
 			return;
 		}
-        
+
 		await writeToFilePath(filePath, JSON.stringify(fileJSON));
 
 	} catch (error) {

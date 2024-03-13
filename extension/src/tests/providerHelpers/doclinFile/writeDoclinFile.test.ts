@@ -12,93 +12,148 @@ const DOCLIN_FILE: DoclinFile = {
 	projectId: 69
 };
 
-const EXISTING_DOCLIN_FILE = '/test/.existingDoclin';
-const GIT_FOLDER = '/test/testGitFolder';
-const ACTIVE_EDITOR_FOLDER = '/test/activeEditorFolder';
-const WORKSPACE_FOLDER = '/test/gitFolder/workspaceFolder';
+const EXISTING_DOCLIN_FILE_URI: vscode.Uri = vscode.Uri.file('/test/.existingDoclin');
+const GIT_FOLDER_URI: vscode.Uri = vscode.Uri.file('/test/testGitFolder');
+const ACTIVE_EDITOR_FOLDER_URI: vscode.Uri = vscode.Uri.file('/test/activeEditorFolder');
+const ACTIVE_EDITOR_URI: vscode.Uri = vscode.Uri.file('/test/activeEditorFolder/activeEditor.js');
+const WORKSPACE_FOLDER_URI: vscode.Uri = vscode.Uri.file('/test/workspaceFolder');
 
 describe('Testing writeDoclinFile', () => {
 	let writeToFilePathStub: SinonStub;
 	let getExistingDoclinFilePathStub: SinonStub;
 	let getGitRootFolderStub: SinonStub;
-	let getActiveEditorFolderStub: SinonStub;
-	let getWorkspaceFolderStub: SinonStub;
 	let activeEditorStub: SinonStub;
+	let workspaceFoldersStub: SinonStub;
 
 	beforeEach(() => {
-		writeToFilePathStub = stub(fileSystemUtil, 'writeToFilePath').resolves();
+		writeToFilePathStub = stub(fileSystemUtil, 'writeToFilePath');
 		getExistingDoclinFilePathStub = stub(doclinFileReadWriteUtil, 'getExistingDoclinFile');
 		getGitRootFolderStub = stub(writeDoclinFile, 'getGitRootFolder');
-		getActiveEditorFolderStub = stub(fileSystemUtil, 'getActiveEditorFolder');
-		getWorkspaceFolderStub = stub(fileSystemUtil, 'getWorkspaceFolder');
 		activeEditorStub = stub(vscode.window, 'activeTextEditor');
+		workspaceFoldersStub = stub(vscode.workspace, 'workspaceFolders');
 	});
 
 	afterEach(() => {
 		getExistingDoclinFilePathStub.restore();
 		writeToFilePathStub.restore();
 		getGitRootFolderStub.restore();
-		getActiveEditorFolderStub.restore();
-		getWorkspaceFolderStub.restore();
 		activeEditorStub.restore();
+		workspaceFoldersStub.restore();
 	});
 
 	it('should write to existing doclin file if it exists', async () => {
-		getExistingDoclinFilePathStub.resolves(vscode.Uri.file(EXISTING_DOCLIN_FILE));
+		getExistingDoclinFilePathStub.resolves(EXISTING_DOCLIN_FILE_URI);
+		getGitRootFolderStub.resolves(GIT_FOLDER_URI);
+		activeEditorStub.get(() => null);
+		workspaceFoldersStub.get(() => []);
 
 		await writeDoclinFile.writeDoclinFile(DOCLIN_FILE);
 
 		expect(writeToFilePathStub.calledOnce).to.be.true;
-		expect(writeToFilePathStub.calledWith(EXISTING_DOCLIN_FILE, match.any));
+		expect(writeToFilePathStub.firstCall.args[0].toString()).to.equal(EXISTING_DOCLIN_FILE_URI.toString());
 	});
 
 	it("should write to the active editor's git directory when no existing doclin file is found", async() => {
 		getExistingDoclinFilePathStub.resolves(null);
-		getGitRootFolderStub.resolves(vscode.Uri.file(GIT_FOLDER));
-		getActiveEditorFolderStub.returns(vscode.Uri.file(ACTIVE_EDITOR_FOLDER));
-		activeEditorStub.returns(true);
+		getGitRootFolderStub.resolves(GIT_FOLDER_URI);
+
+		activeEditorStub.get(() => ({
+			document: {
+				uri: ACTIVE_EDITOR_URI
+			}
+		}));
+
+		const workspaceFolders = [
+			{ uri: WORKSPACE_FOLDER_URI }
+		];
+
+		workspaceFoldersStub.get(() => workspaceFolders);
 
 		await writeDoclinFile.writeDoclinFile(DOCLIN_FILE);
 
 		expect(writeToFilePathStub.calledOnce).to.be.true;
-		expect(writeToFilePathStub.calledWith(`${GIT_FOLDER}/.doclin`, match.any));
+		expect(writeToFilePathStub.firstCall.args[0].toString()).to.equal(`${GIT_FOLDER_URI.toString()}/.doclin`);
 	});
 
-	it("should write to the current directory of the active editor when no existing doclin file is found and the editor is not in a git directory", async() => {
+	it(`should write to the current directory of the active editor when 
+		1. no existing doclin file is found, 
+		2. the editor is not in a git directory, and 
+		3. when workspace folder is not opened`, async() => {
+
 		getExistingDoclinFilePathStub.resolves(null);
 		getGitRootFolderStub.resolves(null);
-		getActiveEditorFolderStub.returns(vscode.Uri.file(ACTIVE_EDITOR_FOLDER));
-		activeEditorStub.returns(true);
+
+		activeEditorStub.get(() => ({
+			document: {
+				uri: ACTIVE_EDITOR_URI
+			}
+		}));
+
+		workspaceFoldersStub.get(() => null);
 
 		await writeDoclinFile.writeDoclinFile(DOCLIN_FILE);
 
 		expect(writeToFilePathStub.calledOnce).to.be.true;
-		expect(writeToFilePathStub.calledWith(`${ACTIVE_EDITOR_FOLDER}/.doclin`, match.any));
+		expect(writeToFilePathStub.firstCall.args[0].toString()).to.equal(`${ACTIVE_EDITOR_FOLDER_URI.toString()}/.doclin`);
+	});
+
+	it(`should write to the current directory of the active editor when 
+		1. no existing doclin file is found, 
+		2. the editor is not in a git directory, and 
+		3. when workspace folder is opened`, async() => {
+
+		getExistingDoclinFilePathStub.resolves(null);
+		getGitRootFolderStub.resolves(null);
+
+		activeEditorStub.get(() => ({
+			document: {
+				uri: ACTIVE_EDITOR_URI
+			}
+		}));
+
+		workspaceFoldersStub.get(() => [
+			{ uri: WORKSPACE_FOLDER_URI }
+		]);
+
+		await writeDoclinFile.writeDoclinFile(DOCLIN_FILE);
+
+		expect(writeToFilePathStub.calledOnce).to.be.true;
+		expect(writeToFilePathStub.firstCall.args[0].toString()).to.equal(`${ACTIVE_EDITOR_FOLDER_URI.toString()}/.doclin`);
 	});
 
 	it("should write to the Git directory of the workspace folder when no existing doclin file is found and no active editor is open", async() => {
 		getExistingDoclinFilePathStub.resolves(null);
-		getGitRootFolderStub.resolves(vscode.Uri.file(GIT_FOLDER));
-		getActiveEditorFolderStub.returns(null);
-		getWorkspaceFolderStub.returns(vscode.Uri.file(WORKSPACE_FOLDER));
+		getGitRootFolderStub.resolves(GIT_FOLDER_URI);
 		activeEditorStub.get(() => null);
+
+		workspaceFoldersStub.get(() => [
+			{ uri: WORKSPACE_FOLDER_URI }
+		]);
 
 		await writeDoclinFile.writeDoclinFile(DOCLIN_FILE);
 
 		expect(writeToFilePathStub.calledOnce).to.be.true;
-		expect(writeToFilePathStub.calledWith(`${GIT_FOLDER}/.doclin`, match.any));
+		expect(writeToFilePathStub.firstCall.args[0].toString()).to.equal(`${GIT_FOLDER_URI.toString()}/.doclin`);
 	});
 
-	it("should write to the workspace folder when no existing doclin file is found, no active editor is open, and the workspace folder is not a Git directory", async() => {
+	it(`should write to the workspace folder when 
+		1. no existing doclin file is found, 
+		2. no active editor is open, and 
+		3. the workspace folder is not a Git directory`, async() => {
+
 		getExistingDoclinFilePathStub.resolves(null);
 		getGitRootFolderStub.resolves(null);
-		getActiveEditorFolderStub.returns(null);
-		getWorkspaceFolderStub.returns(vscode.Uri.file(WORKSPACE_FOLDER));
 		activeEditorStub.get(() => null);
+
+		const workspaceFolders = [
+			{ uri: WORKSPACE_FOLDER_URI }
+		];
+
+		workspaceFoldersStub.get(() => workspaceFolders);
 
 		await writeDoclinFile.writeDoclinFile(DOCLIN_FILE);
 
 		expect(writeToFilePathStub.calledOnce).to.be.true;
-		expect(writeToFilePathStub.calledWith(`${WORKSPACE_FOLDER}/.doclin`, match.any));
+		expect(writeToFilePathStub.firstCall.args[0].toString()).to.equal(`${WORKSPACE_FOLDER_URI.toString()}/.doclin`);
 	});
 });
