@@ -57,7 +57,7 @@ export const storeOrganizationId = async (organizationId: string) => {
 		if (fileJSON) {
 			fileJSON["organizationId"] = organizationId;
 
-			writeDoclinFile(fileJSON);
+			await writeDoclinFile(fileJSON);
 		}
 	} catch (error: any) {
 		logger.error(`An error occurred: ${error.message}`);
