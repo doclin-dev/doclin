@@ -1,7 +1,7 @@
 :root {
   --container-paddding: 20px;
   --input-padding-vertical: 6px;
-  --input-padding-horizontal: 4px;
+  --input-padding-horizontal: 10px;
   --input-margin-vertical: 4px;
   --input-margin-horizontal: 0;
 }
@@ -42,12 +42,13 @@ button {
   border: 1px solid var(--vscode-button-border);
   padding: var(--input-padding-vertical) var(--input-padding-horizontal);
   width: 100%;
+  max-width: 300px;
   text-align: center;
   outline: 1px solid transparent;
   outline-offset: 2px !important;
   color: var(--vscode-button-foreground);
   background: var(--vscode-button-background);
-  margin: var(--input-margin-vertical) 0;
+  margin: var(--input-margin-vertical) auto;
   border-radius: 0.2em;
 }
 
@@ -79,6 +80,7 @@ textarea {
   color: var(--vscode-input-foreground);
   outline-color: var(--vscode-input-border);
   background-color: var(--vscode-input-background);
+  border-radius: 0.2em;
 }
 
 input::placeholder,
@@ -87,5 +89,6 @@ textarea::placeholder {
 }
 
 hr {
+  margin: 0px -20px 0px -20px;
   background-color: var(--vscode-editorGroup-border);
 }

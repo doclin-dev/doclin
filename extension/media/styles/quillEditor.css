@@ -24,7 +24,7 @@ pre.ql-syntax hr {
     border-top: none;
     border-right: none;
     border-left: none;
-    border-bottom: 1px solid var(--vscode-editor-foreground);
+    border-bottom: none;
     padding: 2px;
 }
 
@@ -37,8 +37,15 @@ pre.ql-syntax hr {
 }
 
 .ql-editor {
+    border-top: 1px solid var(--vscode-editor-foreground);
     padding: 10px;
 }
+
+
+.ql-editor:focus {
+    border: 1px solid var(--vscode-focusBorder);
+}
+
 
 .thread-card .ql-toolbar {
     border: 1px solid var(--vscode-input-foreground);

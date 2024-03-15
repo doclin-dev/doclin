@@ -12,6 +12,7 @@
     let anonymousCheck: boolean = false;
     let activeFilePath: string;
     let organizationUsers: User[] | undefined = $currentOrganization?.members;
+    let threadTitle: string;
 
     $: {
         if ($reload > 1) {
@@ -111,22 +112,29 @@
     });
 </script>
 
-<FilterMenu filePath= {activeFilePath} onFirstSegmentClick={loadAllThreads} onSecondSegmentClick={loadCurrentFileThreads}/>
+<div id="textEditorContainer">
+    <FilterMenu filePath= {activeFilePath} onFirstSegmentClick={loadAllThreads} onSecondSegmentClick={loadCurrentFileThreads}/>
 
-<form
-    on:submit|preventDefault={submitThreadMessage}>
-    <div id="textEditor"></div>
-    <label class="checkbox">
-        <input type="checkbox" bind:checked={anonymousCheck}>
-        Post as an anonymous user
-    </label>
-    <button on:click|preventDefault={submitThreadMessage}>Submit</button>
-</form>
+    <form
+        on:submit|preventDefault={submitThreadMessage}>
+        <input class="my-1" placeholder="Title" bind:value={threadTitle} />
+        <div id="textEditor"></div>
+        <label class="checkbox">
+            <input type="checkbox" bind:checked={anonymousCheck}>
+            Post as an anonymous user
+        </label>
+        <div class="text-center">
+            <button on:click|preventDefault={submitThreadMessage}>Submit</button>
+        </div>
+    </form>
+</div>
 
 <div id='viewer'>
     {#if threads}
         {#each threads as thread (thread.id)}
+            <hr />
             <Thread thread={thread} reloadThreads={loadThreads}/>
         {/each}
+        <hr />
     {/if}
 </div>

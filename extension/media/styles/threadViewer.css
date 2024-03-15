@@ -17,12 +17,7 @@
 .thread-card {
     display: flex;
     flex-direction: column;
-    background-color: var(--vscode-input-background);
-    padding: 0.5rem;
-    border-radius: 0.2em;
-    border: 2px;
-    margin: 0.5rem 0;
-    border: 1px solid var(--vscode-input-border);
+    padding: 1rem 0;
 }
 
 .thread-card p {
@@ -131,4 +126,12 @@
     white-space: nowrap;
     overflow: hidden;  
     text-overflow: ellipsis;
+}
+
+#textEditorContainer {
+    padding: 1rem 0;
+}
+
+#submitContainer {
+    display: inline;
 }
