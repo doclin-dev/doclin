@@ -72,7 +72,11 @@
 <div>
     <div class='thread-card'>
         <div class="thread-header">
-            <div class="card-name-header">{thread?.username}</div>
+        
+            <div class="card-name-header">
+                {thread?.username} 
+                <span class='creation-time'>{threadCreationTime}</span></div>
+
             <div class='button-container'>
                 {#if showReplyButton}
                     <Button icon='reply' onClick={handleReplyButtonClick} type='text'/>
@@ -81,7 +85,6 @@
                 <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
             </div>
         </div>
-        <div class='creation-time'>{threadCreationTime}</div>
         <div class='thread-file-path-text mb-2'>{thread?.filePath ? `${thread?.filePath}` : ""}</div>
 
         {#if $editedThreadId === thread?.id}

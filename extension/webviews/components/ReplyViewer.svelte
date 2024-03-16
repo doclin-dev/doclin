@@ -117,14 +117,17 @@
             <Button icon='back-icon' type='text' onClick={handleBackClick}/>
         </div>
     </div>
+
     <div>
         <Thread thread={$threadSelected} showReplyButton={false}/>
+
         <div class="reply-count-line">
             <div class="reply-count-divider"></div>
-            <p>{getReplyCountText(replies.length)}</p>
+                <p>{getReplyCountText(replies.length)}</p>
             <div class="reply-count-divider"></div>
         </div>
     </div>
+
     <div style="padding-bottom: 0.5rem">
         {#if replies.length > 0 }
             {#each replies as reply (reply.id)}

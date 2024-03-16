@@ -109,12 +109,17 @@
 
 <div class='reply-card'>
     <div class="reply-card-header">
-        <div class="card-name-header"> {reply.username}</div>
+        <div class="card-name-header"> 
+            {reply.username}
+            <span class='creation-time'>{replyCreationTime}</span>
+        </div>
+
         <div class='button-container'>
             <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
         </div>
     </div>
-    <div class='creation-time'>{replyCreationTime}</div>
+
+    
     {#if $editedReplyId === reply.id}
         <div id="reply-card-editor"></div> 
         <div class='reply-card-footer'>
