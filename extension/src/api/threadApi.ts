@@ -35,7 +35,7 @@ const postThread = async (organizationId: string,
 	threadMessage: string, 
 	delta: any,
 	snippets: any[],
-	activeEditorFilePath: string,
+	filePath: string,
 	mentionedUserIds: number[],
 	anonymous: boolean) => {
 
@@ -45,7 +45,7 @@ const postThread = async (organizationId: string,
 		threadMessage: threadMessage,
 		snippets: snippets,
 		projectId: projectId,
-		activeEditorFilePath: activeEditorFilePath,
+		filePath: filePath,
 		mentionedUserIds: mentionedUserIds,
 		anonymous: anonymous
 	};

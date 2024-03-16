@@ -2,10 +2,15 @@ import { Thread } from "../entities/Thread";
 import { AppDataSource } from "../dataSource";
 
 export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
+
 	async findThreadByFilePathAndProjectId(filePath: string, projectId: number) {
 		const relevantThreads = await this.createQueryBuilder('thread')
 			.leftJoin('thread.snippets', 'snippet')
-			.where('snippet.filePath = :filePath', { filePath })
+			.where(queryBuilder => {
+				queryBuilder.where('thread.filePath = :filePath', { filePath })
+					.orWhere('snippet.filePath = :filePath', { filePath });
+
+			})
 			.andWhere('thread.projectId = :projectId', { projectId })
 			.getMany();
 
@@ -13,7 +18,7 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
 			return relevantThreads;
 		}
                                             
-		const threadIds = relevantThreads.map(thread => (thread.id));
+		const threadIds = relevantThreads.map(thread => thread.id);
 
 		const relevantThreadsWithAllInfoPopulated =  this.createQueryBuilder('thread')
 			.leftJoinAndSelect('thread.snippets', 'snippet')
@@ -24,6 +29,7 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
 			.orderBy({ 'thread.id': 'DESC', 'reply.id' : 'ASC' })
 			.loadRelationCountAndMap("thread.replyCount", "thread.replies")
 			.getMany();
+
 		return relevantThreadsWithAllInfoPopulated;
 	},
 

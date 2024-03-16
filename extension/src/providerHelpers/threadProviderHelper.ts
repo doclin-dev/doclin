@@ -66,7 +66,9 @@ export const postThread = async({ title, threadMessage, delta, snippets, mention
 	const projectId = await getCurrentProjectId();
 	const activeFilePath = await getActiveEditorFilePath();
 
-	if (!organizationId || !projectId) {return;}
+	if (!organizationId || !projectId) {
+		return;
+	}
 
 	const response = await threadApi.postThread(
 		organizationId, 
@@ -95,7 +97,9 @@ export const updateThread = async({ title, threadMessage, threadId, snippets, de
 	const projectId = await getCurrentProjectId();
 	const activeFilePath = await getActiveEditorFilePath();
 
-	if (!organizationId || !projectId) {return;}
+	if (!organizationId || !projectId) {
+		return;
+	}
 
 	const response = await threadApi.updateThread(
 		organizationId, 

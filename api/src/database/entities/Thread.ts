@@ -54,4 +54,7 @@ export class Thread extends BaseEntity {
 
 	@Column({ type: 'json', nullable: true })
 		delta: any;
+	
+	@Column({ type: 'text', nullable: true })
+		filePath: string;
 }

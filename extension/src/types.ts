@@ -45,6 +45,7 @@ export type PostThread = {
 };
 
 export type UpdateThread = {
+    title: string,
     threadMessage: string, 
     threadId: number,
     snippets: any[],
