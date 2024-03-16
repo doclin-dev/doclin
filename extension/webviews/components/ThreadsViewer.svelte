@@ -6,7 +6,6 @@
     import { ActiveTextEditor, ActiveView, Page } from "../enums";
     import FilterMenu from "./FilterMenu.svelte";
     import { activeTextEditor, activeView, currentOrganization, currentProject, page, reload, threadContents } from "../state/store";
-    import Button from "./Button.svelte";
     
     let quillEditor: TextEditor;
     let threads: Array<ThreadType> = [];
