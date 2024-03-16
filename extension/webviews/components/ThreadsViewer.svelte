@@ -33,7 +33,8 @@
                     snippets: snippets,
                     projectId: $currentProject?.id,
                     mentionedUserIds: mentionedUserIds,
-                    anonymous: anonymousCheck ? true : false
+                    anonymous: anonymousCheck ? true : false,
+                    isFileThreadSelected: $activeView === ActiveView.CurrentFileThreads
                 }
             });
         }

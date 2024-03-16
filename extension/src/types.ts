@@ -14,6 +14,7 @@ export type Thread = {
     replyCount: number;
     threadCreationTime: Date;
     lastReplied: Date;
+    filePath: string;
 };
 
 export type Reply = {
@@ -41,7 +42,8 @@ export type PostThread = {
     delta: any, 
     snippets: any[], 
     mentionedUserIds: number[],
-    anonymous: boolean 
+    anonymous: boolean,
+    isFileThreadSelected: boolean
 };
 
 export type UpdateThread = {

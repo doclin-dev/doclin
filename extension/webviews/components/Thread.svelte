@@ -82,7 +82,7 @@
             </div>
         </div>
         <div class='creation-time'>{threadCreationTime}</div>
-
+        <div class='thread-file-path-text mb-2'>{thread?.filePath ? `${thread?.filePath}` : ""}</div>
 
         {#if $editedThreadId === thread?.id}
             <ThreadEdit thread={thread}/>
