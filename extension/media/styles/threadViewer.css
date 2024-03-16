@@ -64,10 +64,18 @@
     gap: 0.5rem;
 }
 
-.reply-count-divider {
+.reply-count-divider-left {
     height: 1px;
     background-color: var(--vscode-focusBorder);
     flex-grow: 1;
+    margin-left: -20px;
+}
+
+.reply-count-divider-right {
+    height: 1px;
+    background-color: var(--vscode-focusBorder);
+    flex-grow: 1;
+    margin-right: -20px;
 }
 
 .reply-count-line p {
