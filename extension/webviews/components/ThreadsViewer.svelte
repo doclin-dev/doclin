@@ -6,13 +6,14 @@
     import { ActiveTextEditor, ActiveView, Page } from "../enums";
     import FilterMenu from "./FilterMenu.svelte";
     import { activeTextEditor, activeView, currentOrganization, currentProject, page, reload, threadContents } from "../state/store";
+    import Button from "./Button.svelte";
     
     let quillEditor: TextEditor;
     let threads: Array<ThreadType> = [];
     let anonymousCheck: boolean = false;
     let activeFilePath: string;
     let organizationUsers: User[] | undefined = $currentOrganization?.members;
-    let threadTitle: string;
+    let title: string;
 
     $: {
         if ($reload > 1) {
@@ -27,7 +28,8 @@
             tsvscode.postMessage({ 
                 type: "postThread", 
                 value: {
-                    delta: delta, 
+                    delta: delta,
+                    title: title,
                     threadMessage: threadMessage,
                     snippets: snippets,
                     projectId: $currentProject?.id,
@@ -117,19 +119,19 @@
 
     <form
         on:submit|preventDefault={submitThreadMessage}>
-        <input class="my-1" placeholder="Title" bind:value={threadTitle} />
-        <div id="textEditor"></div>
-        <label class="checkbox">
-            <input type="checkbox" bind:checked={anonymousCheck}>
-            Post as an anonymous user
-        </label>
-        <div class="text-center">
+        <input class="my-1" placeholder="Title" bind:value={title} />
+        <div id="textEditor" class="textEditor"></div>
+        <div id="submitContainer">
             <button on:click|preventDefault={submitThreadMessage}>Submit</button>
+            <label class="checkbox">
+                <input type="checkbox" bind:checked={anonymousCheck}>
+                Post as an anonymous user
+            </label>
         </div>
     </form>
 </div>
 
-<div id='viewer'>
+<div id='threads-viewer'>
     {#if threads}
         {#each threads as thread (thread.id)}
             <hr />

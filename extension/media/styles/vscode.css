@@ -42,13 +42,12 @@ button {
   border: 1px solid var(--vscode-button-border);
   padding: var(--input-padding-vertical) var(--input-padding-horizontal);
   width: 100%;
-  max-width: 300px;
   text-align: center;
   outline: 1px solid transparent;
   outline-offset: 2px !important;
   color: var(--vscode-button-foreground);
   background: var(--vscode-button-background);
-  margin: var(--input-margin-vertical) auto;
+  margin: var(--input-margin-vertical) 0;
   border-radius: 0.2em;
 }
 

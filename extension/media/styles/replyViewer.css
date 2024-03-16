@@ -16,12 +16,7 @@
 .reply-card {
     display: flex;
     flex-direction: column;
-    background-color: var(--vscode-input-background);
-    padding: 0.5rem;
-    gap: 0.25;
-    border-radius: 0.2em;
-    border: 2px;
-    margin: 0.5rem 0;
+    padding: 1rem 0;
 }
 
 .reply-card-footer {
@@ -38,6 +33,7 @@
     justify-content: space-between;  
     padding-bottom: 0.5rem;
     align-items: center;
+    margin: 5px -5px 0 -5px;
 }
 
 #replyViewerEditor{

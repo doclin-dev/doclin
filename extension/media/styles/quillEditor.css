@@ -46,21 +46,14 @@ pre.ql-syntax hr {
     border: 1px solid var(--vscode-focusBorder);
 }
 
-
-.thread-card .ql-toolbar {
-    border: 1px solid var(--vscode-input-foreground);
-}
-
-.thread-card .ql-editor {
-    border: 1px solid var(--vscode-input-foreground);
-    border-top: none;
-}
-
-.reply-card .ql-toolbar {
-    border: 1px solid var(--vscode-input-foreground);
-}
-
-.reply-card .ql-editor {
-    border: 1px solid var(--vscode-input-foreground);
-    border-top: none;
+.textEditor {
+    background-color: var(--vscode-input-background);
+    width: 100%;
+    height: 150px;
+    resize: both; 
+    overflow: auto;
+    border: none;
+    border-radius: 0.2em;
+    resize: vertical;
+    border: 1px solid var(--vscode-input-border);
 }

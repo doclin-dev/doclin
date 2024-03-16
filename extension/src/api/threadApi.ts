@@ -31,6 +31,7 @@ const getAllThreads = async (organizationId: string, projectId: number) => {
 
 const postThread = async (organizationId: string,
 	projectId: number,
+	title: string,
 	threadMessage: string, 
 	delta: any,
 	snippets: any[],
@@ -40,6 +41,7 @@ const postThread = async (organizationId: string,
 
 	const data = {
 		delta: delta,
+		title: title,
 		threadMessage: threadMessage,
 		snippets: snippets,
 		projectId: projectId,
@@ -55,14 +57,18 @@ const postThread = async (organizationId: string,
 	return response;
 };
 
-const updateThread = async (organizationId: string, 
+const updateThread = async (
+	organizationId: string, 
 	projectId: number, 
-	threadId: number, 
+	threadId: number,
+	title: string,
 	threadMessage: string, 
 	delta: any,
 	snippets: any[],
 	activeEditorFilePath: string) => {
+
 	const data = {
+		title: title,
 		message: threadMessage,
 		activeEditorFilePath: activeEditorFilePath,
 		delta: delta,

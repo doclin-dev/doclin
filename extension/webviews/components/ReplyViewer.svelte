@@ -126,17 +126,26 @@
         </div>
     </div>
     <div style="padding-bottom: 0.5rem">
-        {#each replies as reply (reply.id)}
-            <Reply reply={reply} reloadReplies={loadReplies}/>
-        {/each}
+        {#if replies.length > 0 }
+            {#each replies as reply (reply.id)}
+                <hr/>
+                <Reply reply={reply} reloadReplies={loadReplies}/>
+            {/each}
+            <hr/>
+        {/if}
     </div>
     
-    <form>
+    <form class="mt-2">
         <div id="replyViewerEditor"></div>
-        <label class="checkbox">
-            <input type="checkbox" bind:checked={anonymousCheck}>
-            Post as an anonymous user
-        </label>
-        <button on:click|preventDefault={onSubmit}>Submit</button>
+
+        <div id="submitContainer">
+            <button on:click|preventDefault={onSubmit}>Reply</button>
+
+            <label class="checkbox">
+                <input type="checkbox" bind:checked={anonymousCheck}>
+                Post as an anonymous user
+            </label>
+        </div>
+
     </form>
 </div>

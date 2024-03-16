@@ -61,7 +61,7 @@ export const getAllThreads = async (): Promise<Thread[] | undefined> => {
 	return threads;
 };
 
-export const postThread = async({ threadMessage, delta, snippets, mentionedUserIds, anonymous }: PostThread): Promise<Thread | undefined> => {
+export const postThread = async({ title, threadMessage, delta, snippets, mentionedUserIds, anonymous }: PostThread): Promise<Thread | undefined> => {
 	const organizationId = await getCurrentOrganizationId();
 	const projectId = await getCurrentProjectId();
 	const activeFilePath = await getActiveEditorFilePath();
@@ -70,7 +70,8 @@ export const postThread = async({ threadMessage, delta, snippets, mentionedUserI
 
 	const response = await threadApi.postThread(
 		organizationId, 
-		projectId, 
+		projectId,
+		title,
 		threadMessage, 
 		delta, 
 		snippets, 
@@ -89,7 +90,7 @@ export const postThread = async({ threadMessage, delta, snippets, mentionedUserI
 	return thread;
 };
 
-export const updateThread = async({ threadMessage, threadId, snippets, delta }: UpdateThread): Promise<Thread | undefined> => {
+export const updateThread = async({ title, threadMessage, threadId, snippets, delta }: UpdateThread): Promise<Thread | undefined> => {
 	const organizationId = await getCurrentOrganizationId();
 	const projectId = await getCurrentProjectId();
 	const activeFilePath = await getActiveEditorFilePath();
@@ -99,7 +100,8 @@ export const updateThread = async({ threadMessage, threadId, snippets, delta }: 
 	const response = await threadApi.updateThread(
 		organizationId, 
 		projectId, 
-		threadId, 
+		threadId,
+		title,
 		threadMessage,
 		delta,
 		snippets,

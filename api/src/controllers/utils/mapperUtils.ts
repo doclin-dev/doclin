@@ -8,6 +8,7 @@ const ANONYMOUS_USER: string = "Anonymous User";
 export const mapThreadResponse = (thread: Thread) => {
 	return {
 		id: thread.id,
+		title: thread.title,
 		message: thread.message,
 		username: thread.anonymous ? ANONYMOUS_USER : thread.user?.name,
 		replyCount: thread.replyCount,

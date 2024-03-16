@@ -5,6 +5,7 @@ export type DoclinFile = {
 
 export type Thread = {
     id: number;
+    title: string;
     snippets: Snippet[];
     message: string;
     delta: any;
@@ -34,7 +35,8 @@ export type Snippet = {
     gitBranch: string;
 };
 
-export type PostThread = { 
+export type PostThread = {
+    title: string,
     threadMessage: string, 
     delta: any, 
     snippets: any[], 
