@@ -63,6 +63,8 @@
 
     onMount(async () => {
         window.addEventListener("message", messageEventListener);
+
+        console.log(thread);
     });
 
     onDestroy(() => {
@@ -87,19 +89,21 @@
             </div>
         </div>
 
-        <div class='thread-file-path-container mb-2'>
-            {#if thread?.gitBranch}
-                <div class='thread-file-path-text'>
-                    <Icon name='git' width={15} height={15} /> {thread?.gitBranch}
-                </div>
-            {/if}
+        {#if thread?.snippets?.length === 0}
+            <div class='thread-file-path-container mb-2'>
+                {#if thread?.gitBranch}
+                    <div class='thread-file-path-text'>
+                        <Icon name='git' width={15} height={15} /> {thread?.gitBranch}
+                    </div>
+                {/if}
 
-            {#if thread?.filePath}
-                <div class='thread-file-path-text'>
-                    <Icon name='file' width={15} height={15} /> {thread?.filePath}
-                </div>
-            {/if}
-        </div>
+                {#if thread?.filePath}
+                    <div class='thread-file-path-text'>
+                        <Icon name='file' width={15} height={15} /> {thread?.filePath}
+                    </div>
+                {/if}
+            </div>
+        {/if}
 
         {#if $editedThreadId === thread?.id}
             <ThreadEdit thread={thread}/>
