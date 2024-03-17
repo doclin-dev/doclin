@@ -123,11 +123,11 @@
         <input class="textEditorTitle" placeholder="Title" bind:value={title} />
         <div id="textEditor" class="textEditor"></div>
         <div id="submitContainer">
-            <button class='submitButton' on:click|preventDefault={submitThreadMessage}>Submit</button>
             <label class="checkbox">
                 <input type="checkbox" bind:checked={anonymousCheck}>
                 Post as an anonymous user
             </label>
+            <button class='submitButton' on:click|preventDefault={submitThreadMessage}>Submit</button>
         </div>
     </form>
 </div>

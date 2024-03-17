@@ -142,12 +142,12 @@
             <div id="replyViewerEditor"></div>
 
             <div id="submitContainer">
-                <button on:click|preventDefault={onSubmit}>Reply</button>
-
                 <label class="checkbox">
                     <input type="checkbox" bind:checked={anonymousCheck}>
                     Post as an anonymous user
                 </label>
+                
+                <button on:click|preventDefault={onSubmit}>Reply</button>
             </div>
         </form>
     </div>

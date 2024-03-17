@@ -63,8 +63,6 @@
 
     onMount(async () => {
         window.addEventListener("message", messageEventListener);
-
-        console.log(thread);
     });
 
     onDestroy(() => {

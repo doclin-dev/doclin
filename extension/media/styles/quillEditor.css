@@ -8,7 +8,7 @@ pre.ql-syntax, .ql-snow .ql-editor pre.ql-syntax {
     color: var(--vscode-editor-foreground);
     padding: 5px 10px;
     border-radius: 0.2em;
-    border: 2px solid var(--vscode-editorGroup-border);
+    border: 1px solid var(--vscode-editorGroup-border);
 }
 
 pre.ql-syntax .line-number {
