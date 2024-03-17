@@ -16,7 +16,8 @@ export const mapThreadResponse = (thread: Thread) => {
 		lastReplied: thread.replies?.length > 0 ? thread.replies[thread.replies.length - 1].createdAt : null,
 		snippets: thread.snippets?.map(mapSnippetResponse),
 		delta: thread.delta,
-		filePath: thread.filePath
+		filePath: thread.filePath,
+		gitBranch: thread.gitBranch
 	};
 };
 

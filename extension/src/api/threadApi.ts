@@ -35,6 +35,7 @@ const postThread = async (organizationId: string,
 	threadMessage: string, 
 	delta: any,
 	snippets: any[],
+	gitBranch: string | null,
 	filePath: string | null,
 	mentionedUserIds: number[],
 	anonymous: boolean) => {
@@ -47,7 +48,8 @@ const postThread = async (organizationId: string,
 		projectId: projectId,
 		filePath: filePath,
 		mentionedUserIds: mentionedUserIds,
-		anonymous: anonymous
+		anonymous: anonymous,
+		gitBranch: gitBranch
 	};
 
 	const apiService = await createAxiosInstance();

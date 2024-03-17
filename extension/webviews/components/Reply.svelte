@@ -121,10 +121,12 @@
 
     
     {#if $editedReplyId === reply.id}
-        <div id="reply-card-editor"></div> 
-        <div class='reply-card-footer'>
-            <Button variant='secondary' onClick={onCancel} title="Cancel"/>
-            <Button variant='secondary' onClick={handleOnSubmit} title="Submit"/>
+        <div class='textEditorContainer'>
+            <div id="reply-card-editor"></div> 
+            <div class='reply-card-footer'>
+                <Button variant='secondary' onClick={onCancel} title="Cancel"/>
+                <Button variant='secondary' onClick={handleOnSubmit} title="Submit"/>
+            </div>
         </div>
     {:else}
         <div>{@html reply.displayMessage}</div>

@@ -15,6 +15,7 @@ export type Thread = {
     threadCreationTime: Date;
     lastReplied: Date;
     filePath: string;
+    gitBranch: string;
 };
 
 export type Reply = {
@@ -37,35 +38,36 @@ export type Snippet = {
 };
 
 export type PostThread = {
-    title: string,
-    threadMessage: string, 
-    delta: any, 
-    snippets: any[], 
-    mentionedUserIds: number[],
-    anonymous: boolean,
-    isFileThreadSelected: boolean
+    title: string;
+    threadMessage: string;
+    delta: any;
+    snippets: any[];
+    mentionedUserIds: number[];
+    anonymous: boolean;
+    isFileThreadSelected: boolean;
+    gitBranch: string;
 };
 
 export type UpdateThread = {
-    title: string,
-    threadMessage: string, 
-    threadId: number,
-    snippets: any[],
-    delta: any
+    title: string;
+    threadMessage: string; 
+    threadId: number;
+    snippets: any[];
+    delta: any;
 };
 
 export type PostReply = {
-    replyMessage: string, 
-    threadId: number, 
-    anonymous: boolean,
-    snippets: any[],
-    delta: any,
-    mentionedUserIds: number[]
+    replyMessage: string;
+    threadId: number;
+    anonymous: boolean;
+    snippets: any[];
+    delta: any;
+    mentionedUserIds: number[];
 };
 
 export type UpdateReply = {
-    replyMessage: string, 
-    replyId: number,
-    snippets: any[],
-    delta: any
+    replyMessage: string;
+    replyId: number;
+    snippets: any[];
+    delta: any;
 };

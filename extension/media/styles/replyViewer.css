@@ -21,7 +21,7 @@
 
 .reply-card-footer {
     display: flex;
-    padding-top: 0.5rem;
+    padding: 0.3rem;
     flex-direction: row;
     justify-content: flex-end;
     gap: 0.25rem;
@@ -57,4 +57,10 @@
 
 .reply-card p {
     margin: 0px auto;
+}
+
+#reply-viewer hr {
+    margin: 0px -20px 0px -20px;
+    background-color: var(--vscode-editorGroup-border);
+    height: 2px;
 }

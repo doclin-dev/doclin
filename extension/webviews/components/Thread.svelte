@@ -6,6 +6,7 @@
     import { Page } from '../enums';
     import moment from 'moment';
     import ThreadEdit from './ThreadEdit.svelte';
+    import Icon from './Icon.svelte';
 
     export let thread: any;
     export let reloadThreads: () => void = () => {};
@@ -85,12 +86,25 @@
                 <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
             </div>
         </div>
-        <div class='thread-file-path-text mb-2'>{thread?.filePath ? `${thread?.filePath}` : ""}</div>
+
+        <div class='thread-file-path-container mb-2'>
+            {#if thread?.gitBranch}
+                <div class='thread-file-path-text'>
+                    <Icon name='git' width={15} height={15} /> {thread?.gitBranch}
+                </div>
+            {/if}
+
+            {#if thread?.filePath}
+                <div class='thread-file-path-text'>
+                    <Icon name='file' width={15} height={15} /> {thread?.filePath}
+                </div>
+            {/if}
+        </div>
 
         {#if $editedThreadId === thread?.id}
             <ThreadEdit thread={thread}/>
         {:else}
-            <h3>{thread?.title ?? ""}</h3>
+            <div class="thread-title">{thread?.title ?? ""}</div>
 
             <div>{@html thread?.displayMessage}</div>
             

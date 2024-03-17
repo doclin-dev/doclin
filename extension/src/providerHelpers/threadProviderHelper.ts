@@ -65,6 +65,7 @@ export const postThread = async({ title, threadMessage, delta, snippets, mention
 	const organizationId = await getCurrentOrganizationId();
 	const projectId = await getCurrentProjectId();
 	const activeFilePath = await getActiveEditorFilePath();
+	const gitBranch = await getGitBranch();
 
 	if (!organizationId || !projectId) {
 		return;
@@ -76,10 +77,11 @@ export const postThread = async({ title, threadMessage, delta, snippets, mention
 		title,
 		threadMessage, 
 		delta, 
-		snippets, 
+		snippets,
+		isFileThreadSelected ? gitBranch : null,
 		isFileThreadSelected ? activeFilePath : null,
 		mentionedUserIds,
-		anonymous
+		anonymous,
 	);
   
 	const thread: Thread = response?.data?.thread;

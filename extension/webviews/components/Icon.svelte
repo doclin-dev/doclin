@@ -9,6 +9,6 @@
     const icon = iconsMap[name];
 </script>
 
-<div class="icon">
+<span class="icon">
     <Icon icon={icon} width={width} height={height} />
-</div>
+</span>

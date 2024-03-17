@@ -15,6 +15,7 @@ export const postThread = async (req: any, res: any) => {
 	const anonymousPost: boolean = req.body.anonymous;
 	const mentionedUserIds: number[] = req.body.mentionedUserIds;
 	const filePath: string = req.body.filePath;
+	const gitBranch: string = req.body.gitBranch;
     
 	const { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage, snippets);
 
@@ -26,7 +27,8 @@ export const postThread = async (req: any, res: any) => {
 		snippets: snippetEntities,
 		anonymous: anonymousPost,
 		delta: delta,
-		filePath: filePath
+		filePath: filePath,
+		gitBranch: gitBranch
 	}).save();
 
     

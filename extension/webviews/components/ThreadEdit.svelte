@@ -71,9 +71,11 @@
     }
 </script>
 
-<input class="my-1" placeholder="Title" bind:value={title} />
-<div id="thread-editor" class="textEditor"></div> 
-<div class='thread-editor-footer'>
-    <Button variant='secondary' onClick={onCancel} title="Cancel"/>
-    <Button variant='secondary' onClick={onSubmit} title="Submit"/>
+<div class='textEditorContainer'>
+    <input class="textEditorTitle" placeholder="Title" bind:value={title} />
+    <div id="thread-editor" class="textEditor"></div> 
+    <div class='thread-editor-footer'>
+        <Button variant='secondary' size='sm' onClick={onCancel} title="Cancel"/>
+        <Button variant='secondary' size='sm' onClick={onSubmit} title="Submit"/>
+    </div>
 </div>

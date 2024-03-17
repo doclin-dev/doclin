@@ -57,4 +57,7 @@ export class Thread extends BaseEntity {
 	
 	@Column({ type: 'text', nullable: true })
 		filePath: string;
+	
+	@Column({ type: 'text', nullable: true })
+		gitBranch: string;
 }

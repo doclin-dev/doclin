@@ -39,6 +39,7 @@
             });
         }
 
+        title = "";
         quillEditor.setText("");
         $threadContents = null;
     }
@@ -114,15 +115,15 @@
     });
 </script>
 
-<div id="textEditorContainer">
-    <FilterMenu filePath= {activeFilePath} onFirstSegmentClick={loadAllThreads} onSecondSegmentClick={loadCurrentFileThreads}/>
+<FilterMenu filePath= {activeFilePath} onFirstSegmentClick={loadAllThreads} onSecondSegmentClick={loadCurrentFileThreads}/>
 
+<div class='textEditorContainer mb-2'>
     <form
         on:submit|preventDefault={submitThreadMessage}>
-        <input class="my-1" placeholder="Title" bind:value={title} />
+        <input class="textEditorTitle" placeholder="Title" bind:value={title} />
         <div id="textEditor" class="textEditor"></div>
         <div id="submitContainer">
-            <button on:click|preventDefault={submitThreadMessage}>Submit</button>
+            <button class='submitButton' on:click|preventDefault={submitThreadMessage}>Submit</button>
             <label class="checkbox">
                 <input type="checkbox" bind:checked={anonymousCheck}>
                 Post as an anonymous user

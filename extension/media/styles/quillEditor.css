@@ -16,7 +16,7 @@ pre.ql-syntax .line-number {
 }
 
 pre.ql-syntax hr {
-    background-color: var(--vscode-editor-foreground);
+    background-color: var(--vscode-input-foreground);
 }
 
 .ql-toolbar.ql-snow {
@@ -37,10 +37,10 @@ pre.ql-syntax hr {
 }
 
 .ql-editor {
-    border-top: 1px solid var(--vscode-editor-foreground);
+    border-top: 1px solid var(--vscode-input-foreground);
+    border-bottom: 1px solid var(--vscode-input-foreground);
     padding: 10px;
 }
-
 
 .ql-editor:focus {
     border: 1px solid var(--vscode-focusBorder);

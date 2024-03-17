@@ -21,4 +21,3 @@
         <Button icon="logout" type='text' onClick={logout}/>
     </div>
 </div>
-<hr/>

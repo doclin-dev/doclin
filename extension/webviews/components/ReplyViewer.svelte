@@ -114,7 +114,7 @@
 <div class='reply-viewer'>
     <div class='topbar'>
         <div class="button-container">
-            <Button icon='back-icon' type='text' onClick={handleBackClick}/>
+            <Button icon='back-icon' title=' Back to threads' type='text' onClick={handleBackClick}/>
         </div>
     </div>
 
@@ -137,17 +137,18 @@
         {/if}
     </div>
     
-    <form class="mt-2">
-        <div id="replyViewerEditor"></div>
+    <div class='textEditorContainer'>
+        <form class="mt-2">
+            <div id="replyViewerEditor"></div>
 
-        <div id="submitContainer">
-            <button on:click|preventDefault={onSubmit}>Reply</button>
+            <div id="submitContainer">
+                <button on:click|preventDefault={onSubmit}>Reply</button>
 
-            <label class="checkbox">
-                <input type="checkbox" bind:checked={anonymousCheck}>
-                Post as an anonymous user
-            </label>
-        </div>
-
-    </form>
+                <label class="checkbox">
+                    <input type="checkbox" bind:checked={anonymousCheck}>
+                    Post as an anonymous user
+                </label>
+            </div>
+        </form>
+    </div>
 </div>
