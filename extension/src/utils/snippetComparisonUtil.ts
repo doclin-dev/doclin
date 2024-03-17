@@ -66,11 +66,14 @@ export const getReadableCodeBlock = (
 
 	let output = `<div class="thread-snippet-container">`;
 
-	output += `<div class="thread-file-path">`;
-	output += gitBranch ? `<div class="thread-file-path-text">${gitIcon} ${gitBranch}</div>`: ``;
-	output += `<div class="thread-file-path-text">${fileIcon} ${filePath}</div>`;
-	output += `<div>${outdatedText}</div>`;
-	output += `</div>\n`;
+	if (gitBranch && filePath) {
+		output += `<div class="thread-file-path">`;
+		output += gitBranch ? `<div class="thread-file-path-text">${gitIcon} ${gitBranch}</div>` : ``;
+		output += filePath ? `<div class="thread-file-path-text">${fileIcon} ${filePath}</div>` : ``;
+		output += `<div>${outdatedText}</div>`;
+		output += `</div>\n`;
+	}
+
 
 	output += `${PRE_TAG_START}${snippetText}${PRE_TAG_END}`;
 
@@ -172,7 +175,6 @@ const readFileContent = async (filePath: string): Promise<string | null> => {
 		return null;
         
 	} catch (error) {
-		logger.error("Error occured while reading code file " + error);
 		return null;
 	}
 };

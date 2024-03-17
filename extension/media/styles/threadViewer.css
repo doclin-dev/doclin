@@ -124,7 +124,8 @@
     justify-content: flex-start;
     align-items: center;
     gap: 0.25rem;
-    padding: 0.25rem; 
+    padding: 0.25rem;
+    border-bottom: 2px solid var(--vscode-editorGroup-border);
 }
 
 .thread-file-path-text {
@@ -194,8 +195,5 @@
 
 .thread-snippet-container pre {
     margin-bottom: 0px;
-    border-right: none !important;
-    border-left: none !important;
-    border-bottom: none !important;
-    border-radius: 0px !important;
+    border: none !important;
 }
