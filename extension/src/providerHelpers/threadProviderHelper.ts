@@ -42,11 +42,13 @@ export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[],
 };
 
 
-export const getAllThreads = async (): Promise<Thread[] | undefined> => {
+export const getAllThreads = async (): Promise<Thread[]> => {
 	const organizationId = await getCurrentOrganizationId();
 	const projectId = await getCurrentProjectId();
 
-	if (!organizationId || !projectId) {return;}
+	if (!organizationId || !projectId) {
+		return [];
+	}
 
 	const response = await threadApi.getAllThreads(organizationId, projectId);
 	const payload = response?.data;

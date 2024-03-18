@@ -22,13 +22,13 @@
 
     const loadCurrentFileThreads = () => {
         if ($currentProject) {
-            tsvscode.postMessage({ type: 'getThreadsByActiveFilePath', value: { currentProjectId: $currentProject.id } });
+            tsvscode.postMessage({ type: 'getThreadsByActiveFilePath', value: null });
         }
     }
 
     const loadAllThreads = () => {
         if ($currentProject) {
-            tsvscode.postMessage({ type: 'getAllThreads', value: { currentProjectId: $currentProject.id } });
+            tsvscode.postMessage({ type: 'getAllThreads', value: null });
         }
     }
 

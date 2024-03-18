@@ -35,7 +35,6 @@
         switch(message.type) {
             case "deleteReply":
                 const deletedReply = message.value;
-                console.log(deletedReply);
                 if (reply.id == deletedReply?.id) {
                     reloadReplies();
                 }
