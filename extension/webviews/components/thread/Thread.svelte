@@ -1,14 +1,14 @@
 <script lang="ts">
-    import OverlayCard from './OverlayCard.svelte';
-    import Button from './Button.svelte'
+    import OverlayCard from '../OverlayCard.svelte';
+    import Button from '../Button.svelte'
     import { tick, onMount, onDestroy } from 'svelte';
-    import { editedReplyId, editedThreadId, page, threadSelected } from '../state/store';
-    import { Page } from '../enums';
+    import { editedReplyId, editedThreadId, page, threadSelected } from '../../state/store';
+    import { Page } from '../../enums';
     import moment from 'moment';
     import ThreadEdit from './ThreadEdit.svelte';
-    import Icon from './Icon.svelte';
-    import SeeMore from './SeeMore.svelte';
-    import type { Thread } from '../types';
+    import Icon from '../Icon.svelte';
+    import SeeMore from '../SeeMore.svelte';
+    import type { Thread } from '../../types';
 
     export let thread: Thread;
     export let reloadThreads: () => void = () => {};

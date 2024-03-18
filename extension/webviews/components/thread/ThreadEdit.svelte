@@ -1,9 +1,9 @@
 <script lang="ts">
     import { tick, onMount } from 'svelte';
-    import Button from './Button.svelte'
-    import { TextEditor } from './TextEditor';
-    import { activeTextEditor, editedThreadId, page } from '../state/store';
-    import { ActiveTextEditor, Page } from '../enums';
+    import Button from '../Button.svelte'
+    import { TextEditor } from '../TextEditor';
+    import { activeTextEditor, editedThreadId, page } from '../../state/store';
+    import { ActiveTextEditor, Page } from '../../enums';
 
     export let thread: any;
     let title: string = thread.title ?? "";
