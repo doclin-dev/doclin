@@ -5,7 +5,7 @@
     import { onMount, onDestroy } from "svelte";
     import Reply from "./Reply.svelte";
     import { page, reload, threadSelected } from "../../state/store";
-  import ReplyAddForm from "./ReplyAddForm.svelte";
+    import ReplyAddForm from "./ReplyAddForm.svelte";
 
     let replies : Array<{message: string, id: number}> = [];
 
