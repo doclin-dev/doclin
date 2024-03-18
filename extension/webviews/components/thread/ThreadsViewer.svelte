@@ -73,7 +73,7 @@
 <ThreadAddForm/>
 
 <div id='threads-viewer'>
-    {#if threads}
+    {#if threads.length > 0}
         {#each threads as thread (thread.id)}
             <hr />
             <Thread thread={thread} reloadThreads={loadThreads}/>
