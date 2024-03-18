@@ -26,6 +26,7 @@
     }
 
     const handleGetExtensionState = (extensionState: any) => {
+        $reload += 1;
         error = extensionState?.error;
         user = extensionState?.user;
         $currentOrganization = extensionState?.organization;
@@ -68,7 +69,6 @@
         }
 
         loading = false;
-        $reload += 1;
     }
 
     const getExtensionState = () => {
