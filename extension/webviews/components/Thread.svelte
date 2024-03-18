@@ -7,8 +7,10 @@
     import moment from 'moment';
     import ThreadEdit from './ThreadEdit.svelte';
     import Icon from './Icon.svelte';
+    import SeeMore from './SeeMore.svelte';
+    import type { Thread } from '../types';
 
-    export let thread: any;
+    export let thread: Thread;
     export let reloadThreads: () => void = () => {};
     export let showReplyButton: boolean = true;
     let lastEdited : string | null = thread?.lastReplied ? moment.utc(thread.lastReplied).fromNow() : null;
@@ -108,7 +110,7 @@
         {:else}
             <div class="thread-title">{thread?.title ?? ""}</div>
 
-            <div>{@html thread?.displayMessage}</div>
+            <div><SeeMore content={thread?.displayMessage}/></div>
             
             {#if thread?.replyCount &&  $page === Page.ThreadsViewer}
                 <div class="number-of-replies-button">

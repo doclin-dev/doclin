@@ -119,7 +119,9 @@
     </div>
 
     <div>
-        <Thread thread={$threadSelected} showReplyButton={false}/>
+        {#if $threadSelected}
+            <Thread thread={$threadSelected} showReplyButton={false}/>
+        {/if}
 
         <div class="reply-count-line">
             <div class="reply-count-divider-left"></div>

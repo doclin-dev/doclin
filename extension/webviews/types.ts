@@ -21,6 +21,12 @@ export type Thread = {
   username: string;
   lastReplied: string;
   threadCreationTime: string;
+  snippets: any[];
+  gitBranch: string;
+  filePath: string;
+  displayMessage: string;
+  title: string;
+  replyCount: number;
 };
 
 export type Organization = {

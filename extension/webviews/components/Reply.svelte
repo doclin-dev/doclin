@@ -6,6 +6,7 @@
     import { activeTextEditor, editedReplyId, editedThreadId } from '../state/store';
     import { ActiveTextEditor } from '../enums';
     import moment from 'moment';
+    import SeeMore from './SeeMore.svelte';
 
     export let reply: any;
     export let reloadReplies: () => void = () => {};
@@ -118,7 +119,6 @@
             <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick}/>
         </div>
     </div>
-
     
     {#if $editedReplyId === reply.id}
         <div class='textEditorContainer'>
@@ -129,7 +129,7 @@
             </div>
         </div>
     {:else}
-        <div>{@html reply.displayMessage}</div>
+        <div><SeeMore content={reply.displayMessage}/></div>
     {/if}
 
 </div>

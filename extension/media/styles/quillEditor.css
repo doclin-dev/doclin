@@ -37,8 +37,8 @@ pre.ql-syntax hr {
 }
 
 .ql-editor {
-    border-top: 1px solid var(--vscode-input-foreground);
-    border-bottom: 1px solid var(--vscode-input-foreground);
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid var(--vscode-disabledForeground);
     padding: 10px;
 }
 
@@ -52,8 +52,21 @@ pre.ql-syntax hr {
     height: 150px;
     resize: both; 
     overflow: auto;
-    border: none;
+    border: transparent;
     border-radius: 0.2em;
     resize: vertical;
     border: 1px solid var(--vscode-input-border);
+}
+
+.ql-editor.ql-blank::before {
+    color: var(--vscode-input-placeholderForeground);
+    content: attr(data-placeholder);
+    font-style: normal;
+    left: 10px;
+    pointer-events: none;
+    position: absolute;
+    right: 15px;
+    font-size: var(--vscode-font-size);
+    font-weight: var(--vscode-font-weight);
+    font-family: var(--vscode-font-family);
 }

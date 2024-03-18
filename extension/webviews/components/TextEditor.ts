@@ -43,7 +43,8 @@ export class TextEditor {
     				},
     			}
     		},
-    		theme: 'snow'
+    		theme: 'snow',
+			placeholder: 'Message'
     	};
         
     	const options = { ...defaultOptions, ...customOptions };

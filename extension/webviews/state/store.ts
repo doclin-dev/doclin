@@ -2,7 +2,7 @@ import { ActiveTextEditor, ActiveView, Page, WebviewStateType } from '../enums';
 import type { Project, Organization, Thread } from '../types';
 import { createState } from './createState';
 
-export const editedThreadId = createState(null, null);
+export const editedThreadId = createState<number|null>(null, null);
 
 export const editedReplyId = createState(null, null);
 
