@@ -68,8 +68,8 @@ export const getReadableCodeBlock = (
 
 	if (gitBranch || filePath) {
 		output += `<div class="thread-file-path">`;
-		output += gitBranch ? `<div class="thread-file-path-text">${gitIcon} ${gitBranch}</div>` : ``;
-		output += filePath ? `<div class="thread-file-path-text">${fileIcon} ${filePath}</div>` : ``;
+		output += gitBranch ? `${gitIcon} <div class="thread-file-path-text">${gitBranch}</div>` : ``;
+		output += filePath ? `${fileIcon} <div class="thread-file-path-text">${filePath}</div>` : ``;
 		output += `<div>${outdatedText}</div>`;
 		output += `</div>\n`;
 	}

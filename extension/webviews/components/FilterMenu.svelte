@@ -3,6 +3,7 @@
     import SegmentedControl from "./SegmentedControl.svelte";
     import { ActiveView } from "../enums";
     import { activeView, currentOrganization, currentProject } from "../state/store";
+  import Icon from "./Icon.svelte";
 
     export let filePath: string | null;
     export let onFirstSegmentClick: () => void;
@@ -32,17 +33,28 @@
     }
 </script>
 
-<div style="dispaly: flex, flex-direction:column">
+<div>
     <div class="segmentedControlContainer">
         <SegmentedControl selectedIndex={selectedIndex}>
             <Segment onClick={handleFirstSegmentClick}>All Threads</Segment>
             <Segment onClick={handleSecondSegmentClick}>File Threads</Segment>
         </SegmentedControl>
     </div>
+    
     <form class="label-holder">
-        <label class="filter-menu-label project-label" for="project">{getOrganizationAndProjectName($currentOrganization?.name, $currentProject?.name)}</label>
+        <label class="filter-menu-label project-label" for="project">
+            <div class="overflow-ellipsis">
+                {getOrganizationAndProjectName($currentOrganization?.name, $currentProject?.name)}
+            </div>
+        </label>
+
         {#if isCurrentFileView}
-            <label class="filter-menu-label file-label" for="file">File: {filePath}</label>
+            <label class="filter-menu-label file-label" for="file">
+                <Icon name='file' height={14} width={14}/>
+                <div class='overflow-ellipsis'>
+                    {filePath}
+                </div>
+            </label>
         {/if}
     </form>
 </div>
