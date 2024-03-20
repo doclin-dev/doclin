@@ -5,6 +5,8 @@
     let showMore = false;
     let textContainer: HTMLElement;
     let seeMoreLink: HTMLAnchorElement;
+    const SEE_LESS_TEXT: string = 'See less';
+    const SEE_MORE_TEXT: string = '...See More';
 
     onMount(() => {
         if (textContainer.scrollHeight > textContainer.clientHeight) {
@@ -20,10 +22,10 @@
         showMore = !showMore;
         if (showMore) {
             textContainer.style.maxHeight = "none";
-            seeMoreLink.textContent = "See less";
+            seeMoreLink.textContent = SEE_LESS_TEXT;
         } else {
-            textContainer.style.maxHeight = "250px"; // Set your max height here
-            seeMoreLink.textContent = "See more";
+            textContainer.style.maxHeight = "125px"; // Set your max height here
+            seeMoreLink.textContent = SEE_MORE_TEXT;
         }
     }
 </script>
@@ -44,5 +46,5 @@
     {@html content}
 </div>
 
-<a href='/' class='see-more' on:click={toggleText} bind:this={seeMoreLink}>See more</a>
+<a href='/' class='see-more' on:click={toggleText} bind:this={seeMoreLink}>{SEE_MORE_TEXT}</a>
 

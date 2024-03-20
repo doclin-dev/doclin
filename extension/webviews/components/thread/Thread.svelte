@@ -90,7 +90,7 @@
         </div>
 
         {#if thread?.snippets?.length === 0}
-            <div class='thread-file-path-container mb-2'>
+            <div class='thread-file-path-container'>
                 {#if thread?.gitBranch}
                     <div class='thread-file-path-text'>
                         <Icon name='git' width={15} height={15} /> {thread?.gitBranch}
@@ -105,25 +105,27 @@
             </div>
         {/if}
 
-        {#if $editedThreadId === thread?.id}
-            <ThreadEdit thread={thread}/>
-        {:else}
-            <div class="thread-title">{thread?.title ?? ""}</div>
+        <div class="thread-body">
+            {#if $editedThreadId === thread?.id}
+                <ThreadEdit thread={thread}/>
+            {:else}
+                <div class="thread-title">{thread?.title ?? ""}</div>
 
-            <div><SeeMore content={thread?.displayMessage}/></div>
-            
-            {#if thread?.replyCount &&  $page === Page.ThreadsViewer}
-                <div class="number-of-replies-button">
-                    <Button 
-                        textAlignment="flex-start" 
-                        variant='primary' 
-                        onClick={handleReplyButtonClick} 
-                        title={thread?.replyCount + ` ${thread?.replyCount > 1 ? 'replies': 'reply'}`}
-                        children={lastEdited ?? ""}
-                        childrenClassName="last-reply"
-                    />
-                </div>
+                <div><SeeMore content={thread?.displayMessage}/></div>
+                
+                {#if thread?.replyCount &&  $page === Page.ThreadsViewer}
+                    <div class="number-of-replies-button">
+                        <Button 
+                            textAlignment="flex-start" 
+                            variant='primary' 
+                            onClick={handleReplyButtonClick} 
+                            title={thread?.replyCount + ` ${thread?.replyCount > 1 ? 'replies': 'reply'}`}
+                            children={lastEdited ?? ""}
+                            childrenClassName="last-reply"
+                        />
+                    </div>
+                {/if}
             {/if}
-        {/if}
+        </div>
     </div>
 </div>
