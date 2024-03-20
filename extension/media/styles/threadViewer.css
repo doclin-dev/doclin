@@ -129,6 +129,14 @@
     border-bottom: 1px solid var(--vscode-editorGroup-border);
 }
 
+.thread-branch-text {
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;  
+    text-overflow: ellipsis;
+    color: var(--vscode-descriptionForeground)
+}
+
 .thread-file-path-text {
     font-size: 12px;
     white-space: nowrap;

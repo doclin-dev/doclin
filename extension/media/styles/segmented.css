@@ -15,7 +15,6 @@
 	position: relative;
 	box-sizing: border-box;
 	display: inline-flex;
-	margin-bottom: 0.5rem;
 	padding: 2px;
 	border-radius: 8px;
 	-webkit-backdrop-filter: blur(14px);

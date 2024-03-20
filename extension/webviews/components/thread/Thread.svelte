@@ -93,14 +93,14 @@
             <div class='thread-file-path-container'>
                 {#if thread?.gitBranch}
                     <Icon name='git' width={15} height={15} />
-                    <div class='thread-file-path-text'>
+                    <div class='thread-branch-text' title='{thread?.gitBranch}'>
                          {thread?.gitBranch}
                     </div>
                 {/if}
 
                 {#if thread?.filePath}
                     <Icon name='file' width={15} height={15} />
-                    <div class='thread-file-path-text'>
+                    <div class='thread-file-path-text' title='{thread?.filePath}'>
                          {thread?.filePath}
                     </div>
                 {/if}

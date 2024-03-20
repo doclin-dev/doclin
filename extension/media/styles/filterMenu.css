@@ -23,12 +23,15 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
+    white-space: nowrap;
 }
 
 .label-holder .overflow-ellipsis  {
     overflow: hidden;
     text-overflow: ellipsis;
     direction: rtl;
+    text-align: left;
+    white-space: nowrap;
 }
 
 .label-holder label {

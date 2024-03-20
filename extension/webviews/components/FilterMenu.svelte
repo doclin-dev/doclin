@@ -3,7 +3,7 @@
     import SegmentedControl from "./SegmentedControl.svelte";
     import { ActiveView } from "../enums";
     import { activeView, currentOrganization, currentProject } from "../state/store";
-  import Icon from "./Icon.svelte";
+    import Icon from "./Icon.svelte";
 
     export let filePath: string | null;
     export let onFirstSegmentClick: () => void;
@@ -11,10 +11,12 @@
 
     let isCurrentFileView: boolean;
     let selectedIndex: number;
+    let organizationAndProjectName: string;
 
     $: {
         isCurrentFileView = $activeView === ActiveView.CurrentFileThreads;
         selectedIndex = $activeView ?? 0;
+        organizationAndProjectName = getOrganizationAndProjectName($currentOrganization?.name, $currentProject?.name);
     }
 
     const handleFirstSegmentClick = () => {
@@ -42,14 +44,14 @@
     </div>
     
     <form class="label-holder">
-        <label class="filter-menu-label project-label" for="project">
+        <label class="filter-menu-label project-label" for="project" title="{organizationAndProjectName}">
             <div class="overflow-ellipsis">
-                {getOrganizationAndProjectName($currentOrganization?.name, $currentProject?.name)}
+                {organizationAndProjectName}
             </div>
         </label>
 
         {#if isCurrentFileView}
-            <label class="filter-menu-label file-label" for="file">
+            <label class="filter-menu-label file-label" for="file" title="{filePath}">
                 <Icon name='file' height={14} width={14}/>
                 <div class='overflow-ellipsis'>
                     {filePath}
