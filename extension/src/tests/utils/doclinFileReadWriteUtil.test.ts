@@ -1,15 +1,10 @@
 import * as vscode from 'vscode';
 import { expect } from 'chai';
-import { SinonStub, stub, replace, match } from 'sinon';
+import { SinonStub, stub } from 'sinon';
 import { getExistingDoclinFile } from '../../utils/doclinFileReadWriteUtil';
 import { DoclinFile } from '../../types';
 import { describe, it, beforeEach, afterEach } from 'mocha';
 import * as path from 'path';
-
-const DOCLIN_FILE: DoclinFile = {
-	organizationId: "test-org-id",
-	projectId: 69
-};
 
 const ACTIVE_EDITOR_FOLDER_URI: vscode.Uri = vscode.Uri.file(path.resolve(__dirname, '../../../testAssets/activeEditorFolder'));
 const ACTIVE_EDITOR_URI: vscode.Uri = vscode.Uri.file(path.resolve(__dirname, '../../../testAssets/activeEditorFolder/activeEditor.txt'));

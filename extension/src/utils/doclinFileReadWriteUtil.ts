@@ -13,7 +13,7 @@ export const getExistingDoclinFile = async (): Promise<vscode.Uri | null> => {
 		}
 
 		if (isLocalWorkspace()) {
-			return getLocalDoclinFile(workingFolder);
+			return await getLocalDoclinFile(workingFolder);
 		}
 
 		return await getRemoteDoclinFile();

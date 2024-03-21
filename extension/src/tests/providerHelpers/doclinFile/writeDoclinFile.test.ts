@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { expect } from 'chai';
-import { SinonStub, stub, replace, match } from 'sinon';
+import { SinonStub, stub } from 'sinon';
 import * as writeDoclinFile from '../../../providerHelpers/doclinFile/writeDoclinFile';
 import { DoclinFile } from '../../../types';
 import { describe, it, beforeEach, afterEach } from 'mocha';
