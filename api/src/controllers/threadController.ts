@@ -6,6 +6,7 @@ import { mapThreadResponse } from "./utils/mapperUtils";
 import { MULTIPLE_LINE_BREAK_REGEX, SINGLE_LINE_BREAK, fillUpThreadOrReplyMessageWithSnippet, getSnippetTag } from "./utils/snippetUtils";
 
 export const postThread = async (req: any, res: any) => {
+	const title: string = req.body.title;
 	const threadMessage: string = req.body.threadMessage;
 	const snippets: any[] = req.body.snippets;
 	const delta: any = req.body.delta;
@@ -13,16 +14,21 @@ export const postThread = async (req: any, res: any) => {
 	const projectId: number = req.body.projectId;
 	const anonymousPost: boolean = req.body.anonymous;
 	const mentionedUserIds: number[] = req.body.mentionedUserIds;
+	const filePath: string = req.body.filePath;
+	const gitBranch: string = req.body.gitBranch;
     
 	const { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage, snippets);
 
 	const thread = await Thread.create({
+		title: title,
 		message: updatedThreadMessage,
 		userId: userId,
 		projectId: projectId,
 		snippets: snippetEntities,
 		anonymous: anonymousPost,
-		delta: delta
+		delta: delta,
+		filePath: filePath,
+		gitBranch: gitBranch
 	}).save();
 
     
@@ -82,6 +88,7 @@ export const getThreads = async (req: any, res: any) => {
 
 export const updateThread = async (req: any, res: any) => {
 	const threadId: number = req.params.id;
+	const title: string = req.body.title;
 	const threadMessage: string = req.body.message;
 	const snippets: any[] = req.body.snippets;
 	const delta: any = req.body.delta;
@@ -97,6 +104,7 @@ export const updateThread = async (req: any, res: any) => {
 
 	const { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage, snippets);
 
+	thread.title = title;
 	thread.message = updatedThreadMessage;
 	thread.snippets = snippetEntities;
 	thread.delta = delta;

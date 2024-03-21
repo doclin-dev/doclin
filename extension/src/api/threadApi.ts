@@ -31,21 +31,25 @@ const getAllThreads = async (organizationId: string, projectId: number) => {
 
 const postThread = async (organizationId: string,
 	projectId: number,
+	title: string,
 	threadMessage: string, 
 	delta: any,
 	snippets: any[],
-	activeEditorFilePath: string,
+	gitBranch: string | null,
+	filePath: string | null,
 	mentionedUserIds: number[],
 	anonymous: boolean) => {
 
 	const data = {
 		delta: delta,
+		title: title,
 		threadMessage: threadMessage,
 		snippets: snippets,
 		projectId: projectId,
-		activeEditorFilePath: activeEditorFilePath,
+		filePath: filePath,
 		mentionedUserIds: mentionedUserIds,
-		anonymous: anonymous
+		anonymous: anonymous,
+		gitBranch: gitBranch
 	};
 
 	const apiService = await createAxiosInstance();
@@ -55,14 +59,18 @@ const postThread = async (organizationId: string,
 	return response;
 };
 
-const updateThread = async (organizationId: string, 
+const updateThread = async (
+	organizationId: string, 
 	projectId: number, 
-	threadId: number, 
+	threadId: number,
+	title: string,
 	threadMessage: string, 
 	delta: any,
 	snippets: any[],
 	activeEditorFilePath: string) => {
+
 	const data = {
+		title: title,
 		message: threadMessage,
 		activeEditorFilePath: activeEditorFilePath,
 		delta: delta,

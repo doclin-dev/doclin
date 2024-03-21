@@ -15,40 +15,49 @@ import { ThreadSnippet } from "./ThreadSnippet";
 
 @Entity()
 export class Thread extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+	@PrimaryGeneratedColumn()
+		id: number;
 
-  @CreateDateColumn()
-  createdAt: Date;
+	@CreateDateColumn()
+		createdAt: Date;
 
-  @Column("text")
-  message: string;
+	@Column({ type: "text", nullable: true }) 
+		title: string;
 
-  @Column({ nullable: true})
-  userId: number;
+	@Column("text")
+		message: string;
 
-  @ManyToOne(() => User, (user) => user.threads)
-  @JoinColumn({ name: "userId" })
-  user: User;
+	@Column({ nullable: true })
+		userId: number;
 
-  @Column({ nullable: true})
-  projectId: number;
+	@ManyToOne(() => User, (user) => user.threads)
+	@JoinColumn({ name: "userId" })
+		user: User;
 
-  @Column ({ nullable: true })
-  anonymous: boolean;
+	@Column({ nullable: true })
+		projectId: number;
 
-  @OneToMany(() => ThreadSnippet, (s) => s.thread, { cascade: true })
-  snippets: ThreadSnippet[];
+	@Column ({ nullable: true })
+		anonymous: boolean;
 
-  @ManyToOne(() => Project, (project) => project.threads)
-  @JoinColumn({ name: "projectId" })
-  project: Project;
+	@OneToMany(() => ThreadSnippet, (s) => s.thread, { cascade: true })
+		snippets: ThreadSnippet[];
 
-  @OneToMany(() => Reply, (reply) => reply.thread, { cascade: true })
-  replies: Reply[];
+	@ManyToOne(() => Project, (project) => project.threads)
+	@JoinColumn({ name: "projectId" })
+		project: Project;
 
-  replyCount: number;
+	@OneToMany(() => Reply, (reply) => reply.thread, { cascade: true })
+		replies: Reply[];
 
-  @Column({ type: 'json', nullable: true })
-  delta: any;
+	replyCount: number;
+
+	@Column({ type: 'json', nullable: true })
+		delta: any;
+	
+	@Column({ type: 'text', nullable: true })
+		filePath: string;
+	
+	@Column({ type: 'text', nullable: true })
+		gitBranch: string;
 }

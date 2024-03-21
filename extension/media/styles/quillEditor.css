@@ -8,7 +8,7 @@ pre.ql-syntax, .ql-snow .ql-editor pre.ql-syntax {
     color: var(--vscode-editor-foreground);
     padding: 5px 10px;
     border-radius: 0.2em;
-    border: 2px solid var(--vscode-editorGroup-border);
+    border: 1px solid var(--vscode-editorGroup-border);
 }
 
 pre.ql-syntax .line-number {
@@ -16,15 +16,12 @@ pre.ql-syntax .line-number {
 }
 
 pre.ql-syntax hr {
-    background-color: var(--vscode-editor-foreground);
+    background-color: var(--vscode-input-foreground);
 }
 
 .ql-toolbar.ql-snow {
     background-color: var(--vscode-input-background);
-    border-top: none;
-    border-right: none;
-    border-left: none;
-    border-bottom: 1px solid var(--vscode-editor-foreground);
+    border: none;
     padding: 2px;
 }
 
@@ -37,23 +34,36 @@ pre.ql-syntax hr {
 }
 
 .ql-editor {
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid var(--vscode-disabledForeground);
     padding: 10px;
 }
 
-.thread-card .ql-toolbar {
-    border: 1px solid var(--vscode-input-foreground);
+.ql-editor:focus {
+    border: 1px solid var(--vscode-focusBorder);
 }
 
-.thread-card .ql-editor {
-    border: 1px solid var(--vscode-input-foreground);
-    border-top: none;
+.textEditor {
+    background-color: var(--vscode-input-background);
+    width: 100%;
+    height: 150px;
+    resize: both; 
+    overflow: auto;
+    border: transparent;
+    border-radius: 0.2em;
+    resize: vertical;
+    border: 1px solid var(--vscode-input-border);
 }
 
-.reply-card .ql-toolbar {
-    border: 1px solid var(--vscode-input-foreground);
-}
-
-.reply-card .ql-editor {
-    border: 1px solid var(--vscode-input-foreground);
-    border-top: none;
+.ql-editor.ql-blank::before {
+    color: var(--vscode-input-placeholderForeground);
+    content: attr(data-placeholder);
+    font-style: normal;
+    left: 10px;
+    pointer-events: none;
+    position: absolute;
+    right: 15px;
+    font-size: var(--vscode-font-size);
+    font-weight: var(--vscode-font-weight);
+    font-family: var(--vscode-font-family);
 }

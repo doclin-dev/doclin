@@ -20,5 +20,4 @@
         <Button icon="invite" type='text' onClick={switchToInvitePage}/>
         <Button icon="logout" type='text' onClick={logout}/>
     </div>
-
 </div>

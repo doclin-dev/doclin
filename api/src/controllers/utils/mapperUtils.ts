@@ -8,13 +8,16 @@ const ANONYMOUS_USER: string = "Anonymous User";
 export const mapThreadResponse = (thread: Thread) => {
 	return {
 		id: thread.id,
+		title: thread.title,
 		message: thread.message,
 		username: thread.anonymous ? ANONYMOUS_USER : thread.user?.name,
 		replyCount: thread.replyCount,
 		threadCreationTime : thread.createdAt,
-		lastReplied: thread.replies?.length > 0 ? thread.replies[0].createdAt : null,
+		lastReplied: thread.replies?.length > 0 ? thread.replies[thread.replies.length - 1].createdAt : null,
 		snippets: thread.snippets?.map(mapSnippetResponse),
-		delta: thread.delta
+		delta: thread.delta,
+		filePath: thread.filePath,
+		gitBranch: thread.gitBranch
 	};
 };
 

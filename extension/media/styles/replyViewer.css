@@ -16,17 +16,12 @@
 .reply-card {
     display: flex;
     flex-direction: column;
-    background-color: var(--vscode-input-background);
-    padding: 0.5rem;
-    gap: 0.25;
-    border-radius: 0.2em;
-    border: 2px;
-    margin: 0.5rem 0;
+    padding: 1rem 0;
 }
 
 .reply-card-footer {
     display: flex;
-    padding-top: 0.5rem;
+    padding: 0.3rem;
     flex-direction: row;
     justify-content: flex-end;
     gap: 0.25rem;
@@ -38,6 +33,7 @@
     justify-content: space-between;  
     padding-bottom: 0.5rem;
     align-items: center;
+    margin: 5px -5px 0 -5px;
 }
 
 #replyViewerEditor{
@@ -52,13 +48,12 @@
     border: 1px solid var(--vscode-input-border);
 }
 
-.checkbox {
-    display: flex;
-    padding-top: 0.5rem;
-    gap: 0.5rem;
-    text-align: center;
-}
-
 .reply-card p {
     margin: 0px auto;
+}
+
+#reply-viewer hr {
+    margin: 0px -20px 0px -20px;
+    background-color: var(--vscode-editorGroup-border);
+    height: 2px;
 }

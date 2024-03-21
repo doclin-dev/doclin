@@ -3,7 +3,7 @@ import { QuillSnippetBlot } from './QuillSnippetBlot';
 import type { TextEditorInsertSnippet, User } from '../types';
 import "quill-mention";
 import { activeTextEditor } from '../state/store';
-import type { ActiveTextEditor } from '../enums';
+import type { TextEditorType } from '../enums';
 
 Quill.register({
 	'formats/snippet': QuillSnippetBlot,
@@ -43,7 +43,8 @@ export class TextEditor {
     				},
     			}
     		},
-    		theme: 'snow'
+    		theme: 'snow',
+			placeholder: 'Message'
     	};
         
     	const options = { ...defaultOptions, ...customOptions };
@@ -51,7 +52,7 @@ export class TextEditor {
     	this.quillInstance = new Quill(selector, options);
 	};
 
-	setActiveEditor(activeEditor: ActiveTextEditor): void {
+	setTextEditorType(activeEditor: TextEditorType): void {
     	this.quillInstance.container.addEventListener('mousedown', () => {
     		activeTextEditor.set(activeEditor);
     	});

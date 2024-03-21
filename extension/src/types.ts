@@ -5,6 +5,7 @@ export type DoclinFile = {
 
 export type Thread = {
     id: number;
+    title: string;
     snippets: Snippet[];
     message: string;
     delta: any;
@@ -13,6 +14,8 @@ export type Thread = {
     replyCount: number;
     threadCreationTime: Date;
     lastReplied: Date;
+    filePath: string;
+    gitBranch: string;
 };
 
 export type Reply = {
@@ -34,33 +37,37 @@ export type Snippet = {
     gitBranch: string;
 };
 
-export type PostThread = { 
-    threadMessage: string, 
-    delta: any, 
-    snippets: any[], 
-    mentionedUserIds: number[],
-    anonymous: boolean 
+export type PostThread = {
+    title: string;
+    threadMessage: string;
+    delta: any;
+    snippets: any[];
+    mentionedUserIds: number[];
+    anonymous: boolean;
+    isFileThreadSelected: boolean;
+    gitBranch: string;
 };
 
 export type UpdateThread = {
-    threadMessage: string, 
-    threadId: number,
-    snippets: any[],
-    delta: any
+    title: string;
+    threadMessage: string; 
+    threadId: number;
+    snippets: any[];
+    delta: any;
 };
 
 export type PostReply = {
-    replyMessage: string, 
-    threadId: number, 
-    anonymous: boolean,
-    snippets: any[],
-    delta: any,
-    mentionedUserIds: number[]
+    replyMessage: string;
+    threadId: number;
+    anonymous: boolean;
+    snippets: any[];
+    delta: any;
+    mentionedUserIds: number[];
 };
 
 export type UpdateReply = {
-    replyMessage: string, 
-    replyId: number,
-    snippets: any[],
-    delta: any
+    replyMessage: string;
+    replyId: number;
+    snippets: any[];
+    delta: any;
 };

@@ -3,9 +3,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding-bottom: 0.5rem;
     font-size: 14px;
-    border-bottom: 1px solid var(--vscode-editorGroup-border);
     margin-bottom: 0.5rem;
 }
 

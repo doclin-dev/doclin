@@ -2,9 +2,9 @@
     import { onMount, onDestroy } from "svelte";
     import type { User } from "../types";
     import { Page } from "../enums";
-    import ThreadsViewer from "./ThreadsViewer.svelte";
+    import ThreadsViewer from "./thread/ThreadsViewer.svelte";
     import InitializeProject from "./InitializeProject.svelte";
-    import ReplyViewer from "./ReplyViewer.svelte";
+    import ReplyViewer from "./reply/ReplyViewer.svelte";
     import InitializeOrganization from "./InitializeOrganization.svelte";
     import InviteUser from "./InviteUser.svelte";
     import AccessRequired from "./AccessRequired.svelte";
@@ -26,6 +26,7 @@
     }
 
     const handleGetExtensionState = (extensionState: any) => {
+        $reload += 1;
         error = extensionState?.error;
         user = extensionState?.user;
         $currentOrganization = extensionState?.organization;
@@ -68,7 +69,6 @@
         }
 
         loading = false;
-        $reload += 1;
     }
 
     const getExtensionState = () => {

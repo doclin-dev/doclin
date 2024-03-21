@@ -14,15 +14,30 @@
 
 .filter-menu-label {
     white-space: nowrap;
-    overflow: hidden;  
-    text-overflow: ellipsis; 
     cursor: pointer;
     border-radius: 0.25rem;
     background-color: var(--vscode-button-background);
     color: var(--vscode-button-foreground);
     padding: 0 0.5rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    white-space: nowrap;
 }
 
-label {
+.label-holder .overflow-ellipsis  {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    direction: rtl;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.label-holder label {
     margin-bottom: 0.25rem;
+}
+
+.label-holder .icon {
+    margin-right: 3px;
 }

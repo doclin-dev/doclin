@@ -42,11 +42,13 @@ export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[],
 };
 
 
-export const getAllThreads = async (): Promise<Thread[] | undefined> => {
+export const getAllThreads = async (): Promise<Thread[]> => {
 	const organizationId = await getCurrentOrganizationId();
 	const projectId = await getCurrentProjectId();
 
-	if (!organizationId || !projectId) {return;}
+	if (!organizationId || !projectId) {
+		return [];
+	}
 
 	const response = await threadApi.getAllThreads(organizationId, projectId);
 	const payload = response?.data;
@@ -61,22 +63,27 @@ export const getAllThreads = async (): Promise<Thread[] | undefined> => {
 	return threads;
 };
 
-export const postThread = async({ threadMessage, delta, snippets, mentionedUserIds, anonymous }: PostThread): Promise<Thread | undefined> => {
+export const postThread = async({ title, threadMessage, delta, snippets, mentionedUserIds, anonymous, isFileThreadSelected }: PostThread): Promise<Thread | undefined> => {
 	const organizationId = await getCurrentOrganizationId();
 	const projectId = await getCurrentProjectId();
 	const activeFilePath = await getActiveEditorFilePath();
+	const gitBranch = await getGitBranch();
 
-	if (!organizationId || !projectId) {return;}
+	if (!organizationId || !projectId) {
+		return;
+	}
 
 	const response = await threadApi.postThread(
 		organizationId, 
-		projectId, 
+		projectId,
+		title,
 		threadMessage, 
 		delta, 
-		snippets, 
-		activeFilePath, 
+		snippets,
+		isFileThreadSelected ? gitBranch : null,
+		isFileThreadSelected ? activeFilePath : null,
 		mentionedUserIds,
-		anonymous
+		anonymous,
 	);
   
 	const thread: Thread = response?.data?.thread;
@@ -89,17 +96,20 @@ export const postThread = async({ threadMessage, delta, snippets, mentionedUserI
 	return thread;
 };
 
-export const updateThread = async({ threadMessage, threadId, snippets, delta }: UpdateThread): Promise<Thread | undefined> => {
+export const updateThread = async({ title, threadMessage, threadId, snippets, delta }: UpdateThread): Promise<Thread | undefined> => {
 	const organizationId = await getCurrentOrganizationId();
 	const projectId = await getCurrentProjectId();
 	const activeFilePath = await getActiveEditorFilePath();
 
-	if (!organizationId || !projectId) {return;}
+	if (!organizationId || !projectId) {
+		return;
+	}
 
 	const response = await threadApi.updateThread(
 		organizationId, 
 		projectId, 
-		threadId, 
+		threadId,
+		title,
 		threadMessage,
 		delta,
 		snippets,
