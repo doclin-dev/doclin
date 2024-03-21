@@ -1,4 +1,4 @@
-import { ActiveTextEditor, ActiveView, Page, WebviewStateType } from '../enums';
+import { TextEditorType, ActiveView, Page, WebviewStateType } from '../enums';
 import type { Project, Organization, Thread } from '../types';
 import { createState } from './createState';
 
@@ -20,7 +20,7 @@ export const threadSelected = createState<Thread|null>(WebviewStateType.THREAD_S
 
 export const githubUrl = createState<string>(WebviewStateType.GITHUB_URL);
 
-export const activeTextEditor = createState<ActiveTextEditor>(WebviewStateType.ACTIVE_TEXT_EDITOR);
+export const activeTextEditor = createState<TextEditorType>(WebviewStateType.ACTIVE_TEXT_EDITOR);
 
 export const activeView = createState<ActiveView>(WebviewStateType.ACTIVE_VIEW);
 

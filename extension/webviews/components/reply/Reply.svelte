@@ -18,8 +18,6 @@
     const handleEditButtonClick = async () => {
         if ($editedReplyId == null && $editedThreadId === null) {
             $editedReplyId = reply.id;
-            await tick();
-
         }
     }
 

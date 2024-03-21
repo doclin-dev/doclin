@@ -2,7 +2,7 @@
     import { onMount, onDestroy } from "svelte";
     import { TextEditor } from "../TextEditor";
     import { activeTextEditor, currentOrganization, page, replyContents, threadSelected } from "../../state/store";
-    import { ActiveTextEditor, Page } from "../../enums";
+    import { TextEditorType, Page } from "../../enums";
 
     let anonymousCheck: boolean = false;
     let quillReplyViewer: TextEditor;
@@ -27,7 +27,7 @@
         const message = event.data;
         switch (message.type) {
             case "populateCodeSnippet":
-                if ($activeTextEditor === ActiveTextEditor.ReplyViewerTextEditor) {
+                if ($activeTextEditor === TextEditorType.ReplyViewerTextEditor) {
                     quillReplyViewer.insertCodeSnippet(message.value);
                 }
                 break;
@@ -36,14 +36,14 @@
 
     async function initializeQuillEditor() {
         quillReplyViewer = new TextEditor('#replyViewerEditor', organizationUsers);
+        quillReplyViewer.setContents($replyContents);
+        quillReplyViewer.setTextEditorType(TextEditorType.ReplyViewerTextEditor);
+
+        $activeTextEditor = TextEditorType.ReplyViewerTextEditor;
 
         quillReplyViewer.onTextChange(() => {
             $replyContents = quillReplyViewer.getContents();
         });
-        
-        $activeTextEditor = ActiveTextEditor.ReplyViewerTextEditor;
-        quillReplyViewer.setActiveEditor(ActiveTextEditor.ReplyViewerTextEditor);
-        quillReplyViewer.setContents($replyContents);
     }
 
     async function postReplyMessage(message: string, snippets: any[], delta: any, mentionedUserIds: number[]) {

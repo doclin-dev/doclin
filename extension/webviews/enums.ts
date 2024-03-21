@@ -11,7 +11,7 @@ export enum Page {
   RegisterEmail = "registerEmail"
 }
 
-export enum ActiveTextEditor {
+export enum TextEditorType {
   ThreadsViewerTextEditor = 1,
   ReplyViewerTextEditor = 2,
   ThreadTextEditor = 3,

@@ -25,7 +25,6 @@
     const handleEditButtonClick = async () => {
         if ($editedThreadId === null && $editedReplyId === null) {
             $editedThreadId = thread.id;
-            await tick();
         }
     }
 

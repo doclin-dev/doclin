@@ -3,15 +3,13 @@
     import Button from '../Button.svelte'
     import { TextEditor } from '../TextEditor';
     import { activeTextEditor, editedThreadId, page } from '../../state/store';
-    import { ActiveTextEditor, Page } from '../../enums';
+    import { TextEditorType, Page } from '../../enums';
 
     export let thread: any;
     let title: string = thread.title ?? "";
     let quillThreadEditor: TextEditor | null;
 
     const onSubmit = async () => {
-        await tick();
-
         if (quillThreadEditor) {
             const { message:threadMessage, snippets, delta } = quillThreadEditor.getStructuredText();
 
@@ -38,9 +36,9 @@
         editedThreadId.set(null);
         if ($activeTextEditor === null){
             if ($page === Page.ThreadsViewer){
-                $activeTextEditor = ActiveTextEditor.ThreadsViewerTextEditor;
+                $activeTextEditor = TextEditorType.ThreadsViewerTextEditor;
             } else if ($page === Page.ReplyViewer){
-                $activeTextEditor = ActiveTextEditor.ReplyViewerTextEditor;
+                $activeTextEditor = TextEditorType.ReplyViewerTextEditor;
             }
         }
     }
@@ -54,8 +52,8 @@
     const initializeQuillEditor = () => {
         quillThreadEditor = new TextEditor('#thread-editor');
         quillThreadEditor.setContents(thread.delta);
-        $activeTextEditor = ActiveTextEditor.ThreadTextEditor;
-        quillThreadEditor.setActiveEditor(ActiveTextEditor.ThreadTextEditor);
+        $activeTextEditor = TextEditorType.ThreadTextEditor;
+        quillThreadEditor.setTextEditorType(TextEditorType.ThreadTextEditor);
     }
 
     const messageEventListener = async(event: any) => {
@@ -63,7 +61,7 @@
 
         switch(message.type) {
             case "populateCodeSnippet":
-                if ($activeTextEditor === ActiveTextEditor.ThreadTextEditor && $editedThreadId === thread.id) {
+                if ($activeTextEditor === TextEditorType.ThreadTextEditor && $editedThreadId === thread.id) {
                     quillThreadEditor?.insertCodeSnippet(message.value);
                 };
                 break;

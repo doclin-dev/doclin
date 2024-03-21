@@ -21,10 +21,7 @@ pre.ql-syntax hr {
 
 .ql-toolbar.ql-snow {
     background-color: var(--vscode-input-background);
-    border-top: none;
-    border-right: none;
-    border-left: none;
-    border-bottom: none;
+    border: none;
     padding: 2px;
 }
 

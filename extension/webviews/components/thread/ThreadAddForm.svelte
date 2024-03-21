@@ -2,7 +2,7 @@
     import { onMount, onDestroy } from "svelte";
     import { activeTextEditor, activeView, currentOrganization, currentProject, page, reload, threadContents } from "../../state/store";
     import { TextEditor } from "../TextEditor";
-    import { ActiveTextEditor, ActiveView, Page } from "../../enums";
+    import { TextEditorType, ActiveView, Page } from "../../enums";
     import type { User, Thread as ThreadType } from "../../types";
 
     let quillEditor: TextEditor;
@@ -23,7 +23,7 @@
         const message = event.data;
         switch (message.type) {
             case "populateCodeSnippet":
-                if ($activeTextEditor === ActiveTextEditor.ThreadsViewerTextEditor) {
+                if ($activeTextEditor === TextEditorType.ThreadsViewerTextEditor) {
                     quillEditor.insertCodeSnippet(message.value);
                 }
                 break;
@@ -32,15 +32,14 @@
 
     async function initializeQuillEditor() {
         quillEditor = new TextEditor('#textEditor', organizationUsers);
-        $activeTextEditor = ActiveTextEditor.ThreadsViewerTextEditor;
-
         quillEditor.setContents($threadContents);
-
-        quillEditor.setActiveEditor(ActiveTextEditor.ThreadsViewerTextEditor);
+        quillEditor.setTextEditorType(TextEditorType.ThreadsViewerTextEditor);
 
         quillEditor.onTextChange(() => {
             $threadContents = quillEditor.getContents();
         });
+
+        $activeTextEditor = TextEditorType.ThreadsViewerTextEditor;
     }
 
     async function submitThreadMessage() {

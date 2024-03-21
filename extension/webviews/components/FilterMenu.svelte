@@ -16,7 +16,7 @@
     $: {
         isCurrentFileView = $activeView === ActiveView.CurrentFileThreads;
         selectedIndex = $activeView ?? 0;
-        organizationAndProjectName = getOrganizationAndProjectName($currentOrganization?.name, $currentProject?.name);
+        organizationAndProjectName = getOrganizationAndProjectName();
     }
 
     const handleFirstSegmentClick = () => {
@@ -29,9 +29,9 @@
         $activeView = ActiveView.CurrentFileThreads;
     }
     
-    const getOrganizationAndProjectName = (organizationName: string | undefined, projectName: string | undefined) => {
-        const orgName = organizationName?.split(' ').join('');
-        return `${orgName} / ${projectName}`
+    const getOrganizationAndProjectName = () => {
+        const orgName = $currentOrganization?.name?.split(' ').join('');
+        return `${orgName} / ${$currentProject?.name}`
     }
 </script>
 

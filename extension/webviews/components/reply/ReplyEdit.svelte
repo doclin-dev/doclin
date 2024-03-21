@@ -2,7 +2,7 @@
     import { TextEditor } from "../TextEditor";
     import { onMount, tick, onDestroy } from 'svelte';
     import { activeTextEditor, editedReplyId, editedThreadId } from '../../state/store';
-    import { ActiveTextEditor } from '../../enums';
+    import { TextEditorType } from '../../enums';
     import Button from '../Button.svelte';
 
     export let reply: any;
@@ -16,15 +16,15 @@
     const initializeQuillEditor = () => {
         quillReplyCardEditor = new TextEditor('#reply-card-editor');
         quillReplyCardEditor.setContents(reply.delta);
-        $activeTextEditor = ActiveTextEditor.ReplyTextEditor;
-        quillReplyCardEditor.setActiveEditor(ActiveTextEditor.ReplyTextEditor);
+        $activeTextEditor = TextEditorType.ReplyTextEditor;
+        quillReplyCardEditor.setTextEditorType(TextEditorType.ReplyTextEditor);
     }
 
     const messageEventListener = async (event: any) => {
         const message = event.data;
         switch(message.type) {
             case "populateCodeSnippet":
-                if ($activeTextEditor === ActiveTextEditor.ReplyTextEditor && $editedReplyId === reply.id) {
+                if ($activeTextEditor === TextEditorType.ReplyTextEditor && $editedReplyId === reply.id) {
                     quillReplyCardEditor?.insertCodeSnippet(message.value);
                 }
                 break;
@@ -32,30 +32,26 @@
     }
 
     const onSubmit = async () => {
-        await tick();
+        if (quillReplyCardEditor) {
+            const { message: replyMessage, snippets, delta } = quillReplyCardEditor.getStructuredText();
 
-        if (!quillReplyCardEditor) {
-            return;
+            updateReplyMessage(replyMessage, snippets, delta);
+
+            quillReplyCardEditor?.removeToolbarTheme();
+            quillReplyCardEditor = null;
         }
 
-        const { message: replyMessage, snippets, delta } = quillReplyCardEditor.getStructuredText();
-
-        updateReplyMessage(replyMessage, snippets, delta);
-
-        quillReplyCardEditor?.removeToolbarTheme();
-        quillReplyCardEditor = null;
         editedReplyId.set(null);
     }
     
     const onCancel = () => {
-        if (!quillReplyCardEditor) {
-            return;
+        if (quillReplyCardEditor) {
+            quillReplyCardEditor.removeToolbarTheme();
+            quillReplyCardEditor = null;
         }
 
-        quillReplyCardEditor.removeToolbarTheme();
-        quillReplyCardEditor = null;
         editedReplyId.set(null);
-        $activeTextEditor = ActiveTextEditor.ReplyViewerTextEditor;
+        $activeTextEditor = TextEditorType.ReplyViewerTextEditor;
     }
 
     async function updateReplyMessage(message: string, snippets: any[], delta: any) {
