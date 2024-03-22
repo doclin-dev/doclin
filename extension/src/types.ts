@@ -71,3 +71,5 @@ export type UpdateReply = {
     snippets: any[];
     delta: any;
 };
+
+export type WebviewMessageFunction = (value: any) => any | Promise<any>;

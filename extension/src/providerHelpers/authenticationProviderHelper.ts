@@ -86,3 +86,4 @@ export const postUserEmail = async(email:string) => {
 		logger.error(`An error occured when registering your email. ${error}`);
 	}
 };
+

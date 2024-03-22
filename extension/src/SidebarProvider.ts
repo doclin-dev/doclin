@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
-import { handleMessagePosting } from "./webviewPostMessage";
-import { getHtmlForWebview, handleActiveTextEditorChange } from "./webviewHtml";
+import { handleMessageReceiveFromWebview } from "./webviewMessageHandler";
+import { getHtmlForWebview } from "./providerHelpers/webviewHtml";
+import { handleActiveTextEditorChange } from "./providerHelpers/activeEditorChange";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
 	_view?: vscode.WebviewView;
@@ -18,13 +19,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 		webviewView.webview.html = getHtmlForWebview(webviewView.webview, this._extensionUri);
 
-		handleMessagePosting(webviewView.webview);
+		handleMessageReceiveFromWebview(webviewView.webview);
 		handleActiveTextEditorChange(webviewView.webview);
 	}
 
 	public revive(panel: vscode.WebviewView) {
   		this._view = panel;
 	}
-
-	
 }

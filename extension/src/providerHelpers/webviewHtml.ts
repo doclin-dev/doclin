@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-import { API_BASE_URL } from "./envConstants";
-import { getNonce } from "./providerHelpers/getNonce";
-import { getExtensionState, isDoclinProjectChanged } from "./utils/sidebarProviderUtil";
+import { API_BASE_URL } from "../envConstants";
+import { getNonce } from "./getNonce";
+import { getExtensionState, isDoclinProjectChanged } from "../utils/sidebarProviderUtil";
 
 
 export const getHtmlForWebview = (webview: vscode.Webview, extensionUri: vscode.Uri) => {
@@ -42,21 +42,4 @@ export const getHtmlForWebview = (webview: vscode.Webview, extensionUri: vscode.
 			</body>
 
 			</html>`;
-};
-
-export const handleActiveTextEditorChange = (webview: vscode.Webview) => {
-	vscode.window.onDidChangeActiveTextEditor(async (editor) => {
-		if (editor) {
-			if (await isDoclinProjectChanged()) {
-				webview.postMessage({
-					type: "getExtensionState",
-					value: await getExtensionState(),
-				});
-			} else {
-				webview.postMessage({
-					type: "switchActiveEditor"
-				});
-			}
-		}
-	});
 };

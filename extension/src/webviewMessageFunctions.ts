@@ -1,0 +1,52 @@
+import * as vscode from "vscode";
+import { authenticate, logout, postUserEmail } from "./providerHelpers/authenticationProviderHelper";
+import { postThread, deleteThread, getThreadsByActiveFilePath, updateThread, getAllThreads } from "./providerHelpers/threadProviderHelper";
+import { storeProjectId } from "./providerHelpers/projectProviderHelper";
+import { getExistingProjects, postProject } from "./providerHelpers/projectProviderHelper";
+import { deleteReply, getRepliesByThreadId, postReply, updateReply } from "./providerHelpers/replyProviderHelper";
+import { postOrganization, getExistingOrganizations, storeOrganizationId, getCurrentOrganizationUsers } from "./providerHelpers/organizationProviderHelper";
+import { getExtensionState } from "./utils/sidebarProviderUtil";
+import { inviteUser, redeemInvitation } from "./providerHelpers/invitationProviderHelper";
+import { getGithubUrl } from "./utils/gitProviderUtil";
+import { WebviewMessageFunction } from "./types";
+import { onError, onInfo } from "./utils/loggerProviderUtil";
+
+export const WEBVIEW_MESSAGE_FUNCTIONS: Record<string, WebviewMessageFunction> = {
+	logout: logout,
+	onInfo: onInfo,
+	onError: onError,
+	getExtensionState: getExtensionState,
+	getGithubUrl: getGithubUrl,
+	getThreadsByActiveFilePath: getThreadsByActiveFilePath,
+	getAllThreads: getAllThreads,
+	postThread: postThread,
+	updateThread: updateThread,
+	deleteThread: deleteThread,
+	getExistingProjects: getExistingProjects,
+	postProject: postProject,
+	setCurrentProject: storeProjectId,
+	postReply: postReply,
+	getRepliesByThreadId: getRepliesByThreadId,
+	updateReply: updateReply,
+	deleteReply: deleteReply,
+	postOrganization: postOrganization,
+	getExistingOrganizations: getExistingOrganizations,
+	setCurrentOrganization: storeOrganizationId,
+	inviteUser: inviteUser,
+	redeemInvitation: redeemInvitation,
+	getCurrentOrganizationUsers: getCurrentOrganizationUsers,
+	postUserEmail: postUserEmail
+};
+
+export const executeRemainingMessageFunctions = (message: any, webview: vscode.Webview) => {
+	switch (message.type) {
+	case "authenticate":
+		authenticate(async () => {
+			webview.postMessage({
+				type: "getExtensionState",
+				value: await getExtensionState(),
+			});
+		});
+		break;
+	}
+};
