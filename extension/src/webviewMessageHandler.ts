@@ -3,7 +3,7 @@ import { executeRemainingMessageFunctions, WEBVIEW_MESSAGE_FUNCTIONS } from "./w
 import { WebviewMessage } from "./types";
 
 export const handleMessageReceiveFromWebview = (webview: vscode.Webview) => {
-	webview.onDidReceiveMessage(async (message: { type: any, value: any }) => {
+	webview.onDidReceiveMessage(async (message: WebviewMessage) => {
 		if (WEBVIEW_MESSAGE_FUNCTIONS[message.type]) {
 			respondUsingWebviewMessageFunction(message, webview);
 		} else {

@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import { API_BASE_URL } from "../envConstants";
 import { getNonce } from "./getNonce";
-import { getExtensionState, isDoclinProjectChanged } from "../utils/sidebarProviderUtil";
 
 
 export const getHtmlForWebview = (webview: vscode.Webview, extensionUri: vscode.Uri) => {
