@@ -15,7 +15,7 @@ export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
 		vscode.commands.executeCommand('workbench.view.extension.doclinSidebarView');
 
 		const activeTextEditor = vscode.window.activeTextEditor;
-
+		
 		if (await isExtensionNotReadyForComment(activeTextEditor)) {
 			return;
 		}

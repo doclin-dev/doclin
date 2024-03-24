@@ -20,7 +20,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		webviewView.webview.html = getHtmlForWebview(webviewView.webview, this._extensionUri);
 
 		handleWebviewMessageReceive(webviewView.webview);
-		handleActiveTextEditorChange(webviewView.webview);
+		handleActiveTextEditorChange(webviewView);
 	}
 
 	public revive(panel: vscode.WebviewView) {

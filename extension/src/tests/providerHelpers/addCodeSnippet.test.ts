@@ -74,10 +74,10 @@ suite('Testing addCodeSnippet', () => {
 
 		await addCodeSnippet(sidebarProvider);
 
-		expect(readDoclinFileStub.calledTwice).to.be.true;
+		expect(readDoclinFileStub.calledOnce).to.be.true;
 		expect(getAuthenticatedUserStub.calledOnce).to.be.true;
 		expect(getActiveEditorRelativeFilePathStub.calledOnce).to.be.true;
-		expect(getTextStub.calledOnce).to.be.true;
+		expect(getTextStub.calledTwice).to.be.true;
 		expect(getGitBranchStub.calledOnce).to.be.true;
 		expect(postMessageStub.calledWithMatch({
 			type: 'populateCodeSnippet',

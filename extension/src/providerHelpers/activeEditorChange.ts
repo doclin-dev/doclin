@@ -1,10 +1,11 @@
 import { getExtensionState, isDoclinProjectChanged } from "../utils/sidebarProviderUtil";
 import * as vscode from 'vscode';
 
-export const handleActiveTextEditorChange = (webview: vscode.Webview) => {
-	vscode.window.onDidChangeActiveTextEditor(async (editor) => {
+export const handleActiveTextEditorChange = (webviewView: vscode.WebviewView) => {
+	const webview = webviewView.webview;
 
-		if (editor) {
+	vscode.window.onDidChangeActiveTextEditor(async (editor) => {
+		if (webviewView.visible && editor) {
 			if (await isDoclinProjectChanged()) {
 				webview.postMessage({
 					type: "getExtensionState",

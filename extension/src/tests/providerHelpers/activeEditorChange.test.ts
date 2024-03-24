@@ -7,57 +7,59 @@ import * as sidebarProviderUtil from '../../utils/sidebarProviderUtil';
 
 suite('handleActiveTextEditorChange', () => {
 	let sandbox: sinon.SinonSandbox;
-	let mockWebview: vscode.Webview;
+	let mockWebviewView: vscode.WebviewView;
 	let onDidChangeActiveTextEditorStub: SinonStub;
 	let isDoclinProjectChangedStub: SinonStub;
 	let postMessagePromise: Promise<any>;
+	let visibleStub: SinonStub;
 
 	setup(() => {
 		sandbox = createSandbox();
+		onDidChangeActiveTextEditorStub = sandbox.stub(vscode.window, 'onDidChangeActiveTextEditor');
+		isDoclinProjectChangedStub = sandbox.stub(sidebarProviderUtil, 'isDoclinProjectChanged');
+		visibleStub = sandbox.stub();
 
-		mockWebview = {
-			postMessage: sandbox.stub(),
-			asWebviewUri: sandbox.stub(),
-			cspSource: '',
-		} as unknown as vscode.Webview;
+		mockWebviewView = {
+			webview: {
+				postMessage: sandbox.stub(),
+				asWebviewUri: sandbox.stub(),
+				cspSource: ''
+			},
+			visible: visibleStub
+		} as unknown as vscode.WebviewView;
 
 		postMessagePromise = new Promise(resolve => {
-			(mockWebview.postMessage as SinonStub).callsFake(() => {
+			(mockWebviewView.webview.postMessage as SinonStub).callsFake(() => {
 				  resolve(null);
 			});
 		});
-
-		onDidChangeActiveTextEditorStub = sandbox.stub(vscode.window, 'onDidChangeActiveTextEditor');
-		isDoclinProjectChangedStub = sandbox.stub(sidebarProviderUtil, 'isDoclinProjectChanged');
 	});
 
 	teardown(() => {
 		sandbox.restore();
 	});
 
-	test('should post message to webview when active editor changes if doclin project is changed', async () => {
+	test('should post message to webview when active editor is changed to different doclin project', async () => {
 		isDoclinProjectChangedStub.resolves(true);
+		visibleStub.returns(true);
 	  
-		handleActiveTextEditorChange(mockWebview);
-	  
+		handleActiveTextEditorChange(mockWebviewView);
 		onDidChangeActiveTextEditorStub.callArgWith(0, {});
-
 		await postMessagePromise;
 	  
-		expect((mockWebview.postMessage as SinonStub).calledOnce).to.be.true;
-		expect((mockWebview.postMessage as SinonStub).calledWithMatch({ type: 'getExtensionState' })).to.be.true;
+		expect((mockWebviewView.webview.postMessage as SinonStub).calledOnce).to.be.true;
+		expect((mockWebviewView.webview.postMessage as SinonStub).calledWithMatch({ type: 'getExtensionState' })).to.be.true;
 	});
 
-	test('should post message to webview when active editor changes if doclin project is not changed', async () => {
+	test('should post message to webview when active editor is changed in same doclin project', async () => {
 		isDoclinProjectChangedStub.resolves(false);
+		visibleStub.returns(true);
 	  
-		handleActiveTextEditorChange(mockWebview);
-	  
+		handleActiveTextEditorChange(mockWebviewView);
 		onDidChangeActiveTextEditorStub.callArgWith(0, {});
-	  
 		await postMessagePromise;
 	  
-		expect((mockWebview.postMessage as SinonStub).calledOnce).to.be.true;
-		expect((mockWebview.postMessage as SinonStub).calledWithMatch({ type: 'switchActiveEditor' })).to.be.true;
+		expect((mockWebviewView.webview.postMessage as SinonStub).calledOnce).to.be.true;
+		expect((mockWebviewView.webview.postMessage as SinonStub).calledWithMatch({ type: 'switchActiveEditor' })).to.be.true;
 	});
 });
