@@ -51,12 +51,22 @@
         "title": "Add Comment"
       }
     ],
+    "submenus": [
+      {
+        "id": "doclin.submenu",
+        "label": "Doclin"
+      }
+    ],
     "menus": {
       "editor/context": [
         {
-          "command": "doclin.addComment",
-          "when": "editorTextFocus",
+          "submenu": "doclin.submenu",
           "group": "doclin"
+        }
+      ],
+      "doclin.submenu": [
+        {
+          "command": "doclin.addComment"
         }
       ]
     }
