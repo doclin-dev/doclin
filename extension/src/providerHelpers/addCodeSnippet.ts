@@ -14,7 +14,7 @@ export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
 
 		const activeTextEditor = vscode.window.activeTextEditor;
 
-		if (!isExtensionReadyForComment()) {
+		if (await isExtensionNotReadyForComment(activeTextEditor)) {
 			return;
 		}
 
@@ -26,7 +26,7 @@ export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
 			const gitBranch = await getGitBranch();
 
 			await pauseExecution(); 
-			
+
 			sidebarProvider._view?.webview.postMessage({
 				type: "populateCodeSnippet",
 				value: { filePath, lineStart, originalSnippet, displaySnippet, gitBranch },
@@ -37,19 +37,17 @@ export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
 	}
 };
 
-const isExtensionReadyForComment = async (): Promise<boolean> => {
-	const activeTextEditor = vscode.window.activeTextEditor;
-  
+const isExtensionNotReadyForComment = async (activeTextEditor: vscode.TextEditor | undefined): Promise<boolean> => {  
 	if (!activeTextEditor) {
 		logger.error("No active file detected. Please open a file to add a comment.");
-		return false;
+		return true;
 	}
 
 	const user = await getAuthenticatedUser();
 
 	if (!user) {
 		logger.error("Please log in to your account before adding a comment.");
-		return false;
+		return true;
 	}
 
 	const organizationId = await getCurrentOrganizationId();
@@ -57,10 +55,10 @@ const isExtensionReadyForComment = async (): Promise<boolean> => {
 
 	if (!organizationId || !projectId) {
 		logger.error("Unable to add a comment. Please complete the organization and project setup first.");
-		return false;
+		return true;
 	}
 
-	return true;
+	return false;
 };
 
 const getLineStart = (activeTextEditor: vscode.TextEditor): number => {

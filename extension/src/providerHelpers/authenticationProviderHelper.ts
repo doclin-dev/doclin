@@ -5,6 +5,7 @@ import { SecretStorageManager } from "../SecretStorageManager";
 import authApi from "../api/authApi";
 import { SecretStorageType } from "../enums";
 import logger from "../utils/logger";
+import { User } from "../types";
 
 const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github`);
 
@@ -56,7 +57,7 @@ const openApiUrl = (err: Error) => {
 	vscode.commands.executeCommand("vscode.open", AUTH_URL);
 };
 
-export const getAuthenticatedUser = async () => {
+export const getAuthenticatedUser = async (): Promise<User | undefined> => {
 	const response = await authApi.getAuthenticatedUser();
 	const payload = response?.data;
 	const user = payload?.user;

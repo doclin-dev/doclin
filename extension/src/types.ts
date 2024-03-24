@@ -75,3 +75,7 @@ export type UpdateReply = {
 export type WebviewMessageFunction = (value: any) => any | Promise<any>;
 
 export type WebviewMessage = { type: any, value: any };
+
+export type User = {
+    username: string;
+};

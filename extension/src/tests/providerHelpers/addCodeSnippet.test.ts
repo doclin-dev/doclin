@@ -3,13 +3,14 @@ import { expect } from 'chai';
 import { createSandbox, SinonSandbox, SinonStub, stub } from 'sinon';
 import { addCodeSnippet } from '../../providerHelpers/addCodeSnippet';
 import * as activeEditorRelativeFilePath from '../../providerHelpers/activeEditorRelativeFilePath';
-import * as addCodeSnippetModule from '../../providerHelpers/addCodeSnippet';
 import * as snippetComparisonUtil from '../../utils/snippetComparisonUtil';
 import * as gitProviderUtil from '../../utils/gitProviderUtil';
-import logger from '../../utils/logger'; // Import the logger module
 import { SidebarProvider } from '../../SidebarProvider';
+import * as authenticationProviderHelper from '../../providerHelpers/authenticationProviderHelper';
+import * as readDoclinFile from '../../providerHelpers/doclinFile/readDoclinFile';
 
 suite('Testing addCodeSnippet', () => {
+	let sidebarProvider: SidebarProvider;
 	let sandbox: SinonSandbox;
 	let executeCommandStub: SinonStub;
 	let activeTextEditorStub: SinonStub;
@@ -17,9 +18,8 @@ suite('Testing addCodeSnippet', () => {
 	let getTextStub: SinonStub;
 	let getGitBranchStub: SinonStub;
 	let postMessageStub: SinonStub;
-	let sidebarProvider: SidebarProvider;
-	let highlightCodeStub: SinonStub;
-	let loggerErrorStub: SinonStub;
+	let getAuthenticatedUserStub: SinonStub;
+	let readDoclinFileStub: SinonStub;
 
 	setup(() => {
 		sandbox = createSandbox();
@@ -29,6 +29,8 @@ suite('Testing addCodeSnippet', () => {
 		getTextStub = sandbox.stub();
 		getGitBranchStub = sandbox.stub(gitProviderUtil, 'getGitBranch');
 		postMessageStub = sandbox.stub();
+		getAuthenticatedUserStub = sandbox.stub(authenticationProviderHelper, 'getAuthenticatedUser');
+		readDoclinFileStub = sandbox.stub(readDoclinFile, 'readDoclinFile');
 
 		sidebarProvider = {
 			_view: {
@@ -37,9 +39,6 @@ suite('Testing addCodeSnippet', () => {
 				}
 			}
 		} as unknown as SidebarProvider;
-
-		highlightCodeStub = sandbox.stub(snippetComparisonUtil, 'highlightCode');
-		loggerErrorStub = sandbox.stub(logger, 'error');
 	});
 
 	teardown(() => {
@@ -52,13 +51,17 @@ suite('Testing addCodeSnippet', () => {
 		expect(executeCommandStub.calledWith('workbench.view.extension.doclinSidebarView')).to.be.true;
 	});
 
-	// TODO: complete
-	// test('should return early if the extension is not ready for comment', async () => {
-		
-	// });
-
 	test('should populate code snippet in the sidebar if there is an active text editor', async () => {
-		const activeTextEditorValue = {
+		getTextStub.returns('originalSnippet');
+		getActiveEditorRelativeFilePathStub.resolves('filePath');
+		getGitBranchStub.resolves('gitBranch');
+		getAuthenticatedUserStub.resolves({ username: 'testuser' });
+		readDoclinFileStub.resolves({
+			organizationId: 'test-id',
+			projectId: 54
+		});
+		
+		activeTextEditorStub.get(() => ({
 			document: {
 				getText: getTextStub,
 			},
@@ -67,19 +70,14 @@ suite('Testing addCodeSnippet', () => {
 					line: 1
 				}
 			}
-		} as unknown as vscode.TextEditor;
-
-		getTextStub.returns('originalSnippet');
-		activeTextEditorStub.get(() => activeTextEditorValue);
-		getActiveEditorRelativeFilePathStub.resolves('filePath');
-		highlightCodeStub.returns('highlightedSnippet');
-		getGitBranchStub.resolves('gitBranch');
+		}));
 
 		await addCodeSnippet(sidebarProvider);
 
+		expect(readDoclinFileStub.calledTwice).to.be.true;
+		expect(getAuthenticatedUserStub.calledOnce).to.be.true;
 		expect(getActiveEditorRelativeFilePathStub.calledOnce).to.be.true;
 		expect(getTextStub.calledOnce).to.be.true;
-		expect(highlightCodeStub.calledOnce).to.be.true;
 		expect(getGitBranchStub.calledOnce).to.be.true;
 		expect(postMessageStub.calledWithMatch({
 			type: 'populateCodeSnippet',
@@ -97,9 +95,34 @@ suite('Testing addCodeSnippet', () => {
 
 		await addCodeSnippet(sidebarProvider);
 
+		expect(readDoclinFileStub.called).to.be.false;
+		expect(getAuthenticatedUserStub.called).to.be.false;
 		expect(getActiveEditorRelativeFilePathStub.called).to.be.false;
 		expect(getTextStub.called).to.be.false;
-		expect(highlightCodeStub.called).to.be.false;
+		expect(getGitBranchStub.called).to.be.false;
+		expect(postMessageStub.called).to.be.false;
+	});
+
+	test('should return early if the user is not logged in', async () => {
+		activeTextEditorStub.get(() => ({
+			document: {
+				getText: getTextStub,
+			},
+			selection: {
+				start: {
+					line: 1
+				}
+			}
+		}));
+
+		getAuthenticatedUserStub.resolves(undefined);
+
+		await addCodeSnippet(sidebarProvider);
+
+		expect(readDoclinFileStub.called).to.be.false;
+		expect(getAuthenticatedUserStub.calledOnce).to.be.true;
+		expect(getActiveEditorRelativeFilePathStub.called).to.be.false;
+		expect(getTextStub.called).to.be.false;
 		expect(getGitBranchStub.called).to.be.false;
 		expect(postMessageStub.called).to.be.false;
 	});
