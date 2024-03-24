@@ -80,7 +80,7 @@ export const postUserEmail = async(email:string) => {
 	try{
 		const response = await authApi.postUserEmail(email);
 		const status = response?.status;
-		logger.info('Email has been successfully registered.');
+		
 		return status;
 	} catch(error) {
 		logger.error(`An error occured when registering your email. ${error}`);

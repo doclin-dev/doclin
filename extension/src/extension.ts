@@ -2,8 +2,8 @@ import * as vscode from "vscode";
 import { authenticate } from "./providerHelpers/authenticationProviderHelper";
 import { SidebarProvider } from "./SidebarProvider";
 import { SecretStorageManager } from "./SecretStorageManager";
-import { addCodeSnippet } from "./providerHelpers/threadProviderHelper";
 import { GlobalStateManager } from "./GlobalStateManager";
+import { addCodeSnippet } from "./providerHelpers/addCodeSnippet";
 
 const DOCLIN_SIDEBAR = "doclin.sidebar";
 const DOCLIN_AUTHENTICATE = "doclin.authenticate";
