@@ -26,12 +26,7 @@ export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
 			const gitBranch = await getGitBranch();
 
 			await pauseExecution(); 
-
-			console.log("checkout output", {
-				type: "populateCodeSnippet",
-				value: { filePath, lineStart, originalSnippet, displaySnippet, gitBranch },
-			});
-
+			
 			sidebarProvider._view?.webview.postMessage({
 				type: "populateCodeSnippet",
 				value: { filePath, lineStart, originalSnippet, displaySnippet, gitBranch },
