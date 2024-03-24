@@ -10,7 +10,6 @@ suite('storeProjectId', () => {
 	let writeDoclinFileStub: SinonStub;
 
 	setup(() => {
-		// Stub the readDoclinFile and writeDoclinFile methods
 		readDoclinFileStub = sandbox.stub(readDoclinFile, 'readDoclinFile');
 		writeDoclinFileStub = sandbox.stub(writeDoclinFile, 'writeDoclinFile');
 	});

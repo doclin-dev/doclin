@@ -24,7 +24,7 @@
             textContainer.style.maxHeight = "none";
             seeMoreLink.textContent = SEE_LESS_TEXT;
         } else {
-            textContainer.style.maxHeight = "125px"; // Set your max height here
+            textContainer.style.maxHeight = "125px";
             seeMoreLink.textContent = SEE_MORE_TEXT;
         }
     }
