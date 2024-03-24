@@ -2,7 +2,7 @@
   "name": "doclin",
   "displayName": "Doclin",
   "publisher": "Doclin",
-  "description": "Doclin is a modern way of commenting on codebase.",
+  "description": "Doclin is a real-time commenting and collaboration tool designed for codebases.",
   "icon": "media/doclinLogo.png",
   "version": "0.1.4",
   "engines": {
