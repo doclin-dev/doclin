@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 
 export const handleActiveTextEditorChange = (webview: vscode.Webview) => {
 	vscode.window.onDidChangeActiveTextEditor(async (editor) => {
+
 		if (editor) {
 			if (await isDoclinProjectChanged()) {
 				webview.postMessage({
