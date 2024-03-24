@@ -1,6 +1,6 @@
 # 🚀 Doclin for VS Code - Collaborate Like Never Before!
 
-Welcome to Doclin, your new favorite real-time commenting and collaboration tool designed specifically for software development teams. We're here to make your life easier when working on complex systems. We're always looking to improve, so we welcome your feedback - [Share Your Thoughts](https://forms.gle/dHpZAUf2qY4vsChZ8)
+Welcome to Doclin, your new favorite real-time commenting and collaboration tool designed specifically for software development teams. We're here to make your life easier when working on complex codebases. We're always looking to improve, so we welcome your feedback - [Share Your Thoughts](https://forms.gle/dHpZAUf2qY4vsChZ8)
 
 ## 🌟 Features
 
