@@ -3,6 +3,11 @@ export type DoclinFile = {
     projectId: number | null;
 };
 
+export type Organization = {
+    organizationId: number;
+
+};
+
 export type Thread = {
     id: number;
     title: string;
@@ -78,4 +83,13 @@ export type WebviewMessage = { type: any, value: any };
 
 export type User = {
     username: string;
+};
+
+export type ExtensionState = {
+    user?: User | undefined;
+    organization?: any;
+    project?: any;
+    githubUrl?: string;
+    isFolderOrFileOpened?: boolean;
+    error?: any;
 };

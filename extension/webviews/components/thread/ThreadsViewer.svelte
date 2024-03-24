@@ -8,7 +8,7 @@
     import ThreadAddForm from "./ThreadAddForm.svelte";
     
     let threads: Array<ThreadType> = [];
-    let activeFilePath: string;
+    let activeFilePath: string = '';
 
     $: {
         if ($reload > 1) {
@@ -68,7 +68,7 @@
     });
 </script>
 
-<FilterMenu filePath= {activeFilePath} onFirstSegmentClick={loadAllThreads} onSecondSegmentClick={loadCurrentFileThreads}/>
+<FilterMenu filePath={activeFilePath} onFirstSegmentClick={loadAllThreads} onSecondSegmentClick={loadCurrentFileThreads}/>
 
 <ThreadAddForm/>
 

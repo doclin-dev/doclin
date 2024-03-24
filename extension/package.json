@@ -20,7 +20,6 @@
   "activationEvents": [
     "onStartupFinished",
     "onCommand:doclin.addComment",
-    "onCommand:doclin.authenticate",
     "onView:doclin.sidebar"
   ],
   "main": "./dist/extension.js",
@@ -50,11 +49,6 @@
         "command": "doclin.addComment",
         "category": "Doclin",
         "title": "Add Comment"
-      },
-      {
-        "command": "doclin.authenticate",
-        "category": "Doclin",
-        "title": "Authenticate"
       }
     ],
     "menus": {

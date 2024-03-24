@@ -7,6 +7,8 @@ import { getAuthenticatedUser } from "./authenticationProviderHelper";
 import logger from "../utils/logger";
 import { getGitBranch } from "../utils/gitProviderUtil";
 import { getActiveEditorRelativeFilePath } from "./activeEditorRelativeFilePath";
+import { readDoclinFile } from "./doclinFile/readDoclinFile";
+import { DoclinFile } from "../types";
 
 export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
 	try {
@@ -50,11 +52,17 @@ const isExtensionNotReadyForComment = async (activeTextEditor: vscode.TextEditor
 		return true;
 	}
 
-	const organizationId = await getCurrentOrganizationId();
-	const projectId = await getCurrentProjectId();
+	const doclinFile: DoclinFile = await readDoclinFile();
+	const organizationId = doclinFile?.organizationId;
+	const projectId = doclinFile?.projectId;
 
 	if (!organizationId || !projectId) {
 		logger.error("Unable to add a comment. Please complete the organization and project setup first.");
+		return true;
+	}
+
+	if (!activeTextEditor.document.getText(activeTextEditor.selection)) {
+		logger.error("Please highlight a section of code to add a comment.");
 		return true;
 	}
 

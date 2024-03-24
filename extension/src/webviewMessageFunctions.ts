@@ -11,10 +11,7 @@ import { getGithubUrl } from "./utils/gitProviderUtil";
 import { WebviewMessageFunction } from "./types";
 import { onError, onInfo } from "./utils/loggerProviderUtil";
 
-export const WEBVIEW_MESSAGE_FUNCTIONS: Record<string, WebviewMessageFunction> = {
-	logout: logout,
-	onInfo: onInfo,
-	onError: onError,
+export const RESPONSE_PROVIDERS: Record<string, WebviewMessageFunction> = {
 	getExtensionState: getExtensionState,
 	getGithubUrl: getGithubUrl,
 	getThreadsByActiveFilePath: getThreadsByActiveFilePath,
@@ -38,7 +35,13 @@ export const WEBVIEW_MESSAGE_FUNCTIONS: Record<string, WebviewMessageFunction> =
 	postUserEmail: postUserEmail
 };
 
-export const executeRemainingMessageFunctions = (message: any, webview: vscode.Webview) => {
+export const VOID_PROVIDERS: Record<string, WebviewMessageFunction> = {
+	logout: logout,
+	onInfo: onInfo,
+	onError: onError,
+};
+
+export const executeRemainingHandlers = (message: any, webview: vscode.Webview) => {
 	switch (message.type) {
 	case "authenticate":
 		authenticate(async () => {

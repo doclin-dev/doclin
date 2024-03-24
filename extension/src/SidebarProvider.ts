@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { handleMessageReceiveFromWebview } from "./webviewMessageHandler";
+import { handleWebviewMessageReceive } from "./webviewMessageHandler";
 import { getHtmlForWebview } from "./providerHelpers/webviewHtml";
 import { handleActiveTextEditorChange } from "./providerHelpers/activeEditorChange";
 
@@ -19,7 +19,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 		webviewView.webview.html = getHtmlForWebview(webviewView.webview, this._extensionUri);
 
-		handleMessageReceiveFromWebview(webviewView.webview);
+		handleWebviewMessageReceive(webviewView.webview);
 		handleActiveTextEditorChange(webviewView.webview);
 	}
 

@@ -6,7 +6,6 @@ import { GlobalStateManager } from "./GlobalStateManager";
 import { addCodeSnippet } from "./providerHelpers/addCodeSnippet";
 
 const DOCLIN_SIDEBAR = "doclin.sidebar";
-const DOCLIN_AUTHENTICATE = "doclin.authenticate";
 const DOCLIN_ADD_COMMENT = "doclin.addComment";
 
 export function activate(context: vscode.ExtensionContext) {
@@ -23,10 +22,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand(DOCLIN_ADD_COMMENT, () => addCodeSnippet(sidebarProvider))
-	);
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand(DOCLIN_AUTHENTICATE, () => authenticate())
 	);
 }
 

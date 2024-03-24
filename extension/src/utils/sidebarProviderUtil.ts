@@ -9,8 +9,9 @@ import * as path from "path";
 import { getGithubUrl } from "./gitProviderUtil";
 import { clearAllThreadsCache } from "./threadCachingUtil";
 import { getActiveEditorFolder, getWorkspaceFolder } from "./fileSystemUtil";
+import { ExtensionState } from "../types";
 
-export const getExtensionState = async () => {
+export const getExtensionState = async (): Promise<ExtensionState> => {
 	try {
 		clearAllThreadsCache();
 		

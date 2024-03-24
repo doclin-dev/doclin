@@ -1,33 +1,37 @@
 import * as vscode from "vscode";
-import { executeRemainingMessageFunctions, WEBVIEW_MESSAGE_FUNCTIONS } from "./webviewMessageFunctions";
+import { executeRemainingHandlers, VOID_PROVIDERS, RESPONSE_PROVIDERS } from "./webviewMessageFunctions";
 import { WebviewMessage } from "./types";
 
-export const handleMessageReceiveFromWebview = (webview: vscode.Webview) => {
+export const handleWebviewMessageReceive = (webview: vscode.Webview) => {
 	webview.onDidReceiveMessage(async (message: WebviewMessage) => {
-		if (WEBVIEW_MESSAGE_FUNCTIONS[message.type]) {
-			respondUsingWebviewMessageFunction(message, webview);
+		if (RESPONSE_PROVIDERS[message.type]) {
+			respondToMessage(message, webview);
+		} else if (VOID_PROVIDERS[message.type]) {
+			executeVoidHandler(message);
 		} else {
-			executeRemainingMessageFunctions(message, webview);
+			executeRemainingHandlers(message, webview);
 		}
 	});
 };
 
-const respondUsingWebviewMessageFunction = (message: WebviewMessage, webview: vscode.Webview) => {
-	const result = WEBVIEW_MESSAGE_FUNCTIONS[message.type](message.value);
+const respondToMessage = (message: WebviewMessage, webview: vscode.Webview) => {
+	const result = RESPONSE_PROVIDERS[message.type](message.value);
 
 	if (result instanceof Promise) {
 		result.then(value => {
-			if (value !== undefined) {
-				webview.postMessage({
-					type: message.type,
-					value: value
-				});
-			}
+			webview.postMessage({
+				type: message.type,
+				value: value
+			});
 		});
-	} else if (result !== undefined) {
+	} else {
 		webview.postMessage({
 			type: message.type,
 			value: result
 		});
 	}
+};
+
+const executeVoidHandler = (message: WebviewMessage) => {
+	VOID_PROVIDERS[message.type](message.value);
 };

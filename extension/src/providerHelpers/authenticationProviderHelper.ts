@@ -11,11 +11,11 @@ const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github`);
 
 const app = polka();
 
-export const authenticate = (fn?: () => void) => {
+export const authenticate = (callback?: () => void) => {
 	try {
 		app.server?.close();
 
-		app.get(`/auth`, (req, res) => getToken(req, res, fn));
+		app.get(`/auth`, (req, res) => getToken(req, res, callback));
 
 		app.listen(54321, openApiUrl);
 	} catch (error) {
