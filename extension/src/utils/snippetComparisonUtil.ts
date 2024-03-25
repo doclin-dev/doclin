@@ -4,7 +4,7 @@ import { Reply, Snippet, Thread } from "../types";
 import logger from "./logger";
 import { getExistingDoclinFile } from "./doclinFileReadWriteUtil";
 import * as path from 'path';
-import { getActiveEditorFolder, getWorkspaceFolder, isLocalWorkspace } from "./fileSystemUtil";
+import { isLocalWorkspace } from "./fileSystemUtil";
 
 hljs.configure({
 	languages: ['javascript', 'python', 'cpp', 'ruby', 'php', 'html']

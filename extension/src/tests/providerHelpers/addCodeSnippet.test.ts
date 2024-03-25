@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { expect } from 'chai';
-import { createSandbox, SinonSandbox, SinonStub, stub } from 'sinon';
+import { createSandbox, SinonSandbox, SinonStub } from 'sinon';
 import { addCodeSnippet, handleIsSidebarReady } from '../../providerHelpers/addCodeSnippet';
 import * as activeEditorRelativeFilePath from '../../providerHelpers/activeEditorRelativeFilePath';
 import * as gitProviderUtil from '../../utils/gitProviderUtil';

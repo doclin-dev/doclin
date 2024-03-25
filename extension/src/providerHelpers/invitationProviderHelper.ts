@@ -2,7 +2,6 @@ import invitationApi from "../api/invitationApi";
 import logger from "../utils/logger";
 import { getCurrentOrganizationId, storeOrganizationId } from "./organizationProviderHelper";
 import { getCurrentProjectId, storeProjectId } from "./projectProviderHelper";
-import * as vscode from "vscode";
 
 const INVITATION_EXPIRED: string = "invitationExpired";
 const INVITATION_EXPIRED_MSG: string = "Invitation code is invalid/expired!";

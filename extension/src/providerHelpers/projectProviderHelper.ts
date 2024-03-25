@@ -1,4 +1,3 @@
-import * as vscode from "vscode";
 import projectApi from "../api/projectApi";
 import { getCurrentOrganizationId } from "./organizationProviderHelper";
 import { readDoclinFile } from "./doclinFile/readDoclinFile";

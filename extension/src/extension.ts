@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import { authenticate } from "./providerHelpers/authenticationProviderHelper";
 import { SidebarProvider } from "./SidebarProvider";
 import { SecretStorageManager } from "./SecretStorageManager";
 import { GlobalStateManager } from "./GlobalStateManager";

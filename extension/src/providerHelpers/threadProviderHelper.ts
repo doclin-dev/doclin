@@ -1,4 +1,3 @@
-import * as vscode from "vscode";
 import threadApi from "../api/threadApi";
 import { getCurrentOrganizationId } from "./organizationProviderHelper";
 import { getCurrentProjectId } from "./projectProviderHelper";
