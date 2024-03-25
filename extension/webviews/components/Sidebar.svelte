@@ -75,11 +75,21 @@
         tsvscode.postMessage({ type: "getExtensionState", value: undefined });
     }
 
+    const isSidebarReady = () => {
+        tsvscode.postMessage({
+            type: "isSidebarReady",
+            value: !loading
+        });
+    }
+
     const messageEventListener = async (event: any) => {
         const message = event.data;
         switch (message.type) {
             case "getExtensionState":
                 handleGetExtensionState(message.value);
+                break;
+            case "isSidebarReady":
+                isSidebarReady();
                 break;
         }
     };

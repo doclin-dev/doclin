@@ -1,6 +1,6 @@
 <script lang="ts">
     import OverlayCard from '../OverlayCard.svelte';
-    import { onMount, tick, onDestroy } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
     import { editedReplyId, editedThreadId } from '../../state/store';
     import moment from 'moment';
     import SeeMore from '../SeeMore.svelte';

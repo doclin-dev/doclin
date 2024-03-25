@@ -1,7 +1,7 @@
 <script lang='ts'>
     import { TextEditor } from "../TextEditor";
-    import { onMount, tick, onDestroy } from 'svelte';
-    import { activeTextEditor, editedReplyId, editedThreadId } from '../../state/store';
+    import { onMount } from 'svelte';
+    import { activeTextEditor, editedReplyId } from '../../state/store';
     import { TextEditorType } from '../../enums';
     import Button from '../Button.svelte';
 

@@ -51,7 +51,7 @@
         </label>
 
         {#if isCurrentFileView}
-            <label class="filter-menu-label file-label" for="file" title="{filePath}">
+            <label class="filter-menu-label file-label" for="file" title="{filePath ?? ''}">
                 <Icon name='file' height={14} width={14}/>
                 <div class='overflow-ellipsis'>
                     {filePath}

@@ -51,6 +51,14 @@
         "title": "Add Comment"
       }
     ],
+    "keybindings": [
+      {
+        "command": "doclin.addComment",
+        "key": "ctrl+alt+c",
+        "mac": "cmd+alt+c",
+        "when": "editorTextFocus"
+      }
+    ],
     "submenus": [
       {
         "id": "doclin.submenu",
@@ -83,7 +91,7 @@
     "test-compile": "tsc -p ./",
     "test-watch": "tsc -watch -p ./",
     "pretest": "npm run test-compile && npm run lint",
-    "lint": "eslint src --ext ts",
+    "lint": "eslint src --ext ts && svelte-check",
     "lint-fix": "eslint src --ext ts --fix",
     "test": "vscode-test",
     "svelte-check": "svelte-check"

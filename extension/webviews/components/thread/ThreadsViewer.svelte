@@ -4,7 +4,7 @@
     import Thread from './Thread.svelte';
     import { ActiveView, Page } from "../../enums";
     import FilterMenu from "../FilterMenu.svelte";
-    import { activeView, currentProject, page, reload, threadContents } from "../../state/store";
+    import { activeView, currentProject, page, reload } from "../../state/store";
     import ThreadAddForm from "./ThreadAddForm.svelte";
     
     let threads: Array<ThreadType> = [];

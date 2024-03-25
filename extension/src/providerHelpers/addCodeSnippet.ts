@@ -8,11 +8,14 @@ import logger from "../utils/logger";
 import { getGitBranch } from "../utils/gitProviderUtil";
 import { getActiveEditorRelativeFilePath } from "./activeEditorRelativeFilePath";
 import { readDoclinFile } from "./doclinFile/readDoclinFile";
-import { DoclinFile } from "../types";
+import { DoclinFile, WebviewMessage } from "../types";
+
+const IS_SIDEBAR_READY = 'isSidebarReady';
+let isSidebarReady: boolean = false;
 
 export const addCodeSnippet = async (webviewView: vscode.WebviewView | undefined) => {
 	try {
-		vscode.commands.executeCommand('workbench.view.extension.doclinSidebarView');
+		await vscode.commands.executeCommand('workbench.view.extension.doclinSidebarView');
 
 		const activeTextEditor = vscode.window.activeTextEditor;
 		
@@ -28,9 +31,11 @@ export const addCodeSnippet = async (webviewView: vscode.WebviewView | undefined
 			const gitBranch = await getGitBranch();
 
 			if (webviewView) {
-				await waitForSidebarToShow(webviewView); 
+				const webview = webviewView.webview;
 
-				webviewView.webview.postMessage({
+				await waitForSidebarToShow(webview); 
+
+				webview.postMessage({
 					type: "populateCodeSnippet",
 					value: { filePath, lineStart, originalSnippet, displaySnippet, gitBranch },
 				});
@@ -81,20 +86,32 @@ const getLineStart = (activeTextEditor: vscode.TextEditor): number => {
 	return 1;
 };
 
-const waitForSidebarToShow = (webviewView: vscode.WebviewView) => {
+const waitForSidebarToShow = (webview: vscode.Webview) => {
 	return new Promise<void>((resolve, reject) => {
 		let timeout: NodeJS.Timeout;
 		const interval = setInterval(() => {
-			if (webviewView.visible) {
+			if (isSidebarReady) {
 				clearInterval(interval);
 				clearTimeout(timeout);
 				resolve();
+			} else {
+				updateSidebarReadyStatus(webview);
 			}
-		}, 100);
+		}, 500);
 
 		timeout = setTimeout(() => {
 			clearInterval(interval);
-			reject(new Error("Maximum wait time exceeded."));
-		}, 10000);
+			reject(new Error("Please open doclin sidebar to add a comment"));
+		}, 5000);
 	});
+};
+
+const updateSidebarReadyStatus = (webview: vscode.Webview) => {
+	webview.postMessage({
+		type: IS_SIDEBAR_READY
+	});
+}
+
+export const handleIsSidebarReady = (response: boolean) => {
+	isSidebarReady = response;
 };

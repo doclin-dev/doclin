@@ -10,6 +10,7 @@ import { inviteUser, redeemInvitation } from "./providerHelpers/invitationProvid
 import { getGithubUrl } from "./utils/gitProviderUtil";
 import { WebviewMessageFunction } from "./types";
 import { onError, onInfo } from "./utils/loggerProviderUtil";
+import { handleIsSidebarReady } from "./providerHelpers/addCodeSnippet";
 
 export const RESPONSE_PROVIDERS: Record<string, WebviewMessageFunction> = {
 	getExtensionState: getExtensionState,
@@ -39,6 +40,7 @@ export const VOID_PROVIDERS: Record<string, WebviewMessageFunction> = {
 	logout: logout,
 	onInfo: onInfo,
 	onError: onError,
+	isSidebarReady: handleIsSidebarReady,
 };
 
 export const executeRemainingHandlers = (message: any, webview: vscode.Webview) => {

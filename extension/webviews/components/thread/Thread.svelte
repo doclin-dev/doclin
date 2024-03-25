@@ -1,7 +1,7 @@
 <script lang="ts">
     import OverlayCard from '../OverlayCard.svelte';
     import Button from '../Button.svelte'
-    import { tick, onMount, onDestroy } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
     import { editedReplyId, editedThreadId, page, threadSelected } from '../../state/store';
     import { Page } from '../../enums';
     import moment from 'moment';
