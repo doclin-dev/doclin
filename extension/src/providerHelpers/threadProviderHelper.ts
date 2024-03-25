@@ -9,22 +9,33 @@ import { getActiveEditorRelativeFilePath } from "./activeEditorRelativeFilePath"
 
 export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[], activeFilePath: string }> => {
 	const activeFilePath = await getActiveEditorRelativeFilePath();
-	const organizationId = await getCurrentOrganizationId();
-	const projectId = await getCurrentProjectId();
-
-	if (!organizationId || !projectId || !activeFilePath) {
+	
+	if (!activeFilePath) {
 		return { threads: [], activeFilePath: "" };
 	}
 
-	const cachedThreads = await getCachedThreads(activeFilePath);
+	const threads = await getThreadsByFilePath(activeFilePath);
+
+	return { threads, activeFilePath };
+};
+
+export const getThreadsByFilePath = async(filePath: string): Promise<Thread[]> => {
+	const organizationId = await getCurrentOrganizationId();
+	const projectId = await getCurrentProjectId();
+
+	if (!organizationId || !projectId) {
+		return [];
+	}
+
+	const cachedThreads = await getCachedThreads(filePath);
 
 	let threads: Thread[];
 
 	if (cachedThreads) {
 		threads = cachedThreads;
 	} else {
-		threads = (await threadApi.getFileBasedThreads(organizationId, projectId, activeFilePath))?.data?.threads;
-		storeThreadsCache(activeFilePath, threads);
+		threads = (await threadApi.getFileBasedThreads(organizationId, projectId, filePath))?.data?.threads;
+		storeThreadsCache(filePath, threads);
 	}
 
 	for (const thread of threads) {
@@ -33,7 +44,7 @@ export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[],
 
 	threads.forEach(fillUpThreadOrReplyMessageWithSnippet);
 
-	return { threads, activeFilePath };
+	return threads;
 };
 
 export const getAllThreads = async (): Promise<Thread[]> => {

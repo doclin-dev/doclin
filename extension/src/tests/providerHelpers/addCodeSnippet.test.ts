@@ -1,11 +1,12 @@
 import * as vscode from 'vscode';
 import { expect } from 'chai';
 import { createSandbox, SinonSandbox, SinonStub } from 'sinon';
-import { addCodeSnippet, handleIsSidebarReady } from '../../providerHelpers/addCodeSnippet';
+import { addCodeSnippet } from '../../providerHelpers/addCodeSnippet';
 import * as activeEditorRelativeFilePath from '../../providerHelpers/activeEditorRelativeFilePath';
 import * as gitProviderUtil from '../../utils/gitProviderUtil';
 import * as authenticationProviderHelper from '../../providerHelpers/authenticationProviderHelper';
 import * as readDoclinFile from '../../providerHelpers/doclinFile/readDoclinFile';
+import { handleIsSidebarReady } from '../../utils/waitForSidebarToShow';
 
 suite('Testing addCodeSnippet', () => {
 	let webviewView: vscode.WebviewView;

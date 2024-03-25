@@ -10,7 +10,7 @@ import { inviteUser, redeemInvitation } from "./providerHelpers/invitationProvid
 import { getGithubUrl } from "./utils/gitProviderUtil";
 import { WebviewMessageFunction } from "./types";
 import { onError, onInfo } from "./utils/loggerProviderUtil";
-import { handleIsSidebarReady } from "./providerHelpers/addCodeSnippet";
+import { handleIsSidebarReady } from "./utils/waitForSidebarToShow";
 
 export const RESPONSE_PROVIDERS: Record<string, WebviewMessageFunction> = {
 	getExtensionState: getExtensionState,

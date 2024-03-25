@@ -3,13 +3,13 @@ import { SidebarProvider } from "./SidebarProvider";
 import { SecretStorageManager } from "./SecretStorageManager";
 import { GlobalStateManager } from "./GlobalStateManager";
 import { addCodeSnippet } from "./providerHelpers/addCodeSnippet";
+import { initializeCodeLens, viewFileThreads } from "./providerHelpers/codeLensProvider";
 
 const DOCLIN_SIDEBAR = "doclin.sidebar";
 const DOCLIN_ADD_COMMENT = "doclin.addComment";
+const DOCLIN_VIEW_FILE_THREADS = "doclin.viewFileThreads";
 
 export function activate(context: vscode.ExtensionContext) {
-	createStatusBarItem();
-
   	SecretStorageManager.secretStorage = context.secrets;
   	GlobalStateManager.globalState = context.globalState;
 
@@ -22,6 +22,13 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.commands.registerCommand(DOCLIN_ADD_COMMENT, () => addCodeSnippet(sidebarProvider.getWebviewView()))
 	);
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand(DOCLIN_VIEW_FILE_THREADS, () => viewFileThreads(sidebarProvider.getWebviewView()))
+	);
+
+	createStatusBarItem();
+	initializeCodeLens(context);
 }
 
 const createStatusBarItem = () => {
