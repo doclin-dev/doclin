@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { expect } from 'chai';
 import { createSandbox, SinonSandbox, SinonStub, stub } from 'sinon';
-import { addCodeSnippet } from '../../providerHelpers/addCodeSnippet';
+import { addCodeSnippet, handleIsSidebarReady } from '../../providerHelpers/addCodeSnippet';
 import * as activeEditorRelativeFilePath from '../../providerHelpers/activeEditorRelativeFilePath';
 import * as gitProviderUtil from '../../utils/gitProviderUtil';
 import * as authenticationProviderHelper from '../../providerHelpers/authenticationProviderHelper';
@@ -69,6 +69,7 @@ suite('Testing addCodeSnippet', () => {
 			}
 		}));
 
+		handleIsSidebarReady(true);
 		await addCodeSnippet(webviewView);
 
 		expect(readDoclinFileStub.calledOnce).to.be.true;

@@ -1,14 +1,11 @@
 import * as vscode from "vscode";
-import { getCurrentOrganizationId } from "./organizationProviderHelper";
-import { getCurrentProjectId } from "./projectProviderHelper";
 import { highlightCode, addLineNumbers } from "../utils/snippetComparisonUtil";
-import { SidebarProvider } from "../SidebarProvider";
 import { getAuthenticatedUser } from "./authenticationProviderHelper";
 import logger from "../utils/logger";
 import { getGitBranch } from "../utils/gitProviderUtil";
 import { getActiveEditorRelativeFilePath } from "./activeEditorRelativeFilePath";
 import { readDoclinFile } from "./doclinFile/readDoclinFile";
-import { DoclinFile, WebviewMessage } from "../types";
+import { DoclinFile } from "../types";
 
 const IS_SIDEBAR_READY = 'isSidebarReady';
 let isSidebarReady: boolean = false;
@@ -87,6 +84,8 @@ const getLineStart = (activeTextEditor: vscode.TextEditor): number => {
 };
 
 const waitForSidebarToShow = (webview: vscode.Webview) => {
+	updateSidebarReadyStatus(webview);
+
 	return new Promise<void>((resolve, reject) => {
 		let timeout: NodeJS.Timeout;
 		const interval = setInterval(() => {
@@ -110,7 +109,7 @@ const updateSidebarReadyStatus = (webview: vscode.Webview) => {
 	webview.postMessage({
 		type: IS_SIDEBAR_READY
 	});
-}
+};
 
 export const handleIsSidebarReady = (response: boolean) => {
 	isSidebarReady = response;
