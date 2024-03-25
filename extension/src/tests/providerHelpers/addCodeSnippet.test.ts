@@ -3,14 +3,12 @@ import { expect } from 'chai';
 import { createSandbox, SinonSandbox, SinonStub, stub } from 'sinon';
 import { addCodeSnippet } from '../../providerHelpers/addCodeSnippet';
 import * as activeEditorRelativeFilePath from '../../providerHelpers/activeEditorRelativeFilePath';
-import * as snippetComparisonUtil from '../../utils/snippetComparisonUtil';
 import * as gitProviderUtil from '../../utils/gitProviderUtil';
-import { SidebarProvider } from '../../SidebarProvider';
 import * as authenticationProviderHelper from '../../providerHelpers/authenticationProviderHelper';
 import * as readDoclinFile from '../../providerHelpers/doclinFile/readDoclinFile';
 
 suite('Testing addCodeSnippet', () => {
-	let sidebarProvider: SidebarProvider;
+	let webviewView: vscode.WebviewView;
 	let sandbox: SinonSandbox;
 	let executeCommandStub: SinonStub;
 	let activeTextEditorStub: SinonStub;
@@ -32,13 +30,12 @@ suite('Testing addCodeSnippet', () => {
 		getAuthenticatedUserStub = sandbox.stub(authenticationProviderHelper, 'getAuthenticatedUser');
 		readDoclinFileStub = sandbox.stub(readDoclinFile, 'readDoclinFile');
 
-		sidebarProvider = {
-			_view: {
-				webview: {
-					postMessage: postMessageStub
-				}
-			}
-		} as unknown as SidebarProvider;
+		webviewView = {
+			webview: {
+				postMessage: postMessageStub
+			},
+			visible: true
+		} as unknown as vscode.WebviewView;
 	});
 
 	teardown(() => {
@@ -46,7 +43,7 @@ suite('Testing addCodeSnippet', () => {
 	});
 
 	test('should execute the command to open the doclin sidebar view', async () => {
-		await addCodeSnippet(sidebarProvider);
+		await addCodeSnippet(webviewView);
 
 		expect(executeCommandStub.calledWith('workbench.view.extension.doclinSidebarView')).to.be.true;
 	});
@@ -72,7 +69,7 @@ suite('Testing addCodeSnippet', () => {
 			}
 		}));
 
-		await addCodeSnippet(sidebarProvider);
+		await addCodeSnippet(webviewView);
 
 		expect(readDoclinFileStub.calledOnce).to.be.true;
 		expect(getAuthenticatedUserStub.calledOnce).to.be.true;
@@ -93,7 +90,7 @@ suite('Testing addCodeSnippet', () => {
 	test('should not populate code snippet in the sidebar if there is no active text editor', async () => {
 		activeTextEditorStub.get(() => undefined);
 
-		await addCodeSnippet(sidebarProvider);
+		await addCodeSnippet(webviewView);
 
 		expect(readDoclinFileStub.called).to.be.false;
 		expect(getAuthenticatedUserStub.called).to.be.false;
@@ -117,7 +114,7 @@ suite('Testing addCodeSnippet', () => {
 
 		getAuthenticatedUserStub.resolves(undefined);
 
-		await addCodeSnippet(sidebarProvider);
+		await addCodeSnippet(webviewView);
 
 		expect(readDoclinFileStub.called).to.be.false;
 		expect(getAuthenticatedUserStub.calledOnce).to.be.true;

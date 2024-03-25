@@ -23,6 +23,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		handleActiveTextEditorChange(webviewView);
 	}
 
+	public getWebviewView(): vscode.WebviewView | undefined {
+		return this._view;
+	}
+
 	public revive(panel: vscode.WebviewView) {
   		this._view = panel;
 	}

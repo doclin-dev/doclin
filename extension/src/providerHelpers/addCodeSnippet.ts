@@ -10,7 +10,7 @@ import { getActiveEditorRelativeFilePath } from "./activeEditorRelativeFilePath"
 import { readDoclinFile } from "./doclinFile/readDoclinFile";
 import { DoclinFile } from "../types";
 
-export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
+export const addCodeSnippet = async (webviewView: vscode.WebviewView | undefined) => {
 	try {
 		vscode.commands.executeCommand('workbench.view.extension.doclinSidebarView');
 
@@ -27,12 +27,14 @@ export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
 			const displaySnippet = addLineNumbers(lineStart, highlightCode(originalSnippet));
 			const gitBranch = await getGitBranch();
 
-			await pauseExecution(); 
+			if (webviewView) {
+				await waitForSidebarToShow(webviewView); 
 
-			sidebarProvider._view?.webview.postMessage({
-				type: "populateCodeSnippet",
-				value: { filePath, lineStart, originalSnippet, displaySnippet, gitBranch },
-			});
+				webviewView.webview.postMessage({
+					type: "populateCodeSnippet",
+					value: { filePath, lineStart, originalSnippet, displaySnippet, gitBranch },
+				});
+			}
 		}
 	} catch (error) {
 		logger.error("Exception occured. " + error);
@@ -79,8 +81,20 @@ const getLineStart = (activeTextEditor: vscode.TextEditor): number => {
 	return 1;
 };
 
-const pauseExecution = () => {
-	return new Promise((resolve) => {
-		setTimeout(resolve, 500);
+const waitForSidebarToShow = (webviewView: vscode.WebviewView) => {
+	return new Promise<void>((resolve, reject) => {
+		let timeout: NodeJS.Timeout;
+		const interval = setInterval(() => {
+			if (webviewView.visible) {
+				clearInterval(interval);
+				clearTimeout(timeout);
+				resolve();
+			}
+		}, 100);
+
+		timeout = setTimeout(() => {
+			clearInterval(interval);
+			reject(new Error("Maximum wait time exceeded."));
+		}, 10000);
 	});
 };
