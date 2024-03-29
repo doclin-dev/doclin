@@ -28,8 +28,7 @@
 
 		context.addSegment({ index, isDisabled, length, offset });
 	})
-</script>  
-
+</script>
 
 <button bind:this={ref}
 	class='segmented-control-item'

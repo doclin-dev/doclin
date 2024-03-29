@@ -16,8 +16,6 @@ export const viewFileThreads = async (webviewView: vscode.WebviewView | undefine
 		if (webviewView) {
 			const webview = webviewView.webview;
 
-			console.log(webview);
-
 			await waitForSidebarStatus(webview, SidebarLoadingStatus.LOADING); 
 
 			webview.postMessage({

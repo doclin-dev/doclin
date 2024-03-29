@@ -14,9 +14,9 @@
         if ($reload > 1) {
             loadThreads();
         }
-
-        $activeView === ActiveView.CurrentFileThreads ? loadCurrentFileThreads() : loadAllThreads();
     }
+    
+    $: $activeView === ActiveView.CurrentFileThreads ? loadCurrentFileThreads() : loadAllThreads();
 
     const loadThreads = () => {
         $activeView === ActiveView.CurrentFileThreads ? loadCurrentFileThreads() : loadAllThreads();

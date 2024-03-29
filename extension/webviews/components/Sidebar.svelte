@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount, onDestroy, tick } from "svelte";
+    import { onMount, onDestroy } from "svelte";
     import type { User } from "../types";
     import { ActiveView, Page, SidebarLoadingStatus } from "../enums";
     import ThreadsViewer from "./thread/ThreadsViewer.svelte";

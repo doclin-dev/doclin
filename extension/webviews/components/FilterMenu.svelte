@@ -4,22 +4,19 @@
     import { ActiveView } from "../enums";
     import { activeView, currentOrganization, currentProject } from "../state/store";
     import Icon from "./Icon.svelte";
+  import type { Organization, Project } from "../types";
 
     export let filePath: string | null;
 
     let isCurrentFileView: boolean;
-    let selectedIndex: number;
     let organizationAndProjectName: string;
 
-    $: {
-        isCurrentFileView = $activeView === ActiveView.CurrentFileThreads;
-        selectedIndex = $activeView ?? 0;
-        organizationAndProjectName = getOrganizationAndProjectName();
-    }
+    $: isCurrentFileView = $activeView === ActiveView.CurrentFileThreads;
+    $: organizationAndProjectName = getOrganizationAndProjectName($currentOrganization, $currentProject);
     
-    const getOrganizationAndProjectName = () => {
-        const orgName = $currentOrganization?.name?.split(' ').join('');
-        return `${orgName} / ${$currentProject?.name}`
+    const getOrganizationAndProjectName = (organization: Organization|null, project: Project|null) => {
+        const orgName = organization?.name?.split(' ').join('');
+        return `${orgName} / ${project?.name}`
     }
 </script>
 
