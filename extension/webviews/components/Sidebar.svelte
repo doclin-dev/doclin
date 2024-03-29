@@ -75,13 +75,6 @@
         tsvscode.postMessage({ type: "getExtensionState", value: undefined });
     }
 
-    const isSidebarMounted = () => {
-        tsvscode.postMessage({
-            type: "isSidebarMounted",
-            value: true
-        });
-    }
-
     const getSidebarLoadingStatus = () => {
         let response = SidebarLoadingStatus.LOADING;
 
@@ -101,16 +94,14 @@
             case "getExtensionState":
                 handleGetExtensionState(message.value);
                 break;
-            case "isSidebarMounted":
-                isSidebarMounted();
-                break;
             case "getSidebarLoadingStatus":
                 getSidebarLoadingStatus();
                 break;
             case "viewFileThreads":
-                if ($page != Page.ThreadsViewer) {
-                    $page = Page.ThreadsViewer;
-                }
+                console.log("view file threads");
+                $page = Page.ThreadsViewer;
+                $activeView = ActiveView.CurrentFileThreads;
+
         }
     };
 

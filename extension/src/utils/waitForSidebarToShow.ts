@@ -10,7 +10,7 @@ export const waitForSidebarStatus = (webview: vscode.Webview, targetLoadingStatu
 	return new Promise<void>((resolve, reject) => {
 		let timeout: NodeJS.Timeout;
 		const interval = setInterval(() => {
-			if (sidebarLoadingStatus === targetLoadingStatus) {
+			if (sidebarLoadingStatus >= targetLoadingStatus) {
 				clearInterval(interval);
 				clearTimeout(timeout);
 				resolve();

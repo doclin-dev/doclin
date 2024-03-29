@@ -15,7 +15,7 @@ export enum LogType {
 }
 
 export enum SidebarLoadingStatus {
-    UNMOUNTED = "unmounted",
-    LOADING = "loading",
-    LOADING_COMPLETE = "loadingComplete"
+    UNMOUNTED = 0,
+    LOADING = 1,
+    LOADING_COMPLETE = 2
 }

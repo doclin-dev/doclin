@@ -53,9 +53,6 @@
                     loadCurrentFileThreads();
                 }
                 break;
-            case "viewFileThreads":
-                $activeView = ActiveView.CurrentFileThreads;
-                break;
         }
     }
 

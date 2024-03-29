@@ -42,6 +42,6 @@ export enum WebviewStateType {
 }
 
 export enum SidebarLoadingStatus {
-  LOADING = "loading",
-  LOADING_COMPLETE = "loadingComplete"
+  LOADING = 1,
+  LOADING_COMPLETE = 2
 }
