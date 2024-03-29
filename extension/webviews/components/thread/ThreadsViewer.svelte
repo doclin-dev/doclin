@@ -64,8 +64,6 @@
             $page = Page.InitializeProject;
         }
 
-        console.log('mount threadsViewer');
-
         window.addEventListener("message", messageEventListener);
         loadThreads();
     });
