@@ -1,15 +1,16 @@
 import * as vscode from 'vscode';
+import { SidebarLoadingStatus } from '../enums';
 
-const IS_SIDEBAR_READY = 'isSidebarReady';
-let isSidebarReady: boolean = false;
+const GET_SIDEBAR_LOADING_STATUS = 'getSidebarLoadingStatus';
+let sidebarLoadingStatus: SidebarLoadingStatus = SidebarLoadingStatus.UNMOUNTED;
 
-export const waitForSidebarToShow = (webview: vscode.Webview) => {
+export const waitForSidebarStatus = (webview: vscode.Webview, targetLoadingStatus: SidebarLoadingStatus) => {
 	updateSidebarReadyStatus(webview);
 
 	return new Promise<void>((resolve, reject) => {
 		let timeout: NodeJS.Timeout;
 		const interval = setInterval(() => {
-			if (isSidebarReady) {
+			if (sidebarLoadingStatus === targetLoadingStatus) {
 				clearInterval(interval);
 				clearTimeout(timeout);
 				resolve();
@@ -27,10 +28,10 @@ export const waitForSidebarToShow = (webview: vscode.Webview) => {
 
 const updateSidebarReadyStatus = (webview: vscode.Webview) => {
 	webview.postMessage({
-		type: IS_SIDEBAR_READY
+		type: GET_SIDEBAR_LOADING_STATUS
 	});
 };
 
-export const handleIsSidebarReady = (response: boolean) => {
-	isSidebarReady = response;
+export const handleGetSidebarLoadingStatus = (response: SidebarLoadingStatus) => {
+	sidebarLoadingStatus = response;
 };

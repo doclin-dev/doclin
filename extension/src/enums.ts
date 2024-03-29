@@ -13,3 +13,9 @@ export enum LogType {
     WARNING = "warning",
     ERROR = "error"
 }
+
+export enum SidebarLoadingStatus {
+    UNMOUNTED = "unmounted",
+    LOADING = "loading",
+    LOADING_COMPLETE = "loadingComplete"
+}

@@ -6,8 +6,6 @@
     import Icon from "./Icon.svelte";
 
     export let filePath: string | null;
-    export let onFirstSegmentClick: () => void;
-    export let onSecondSegmentClick: () => void;
 
     let isCurrentFileView: boolean;
     let selectedIndex: number;
@@ -18,16 +16,6 @@
         selectedIndex = $activeView ?? 0;
         organizationAndProjectName = getOrganizationAndProjectName();
     }
-
-    const handleFirstSegmentClick = () => {
-        onFirstSegmentClick();
-        $activeView = ActiveView.AllThreads;
-    }
-
-    const handleSecondSegmentClick = () => {
-        onSecondSegmentClick();
-        $activeView = ActiveView.CurrentFileThreads;
-    }
     
     const getOrganizationAndProjectName = () => {
         const orgName = $currentOrganization?.name?.split(' ').join('');
@@ -37,9 +25,9 @@
 
 <div>
     <div class="segmentedControlContainer">
-        <SegmentedControl selectedIndex={selectedIndex}>
-            <Segment onClick={handleFirstSegmentClick}>All Threads</Segment>
-            <Segment onClick={handleSecondSegmentClick}>File Threads</Segment>
+        <SegmentedControl selectedIndex={activeView}>
+            <Segment>All Threads</Segment>
+            <Segment>File Threads</Segment>
         </SegmentedControl>
     </div>
     

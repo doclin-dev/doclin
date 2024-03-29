@@ -6,9 +6,8 @@ import { getGitBranch } from "../utils/gitProviderUtil";
 import { getActiveEditorRelativeFilePath } from "./activeEditorRelativeFilePath";
 import { readDoclinFile } from "./doclinFile/readDoclinFile";
 import { DoclinFile } from "../types";
-import { waitForSidebarToShow } from "../utils/waitForSidebarToShow";
-
-
+import { waitForSidebarStatus } from "../utils/waitForSidebarToShow";
+import { SidebarLoadingStatus } from "../enums";
 
 export const addCodeSnippet = async (webviewView: vscode.WebviewView | undefined) => {
 	try {
@@ -30,7 +29,7 @@ export const addCodeSnippet = async (webviewView: vscode.WebviewView | undefined
 			if (webviewView) {
 				const webview = webviewView.webview;
 
-				await waitForSidebarToShow(webview); 
+				await waitForSidebarStatus(webview, SidebarLoadingStatus.LOADING_COMPLETE); 
 
 				webview.postMessage({
 					type: "populateCodeSnippet",

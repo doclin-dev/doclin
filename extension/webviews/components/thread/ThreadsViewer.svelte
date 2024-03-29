@@ -14,6 +14,8 @@
         if ($reload > 1) {
             loadThreads();
         }
+
+        $activeView === ActiveView.CurrentFileThreads ? loadCurrentFileThreads() : loadAllThreads();
     }
 
     const loadThreads = () => {
@@ -51,6 +53,9 @@
                     loadCurrentFileThreads();
                 }
                 break;
+            case "viewFileThreads":
+                $activeView = ActiveView.CurrentFileThreads;
+                break;
         }
     }
 
@@ -58,6 +63,8 @@
         if ($currentProject === null) {
             $page = Page.InitializeProject;
         }
+
+        console.log('mount threadsViewer');
 
         window.addEventListener("message", messageEventListener);
         loadThreads();
@@ -68,7 +75,7 @@
     });
 </script>
 
-<FilterMenu filePath={activeFilePath} onFirstSegmentClick={loadAllThreads} onSecondSegmentClick={loadCurrentFileThreads}/>
+<FilterMenu filePath={activeFilePath}/>
 
 <ThreadAddForm/>
 

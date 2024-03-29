@@ -6,7 +6,8 @@ import * as activeEditorRelativeFilePath from '../../providerHelpers/activeEdito
 import * as gitProviderUtil from '../../utils/gitProviderUtil';
 import * as authenticationProviderHelper from '../../providerHelpers/authenticationProviderHelper';
 import * as readDoclinFile from '../../providerHelpers/doclinFile/readDoclinFile';
-import { handleIsSidebarReady } from '../../utils/waitForSidebarToShow';
+import { handleGetSidebarLoadingStatus } from '../../utils/waitForSidebarToShow';
+import { SidebarLoadingStatus } from '../../enums';
 
 suite('Testing addCodeSnippet', () => {
 	let webviewView: vscode.WebviewView;
@@ -70,7 +71,7 @@ suite('Testing addCodeSnippet', () => {
 			}
 		}));
 
-		handleIsSidebarReady(true);
+		handleGetSidebarLoadingStatus(SidebarLoadingStatus.LOADING_COMPLETE);
 		await addCodeSnippet(webviewView);
 
 		expect(readDoclinFileStub.calledOnce).to.be.true;

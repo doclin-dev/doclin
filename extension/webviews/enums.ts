@@ -40,3 +40,8 @@ export enum WebviewStateType {
   ACTIVE_TEXT_EDITOR = "activeTextEditor",
   ACTIVE_VIEW = "activeView",
 }
+
+export enum SidebarLoadingStatus {
+  LOADING = "loading",
+  LOADING_COMPLETE = "loadingComplete"
+}

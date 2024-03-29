@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { onMount, onDestroy } from "svelte";
+    import { onMount, onDestroy, tick } from "svelte";
     import type { User } from "../types";
-    import { Page } from "../enums";
+    import { ActiveView, Page, SidebarLoadingStatus } from "../enums";
     import ThreadsViewer from "./thread/ThreadsViewer.svelte";
     import InitializeProject from "./InitializeProject.svelte";
     import ReplyViewer from "./reply/ReplyViewer.svelte";
@@ -10,7 +10,7 @@
     import AccessRequired from "./AccessRequired.svelte";
     import ViewerTopBar from "./ViewerTopBar.svelte";
     import RegisterEmail from "./RegisterEmail.svelte";
-    import { currentOrganization, currentProject, githubUrl, page, reload } from "../state/store";
+    import { activeView, currentOrganization, currentProject, githubUrl, page, reload } from "../state/store";
 
     let loading = true;
     let user: User | null = null;
@@ -75,10 +75,23 @@
         tsvscode.postMessage({ type: "getExtensionState", value: undefined });
     }
 
-    const isSidebarReady = () => {
+    const isSidebarMounted = () => {
         tsvscode.postMessage({
-            type: "isSidebarReady",
-            value: !loading
+            type: "isSidebarMounted",
+            value: true
+        });
+    }
+
+    const getSidebarLoadingStatus = () => {
+        let response = SidebarLoadingStatus.LOADING;
+
+        if (!loading) {
+            response = SidebarLoadingStatus.LOADING_COMPLETE
+        }
+
+        tsvscode.postMessage({
+            type: "getSidebarLoadingStatus",
+            value: response
         });
     }
 
@@ -88,9 +101,16 @@
             case "getExtensionState":
                 handleGetExtensionState(message.value);
                 break;
-            case "isSidebarReady":
-                isSidebarReady();
+            case "isSidebarMounted":
+                isSidebarMounted();
                 break;
+            case "getSidebarLoadingStatus":
+                getSidebarLoadingStatus();
+                break;
+            case "viewFileThreads":
+                if ($page != Page.ThreadsViewer) {
+                    $page = Page.ThreadsViewer;
+                }
         }
     };
 

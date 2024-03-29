@@ -2,8 +2,9 @@ import * as vscode from 'vscode';
 import { getDoclinRelativeFilePath } from './activeEditorRelativeFilePath';
 import { getThreadsByFilePath } from './threadProviderHelper';
 import logger from '../utils/logger';
-import { waitForSidebarToShow } from '../utils/waitForSidebarToShow';
+import { waitForSidebarStatus } from '../utils/waitForSidebarToShow';
 import { Thread } from '../types';
+import { SidebarLoadingStatus } from '../enums';
 
 let codeLensProviderDisposable: vscode.Disposable;
 const DOCLIN_VIEW_FILE_THREADS = "doclin.viewFileThreads";
@@ -15,7 +16,7 @@ export const viewFileThreads = async (webviewView: vscode.WebviewView | undefine
 		if (webviewView) {
 			const webview = webviewView.webview;
 
-			await waitForSidebarToShow(webview); 
+			await waitForSidebarStatus(webview, SidebarLoadingStatus.LOADING); 
 
 			webview.postMessage({
 				type: "viewFileThreads"
