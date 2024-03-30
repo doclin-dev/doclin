@@ -1,43 +1,45 @@
-# Doclin for VS Code
+# 🚀 Doclin for VS Code - Collaborate Like Never Before!
 
-Doclin is a modern way of commenting on a codebase. It is built for software developer teams dealing with complex systems.
+Welcome to Doclin, your new favorite real-time commenting and discussion tool designed for codebases. We're here to make your life easier when working on complex codebases. We are in beta and always looking to improve, so we welcome your feedback - [Share Your Thoughts](https://forms.gle/dHpZAUf2qY4vsChZ8)
 
-We are continuously improving, please leave us some feedback - https://docs.google.com/forms/d/e/1FAIpQLSeBWV7a1XwfTXvrTLAdb8vijr3_JzbPQtnGqlJAuohTzz63ag/viewform
+## 🌟 Use Cases
 
-### With doclin,
+1. **🔍 Ask Questions Without Leaving Your IDE**:\
+   Stumbled upon a complex piece of code? Just select the code, tag your team member on Doclin, and fire away your question. The Q&A stays with the code for future reference.
 
-1. **No need to leave your IDE to ask a question on a complex piece of code**.\
-If you come across a code that raises questions, simply select the code and tag your team member on doclin and ask the question. Your question and answer will stay coupled with the code that anyone can view at any time.
+2. **💬 Replace Inline Comments**:\
+   Tired of messy and outdated inline comments? Use Doclin's rich text editor and thread system to discuss and provide detailed comments on complex code in real-time.
 
-2. **No longer need inline comments**.\
-Inline comments are messy and get easily outdated. They are often redundant and _not useful when explaining difficult business logic._ Instead, leverage doclin's rich text editor and thread system, to seamlessly discuss and provide detailed comments on complex business-specific code in real-time.
+3. **🔁 Avoid Repeating Questions**:\
+   With Doclin, questions asked on a specific piece of code stay with the code. So, you might find your question has already been answered!
 
-3. **Prevent questions that are already answered**.\
-Any questions asked on a particular piece of code stay coupled to the code in doclin. So whenever you pull up a tangly source code you may come across threads that already answer your questions.
+4. **🧹 Prevent Unclean Code from Resurfacing**:\
+   Found some unclean code? Leave a comment suggesting a better alternative. Help future developers avoid the same pitfalls.
 
-4. **Prevent unclean code from resurfacing**.\
-If you ever come across some unclean code, just leave a comment and suggest a better alternative, this will save future devs from repeating the same pitfalls. 
+![Doclin Demo](https://github.com/doclin-dev/landingpage-build/blob/main/assets/doclinDemo.gif?raw=true)
 
-![image](https://github.com/doclin-dev/landingpage-build/blob/main/assets/doclinDemo.gif?raw=true)
+## 🚀 Getting Started
 
-# Doclin is super easy to set up
+1. Install the Doclin extension in VS Code.
+2. Open a folder or file where you want to leave a comment. For best results, use a git repository.
+3. Open the Doclin extension from the left activity bar.
+4. If you're using Doclin for the first time, you'll be prompted to create an organization and project. This creates a `.doclin` file in your directory. Push this to git so your teammates can collaborate with you on Doclin. Invite new members using the invite button.
+5. Start using Doclin!
 
-1. Install the extension in VS Code.
-2. Open a folder or a file where you want to leave a comment. To get the most out of doclin's productivity, use a git repo.
-3. Open doclin extension from the left activity bar.
-4. If you are using doclin for the first time, you will be asked to create an organization and project. This will create a `.doclin` file in your directory - push it to git and all your teammates will be able to collaborate with you on doclin. You can invite new members by sending an invitation from the invite button. 
-5. You are ready to use doclin!
+![Doclin Setup](https://github.com/doclin-dev/landingpage-build/blob/main/assets/doclinSetup.gif?raw=true)
 
-![image](https://github.com/doclin-dev/landingpage-build/blob/main/assets/doclinSetup.gif?raw=true)
+## 📝 How to Add a Comment
 
-# It is even easier to add a comment
+1. Open a file in VS Code with Doclin installed.
+2. Highlight a piece of code and click `Add Comment`. You can do this in three ways:
+    - Use the `Add Comment` button on the bottom-left status bar.
+    - Right-click in VS Code and click `Add Comment`.
+    - Use `CTRL + SHIFT + P` and type in `Add Comment`.
+3. To mention your teammates, type `@` followed by their names in the editor.
+4. Click `Submit`. Mentioned users will be notified via email.
 
-1. Open a file on vscode with doclin installed.
-2. Highlight a piece of code and click 'Add Comment'. There are three ways to add a comment:
-    - Use the 'Add Comment' button on the bottom-left status bar.
-    - Or, right-click on vscode and click 'Add Comment'.
-    - Or, use 'CTRL + SHIFT + P' and type in 'Add Comment'.
-3. If you want to mention your teammates, type in `@` and their names on the editor.
-4. Hit 'Submit'. The mentioned users will be notified through their email. 
+![Add Comment](https://github.com/doclin-dev/landingpage-build/blob/main/assets/doclinDemo.gif?raw=true)
 
-![image](https://github.com/doclin-dev/landingpage-build/blob/main/assets/doclinDemo.gif?raw=true)
+## 🔒 Security
+
+Comment data is stored safely in the cloud to enable real-time collaboration in Doclin. Only you and the members you've added to your organization can access your data. Learn more at [doclin.dev](https://doclin.dev).
