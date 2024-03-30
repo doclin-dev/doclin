@@ -33,16 +33,17 @@ const getToken = async (req: any, res: any, fn?: () => void) => {
 			return;
 		}
 
+		res.end(`Authentication successful. You can close this now!`);
+		logger.info("Authentication successful.");
+
+		app.server?.close();
+
 		await setTokenToStorage(token);
 
 		if (fn) {
 			fn();
 		}
 
-		res.end(`Authentication successful. You can close this now!`);
-		logger.info("Authentication successful.");
-
-		app.server?.close();
 	} catch (error) {
 		logger.error("An error occured when receiving token" + error);
 	}
