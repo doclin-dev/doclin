@@ -1,8 +1,8 @@
 # 🚀 Doclin for VS Code - Collaborate Like Never Before!
 
-Welcome to Doclin, your new favorite real-time commenting and collaboration tool designed specifically for software development teams. We're here to make your life easier when working on complex codebases. We're always looking to improve, so we welcome your feedback - [Share Your Thoughts](https://forms.gle/dHpZAUf2qY4vsChZ8)
+Welcome to Doclin, your new favorite real-time commenting and discussion tool designed for codebases. We're here to make your life easier when working on complex codebases. We are in beta and always looking to improve, so we welcome your feedback - [Share Your Thoughts](https://forms.gle/dHpZAUf2qY4vsChZ8)
 
-## 🌟 Features
+## 🌟 Use Cases
 
 1. **🔍 Ask Questions Without Leaving Your IDE**:\
    Stumbled upon a complex piece of code? Just select the code, tag your team member on Doclin, and fire away your question. The Q&A stays with the code for future reference.
@@ -13,7 +13,7 @@ Welcome to Doclin, your new favorite real-time commenting and collaboration tool
 3. **🔁 Avoid Repeating Questions**:\
    With Doclin, questions asked on a specific piece of code stay with the code. So, you might find your question has already been answered!
 
-4. **🧹 Prevent Unclean Code**:\
+4. **🧹 Prevent Unclean Code from Resurfacing**:\
    Found some unclean code? Leave a comment suggesting a better alternative. Help future developers avoid the same pitfalls.
 
 ![Doclin Demo](https://github.com/doclin-dev/landingpage-build/blob/main/assets/doclinDemo.gif?raw=true)
@@ -42,4 +42,4 @@ Welcome to Doclin, your new favorite real-time commenting and collaboration tool
 
 ## 🔒 Security
 
-Your comments are safe with us. Comment data is stored encrypted in the cloud to enable real-time collaboration in Doclin. Only you and the members you've added to your organization can access your data. Learn more at [doclin.dev](https://doclin.dev).
+Comment data is stored safely in the cloud to enable real-time collaboration in Doclin. Only you and the members you've added to your organization can access your data. Learn more at [doclin.dev](https://doclin.dev).
