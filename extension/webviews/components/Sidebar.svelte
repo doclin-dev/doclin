@@ -10,7 +10,7 @@
     import AccessRequired from "./AccessRequired.svelte";
     import ViewerTopBar from "./ViewerTopBar.svelte";
     import RegisterEmail from "./RegisterEmail.svelte";
-    import { activeView, currentOrganization, currentProject, githubUrl, page, reload } from "../state/store";
+    import { activeView, currentOrganization, currentProject, githubUrl, page, reload, threadSelected } from "../state/store";
 
     let loading = true;
     let user: User | null = null;
@@ -98,10 +98,13 @@
                 getSidebarLoadingStatus();
                 break;
             case "viewFileThreads":
-                console.log("view file threads");
                 $page = Page.ThreadsViewer;
                 $activeView = ActiveView.CurrentFileThreads;
-
+                break;
+            case "viewThread":
+                $threadSelected = message.value;
+                $page = Page.ReplyViewer;
+                break;
         }
     };
 

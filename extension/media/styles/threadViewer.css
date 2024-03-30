@@ -61,14 +61,6 @@
     align-items: center;
 }
 
-.reply-count-line {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-}
-
 .reply-count-divider-left {
     height: 1px;
     background-color: var(--vscode-focusBorder);
@@ -154,7 +146,6 @@
 #threads-viewer hr {
     margin: 0px -20px 0px -20px;
     background-color: var(--vscode-editorGroup-border);
-    height: 2px;
 }
 
 .textEditorContainer {
@@ -200,7 +191,7 @@
 .thread-snippet-container {
     background-color: var(--vscode-editor-background);
     border: 1px solid var(--vscode-editorGroup-border);
-    margin: 0.2em 0;
+    margin: 0.5em 0;
     border-radius: 0.2em;
 }
 

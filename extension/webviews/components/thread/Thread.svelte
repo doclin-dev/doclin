@@ -112,9 +112,15 @@
             {:else}
                 <div class="thread-title">{thread?.title ?? ""}</div>
 
-                <div><SeeMore content={thread?.displayMessage}/></div>
+                {#if $page === Page.ThreadsViewer}
+                    <SeeMore content={thread?.displayMessage}/>
+                {:else}
+                    <div>
+                        {@html thread?.displayMessage}
+                    </div>
+                {/if}
                 
-                {#if thread?.replyCount &&  $page === Page.ThreadsViewer}
+                {#if thread?.replyCount && $page === Page.ThreadsViewer}
                     <div class="number-of-replies-button">
                         <Button 
                             textAlignment="flex-start" 

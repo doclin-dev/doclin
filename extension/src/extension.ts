@@ -3,11 +3,13 @@ import { SidebarProvider } from "./SidebarProvider";
 import { SecretStorageManager } from "./SecretStorageManager";
 import { GlobalStateManager } from "./GlobalStateManager";
 import { addCodeSnippet } from "./providerHelpers/addCodeSnippet";
-import { initializeCodeLens, viewFileThreads } from "./providerHelpers/codeLensProvider";
+import { initializeCodeLens } from "./providerHelpers/annotation/codeLensProvider";
+import { DOCLIN_ADD_COMMENT, DOCLIN_VIEW_FILE_THREADS, DOCLIN_VIEW_THREAD } from "./commands";
+import { viewFileThreadsCommand } from "./providerHelpers/annotation/viewFileThreadsCommand";
+import { viewThreadCommand } from "./providerHelpers/annotation/viewThreadCommand";
+import { Thread } from "./types";
 
-const DOCLIN_SIDEBAR = "doclin.sidebar";
-const DOCLIN_ADD_COMMENT = "doclin.addComment";
-const DOCLIN_VIEW_FILE_THREADS = "doclin.viewFileThreads";
+export const DOCLIN_SIDEBAR = "doclin.sidebar";
 
 export function activate(context: vscode.ExtensionContext) {
   	SecretStorageManager.secretStorage = context.secrets;
@@ -24,7 +26,11 @@ export function activate(context: vscode.ExtensionContext) {
 	);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand(DOCLIN_VIEW_FILE_THREADS, () => viewFileThreads(sidebarProvider.getWebviewView()))
+		vscode.commands.registerCommand(DOCLIN_VIEW_FILE_THREADS, () => viewFileThreadsCommand(sidebarProvider.getWebviewView()))
+	);
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand(DOCLIN_VIEW_THREAD, (thread: Thread) => viewThreadCommand(thread, sidebarProvider.getWebviewView()))
 	);
 
 	createStatusBarItem();
