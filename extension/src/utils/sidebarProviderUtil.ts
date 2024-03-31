@@ -10,10 +10,12 @@ import { getGithubUrl } from "./gitProviderUtil";
 import { clearAllThreadsCache } from "./threadCachingUtil";
 import { getActiveEditorFolder, getWorkspaceFolder } from "./fileSystemUtil";
 import { ExtensionState } from "../types";
+import { clearRelativeFilePathMapCache } from "../providerHelpers/activeEditorRelativeFilePath";
 
 export const getExtensionState = async (): Promise<ExtensionState> => {
 	try {
 		clearAllThreadsCache();
+		clearRelativeFilePathMapCache();
 		
 		return {
 			user: await getAuthenticatedUser(),

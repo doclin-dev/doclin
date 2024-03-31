@@ -5,7 +5,8 @@ export enum SecretStorageType {
 
 export enum GlobalStateType {
     DOCLIN_FOLDER = "doclinFolder",
-    CACHED_THREADS_MAP = "cachedThreadsMap"
+    CACHED_THREADS_MAP = "cachedThreadsMap",
+    RELATIVE_FILE_PATH_MAP = "relativeFilePathMap"
 }
 
 export enum LogType {

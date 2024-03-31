@@ -101,7 +101,6 @@
     align-self: flex-end;
 }
 
-
 .outdated-label {
     border: 1px solid var(--vscode-inputValidation-warningBorder);
     border-radius: 0.5em;
