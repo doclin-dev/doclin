@@ -47,10 +47,9 @@ export const getDoclinRelativeFilePath = async (documentUri: vscode.Uri): Promis
 	
 		return doclinRelativePath;
 
-	} else {
-		logger.error("Doclin file does not exist");
-		return "";
 	}
+
+	return "";
 };
 
 const getRelativeFilePathMapCache = async (): Promise<Record<string, string>> => {
