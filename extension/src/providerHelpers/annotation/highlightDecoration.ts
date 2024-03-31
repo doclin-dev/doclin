@@ -8,7 +8,7 @@ const highlightDecorationType = vscode.window.createTextEditorDecorationType({
 });
 
 
-export const registerHighlightProvider = async (hiddenCodeLensRanges: vscode.Range[]) => {
+export const registerHighlightDecoration = (hiddenCodeLensRanges: vscode.Range[]) => {
 	const openEditors: readonly vscode.TextEditor[] = vscode.window.visibleTextEditors;
 
 	openEditors.forEach(editor => provideHighlighting(editor, hiddenCodeLensRanges));
@@ -20,10 +20,6 @@ const provideHighlighting = async (editor: vscode.TextEditor, hiddenCodeLensRang
 	const filePath: string = await getDoclinRelativeFilePath(editor.document.uri);
 	const threads: Thread[] = await getThreadsByFilePath(filePath);
 
-	if (threads.length === 0) {
-		return [];
-	}
-	
 	for (const thread of threads) {
 		for (const snippet of thread.snippets) {
 			if (snippet.outdated) {
