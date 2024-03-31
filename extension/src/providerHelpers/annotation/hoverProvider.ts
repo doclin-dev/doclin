@@ -23,14 +23,12 @@ const provideHover = async (document: vscode.TextDocument, position: vscode.Posi
 			if (snippet.outdated) {
 				continue;
 			}
-
+			
 			if (snippet.updatedRange.contains(position)) {
 				const markdown = new vscode.MarkdownString();
 				markdown.appendMarkdown(`${thread.username} commented on Doclin\n\n`);
 				markdown.appendMarkdown(`**${thread?.title}**\n\n`);
 				markdown.appendText(`${thread?.message}\n\n`);
-
-
 
 				return new vscode.Hover(markdown);
 			}

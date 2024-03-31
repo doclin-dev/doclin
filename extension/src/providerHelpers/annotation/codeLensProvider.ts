@@ -6,7 +6,7 @@ import { DOCLIN_VIEW_FILE_THREADS, DOCLIN_VIEW_THREAD } from '../../commands';
 
 let codeLensProviderDisposable: vscode.Disposable;
 const highlightDecorationType = vscode.window.createTextEditorDecorationType({
-	backgroundColor: 'rgba(255, 255, 0, 0.1)',
+	backgroundColor: new vscode.ThemeColor('editor.hoverHighlightBackground'),
 });
 
 let decorationRanges: vscode.Range[] = [];
