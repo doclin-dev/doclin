@@ -5,15 +5,23 @@ import { Thread } from '../../types';
 import { DOCLIN_VIEW_FILE_THREADS, DOCLIN_VIEW_THREAD } from '../../commands';
 
 let codeLensProviderDisposable: vscode.Disposable;
+const highlightDecorationType = vscode.window.createTextEditorDecorationType({
+	backgroundColor: 'rgba(255, 255, 0, 0.1)',
+});
 
+let decorationRanges: vscode.Range[] = [];
+let hiddenCodeLensRanges: vscode.Range[] = [];
 
-export const registerCodeLensProvider = (context: vscode.ExtensionContext) => {
+export const registerCodeLensProvider = (context: vscode.ExtensionContext, refreshAnnotationEvent: vscode.EventEmitter<void>) => {
 	if (codeLensProviderDisposable) {
 		codeLensProviderDisposable.dispose();
 	}
-  
+
 	codeLensProviderDisposable = vscode.languages.registerCodeLensProvider({ pattern: '**/*' }, { provideCodeLenses });
 	context.subscriptions.push(codeLensProviderDisposable);
+	context.subscriptions.push(vscode.commands.registerCommand('extension.removeDecoration', (range) => {
+		removeDecoration(range, refreshAnnotationEvent)
+	}));
 };
 
 const provideCodeLenses = async (document: vscode.TextDocument) => {
@@ -30,17 +38,34 @@ const provideCodeLenses = async (document: vscode.TextDocument) => {
 	});
 
 	const codeLenses: vscode.CodeLens[] = [topCodeLens];
-
+	decorationRanges = [];
 	for (const thread of threads) {
 		for (const snippet of thread.snippets) {
+			if (hiddenCodeLensRanges.some(hiddenRange => hiddenRange.isEqual(snippet.updatedRange))) {
+				continue;
+			}
+			
 			const codeLens = new vscode.CodeLens(snippet.updatedRange, {
 				title: getThreadTitle(thread),
 				command: DOCLIN_VIEW_THREAD,
 				arguments: [thread]
 			});
 
-			codeLenses.push(codeLens);
+			const hideCodeLens = new vscode.CodeLens(snippet.updatedRange, {
+				title: 'Hide',
+				command: 'extension.removeDecoration',
+				arguments: [snippet.updatedRange]
+			});
+
+			decorationRanges.push(snippet.updatedRange);
+
+			codeLenses.push(codeLens, hideCodeLens);
 		}
+	}
+
+	const editor = vscode.window.activeTextEditor;
+	if (editor) {
+		editor.setDecorations(highlightDecorationType, decorationRanges);
 	}
 
 	return codeLenses;
@@ -54,4 +79,15 @@ const getTitle = (threads: Thread[]) => {
 
 const getThreadTitle = (thread: Thread) => {
 	return `${thread.username} left a comment`;
+};
+
+const removeDecoration = (range: vscode.Range, refreshAnnotationEvent: vscode.EventEmitter<void>) => {
+	const editor = vscode.window.activeTextEditor;
+
+	if (editor) {
+		hiddenCodeLensRanges.push(range);
+		decorationRanges = decorationRanges.filter(decorationRange => !decorationRange.isEqual(range));
+		editor.setDecorations(highlightDecorationType, decorationRanges);
+		refreshAnnotationEvent.fire();
+	}
 };

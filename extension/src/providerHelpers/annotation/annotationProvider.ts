@@ -1,17 +1,21 @@
 import * as vscode from 'vscode';
 import { registerHoverProvider } from './hoverProvider';
 import { registerCodeLensProvider } from './codeLensProvider';
-import { registerHighlightDecorationProvider } from './highlightDecorationProvider';
+
+const refreshAnnotationEvent = new vscode.EventEmitter<void>();
 
 export const initializeAnnotation = (context: vscode.ExtensionContext) => {
-	registerCodeLensProvider(context);
+	registerCodeLensProvider(context, refreshAnnotationEvent);
 	registerHoverProvider(context);
-	registerHighlightDecorationProvider();
   
 	vscode.workspace.onDidChangeTextDocument((event) => {
 		if (event.document === vscode.window.activeTextEditor?.document) {
-			registerCodeLensProvider(context);
+			registerCodeLensProvider(context, refreshAnnotationEvent);
 			registerHoverProvider(context);
 		}
+	});
+
+	refreshAnnotationEvent.event(() => {
+		registerCodeLensProvider(context, refreshAnnotationEvent);
 	});
 };
