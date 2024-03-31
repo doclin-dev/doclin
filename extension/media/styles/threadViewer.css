@@ -101,24 +101,32 @@
     align-self: flex-end;
 }
 
+
 .outdated-label {
-    border: 1.5px solid var(--vscode-inputValidation-warningBorder);
+    border: 1px solid var(--vscode-inputValidation-warningBorder);
     border-radius: 0.5em;
     font-size: 10px;
-    font-weight: bold;
     padding: 2px 5px;
     color: var(--vscode-inputValidation-warningBorder);
+    margin: 0px;
 }
 
 .thread-file-path {
     font-size: 12px;
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 0.25rem;
+    justify-content: space-between;
     padding: 0.25rem;
     border-bottom: 1px solid var(--vscode-editorGroup-border);
+}
+
+.thread-file-path-left {
+    display: flex;
+    justify-content: flex-start;
+    gap: 0.25rem;
+    align-items: center;
+    flex-direction: row;
+    width: 100%;
 }
 
 .thread-branch-text {
@@ -126,7 +134,7 @@
     white-space: nowrap;
     overflow: hidden;  
     text-overflow: ellipsis;
-    color: var(--vscode-descriptionForeground)
+    color: var(--vscode-descriptionForeground);
 }
 
 .thread-file-path-text {
@@ -135,7 +143,7 @@
     overflow: hidden;  
     text-overflow: ellipsis;
     direction: rtl;
-    color: var(--vscode-descriptionForeground)
+    color: var(--vscode-descriptionForeground);
 }
 
 .thread-title {
