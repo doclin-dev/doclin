@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { expect } from 'chai';
-import { SinonStub, stub } from 'sinon';
+import { createSandbox, SinonSandbox, SinonStub } from 'sinon';
 import * as writeDoclinFile from '../../../providerHelpers/doclinFile/writeDoclinFile';
 import { DoclinFile } from '../../../types';
 import * as doclinFileReadWriteUtil from '../../../utils/doclinFileReadWriteUtil';
@@ -18,6 +18,7 @@ const ACTIVE_EDITOR_URI: vscode.Uri = vscode.Uri.file('/test/activeEditorFolder/
 const WORKSPACE_FOLDER_URI: vscode.Uri = vscode.Uri.file('/test/workspaceFolder');
 
 suite('Testing writeDoclinFile', () => {
+	let sandbox: SinonSandbox;
 	let writeToFilePathStub: SinonStub;
 	let getExistingDoclinFilePathStub: SinonStub;
 	let getGitRootFolderStub: SinonStub;
@@ -25,19 +26,16 @@ suite('Testing writeDoclinFile', () => {
 	let workspaceFoldersStub: SinonStub;
 
 	setup(() => {
-		writeToFilePathStub = stub(fileSystemUtil, 'writeToFilePath');
-		getExistingDoclinFilePathStub = stub(doclinFileReadWriteUtil, 'getExistingDoclinFile');
-		getGitRootFolderStub = stub(writeDoclinFile, 'getGitRootFolder');
-		activeEditorStub = stub(vscode.window, 'activeTextEditor');
-		workspaceFoldersStub = stub(vscode.workspace, 'workspaceFolders');
+		sandbox = createSandbox();
+		writeToFilePathStub = sandbox.stub(fileSystemUtil, 'writeToFilePath');
+		getExistingDoclinFilePathStub = sandbox.stub(doclinFileReadWriteUtil, 'getExistingDoclinFile');
+		getGitRootFolderStub = sandbox.stub(writeDoclinFile, 'getGitRootFolder');
+		activeEditorStub = sandbox.stub(vscode.window, 'activeTextEditor');
+		workspaceFoldersStub = sandbox.stub(vscode.workspace, 'workspaceFolders');
 	});
 
 	teardown(() => {
-		getExistingDoclinFilePathStub.restore();
-		writeToFilePathStub.restore();
-		getGitRootFolderStub.restore();
-		activeEditorStub.restore();
-		workspaceFoldersStub.restore();
+		sandbox.restore();
 	});
 
 	test('should write to existing doclin file if it exists', async () => {

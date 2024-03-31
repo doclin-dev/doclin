@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { expect } from 'chai';
-import { SinonStub, stub } from 'sinon';
+import { createSandbox, SinonSandbox, SinonStub } from 'sinon';
 import { getExistingDoclinFile } from '../../utils/doclinFileReadWriteUtil';
 import * as path from 'path';
 
@@ -9,17 +9,18 @@ const ACTIVE_EDITOR_URI: vscode.Uri = vscode.Uri.file(path.resolve(__dirname, '.
 const WORKSPACE_FOLDER_URI: vscode.Uri = vscode.Uri.file(path.resolve(__dirname, '../../../testAssets/workspaceFolder'));
 
 suite('Testing getExistingDoclinFile', () => {
+	let sandbox: SinonSandbox;
 	let activeEditorStub: SinonStub;
 	let workspaceFoldersStub: SinonStub;
 
 	setup(() => {
-		activeEditorStub = stub(vscode.window, 'activeTextEditor');
-		workspaceFoldersStub = stub(vscode.workspace, 'workspaceFolders');
+		sandbox = createSandbox();
+		activeEditorStub = sandbox.stub(vscode.window, 'activeTextEditor');
+		workspaceFoldersStub = sandbox.stub(vscode.workspace, 'workspaceFolders');
 	});
 
 	teardown(() => {
-		activeEditorStub.restore();
-		workspaceFoldersStub.restore();
+		sandbox.restore();
 	});
 
 	test('should return no existing doclin file when no active editor or workspace folder is opened', async () => {

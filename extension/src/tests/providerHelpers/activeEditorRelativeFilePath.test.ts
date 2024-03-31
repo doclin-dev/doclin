@@ -1,31 +1,38 @@
 import * as vscode from 'vscode';
 import { expect } from 'chai';
-import { SinonStub, stub } from 'sinon';
-import { getActiveEditorRelativeFilePath } from '../../providerHelpers/activeEditorRelativeFilePath';
+import { SinonSandbox, SinonStub, createSandbox } from 'sinon';
+import { clearRelativeFilePathMapCache, getActiveEditorRelativeFilePath } from '../../providerHelpers/activeEditorRelativeFilePath';
 import * as doclinFileReadWriteUtil from '../../utils/doclinFileReadWriteUtil';
 import * as path from 'path';
+import { GlobalStateManager } from '../../GlobalStateManager';
 
 const ACTIVE_EDITOR_URI: vscode.Uri = vscode.Uri.file('/path/to/activeEditor.txt');
 const DOCLIN_FILE_PATH: vscode.Uri = vscode.Uri.file('/path/to/.doclin');
 const DOCLIN_FOLDER_PATH: string = '/path/to';
 
 suite('Testing getActiveEditorRelativeFilePath', () => {
+	let sandbox: SinonSandbox;
 	let activeEditorStub: SinonStub;
 	let getExistingDoclinFileStub: SinonStub<any[], any>;
+	let pathRelativeStub: SinonStub;
 
 	setup(() => {
-		activeEditorStub = stub(vscode.window, 'activeTextEditor');
-		getExistingDoclinFileStub = stub(doclinFileReadWriteUtil, 'getExistingDoclinFile');
+		sandbox = createSandbox();
+		activeEditorStub = sandbox.stub(vscode.window, 'activeTextEditor');
+		getExistingDoclinFileStub = sandbox.stub(doclinFileReadWriteUtil, 'getExistingDoclinFile');
+		pathRelativeStub = sandbox.stub(path, 'relative');
+		sandbox.stub(GlobalStateManager, 'setState');
+		sandbox.stub(GlobalStateManager, 'getState').resolves({});
 	});
 
 	teardown(() => {
-		activeEditorStub.restore();
-		getExistingDoclinFileStub.restore();
+		sandbox.restore();
 	});
 
 	test('should return empty string when no active editor is opened', async () => {
 		activeEditorStub.get(() => null);
 
+		clearRelativeFilePathMapCache();
 		const result = await getActiveEditorRelativeFilePath();
 
 		expect(result).to.equal('');
@@ -39,6 +46,7 @@ suite('Testing getActiveEditorRelativeFilePath', () => {
 		}));
 		getExistingDoclinFileStub.resolves(null);
 
+		clearRelativeFilePathMapCache();
 		const result = await getActiveEditorRelativeFilePath();
 
 		expect(result).to.equal('');
@@ -52,14 +60,13 @@ suite('Testing getActiveEditorRelativeFilePath', () => {
 		}));
 		
 		getExistingDoclinFileStub.resolves(DOCLIN_FILE_PATH);
-		const pathRelativeStub = stub(path, 'relative').returns('relative/path');
+		pathRelativeStub.returns('relative/path');
 
+		clearRelativeFilePathMapCache();
 		const result = await getActiveEditorRelativeFilePath();
 
 		expect(result).to.equal('relative/path');
 		expect(pathRelativeStub.calledWith(DOCLIN_FOLDER_PATH, ACTIVE_EDITOR_URI.fsPath)).to.be.true;
-
-		pathRelativeStub.restore();
 	});
 
 	test('should return empty string when active editor is outside doclin folder', async () => {
@@ -69,13 +76,12 @@ suite('Testing getActiveEditorRelativeFilePath', () => {
 			}
 		}));
 		getExistingDoclinFileStub.resolves(DOCLIN_FILE_PATH);
-		const pathRelativeStub = stub(path, 'relative').returns('../outside/path');
+		pathRelativeStub.returns('../outside/path');
 
+		clearRelativeFilePathMapCache();
 		const result = await getActiveEditorRelativeFilePath();
 
 		expect(result).to.equal('');
 		expect(pathRelativeStub.calledWith(DOCLIN_FOLDER_PATH, ACTIVE_EDITOR_URI.fsPath)).to.be.true;
-
-		pathRelativeStub.restore();
 	});
 });
