@@ -1,5 +1,6 @@
 import { Reply, Thread } from "../types";
 import { addLineNumbers, highlightCode } from "./snippetFormatUtil";
+import { utc } from 'moment';
 
 const PRE_TAG_START: string = `<pre class="ql-syntax" spellcheck="false" contenteditable="false">`;
 const PRE_TAG_END: string = `</pre>`;
@@ -38,6 +39,9 @@ export const fillUpThreadOrReplyMessageWithSnippet = (threadOrReply: Thread | Re
 			)
 		);
 	}
+
+	threadOrReply.hoverMessage = removeHtmlAndSnippetTags(threadOrReply.message);
+	threadOrReply.displayCreationTime = utc(threadOrReply?.createdAt).fromNow();
 };
 
 const getReadableCodeBlock = (
@@ -74,4 +78,10 @@ const getReadableCodeBlock = (
 
 const getSnippetTag = (snippetId: number) => {
 	return `[snippet_${snippetId}]`;
+};
+
+const removeHtmlAndSnippetTags = (threadMessage: string) => {
+	let result = threadMessage.replace(/<[^>]*>/g, '');
+	result = result.replace(/\[snippet_\d+\]/g, '');
+	return result;
 };

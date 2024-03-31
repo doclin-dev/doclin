@@ -4,7 +4,7 @@ import { createState } from './createState';
 
 export const editedThreadId = createState<number|null>(null, null);
 
-export const editedReplyId = createState(null, null);
+export const editedReplyId = createState<number|null>(null, null);
 
 export const page = createState<Page>(WebviewStateType.PAGE);
 

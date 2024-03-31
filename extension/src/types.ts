@@ -17,9 +17,11 @@ export type Thread = {
     message: string;
     delta: any;
     displayMessage: string;
+    hoverMessage: string;
     username: string;
     replyCount: number;
-    threadCreationTime: Date;
+    createdAt: Date;
+    displayCreationTime: string;
     lastReplied: Date;
     filePath: string;
     gitBranch: string;
@@ -31,8 +33,10 @@ export type Reply = {
     message: string;
     delta: any;
     displayMessage: string;
+    hoverMessage: string;
     username: string;
-    replyCreationTime: Date;
+    createdAt: Date;
+    displayCreationTime: string;
 };
 
 export type Snippet = {

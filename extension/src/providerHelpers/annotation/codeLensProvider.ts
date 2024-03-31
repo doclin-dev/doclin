@@ -69,5 +69,5 @@ const getTitle = (threads: Thread[]) => {
 };
 
 const getThreadTitle = (thread: Thread) => {
-	return `${thread.username} left a comment`;
+	return `${thread.username} left a comment, ${thread.displayCreationTime}`;
 };

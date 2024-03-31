@@ -12,7 +12,7 @@ export const mapThreadResponse = (thread: Thread) => {
 		message: thread.message,
 		username: thread.anonymous ? ANONYMOUS_USER : thread.user?.name,
 		replyCount: thread.replyCount,
-		threadCreationTime : thread.createdAt,
+		createdAt : thread.createdAt,
 		lastReplied: thread.replies?.length > 0 ? thread.replies[thread.replies.length - 1].createdAt : null,
 		snippets: thread.snippets?.map(mapSnippetResponse),
 		delta: thread.delta,
@@ -26,7 +26,7 @@ export const mapReplyResponse = (reply: Reply) => {
 		id: reply.id,
 		message: reply.message,
 		username: reply.anonymous ? ANONYMOUS_USER : reply.user?.name,
-		replyCreationTime : reply.createdAt,
+		createdAt : reply.createdAt,
 		snippets: reply.snippets.map(mapSnippetResponse),
 		delta: reply.delta
 	};

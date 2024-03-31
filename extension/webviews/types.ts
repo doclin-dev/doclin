@@ -20,13 +20,24 @@ export type Thread = {
   userId: number;
   username: string;
   lastReplied: string;
-  threadCreationTime: string;
+  createdAt: string;
   snippets: any[];
   gitBranch: string;
   filePath: string;
   displayMessage: string;
   title: string;
   replyCount: number;
+};
+
+export type Reply = {
+  id: number;
+  message: string;
+  delta: any;
+  displayMessage: string;
+  hoverMessage: string;
+  username: string;
+  createdAt: Date;
+  displayCreationTime: Date;
 };
 
 export type Organization = {

@@ -14,11 +14,11 @@
     export let reloadThreads: () => void = () => {};
     export let showReplyButton: boolean = true;
     let lastEdited : string | null = thread?.lastReplied ? moment.utc(thread.lastReplied).fromNow() : null;
-    let threadCreationTime : string = moment.utc(thread?.threadCreationTime).fromNow();
+    let threadCreationTime : string = moment.utc(thread?.createdAt).fromNow();
 
     setInterval(()=>{
         lastEdited = thread?.lastReplied ? moment.utc(thread.lastReplied).fromNow() : null;
-        threadCreationTime = moment.utc(thread?.threadCreationTime).fromNow();
+        threadCreationTime = moment.utc(thread?.createdAt).fromNow();
     }, 60000);
 
         
