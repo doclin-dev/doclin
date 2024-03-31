@@ -37,6 +37,7 @@ const provideCodeLenses = async (document: vscode.TextDocument) => {
 
 	const codeLenses: vscode.CodeLens[] = [topCodeLens];
 	decorationRanges = [];
+	
 	for (const thread of threads) {
 		for (const snippet of thread.snippets) {
 			if (snippet.outdated) {
@@ -66,8 +67,8 @@ const provideCodeLenses = async (document: vscode.TextDocument) => {
 	}
 
 	const editor = vscode.window.activeTextEditor;
+
 	if (editor) {
-		console.log(decorationRanges);
 		editor.setDecorations(highlightDecorationType, decorationRanges);
 	}
 

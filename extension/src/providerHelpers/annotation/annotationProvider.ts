@@ -2,8 +2,6 @@ import * as vscode from 'vscode';
 import { registerHoverProvider } from './hoverProvider';
 import { registerCodeLensProvider, removeDecoration } from './codeLensProvider';
 
-
-
 export const initializeAnnotation = (context: vscode.ExtensionContext) => {
 	registerCodeLensProvider(context);
 	registerHoverProvider(context);
