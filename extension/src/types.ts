@@ -1,3 +1,5 @@
+import * as vscode from 'vscode';
+
 export type DoclinFile = {
     organizationId: string | null;
     projectId: number | null;
@@ -38,6 +40,7 @@ export type Snippet = {
     text: string;
     filePath: string;
     lineStart: number;
+    updatedRange: vscode.Range;
     outdated: boolean;
     gitBranch: string;
 };

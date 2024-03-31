@@ -3,7 +3,7 @@ import { SidebarProvider } from "./SidebarProvider";
 import { SecretStorageManager } from "./SecretStorageManager";
 import { GlobalStateManager } from "./GlobalStateManager";
 import { addCodeSnippet } from "./providerHelpers/addCodeSnippet";
-import { initializeCodeLens } from "./providerHelpers/annotation/codeLensProvider";
+import { initializeAnnotation } from "./providerHelpers/annotation/annotationProvider";
 import { DOCLIN_ADD_COMMENT, DOCLIN_VIEW_FILE_THREADS, DOCLIN_VIEW_THREAD } from "./commands";
 import { viewFileThreadsCommand } from "./providerHelpers/annotation/viewFileThreadsCommand";
 import { viewThreadCommand } from "./providerHelpers/annotation/viewThreadCommand";
@@ -34,7 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
 	);
 
 	createStatusBarItem();
-	initializeCodeLens(context);
+	initializeAnnotation(context);
 }
 
 const createStatusBarItem = () => {

@@ -4,9 +4,7 @@ import { waitForSidebarStatus } from '../../utils/waitForSidebarToShow';
 import { SidebarLoadingStatus } from '../../enums';
 import { Thread } from '../../types';
 
-export const viewThreadCommand = async (thread: Thread, webviewView: vscode.WebviewView | undefined) => {
-	console.log(thread);
-	
+export const viewThreadCommand = async (thread: Thread, webviewView: vscode.WebviewView | undefined) => {	
 	try {
 		await vscode.commands.executeCommand('workbench.view.extension.doclinSidebarView');
 

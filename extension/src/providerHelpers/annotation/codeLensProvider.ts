@@ -6,17 +6,8 @@ import { DOCLIN_VIEW_FILE_THREADS, DOCLIN_VIEW_THREAD } from '../../commands';
 
 let codeLensProviderDisposable: vscode.Disposable;
 
-export const initializeCodeLens = (context: vscode.ExtensionContext) => {
-	registerCodeLensProvider(context);
-  
-	vscode.workspace.onDidChangeTextDocument((event) => {
-		if (event.document === vscode.window.activeTextEditor?.document) {
-			registerCodeLensProvider(context);
-		}
-	});
-};
 
-const registerCodeLensProvider = (context: vscode.ExtensionContext) => {
+export const registerCodeLensProvider = (context: vscode.ExtensionContext) => {
 	if (codeLensProviderDisposable) {
 		codeLensProviderDisposable.dispose();
 	}
@@ -42,11 +33,8 @@ const provideCodeLenses = async (document: vscode.TextDocument) => {
 
 	for (const thread of threads) {
 		for (const snippet of thread.snippets) {
-			const lineNumber = snippet.lineStart - 1;
-			const range = new vscode.Range(lineNumber, 0, lineNumber, 0);
-
-			const codeLens = new vscode.CodeLens(range, {
-				title: 'View Comment',
+			const codeLens = new vscode.CodeLens(snippet.updatedRange, {
+				title: getThreadTitle(thread),
 				command: DOCLIN_VIEW_THREAD,
 				arguments: [thread]
 			});
@@ -62,4 +50,8 @@ const getTitle = (threads: Thread[]) => {
 	const comment = threads.length === 1 ? 'comment' : 'comments';
 
 	return `${threads.length} ${comment} on Doclin`;
+};
+
+const getThreadTitle = (thread: Thread) => {
+	return `${thread.username} left a comment`;
 };

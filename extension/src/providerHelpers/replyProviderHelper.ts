@@ -1,6 +1,7 @@
 import replyApi from "../api/replyApi";
 import { PostReply, Reply, UpdateReply } from "../types";
-import { compareSnippetsWithActiveEditor, fillUpThreadOrReplyMessageWithSnippet } from "../utils/snippetComparisonUtil";
+import { fillUpThreadOrReplyMessageWithSnippet } from "../utils/fillUpThreadOrReplyMessageWithSnippet";
+import { compareSnippetsWithActiveEditor } from "../utils/snippetComparisonUtil";
 import { getCurrentOrganizationId } from "./organizationProviderHelper";
 import { getCurrentProjectId } from "./projectProviderHelper";
 

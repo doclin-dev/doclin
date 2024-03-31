@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { highlightCode, addLineNumbers } from "../utils/snippetComparisonUtil";
+import { highlightCode, addLineNumbers } from "../utils/snippetFormatUtil";
 import { getAuthenticatedUser } from "./authenticationProviderHelper";
 import logger from "../utils/logger";
 import { getGitBranch } from "../utils/gitProviderUtil";

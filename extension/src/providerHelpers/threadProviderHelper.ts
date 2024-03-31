@@ -1,11 +1,12 @@
 import threadApi from "../api/threadApi";
 import { getCurrentOrganizationId } from "./organizationProviderHelper";
 import { getCurrentProjectId } from "./projectProviderHelper";
-import { compareSnippetsWithActiveEditor, fillUpThreadOrReplyMessageWithSnippet } from "../utils/snippetComparisonUtil";
+import { compareSnippetsWithActiveEditor } from "../utils/snippetComparisonUtil";
 import { PostThread, Thread, UpdateThread } from "../types";
 import { getGitBranch } from "../utils/gitProviderUtil";
 import { clearThreadsCache, getCachedThreads, storeThreadsCache } from "../utils/threadCachingUtil";
 import { getActiveEditorRelativeFilePath } from "./activeEditorRelativeFilePath";
+import { fillUpThreadOrReplyMessageWithSnippet } from "../utils/fillUpThreadOrReplyMessageWithSnippet";
 
 export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[], activeFilePath: string }> => {
 	const activeFilePath = await getActiveEditorRelativeFilePath();
