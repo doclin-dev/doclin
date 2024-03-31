@@ -12,16 +12,14 @@ const highlightDecorationType = vscode.window.createTextEditorDecorationType({
 let decorationRanges: vscode.Range[] = [];
 let hiddenCodeLensRanges: vscode.Range[] = [];
 
-export const registerCodeLensProvider = (context: vscode.ExtensionContext, refreshAnnotationEvent: vscode.EventEmitter<void>) => {
+export const registerCodeLensProvider = (context: vscode.ExtensionContext) => {
 	if (codeLensProviderDisposable) {
 		codeLensProviderDisposable.dispose();
 	}
 
 	codeLensProviderDisposable = vscode.languages.registerCodeLensProvider({ pattern: '**/*' }, { provideCodeLenses });
 	context.subscriptions.push(codeLensProviderDisposable);
-	context.subscriptions.push(vscode.commands.registerCommand('extension.removeDecoration', (range) => {
-		removeDecoration(range, refreshAnnotationEvent)
-	}));
+
 };
 
 const provideCodeLenses = async (document: vscode.TextDocument) => {
@@ -41,6 +39,10 @@ const provideCodeLenses = async (document: vscode.TextDocument) => {
 	decorationRanges = [];
 	for (const thread of threads) {
 		for (const snippet of thread.snippets) {
+			if (snippet.outdated) {
+				continue;
+			}
+
 			if (hiddenCodeLensRanges.some(hiddenRange => hiddenRange.isEqual(snippet.updatedRange))) {
 				continue;
 			}
@@ -65,6 +67,7 @@ const provideCodeLenses = async (document: vscode.TextDocument) => {
 
 	const editor = vscode.window.activeTextEditor;
 	if (editor) {
+		console.log(decorationRanges);
 		editor.setDecorations(highlightDecorationType, decorationRanges);
 	}
 
@@ -81,13 +84,12 @@ const getThreadTitle = (thread: Thread) => {
 	return `${thread.username} left a comment`;
 };
 
-const removeDecoration = (range: vscode.Range, refreshAnnotationEvent: vscode.EventEmitter<void>) => {
+export const removeDecoration = (range: vscode.Range) => {
 	const editor = vscode.window.activeTextEditor;
 
 	if (editor) {
 		hiddenCodeLensRanges.push(range);
 		decorationRanges = decorationRanges.filter(decorationRange => !decorationRange.isEqual(range));
 		editor.setDecorations(highlightDecorationType, decorationRanges);
-		refreshAnnotationEvent.fire();
 	}
 };
