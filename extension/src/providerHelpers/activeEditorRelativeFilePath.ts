@@ -23,7 +23,6 @@ export const getActiveEditorRelativeFilePath = async (): Promise<string> => {
 		return "";
 
 	} catch (error) {
-		console.log('got error', error);
 		logger.error("Error while fetching active editor filepath: " + error);
 		return "";
 	}

@@ -27,26 +27,20 @@ export const getThreadsByFilePath = async(filePath: string): Promise<Thread[]> =
 
 	if (cachedThreads) {
 		threads = cachedThreads;
-		
-		for (const thread of threads) {
-			await compareSnippetsWithActiveEditor(thread.snippets);
-		};
-
 	} else {
 		const organizationId = await getCurrentOrganizationId();
 		const projectId = await getCurrentProjectId();
 	
 		if (organizationId && projectId) {
 			threads = (await threadApi.getFileBasedThreads(organizationId, projectId, filePath))?.data?.threads;
-			
-			for (const thread of threads) {
-				await compareSnippetsWithActiveEditor(thread.snippets);
-				fillUpThreadOrReplyMessageWithSnippet(thread);
-			};
-
 			storeThreadsCache(filePath, threads);
 		}
 	}
+
+	for (const thread of threads) {
+		await compareSnippetsWithActiveEditor(thread.snippets);
+		fillUpThreadOrReplyMessageWithSnippet(thread);
+	};
 
 	return threads;
 };
