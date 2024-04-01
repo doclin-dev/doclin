@@ -6,7 +6,6 @@ const highlightDecorationType = vscode.window.createTextEditorDecorationType({
 	backgroundColor: new vscode.ThemeColor('editor.hoverHighlightBackground'),
 });
 
-
 export const registerHighlightDecoration = (hiddenCodeLensRanges: vscode.Range[]) => {
 	const openEditors: readonly vscode.TextEditor[] = vscode.window.visibleTextEditors;
 

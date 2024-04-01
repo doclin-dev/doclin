@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { getThreadsByFilePath } from '../threadProviderHelper';
-import { Thread } from '../../types';
+import { Snippet, Thread } from '../../types';
 import { DOCLIN_VIEW_FILE_THREADS, DOCLIN_VIEW_THREAD } from '../../commands';
 
 let codeLensProviderDisposable: vscode.Disposable;
@@ -24,12 +24,7 @@ const provideCodeLenses = async (document: vscode.TextDocument, hiddenCodeLensRa
 		return [];
 	}
 
-	const topCodeLens = new vscode.CodeLens(new vscode.Range(0, 0, 0, 0), {
-		title: getTitle(threads),
-		command: DOCLIN_VIEW_FILE_THREADS
-	});
-
-	const codeLenses: vscode.CodeLens[] = [topCodeLens];
+	const codeLenses: vscode.CodeLens[] = [createTopCodeLens(threads.length)];
 	
 	for (const thread of threads) {
 		for (const snippet of thread.snippets) {
@@ -41,31 +36,41 @@ const provideCodeLenses = async (document: vscode.TextDocument, hiddenCodeLensRa
 				continue;
 			}
 			
-			const codeLens = new vscode.CodeLens(snippet.updatedRange, {
-				title: getThreadTitle(thread),
-				command: DOCLIN_VIEW_THREAD,
-				arguments: [thread]
-			});
-
-			const hideCodeLens = new vscode.CodeLens(snippet.updatedRange, {
-				title: 'Hide',
-				command: 'extension.removeDecoration',
-				arguments: [snippet.updatedRange]
-			});
-
-			codeLenses.push(codeLens, hideCodeLens);
+			codeLenses.push(createSnippetCodeLens(thread, snippet), createHideCodeLens(snippet));
 		}
 	}
 
 	return codeLenses;
 };
 
-const getTitle = (threads: Thread[]) => {
-	const comment = threads.length === 1 ? 'comment' : 'comments';
-
-	return `${threads.length} ${comment} on Doclin`;
+const createTopCodeLens = (threadLength: number) => {
+	return new vscode.CodeLens(new vscode.Range(0, 0, 0, 0), {
+		title: getTopLensTitle(threadLength),
+		command: DOCLIN_VIEW_FILE_THREADS
+	});
 };
 
-const getThreadTitle = (thread: Thread) => {
-	return `${thread.username} left a comment, ${thread.displayCreationTime}`;
+const getTopLensTitle = (threadLength: number) => {
+	const comment = threadLength === 1 ? 'comment' : 'comments';
+	return `${threadLength} ${comment} on Doclin`;
+};
+
+const createSnippetCodeLens = (thread: Thread, snippet: Snippet) => {
+	return new vscode.CodeLens(snippet.updatedRange, {
+		title: getSnippetLensTitle(thread),
+		command: DOCLIN_VIEW_THREAD,
+		arguments: [thread]
+	});
+};
+
+const getSnippetLensTitle = (thread: Thread) => {
+	return `${thread.username} commented on Doclin, ${thread.displayCreationTime}`;
+};
+
+const createHideCodeLens = (snippet: Snippet) => {
+	return new vscode.CodeLens(snippet.updatedRange, {
+		title: 'Hide',
+		command: 'extension.removeDecoration',
+		arguments: [snippet.updatedRange]
+	});
 };
