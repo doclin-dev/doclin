@@ -7,7 +7,7 @@ import { getDoclinRelativeFilePath } from "./doclinRelativeFilePath";
 import { fillUpThreadOrReplyMessageWithSnippet } from "../utils/fillUpThreadOrReplyMessageWithSnippet";
 import { readDoclinFile } from './doclinFile/readDoclinFile';
 import AllThreadsCacheManager from '../utils/cache/AllThreadsCacheManager';
-import FileThreadCacheManager from "../utils/cache/FileThreadCacheManager";
+import FileThreadCacheManager from "../utils/cache/FileThreadsCacheManager";
 
 export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[], activeFilePath: string }> => {
 	const editor = vscode.window.activeTextEditor;

@@ -11,7 +11,7 @@ import { ExtensionState } from "../types";
 import { readDoclinFile } from "../providerHelpers/doclinFile/readDoclinFile";
 import OrganizationCacheManager from "./cache/OrganizationCacheManager";
 import AllThreadsCacheManager from "./cache/AllThreadsCacheManager";
-import FileThreadCacheManager from "./cache/FileThreadCacheManager";
+import FileThreadCacheManager from "./cache/FileThreadsCacheManager";
 import ProjectCacheMananger from "./cache/ProjectCacheManager";
 import DoclinRelativePathCacheManager from "./cache/DoclinRelativePathCacheManager";
 import AuthenticatedUserCacheManager from "./cache/AuthenticatedUserCacheManager";
