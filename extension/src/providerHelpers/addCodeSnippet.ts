@@ -3,7 +3,7 @@ import { highlightCode, addLineNumbers } from "../utils/snippetFormatUtil";
 import { getAuthenticatedUser } from "./authenticationProviderHelper";
 import logger from "../utils/logger";
 import { getGitBranch } from "../utils/gitProviderUtil";
-import { getDoclinRelativeFilePath } from "./activeEditorRelativeFilePath";
+import { getDoclinRelativeFilePath } from "./doclinRelativeFilePath";
 import { readDoclinFile } from "./doclinFile/readDoclinFile";
 import { DoclinFile } from "../types";
 import { waitForSidebarStatus } from "../utils/waitForSidebarToShow";

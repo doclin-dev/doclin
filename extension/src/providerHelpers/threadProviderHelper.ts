@@ -3,7 +3,7 @@ import threadApi from "../api/threadApi";
 import { compareSnippetsWithActiveEditor } from "../utils/snippetComparisonUtil";
 import { PostThread, Thread, UpdateThread } from "../types";
 import { getGitBranch } from "../utils/gitProviderUtil";
-import { getDoclinRelativeFilePath } from "./activeEditorRelativeFilePath";
+import { getDoclinRelativeFilePath } from "./doclinRelativeFilePath";
 import { fillUpThreadOrReplyMessageWithSnippet } from "../utils/fillUpThreadOrReplyMessageWithSnippet";
 import { readDoclinFile } from './doclinFile/readDoclinFile';
 import AllThreadsCacheManager from '../utils/cache/AllThreadsCacheManager';
@@ -117,7 +117,7 @@ export const postThread = async({ title, threadMessage, delta, snippets, mention
 	await compareSnippetsWithActiveEditor(thread.snippets);
 	fillUpThreadOrReplyMessageWithSnippet(thread);
 
-	if (isFileThreadSelected && activeEditorUri) {
+	if (activeEditorUri) {
 		const fileThreadCacheManager = new FileThreadCacheManager();
 		await fileThreadCacheManager.clear(activeEditorUri.fsPath);
 	}

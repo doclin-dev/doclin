@@ -25,6 +25,8 @@ export const postOrganization = async({ name }: { name: string }) => {
 	
 		const organizationCacheManager = new OrganizationCacheManager();
 		await organizationCacheManager.set(organization.id, organization);
+
+		await storeOrganizationId(organization.id);
 	
 		return organization;
 

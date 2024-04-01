@@ -7,7 +7,7 @@ import * as authenticationProviderHelper from '../../providerHelpers/authenticat
 import * as readDoclinFile from '../../providerHelpers/doclinFile/readDoclinFile';
 import { handleGetSidebarLoadingStatus } from '../../utils/waitForSidebarToShow';
 import { SidebarLoadingStatus } from '../../enums';
-import * as activeEditorRelativeFilePath from '../../providerHelpers/activeEditorRelativeFilePath';
+import * as activeEditorRelativeFilePath from '../../providerHelpers/doclinRelativeFilePath';
 
 suite('Testing addCodeSnippet', () => {
 	let webviewView: vscode.WebviewView;
