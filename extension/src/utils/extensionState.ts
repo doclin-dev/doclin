@@ -1,8 +1,8 @@
 import { GlobalStateManager } from "../GlobalStateManager";
 import { GlobalStateType } from "../enums";
-import { getAuthenticatedUser } from "../providerHelpers/authenticationProviderHelper";
-import { getOrganization } from "../providerHelpers/organizationProviderHelper";
-import { getProject } from "../providerHelpers/projectProviderHelper";
+import { clearUserCache, getAuthenticatedUser } from "../providerHelpers/authenticationProviderHelper";
+import { clearOrganizationCache, getOrganization } from "../providerHelpers/organizationProviderHelper";
+import { clearProjectCache, getProject } from "../providerHelpers/projectProviderHelper";
 import logger from "./logger";
 import { getExistingDoclinFile } from "./doclinFileReadWriteUtil";
 import * as path from "path";
@@ -35,9 +35,12 @@ export const getExtensionState = async (): Promise<ExtensionState> => {
 };
 
 export const reloadAndGetExtensionState = async (): Promise<ExtensionState> => {
+	await clearUserCache();
+	await clearProjectCache();
+	await clearOrganizationCache();
 	clearAllThreadsCache();
-	clearFileThreadsCache();
-	clearRelativeFilePathMapCache();
+	await clearFileThreadsCache();
+	await clearRelativeFilePathMapCache();
 
 	return await getExtensionState();
 };

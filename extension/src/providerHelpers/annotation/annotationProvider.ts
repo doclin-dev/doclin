@@ -15,10 +15,10 @@ export const initializeAnnotation = (context: vscode.ExtensionContext) => {
 	}));
 };
 
-const registerAllAnnotationProviders = (context: vscode.ExtensionContext, hiddenCodeLensRanges: vscode.Range[]) => {
+const registerAllAnnotationProviders = async (context: vscode.ExtensionContext, hiddenCodeLensRanges: vscode.Range[]) => {
 	registerCodeLensProvider(context, hiddenCodeLensRanges);
 	registerHoverProvider(context, hiddenCodeLensRanges);
-	registerHighlightDecoration(hiddenCodeLensRanges);
+	await registerHighlightDecoration(hiddenCodeLensRanges);
 };
 
 const setupEventsForHighlight = () => {

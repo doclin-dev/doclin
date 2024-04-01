@@ -84,3 +84,7 @@ export const storeProjectId = async (projectId: number) => {
 		logger.error(`An error occurred: ${error.message}`);
 	}
 };
+
+export const clearProjectCache = async (): Promise<void> => {
+	await GlobalStateManager.setState(GlobalStateType.PROJECT_MAP_CACHE, {});
+};

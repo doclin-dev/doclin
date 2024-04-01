@@ -6,10 +6,12 @@ const highlightDecorationType = vscode.window.createTextEditorDecorationType({
 	backgroundColor: new vscode.ThemeColor('editor.findRangeHighlightBackground'),
 });
 
-export const registerHighlightDecoration = (hiddenCodeLensRanges: vscode.Range[]) => {
+export const registerHighlightDecoration = async (hiddenCodeLensRanges: vscode.Range[]) => {
 	const openEditors: readonly vscode.TextEditor[] = vscode.window.visibleTextEditors;
 
-	openEditors.forEach(editor => provideHighlighting(editor, hiddenCodeLensRanges));
+	for (const editor of openEditors) {
+		await provideHighlighting(editor, hiddenCodeLensRanges);
+	}
 };
 
 const provideHighlighting = async (editor: vscode.TextEditor, hiddenCodeLensRanges: vscode.Range[]) => {

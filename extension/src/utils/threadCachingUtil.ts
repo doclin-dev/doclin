@@ -40,7 +40,7 @@ export const clearThreadsCache = async (activeFilePath: string) => {
 };
 
 export const clearFileThreadsCache = async() => {
-	GlobalStateManager.setState(GlobalStateType.CACHED_THREADS_MAP, null);
+	await GlobalStateManager.setState(GlobalStateType.CACHED_THREADS_MAP, null);
 };
 
 const getThreadMapFromState = async (): Promise<Map<string, Thread[]>> => {

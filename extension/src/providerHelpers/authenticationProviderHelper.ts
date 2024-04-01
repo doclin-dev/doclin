@@ -98,3 +98,6 @@ export const postUserEmail = async(email:string) => {
 	}
 };
 
+export const clearUserCache = async (): Promise<void> => {
+	await GlobalStateManager.setState(GlobalStateType.AUTHENTICATED_USER_CACHE, null);
+};

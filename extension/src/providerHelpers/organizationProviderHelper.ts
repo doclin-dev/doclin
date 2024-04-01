@@ -101,3 +101,7 @@ export const getCurrentOrganizationUsers = async (): Promise<User|undefined> => 
 	
 	return members;
 };
+
+export const clearOrganizationCache = async (): Promise<void> => {
+	await GlobalStateManager.setState(GlobalStateType.ORGANIZATION_MAP_CACHE, {});
+};
