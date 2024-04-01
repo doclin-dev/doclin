@@ -1,7 +1,8 @@
 import invitationApi from "../api/invitationApi";
 import logger from "../utils/logger";
-import { getCurrentOrganizationId, storeOrganizationId } from "./organizationProviderHelper";
-import { getCurrentProjectId, storeProjectId } from "./projectProviderHelper";
+import { readDoclinFile } from "./doclinFile/readDoclinFile";
+import { storeOrganizationId } from "./organizationProviderHelper";
+import { storeProjectId } from "./projectProviderHelper";
 
 const INVITATION_EXPIRED: string = "invitationExpired";
 const INVITATION_EXPIRED_MSG: string = "Invitation code is invalid/expired!";
@@ -9,8 +10,9 @@ const EMAIL_SENT_MSG: string = "Invitation code has been sent to";
 const EMAIL_INVALID_MSG: string = "Email format is invalid!";
 
 export const inviteUser = async({ email }: { email: string }) => {
-	const organizationId = await getCurrentOrganizationId();
-	const projectId = await getCurrentProjectId();
+	const doclinFile = await readDoclinFile();
+	const organizationId = doclinFile?.organizationId;
+	const projectId = doclinFile?.projectId;
 
 	if (!organizationId || !email || !projectId || !validateEmail(email)) {
 		return;

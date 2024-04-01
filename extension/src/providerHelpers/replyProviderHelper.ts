@@ -2,14 +2,16 @@ import replyApi from "../api/replyApi";
 import { PostReply, Reply, UpdateReply } from "../types";
 import { fillUpThreadOrReplyMessageWithSnippet } from "../utils/fillUpThreadOrReplyMessageWithSnippet";
 import { compareSnippetsWithActiveEditor } from "../utils/snippetComparisonUtil";
-import { getCurrentOrganizationId } from "./organizationProviderHelper";
-import { getCurrentProjectId } from "./projectProviderHelper";
+import { readDoclinFile } from "./doclinFile/readDoclinFile";
 
 export const getRepliesByThreadId = async ({ threadId }: { threadId: number }): Promise<any> => {
-	const organizationId = await getCurrentOrganizationId();
-	const projectId = await getCurrentProjectId();
+	const doclinFile = await readDoclinFile();
+	const organizationId = doclinFile?.organizationId;
+	const projectId = doclinFile?.projectId;
 
-	if (!organizationId || !projectId) {return;}
+	if (!organizationId || !projectId) {
+		return;
+	}
 
 	const response = await replyApi.getReplies(organizationId, projectId, threadId);
 	const payload = response?.data;
@@ -24,10 +26,13 @@ export const getRepliesByThreadId = async ({ threadId }: { threadId: number }): 
 };
 
 export const postReply = async ({ replyMessage, threadId, anonymous, snippets, delta, mentionedUserIds }: PostReply): Promise<any> => {
-	const organizationId = await getCurrentOrganizationId();
-	const projectId = await getCurrentProjectId();
+	const doclinFile = await readDoclinFile();
+	const organizationId = doclinFile?.organizationId;
+	const projectId = doclinFile?.projectId;
 
-	if (!organizationId || !projectId) {return;}
+	if (!organizationId || !projectId) {
+		return;
+	}
 
 	const response = await replyApi.postReply(
 		organizationId, 
@@ -49,10 +54,13 @@ export const postReply = async ({ replyMessage, threadId, anonymous, snippets, d
 };
 
 export const updateReply = async ({ replyMessage, replyId, snippets, delta }: UpdateReply): Promise<any> => {
-	const organizationId = await getCurrentOrganizationId();
-	const projectId = await getCurrentProjectId();
+	const doclinFile = await readDoclinFile();
+	const organizationId = doclinFile?.organizationId;
+	const projectId = doclinFile?.projectId;
 
-	if (!organizationId || !projectId) {return;}
+	if (!organizationId || !projectId) {
+		return;
+	}
 
 	const response = await replyApi.updateReply(organizationId, projectId, replyId, replyMessage, snippets, delta);
 	const reply: Reply = response?.data?.reply;
@@ -64,8 +72,9 @@ export const updateReply = async ({ replyMessage, replyId, snippets, delta }: Up
 };
 
 export const deleteReply = async ({ replyId }: { replyId: number }) => {
-	const organizationId = await getCurrentOrganizationId();
-	const projectId = await getCurrentProjectId();
+	const doclinFile = await readDoclinFile();
+	const organizationId = doclinFile?.organizationId;
+	const projectId = doclinFile?.projectId;
 
 	if (!organizationId || !projectId) {
 		return;
