@@ -7,7 +7,6 @@ let hiddenCodeLensRanges: vscode.Range[] = [];
 
 export const initializeAnnotation = (context: vscode.ExtensionContext) => {
 	registerAllAnnotationProviders(context, hiddenCodeLensRanges);
-	setupEventsForHighlight();
 
 	context.subscriptions.push(vscode.commands.registerCommand('extension.removeDecoration', (range) => {
 		removeDecoration(range);
@@ -18,21 +17,6 @@ export const initializeAnnotation = (context: vscode.ExtensionContext) => {
 const registerAllAnnotationProviders = async (context: vscode.ExtensionContext, hiddenCodeLensRanges: vscode.Range[]) => {
 	registerCodeLensProvider(context, hiddenCodeLensRanges);
 	registerHoverProvider(context, hiddenCodeLensRanges);
-	await registerHighlightDecoration(hiddenCodeLensRanges);
-};
-
-const setupEventsForHighlight = () => {
-	vscode.workspace.onDidChangeTextDocument((event) => {
-		if (event.document === vscode.window.activeTextEditor?.document) {
-			registerHighlightDecoration(hiddenCodeLensRanges);
-		}
-	});
-
-	vscode.window.onDidChangeActiveTextEditor(editor => {
-		if (editor) {
-			registerHighlightDecoration(hiddenCodeLensRanges);
-		}
-	});
 };
 
 const removeDecoration = (range: vscode.Range) => {

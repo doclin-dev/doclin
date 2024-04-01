@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { getThreadsByFilePath } from '../threadProviderHelper';
 import { Snippet, Thread } from '../../types';
 import { DOCLIN_VIEW_FILE_THREADS, DOCLIN_VIEW_THREAD } from '../../commands';
+import { registerHighlightDecoration } from './highlightDecoration';
 
 let codeLensProviderDisposable: vscode.Disposable;
 
@@ -11,7 +12,7 @@ export const registerCodeLensProvider = (context: vscode.ExtensionContext, hidde
 	}
 
 	codeLensProviderDisposable = vscode.languages.registerCodeLensProvider({ pattern: '**/*' }, { 
-		provideCodeLenses: document => provideCodeLenses(document, hiddenCodeLensRanges) 
+		provideCodeLenses: document => provideCodeLenses(document, hiddenCodeLensRanges)
 	});
 
 	context.subscriptions.push(codeLensProviderDisposable);
@@ -32,7 +33,7 @@ const provideCodeLenses = async (document: vscode.TextDocument, hiddenCodeLensRa
 				continue;
 			}
 
-			if (hiddenCodeLensRanges.some(hiddenRange => hiddenRange.isEqual(snippet.updatedRange))) {
+			if (hiddenCodeLensRanges.some(snippet.updatedRange.isEqual)) {
 				continue;
 			}
 			
@@ -40,6 +41,8 @@ const provideCodeLenses = async (document: vscode.TextDocument, hiddenCodeLensRa
 		}
 	}
 
+	registerHighlightDecoration(hiddenCodeLensRanges);
+	
 	return codeLenses;
 };
 
