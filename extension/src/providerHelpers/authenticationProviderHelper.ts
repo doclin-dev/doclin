@@ -3,9 +3,10 @@ import { API_BASE_URL, PRODUCTION } from "../envConstants";
 import * as polka from "polka";
 import { SecretStorageManager } from "../SecretStorageManager";
 import authApi from "../api/authApi";
-import { SecretStorageType } from "../enums";
+import { GlobalStateType, SecretStorageType } from "../enums";
 import logger from "../utils/logger";
 import { User } from "../types";
+import { GlobalStateManager } from "../GlobalStateManager";
 
 const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github`);
 
@@ -59,9 +60,17 @@ const openApiUrl = (err: Error) => {
 };
 
 export const getAuthenticatedUser = async (): Promise<User | undefined> => {
+	const authenticatedUserCache = await GlobalStateManager.getState(GlobalStateType.AUTHENTICATED_USER_CACHE);
+
+	if (authenticatedUserCache) {
+		return authenticatedUserCache;
+	}
+
 	const response = await authApi.getAuthenticatedUser();
 	const payload = response?.data;
-	const user = payload?.user;
+	const user: User = payload?.user;
+
+	await GlobalStateManager.setState(GlobalStateType.AUTHENTICATED_USER_CACHE, user);
 
 	return user;
 };

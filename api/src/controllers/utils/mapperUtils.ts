@@ -2,6 +2,7 @@ import { Reply } from "src/database/entities/Reply";
 import { ReplySnippet } from "src/database/entities/ReplySnippet";
 import { Thread } from "src/database/entities/Thread";
 import { ThreadSnippet } from "src/database/entities/ThreadSnippet";
+import { User } from "src/database/entities/User";
 
 const ANONYMOUS_USER: string = "Anonymous User";
 
@@ -39,5 +40,14 @@ export const mapSnippetResponse = (snippet: ThreadSnippet | ReplySnippet) => {
 		filePath: snippet.filePath,
 		lineStart: snippet.lineStart,
 		gitBranch: snippet.gitBranch
+	};
+};
+
+export const mapOrganizationUser = (user: User) => {
+	return {
+		id: user.id,
+		name: user.name,
+		email: user.email,
+		githubId: user.githubId
 	};
 };

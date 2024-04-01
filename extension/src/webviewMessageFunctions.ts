@@ -5,7 +5,7 @@ import { storeProjectId } from "./providerHelpers/projectProviderHelper";
 import { getExistingProjects, postProject } from "./providerHelpers/projectProviderHelper";
 import { deleteReply, getRepliesByThreadId, postReply, updateReply } from "./providerHelpers/replyProviderHelper";
 import { postOrganization, getExistingOrganizations, storeOrganizationId, getCurrentOrganizationUsers } from "./providerHelpers/organizationProviderHelper";
-import { getExtensionState } from "./utils/sidebarProviderUtil";
+import { getExtensionState } from "./utils/extensionState";
 import { inviteUser, redeemInvitation } from "./providerHelpers/invitationProviderHelper";
 import { getGithubUrl } from "./utils/gitProviderUtil";
 import { WebviewMessageFunction } from "./types";

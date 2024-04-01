@@ -6,8 +6,18 @@ export type DoclinFile = {
 };
 
 export type Organization = {
-    organizationId: number;
+    id: string;
+    name?: string;
+    members?: User[];
+    unauthorized?: boolean;
+};
 
+export type Project = {
+    id?: number;
+    name?: string;
+    url?: string;
+    userId?: number;
+    unauthorized?: boolean;
 };
 
 export type Thread = {
@@ -86,10 +96,16 @@ export type UpdateReply = {
 
 export type WebviewMessageFunction = (value: any) => any | Promise<any>;
 
-export type WebviewMessage = { type: any, value: any };
+export type WebviewMessage = { 
+    type: any, 
+    value: any 
+};
 
 export type User = {
-    username: string;
+    id: number,
+    name: string,
+    email: string,
+    githubId: number
 };
 
 export type ExtensionState = {

@@ -3,7 +3,9 @@ import { getCurrentOrganizationId } from "./organizationProviderHelper";
 import { readDoclinFile } from "./doclinFile/readDoclinFile";
 import { writeDoclinFile } from "./doclinFile/writeDoclinFile";
 import logger from "../utils/logger";
-import { DoclinFile } from "../types";
+import { DoclinFile, Project } from "../types";
+import { GlobalStateManager } from "../GlobalStateManager";
+import { GlobalStateType } from "../enums";
 
 const UNAUTHORIZED = {
 	unauthorized: true
@@ -15,22 +17,30 @@ export const getCurrentProjectId = async (): Promise<number|null> => {
 	return fileJSON?.projectId;
 };
 
-export const getCurrentProject = async () => {
-	const organizationId = await getCurrentOrganizationId();
-	const projectId = await getCurrentProjectId();
+export const getProject = async (organizationId: string, projectId: number): Promise<Project | { unauthorized: boolean}>  => {
+	const projectMapCache: Record<number, Project> = await GlobalStateManager.getState(GlobalStateType.PROJECT_MAP_CACHE) ?? {};
 
-	if (!organizationId || !projectId) {return;}
+	if (projectMapCache[projectId]) {
+		return projectMapCache[projectId];
+	}
 
+	return apiFetchProject(organizationId, projectId);
+};
+
+const apiFetchProject = async (organizationId: string, projectId: number): Promise<Project | { unauthorized: boolean}> => {	
 	try {
 		const response = await projectApi.getProject(projectId, organizationId);
 		const payload = response?.data;
 		const project = payload?.project;
 		
+		const projectMapCache: Record<number, Project> = await GlobalStateManager.getState(GlobalStateType.PROJECT_MAP_CACHE) ?? {};
+		projectMapCache[project.id] = project;
+		await GlobalStateManager.setState(GlobalStateType.PROJECT_MAP_CACHE, projectMapCache);
+
 		return project;
 	} catch {
 		return UNAUTHORIZED;
 	}
-
 };
 
 export const getExistingProjects = async () => {

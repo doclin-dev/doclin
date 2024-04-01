@@ -28,7 +28,7 @@ export const getDoclinRelativeFilePath = async (documentUri: vscode.Uri): Promis
 };
 
 const getRelativeFilePathMapCache = async (): Promise<Record<string, string>> => {
-	let relativeFilePathMap: Record<string, string> = await GlobalStateManager.getState(GlobalStateType.RELATIVE_FILE_PATH_MAP);
+	let relativeFilePathMap: Record<string, string> = await GlobalStateManager.getState(GlobalStateType.RELATIVE_FILE_PATH_MAP_CACHE);
 
 	if (!relativeFilePathMap) {
 		relativeFilePathMap = {};
@@ -38,9 +38,9 @@ const getRelativeFilePathMapCache = async (): Promise<Record<string, string>> =>
 };
 
 const updateRelativeFilePathMapCache = async (map: Record<string, string>): Promise<void> => {
-	await GlobalStateManager.setState(GlobalStateType.RELATIVE_FILE_PATH_MAP, map);
+	await GlobalStateManager.setState(GlobalStateType.RELATIVE_FILE_PATH_MAP_CACHE, map);
 };
 
 export const clearRelativeFilePathMapCache = async (): Promise<void> => {
-	await GlobalStateManager.setState(GlobalStateType.RELATIVE_FILE_PATH_MAP, {});
+	await GlobalStateManager.setState(GlobalStateType.RELATIVE_FILE_PATH_MAP_CACHE, {});
 };

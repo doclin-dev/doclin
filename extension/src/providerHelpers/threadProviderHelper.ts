@@ -8,6 +8,9 @@ import { getGitBranch } from "../utils/gitProviderUtil";
 import { clearThreadsCache, getCachedThreads, storeThreadsCache } from "../utils/threadCachingUtil";
 import { getDoclinRelativeFilePath } from "./activeEditorRelativeFilePath";
 import { fillUpThreadOrReplyMessageWithSnippet } from "../utils/fillUpThreadOrReplyMessageWithSnippet";
+import { readDoclinFile } from './doclinFile/readDoclinFile';
+
+const allThreadsCache: Record<number, Thread[]|null> = {};
 
 export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[], activeFilePath: string }> => {
 	const editor = vscode.window.activeTextEditor;
@@ -51,13 +54,22 @@ export const getThreadsByFilePath = async(documentUri: vscode.Uri): Promise<Thre
 };
 
 export const getAllThreads = async (): Promise<Thread[]> => {
-	const organizationId = await getCurrentOrganizationId();
-	const projectId = await getCurrentProjectId();
+	const doclinFile = await readDoclinFile();
+	const organizationId = doclinFile.organizationId;
+	const projectId = doclinFile.projectId;
 
 	if (!organizationId || !projectId) {
 		return [];
 	}
 
+	if (allThreadsCache[projectId]) {
+		return allThreadsCache[projectId];
+	}
+
+	return await apiFetchAllThreads(organizationId, projectId);
+};
+
+const apiFetchAllThreads = async (organizationId: string, projectId: number) => {
 	const response = await threadApi.getAllThreads(organizationId, projectId);
 	const payload = response?.data;
 	let threads: Thread[] = payload?.threads;
@@ -71,8 +83,9 @@ export const getAllThreads = async (): Promise<Thread[]> => {
 };
 
 export const postThread = async({ title, threadMessage, delta, snippets, mentionedUserIds, anonymous, isFileThreadSelected }: PostThread): Promise<Thread | undefined> => {
-	const organizationId = await getCurrentOrganizationId();
-	const projectId = await getCurrentProjectId();
+	const doclinFile = await readDoclinFile();
+	const organizationId = doclinFile.organizationId;
+	const projectId = doclinFile.projectId;
 	const activeEditorUri = vscode.window.activeTextEditor?.document.uri;
 	const activeEditorDoclinRelativePath = activeEditorUri ? await getDoclinRelativeFilePath(activeEditorUri) : null;
 	const gitBranch = await getGitBranch();
@@ -99,16 +112,19 @@ export const postThread = async({ title, threadMessage, delta, snippets, mention
 	await compareSnippetsWithActiveEditor(thread.snippets);
 	fillUpThreadOrReplyMessageWithSnippet(thread);
 
-	if (activeEditorUri) {
+	if (isFileThreadSelected && activeEditorUri) {
 		await clearThreadsCache(activeEditorUri.fsPath);
 	}
+
+	allThreadsCache[projectId] = null;
 
 	return thread;
 };
 
 export const updateThread = async({ title, threadMessage, threadId, snippets, delta }: UpdateThread): Promise<Thread | undefined> => {
-	const organizationId = await getCurrentOrganizationId();
-	const projectId = await getCurrentProjectId();
+	const doclinFile = await readDoclinFile();
+	const organizationId = doclinFile.organizationId;
+	const projectId = doclinFile.projectId;
 	const activeEditorUri = vscode.window.activeTextEditor?.document.uri;
 	const activeEditorDoclinRelativePath = activeEditorUri ? await getDoclinRelativeFilePath(activeEditorUri) : null;
 
@@ -136,12 +152,15 @@ export const updateThread = async({ title, threadMessage, threadId, snippets, de
 		await clearThreadsCache(activeEditorUri.fsPath);
 	}
 
+	allThreadsCache[projectId] = null;
+
 	return thread;
 };
 
 export const deleteThread = async({ threadId }: { threadId: number }) => {
-	const organizationId = await getCurrentOrganizationId();
-	const projectId = await getCurrentProjectId();
+	const doclinFile = await readDoclinFile();
+	const organizationId = doclinFile.organizationId;
+	const projectId = doclinFile.projectId;
 	const activeEditorUri = vscode.window.activeTextEditor?.document.uri;
 
 	if (!organizationId || !projectId) {return;}
@@ -152,6 +171,8 @@ export const deleteThread = async({ threadId }: { threadId: number }) => {
 	if (activeEditorUri) {
 		await clearThreadsCache(activeEditorUri.fsPath);
 	}
+
+	allThreadsCache[projectId] = null;
 
 	return thread;
 };

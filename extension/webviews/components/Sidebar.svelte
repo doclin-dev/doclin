@@ -72,7 +72,11 @@
     }
 
     const getExtensionState = () => {
-        tsvscode.postMessage({ type: "getExtensionState", value: undefined });
+        tsvscode.postMessage({ type: "getExtensionState", value: null });
+    }
+
+    const reloadAndGetExtensionState = () => {
+        tsvscode.postMessage({ type: "reloadAndGetExtensionState", value: null });
     }
 
     const getSidebarLoadingStatus = () => {
@@ -125,7 +129,7 @@
     <div>Could not reach server. Please try again later!</div>
     <button on:click={getExtensionState}>Reload</button>
 {:else if user}
-    <ViewerTopBar username={user?.name} reload={getExtensionState} logout={logout}/>
+    <ViewerTopBar username={user?.name} reload={getExtensionState} logout={reloadAndGetExtensionState}/>
 
     {#if $page === Page.RegisterEmail}
         <RegisterEmail/>

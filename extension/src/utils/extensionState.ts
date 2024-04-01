@@ -1,8 +1,8 @@
 import { GlobalStateManager } from "../GlobalStateManager";
 import { GlobalStateType } from "../enums";
 import { getAuthenticatedUser } from "../providerHelpers/authenticationProviderHelper";
-import { getCurrentOrganization } from "../providerHelpers/organizationProviderHelper";
-import { getCurrentProject } from "../providerHelpers/projectProviderHelper";
+import { getOrganization } from "../providerHelpers/organizationProviderHelper";
+import { getProject } from "../providerHelpers/projectProviderHelper";
 import logger from "./logger";
 import { getExistingDoclinFile } from "./doclinFileReadWriteUtil";
 import * as path from "path";
@@ -11,23 +11,33 @@ import { clearAllThreadsCache } from "./threadCachingUtil";
 import { getActiveEditorFolder, getWorkspaceFolder } from "./fileSystemUtil";
 import { ExtensionState } from "../types";
 import { clearRelativeFilePathMapCache } from "../providerHelpers/activeEditorRelativeFilePath";
+import { readDoclinFile } from "../providerHelpers/doclinFile/readDoclinFile";
 
 export const getExtensionState = async (): Promise<ExtensionState> => {
 	try {
-		clearAllThreadsCache();
-		clearRelativeFilePathMapCache();
-		
+		const doclinFile = await readDoclinFile();
+		const organizationId = doclinFile.organizationId;
+		const projectId = doclinFile.projectId;
+
 		return {
 			user: await getAuthenticatedUser(),
-			organization: await getCurrentOrganization(),
-			project: await getCurrentProject(),
+			organization: organizationId ? await getOrganization(organizationId) : null,
+			project: (organizationId && projectId) ? await getProject(organizationId, projectId) : null,
 			githubUrl: await getGithubUrl(),
 			isFolderOrFileOpened: isFolderOrFileOpened()
 		};
+		
 	} catch (error) {
 		logger.error(`Error during get extension ${error}`);
 		return { error };
 	}
+};
+
+export const reloadAndGetExtensionState = async (): Promise<ExtensionState> => {
+	clearAllThreadsCache();
+	clearRelativeFilePathMapCache();
+
+	return await getExtensionState();
 };
 
 export const isDoclinProjectChanged = async (): Promise<boolean> => {

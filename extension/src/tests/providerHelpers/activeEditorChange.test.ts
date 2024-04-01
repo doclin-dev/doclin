@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import { SinonStub, createSandbox } from 'sinon';
 import { expect } from 'chai';
 import { handleActiveTextEditorChange } from '../../providerHelpers/activeEditorChange';
-import * as sidebarProviderUtil from '../../utils/sidebarProviderUtil';
+import * as sidebarProviderUtil from '../../utils/extensionState';
 
 suite('handleActiveTextEditorChange', () => {
 	let sandbox: sinon.SinonSandbox;

@@ -16,7 +16,9 @@
         }
     }
     
-    $: $activeView === ActiveView.CurrentFileThreads ? loadCurrentFileThreads() : loadAllThreads();
+    $: if ($activeView != null && $activeView != undefined) {
+        loadThreads();
+    }
 
     const loadThreads = () => {
         $activeView === ActiveView.CurrentFileThreads ? loadCurrentFileThreads() : loadAllThreads();
@@ -49,7 +51,7 @@
                 threads = [message.value, ...threads];
                 break;
             case "switchActiveEditor":
-                if ($activeView === ActiveView.CurrentFileThreads){
+                if ($activeView === ActiveView.CurrentFileThreads) {
                     loadCurrentFileThreads();
                 }
                 break;
@@ -62,7 +64,6 @@
         }
 
         window.addEventListener("message", messageEventListener);
-        loadThreads();
     });
 
     onDestroy(() => {
