@@ -1,5 +1,8 @@
+import * as vscode from "vscode";
 import replyApi from "../api/replyApi";
 import { PostReply, Reply, UpdateReply } from "../types";
+import AllThreadsCacheManager from "../utils/cache/AllThreadsCacheManager";
+import FileThreadCacheManager from "../utils/cache/FileThreadCacheManager";
 import { fillUpThreadOrReplyMessageWithSnippet } from "../utils/fillUpThreadOrReplyMessageWithSnippet";
 import { compareSnippetsWithActiveEditor } from "../utils/snippetComparisonUtil";
 import { readDoclinFile } from "./doclinFile/readDoclinFile";
@@ -50,7 +53,21 @@ export const postReply = async ({ replyMessage, threadId, anonymous, snippets, d
 	await compareSnippetsWithActiveEditor(reply.snippets);
 	fillUpThreadOrReplyMessageWithSnippet(reply);
 
+	clearThreadsCache(projectId);
+
 	return reply;
+};
+
+const clearThreadsCache = async (projectId: number) => {
+	const activeEditorUri = vscode.window.activeTextEditor?.document.uri;
+
+	if (activeEditorUri) {
+		const fileThreadCacheManager = new FileThreadCacheManager();
+		await fileThreadCacheManager.clear(activeEditorUri.fsPath);
+	}
+
+	const allThreadsCacheManager = new AllThreadsCacheManager();
+	await allThreadsCacheManager.clear(projectId);
 };
 
 export const updateReply = async ({ replyMessage, replyId, snippets, delta }: UpdateReply): Promise<any> => {
