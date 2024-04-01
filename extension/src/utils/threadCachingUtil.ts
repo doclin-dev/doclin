@@ -39,7 +39,7 @@ export const clearThreadsCache = async (activeFilePath: string) => {
 	}
 };
 
-export const clearAllThreadsCache = async() => {
+export const clearFileThreadsCache = async() => {
 	GlobalStateManager.setState(GlobalStateType.CACHED_THREADS_MAP, null);
 };
 

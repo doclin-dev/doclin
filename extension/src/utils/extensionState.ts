@@ -7,11 +7,12 @@ import logger from "./logger";
 import { getExistingDoclinFile } from "./doclinFileReadWriteUtil";
 import * as path from "path";
 import { getGithubUrl } from "./gitProviderUtil";
-import { clearAllThreadsCache } from "./threadCachingUtil";
+import { clearFileThreadsCache } from "./threadCachingUtil";
 import { getActiveEditorFolder, getWorkspaceFolder } from "./fileSystemUtil";
 import { ExtensionState } from "../types";
 import { clearRelativeFilePathMapCache } from "../providerHelpers/activeEditorRelativeFilePath";
 import { readDoclinFile } from "../providerHelpers/doclinFile/readDoclinFile";
+import { clearAllThreadsCache } from "../providerHelpers/threadProviderHelper";
 
 export const getExtensionState = async (): Promise<ExtensionState> => {
 	try {
@@ -35,6 +36,7 @@ export const getExtensionState = async (): Promise<ExtensionState> => {
 
 export const reloadAndGetExtensionState = async (): Promise<ExtensionState> => {
 	clearAllThreadsCache();
+	clearFileThreadsCache();
 	clearRelativeFilePathMapCache();
 
 	return await getExtensionState();

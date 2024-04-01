@@ -98,6 +98,10 @@
             case "getExtensionState":
                 handleGetExtensionState(message.value);
                 break;
+            case "reloadAndGetExtensionState":
+                console.log()
+                handleGetExtensionState(message.value);
+                break;
             case "getSidebarLoadingStatus":
                 getSidebarLoadingStatus();
                 break;
@@ -127,9 +131,9 @@
     <div>loading...</div>
 {:else if error}
     <div>Could not reach server. Please try again later!</div>
-    <button on:click={getExtensionState}>Reload</button>
+    <button on:click={reloadAndGetExtensionState}>Reload</button>
 {:else if user}
-    <ViewerTopBar username={user?.name} reload={getExtensionState} logout={reloadAndGetExtensionState}/>
+    <ViewerTopBar username={user?.name} reload={reloadAndGetExtensionState} logout={logout}/>
 
     {#if $page === Page.RegisterEmail}
         <RegisterEmail/>

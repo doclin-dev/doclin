@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import { expect } from 'chai';
 import { createSandbox, SinonSandbox, SinonStub } from 'sinon';
 import { addCodeSnippet } from '../../providerHelpers/addCodeSnippet';
-import * as activeEditorRelativeFilePath from '../../providerHelpers/activeEditorRelativeFilePath';
 import * as gitProviderUtil from '../../utils/gitProviderUtil';
 import * as authenticationProviderHelper from '../../providerHelpers/authenticationProviderHelper';
 import * as readDoclinFile from '../../providerHelpers/doclinFile/readDoclinFile';
@@ -25,7 +24,6 @@ suite('Testing addCodeSnippet', () => {
 		sandbox = createSandbox();
 		executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand');
 		activeTextEditorStub = sandbox.stub(vscode.window, 'activeTextEditor');
-		getActiveEditorRelativeFilePathStub = sandbox.stub(activeEditorRelativeFilePath, 'getActiveEditorRelativeFilePath');
 		getTextStub = sandbox.stub();
 		getGitBranchStub = sandbox.stub(gitProviderUtil, 'getGitBranch');
 		postMessageStub = sandbox.stub();

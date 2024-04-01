@@ -10,7 +10,7 @@ import { getDoclinRelativeFilePath } from "./activeEditorRelativeFilePath";
 import { fillUpThreadOrReplyMessageWithSnippet } from "../utils/fillUpThreadOrReplyMessageWithSnippet";
 import { readDoclinFile } from './doclinFile/readDoclinFile';
 
-const allThreadsCache: Record<number, Thread[]|null> = {};
+let allThreadsCache: Record<number, Thread[]> = {};
 
 export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[], activeFilePath: string }> => {
 	const editor = vscode.window.activeTextEditor;
@@ -79,6 +79,8 @@ const apiFetchAllThreads = async (organizationId: string, projectId: number) => 
 		fillUpThreadOrReplyMessageWithSnippet(thread);
 	};
 
+	allThreadsCache[projectId] = threads;
+
 	return threads;
 };
 
@@ -116,7 +118,7 @@ export const postThread = async({ title, threadMessage, delta, snippets, mention
 		await clearThreadsCache(activeEditorUri.fsPath);
 	}
 
-	allThreadsCache[projectId] = null;
+	delete allThreadsCache[projectId];
 
 	return thread;
 };
@@ -152,7 +154,7 @@ export const updateThread = async({ title, threadMessage, threadId, snippets, de
 		await clearThreadsCache(activeEditorUri.fsPath);
 	}
 
-	allThreadsCache[projectId] = null;
+	delete allThreadsCache[projectId];
 
 	return thread;
 };
@@ -172,7 +174,11 @@ export const deleteThread = async({ threadId }: { threadId: number }) => {
 		await clearThreadsCache(activeEditorUri.fsPath);
 	}
 
-	allThreadsCache[projectId] = null;
+	delete allThreadsCache[projectId];
 
 	return thread;
+};
+
+export const clearAllThreadsCache = () => {
+	allThreadsCache = {};
 };
