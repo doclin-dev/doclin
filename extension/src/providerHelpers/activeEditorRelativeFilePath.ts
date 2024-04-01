@@ -1,32 +1,8 @@
 import * as vscode from "vscode";
-import logger from "../utils/logger";
 import * as path from 'path';
 import { getExistingDoclinFile } from "../utils/doclinFileReadWriteUtil";
 import { GlobalStateManager } from "../GlobalStateManager";
 import { GlobalStateType } from "../enums";
-
-export const getActiveEditorRelativeFilePath = async (): Promise<string> => {
-	try {
-		const editor = vscode.window.activeTextEditor;
-
-		if (editor) {
-			const relativePath = await getDoclinRelativeFilePath(editor.document.uri);
-
-			if (isActiveEditorOutsideDoclinFolder(relativePath)) {
-				logger.error("Active file path does not belong in this project");
-				return "";
-			}
-
-			return relativePath;
-		}
-
-		return "";
-
-	} catch (error) {
-		logger.error("Error while fetching active editor filepath: " + error);
-		return "";
-	}
-};
 
 export const getDoclinRelativeFilePath = async (documentUri: vscode.Uri): Promise<string> => {
 	const activeEditorFilePath: string = documentUri.fsPath;
@@ -67,8 +43,4 @@ const updateRelativeFilePathMapCache = async (map: Record<string, string>): Prom
 
 export const clearRelativeFilePathMapCache = async (): Promise<void> => {
 	await GlobalStateManager.setState(GlobalStateType.RELATIVE_FILE_PATH_MAP, {});
-};
-
-const isActiveEditorOutsideDoclinFolder = (relativePath: string) => {
-	return relativePath.startsWith('..');
 };

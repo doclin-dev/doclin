@@ -3,7 +3,7 @@ import { getThreadsByFilePath } from '../threadProviderHelper';
 import { Thread } from '../../types';
 
 const highlightDecorationType = vscode.window.createTextEditorDecorationType({
-	backgroundColor: new vscode.ThemeColor('editor.hoverHighlightBackground'),
+	backgroundColor: new vscode.ThemeColor('editor.findRangeHighlightBackground'),
 });
 
 export const registerHighlightDecoration = (hiddenCodeLensRanges: vscode.Range[]) => {

@@ -67,7 +67,7 @@ const updateThread = async (
 	threadMessage: string, 
 	delta: any,
 	snippets: any[],
-	activeEditorFilePath: string) => {
+	activeEditorFilePath: string | null) => {
 
 	const data = {
 		title: title,

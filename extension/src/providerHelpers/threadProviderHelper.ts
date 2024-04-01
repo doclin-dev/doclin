@@ -6,7 +6,7 @@ import { compareSnippetsWithActiveEditor } from "../utils/snippetComparisonUtil"
 import { PostThread, Thread, UpdateThread } from "../types";
 import { getGitBranch } from "../utils/gitProviderUtil";
 import { clearThreadsCache, getCachedThreads, storeThreadsCache } from "../utils/threadCachingUtil";
-import { getActiveEditorRelativeFilePath, getDoclinRelativeFilePath } from "./activeEditorRelativeFilePath";
+import { getDoclinRelativeFilePath } from "./activeEditorRelativeFilePath";
 import { fillUpThreadOrReplyMessageWithSnippet } from "../utils/fillUpThreadOrReplyMessageWithSnippet";
 
 export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[], activeFilePath: string }> => {
@@ -73,7 +73,8 @@ export const getAllThreads = async (): Promise<Thread[]> => {
 export const postThread = async({ title, threadMessage, delta, snippets, mentionedUserIds, anonymous, isFileThreadSelected }: PostThread): Promise<Thread | undefined> => {
 	const organizationId = await getCurrentOrganizationId();
 	const projectId = await getCurrentProjectId();
-	const activeFilePath = await getActiveEditorRelativeFilePath();
+	const activeEditorUri = vscode.window.activeTextEditor?.document.uri;
+	const activeEditorDoclinRelativePath = activeEditorUri ? await getDoclinRelativeFilePath(activeEditorUri) : null;
 	const gitBranch = await getGitBranch();
 
 	if (!organizationId || !projectId) {
@@ -88,7 +89,7 @@ export const postThread = async({ title, threadMessage, delta, snippets, mention
 		delta, 
 		snippets,
 		isFileThreadSelected ? gitBranch : null,
-		isFileThreadSelected ? activeFilePath : null,
+		isFileThreadSelected ? activeEditorDoclinRelativePath : null,
 		mentionedUserIds,
 		anonymous,
 	);
@@ -98,7 +99,9 @@ export const postThread = async({ title, threadMessage, delta, snippets, mention
 	await compareSnippetsWithActiveEditor(thread.snippets);
 	fillUpThreadOrReplyMessageWithSnippet(thread);
 
-	await clearThreadsCache(activeFilePath);
+	if (activeEditorUri) {
+		await clearThreadsCache(activeEditorUri.fsPath);
+	}
 
 	return thread;
 };
@@ -106,7 +109,8 @@ export const postThread = async({ title, threadMessage, delta, snippets, mention
 export const updateThread = async({ title, threadMessage, threadId, snippets, delta }: UpdateThread): Promise<Thread | undefined> => {
 	const organizationId = await getCurrentOrganizationId();
 	const projectId = await getCurrentProjectId();
-	const activeFilePath = await getActiveEditorRelativeFilePath();
+	const activeEditorUri = vscode.window.activeTextEditor?.document.uri;
+	const activeEditorDoclinRelativePath = activeEditorUri ? await getDoclinRelativeFilePath(activeEditorUri) : null;
 
 	if (!organizationId || !projectId) {
 		return;
@@ -120,7 +124,7 @@ export const updateThread = async({ title, threadMessage, threadId, snippets, de
 		threadMessage,
 		delta,
 		snippets,
-		activeFilePath
+		activeEditorDoclinRelativePath
 	);
 
 	const thread: Thread = response?.data?.thread;
@@ -128,7 +132,9 @@ export const updateThread = async({ title, threadMessage, threadId, snippets, de
 	await compareSnippetsWithActiveEditor(thread.snippets);
 	fillUpThreadOrReplyMessageWithSnippet(thread);
 
-	await clearThreadsCache(activeFilePath);
+	if (activeEditorUri) {
+		await clearThreadsCache(activeEditorUri.fsPath);
+	}
 
 	return thread;
 };
@@ -136,14 +142,16 @@ export const updateThread = async({ title, threadMessage, threadId, snippets, de
 export const deleteThread = async({ threadId }: { threadId: number }) => {
 	const organizationId = await getCurrentOrganizationId();
 	const projectId = await getCurrentProjectId();
-	const activeFilePath = await getActiveEditorRelativeFilePath();
+	const activeEditorUri = vscode.window.activeTextEditor?.document.uri;
 
 	if (!organizationId || !projectId) {return;}
   
 	const response = await threadApi.deleteThread(organizationId, projectId, threadId);
 	const thread = response?.data?.thread;
 
-	await clearThreadsCache(activeFilePath);
+	if (activeEditorUri) {
+		await clearThreadsCache(activeEditorUri.fsPath);
+	}
 
 	return thread;
 };

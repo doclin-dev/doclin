@@ -3,7 +3,7 @@ import { highlightCode, addLineNumbers } from "../utils/snippetFormatUtil";
 import { getAuthenticatedUser } from "./authenticationProviderHelper";
 import logger from "../utils/logger";
 import { getGitBranch } from "../utils/gitProviderUtil";
-import { getActiveEditorRelativeFilePath } from "./activeEditorRelativeFilePath";
+import { getDoclinRelativeFilePath } from "./activeEditorRelativeFilePath";
 import { readDoclinFile } from "./doclinFile/readDoclinFile";
 import { DoclinFile } from "../types";
 import { waitForSidebarStatus } from "../utils/waitForSidebarToShow";
@@ -70,6 +70,33 @@ const isExtensionNotReadyForComment = async (activeTextEditor: vscode.TextEditor
 	}
 
 	return false;
+};
+
+const getActiveEditorRelativeFilePath = async (): Promise<string> => {
+	try {
+		const editor = vscode.window.activeTextEditor;
+
+		if (editor) {
+			const relativePath = await getDoclinRelativeFilePath(editor.document.uri);
+
+			if (isActiveEditorOutsideDoclinFolder(relativePath)) {
+				logger.error("Active file path does not belong in this project");
+				return "";
+			}
+
+			return relativePath;
+		}
+
+		return "";
+
+	} catch (error) {
+		logger.error("Error while fetching active editor filepath: " + error);
+		return "";
+	}
+};
+
+const isActiveEditorOutsideDoclinFolder = (relativePath: string) => {
+	return relativePath.startsWith('..');
 };
 
 const getLineStart = (activeTextEditor: vscode.TextEditor): number => {
