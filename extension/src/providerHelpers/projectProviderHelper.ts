@@ -4,8 +4,7 @@ import { readDoclinFile } from "./doclinFile/readDoclinFile";
 import { writeDoclinFile } from "./doclinFile/writeDoclinFile";
 import logger from "../utils/logger";
 import { DoclinFile, Project } from "../types";
-import { GlobalStateManager } from "../GlobalStateManager";
-import { GlobalStateType } from "../enums";
+import ProjectCacheMananger from "../utils/cache/ProjectCacheManager";
 
 const UNAUTHORIZED = {
 	unauthorized: true
@@ -18,10 +17,11 @@ export const getCurrentProjectId = async (): Promise<number|null> => {
 };
 
 export const getProject = async (organizationId: string, projectId: number): Promise<Project | { unauthorized: boolean}>  => {
-	const projectMapCache: Record<number, Project> = await GlobalStateManager.getState(GlobalStateType.PROJECT_MAP_CACHE) ?? {};
+	const projectCacheManager = new ProjectCacheMananger();
+	const cachedProject = await projectCacheManager.get(projectId);
 
-	if (projectMapCache[projectId]) {
-		return projectMapCache[projectId];
+	if (cachedProject) {
+		return cachedProject;
 	}
 
 	return apiFetchProject(organizationId, projectId);
@@ -33,9 +33,8 @@ const apiFetchProject = async (organizationId: string, projectId: number): Promi
 		const payload = response?.data;
 		const project = payload?.project;
 		
-		const projectMapCache: Record<number, Project> = await GlobalStateManager.getState(GlobalStateType.PROJECT_MAP_CACHE) ?? {};
-		projectMapCache[project.id] = project;
-		await GlobalStateManager.setState(GlobalStateType.PROJECT_MAP_CACHE, projectMapCache);
+		const projectCacheManager = new ProjectCacheMananger();
+		await projectCacheManager.set(project.id, project);
 
 		return project;
 	} catch {
@@ -46,7 +45,9 @@ const apiFetchProject = async (organizationId: string, projectId: number): Promi
 export const getExistingProjects = async () => {
 	const organizationId = await getCurrentOrganizationId();
 
-	if (!organizationId) {return { projects: null };}
+	if (!organizationId) {
+		return { projects: null };
+	}
 
 	const response = await projectApi.getProjects(organizationId);
 	const payload = response?.data;
@@ -58,13 +59,16 @@ export const getExistingProjects = async () => {
 export const postProject = async({ name, githubUrl }: { name: string, githubUrl: string }) => {
 	const organizationId = await getCurrentOrganizationId();
 
-	if (!organizationId) {return { 
-		project: null 
-	};}
+	if (!organizationId) {
+		return { project: null };
+	}
 
 	const response = await projectApi.postProject(organizationId, name, githubUrl);
 	const payload = response?.data;
 	const project = payload?.project;
+
+	const projectCacheManager = new ProjectCacheMananger();
+	await projectCacheManager.set(project.id, project);
 
 	await storeProjectId(project.id);
 	
@@ -83,8 +87,4 @@ export const storeProjectId = async (projectId: number) => {
 	} catch (error: any) {
 		logger.error(`An error occurred: ${error.message}`);
 	}
-};
-
-export const clearProjectCache = async (): Promise<void> => {
-	await GlobalStateManager.setState(GlobalStateType.PROJECT_MAP_CACHE, {});
 };

@@ -3,8 +3,7 @@ import { readDoclinFile } from "./doclinFile/readDoclinFile";
 import { writeDoclinFile } from "./doclinFile/writeDoclinFile";
 import logger from "../utils/logger";
 import { DoclinFile, Organization, User } from "../types";
-import { GlobalStateManager } from "../GlobalStateManager";
-import { GlobalStateType } from "../enums";
+import OrganizationCacheManager from "../utils/cache/OrganizationCacheManager";
 
 const UNAUTHORIZED = {
 	unauthorized: true
@@ -24,10 +23,8 @@ export const postOrganization = async({ name }: { name: string }) => {
 		const payload = response?.data;
 		const organization: Organization = payload?.organization;
 	
-		const organizationMapCache: Record<string, Organization> = await GlobalStateManager.getState(GlobalStateType.ORGANIZATION_MAP_CACHE) ?? {};
-		organizationMapCache[organization.id] = organization;
-		await GlobalStateManager.setState(GlobalStateType.ORGANIZATION_MAP_CACHE, organizationMapCache);
-		await storeOrganizationId(organization.id);
+		const organizationCacheManager = new OrganizationCacheManager();
+		await organizationCacheManager.set(organization.id, organization);
 	
 		return organization;
 
@@ -43,10 +40,11 @@ export const getCurrentOrganizationId = async (): Promise<string|null> => {
 };
 
 export const getOrganization = async (organizationId: string): Promise<Organization | { unauthorized: boolean }> => {
-	const organizationMapCache: Record<string, Organization> = await GlobalStateManager.getState(GlobalStateType.ORGANIZATION_MAP_CACHE) ?? {};
+	const organizationCacheManager = new OrganizationCacheManager();
+	const cachedOrganization = await organizationCacheManager.get(organizationId);
 	
-	if (organizationMapCache[organizationId]) {
-		return organizationMapCache[organizationId];
+	if (cachedOrganization) {
+		return cachedOrganization;
 	}
 
 	try {
@@ -63,9 +61,8 @@ const apiFetchOrganization = async (organizationId: string) => {
 		const payload = response?.data;
 		const organization: Organization = payload?.organization;
 
-		const organizationMapCache: Record<string, Organization> = await GlobalStateManager.getState(GlobalStateType.ORGANIZATION_MAP_CACHE) ?? {};
-		organizationMapCache[organizationId] = organization;
-		await GlobalStateManager.setState(GlobalStateType.ORGANIZATION_MAP_CACHE, organizationMapCache);
+		const organizationCacheManager = new OrganizationCacheManager();
+		await organizationCacheManager.set(organization.id, organization);
 
 		return organization;
 
@@ -100,8 +97,4 @@ export const getCurrentOrganizationUsers = async (): Promise<User|undefined> => 
 	const members = payload?.organization?.members;
 	
 	return members;
-};
-
-export const clearOrganizationCache = async (): Promise<void> => {
-	await GlobalStateManager.setState(GlobalStateType.ORGANIZATION_MAP_CACHE, {});
 };

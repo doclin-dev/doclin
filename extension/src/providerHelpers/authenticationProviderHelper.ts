@@ -3,10 +3,10 @@ import { API_BASE_URL, PRODUCTION } from "../envConstants";
 import * as polka from "polka";
 import { SecretStorageManager } from "../SecretStorageManager";
 import authApi from "../api/authApi";
-import { GlobalStateType, SecretStorageType } from "../enums";
+import { SecretStorageType } from "../enums";
 import logger from "../utils/logger";
 import { User } from "../types";
-import { GlobalStateManager } from "../GlobalStateManager";
+import AuthenticatedUserCacheManager from "../utils/cache/AuthenticatedUserCacheManager";
 
 const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github`);
 
@@ -60,7 +60,8 @@ const openApiUrl = (err: Error) => {
 };
 
 export const getAuthenticatedUser = async (): Promise<User | undefined> => {
-	const authenticatedUserCache = await GlobalStateManager.getState(GlobalStateType.AUTHENTICATED_USER_CACHE);
+	const autheticatedUserCacheManger = new AuthenticatedUserCacheManager();
+	const authenticatedUserCache = await autheticatedUserCacheManger.getAuthenticatedUser();
 
 	if (authenticatedUserCache) {
 		return authenticatedUserCache;
@@ -70,7 +71,7 @@ export const getAuthenticatedUser = async (): Promise<User | undefined> => {
 	const payload = response?.data;
 	const user: User = payload?.user;
 
-	await GlobalStateManager.setState(GlobalStateType.AUTHENTICATED_USER_CACHE, user);
+	await autheticatedUserCacheManger.setAuthenticatedUser(user);
 
 	return user;
 };
@@ -85,6 +86,8 @@ const setTokenToStorage = async (token: string|null) => {
 
 export const logout = async () => {
 	await setTokenToStorage("");
+	const autheticatedUserCacheManger = new AuthenticatedUserCacheManager();
+	await autheticatedUserCacheManger.clearAuthenticatedUser();
 };
 
 export const postUserEmail = async(email:string) => {
@@ -96,8 +99,4 @@ export const postUserEmail = async(email:string) => {
 	} catch(error) {
 		logger.error(`An error occured when registering your email. ${error}`);
 	}
-};
-
-export const clearUserCache = async (): Promise<void> => {
-	await GlobalStateManager.setState(GlobalStateType.AUTHENTICATED_USER_CACHE, null);
 };

@@ -1,18 +1,21 @@
 import { GlobalStateManager } from "../GlobalStateManager";
 import { GlobalStateType } from "../enums";
-import { clearUserCache, getAuthenticatedUser } from "../providerHelpers/authenticationProviderHelper";
-import { clearOrganizationCache, getOrganization } from "../providerHelpers/organizationProviderHelper";
-import { clearProjectCache, getProject } from "../providerHelpers/projectProviderHelper";
+import { getAuthenticatedUser } from "../providerHelpers/authenticationProviderHelper";
+import { getOrganization } from "../providerHelpers/organizationProviderHelper";
+import { getProject } from "../providerHelpers/projectProviderHelper";
 import logger from "./logger";
 import { getExistingDoclinFile } from "./doclinFileReadWriteUtil";
 import * as path from "path";
 import { getGithubUrl } from "./gitProviderUtil";
-import { clearFileThreadsCache } from "./threadCachingUtil";
 import { getActiveEditorFolder, getWorkspaceFolder } from "./fileSystemUtil";
 import { ExtensionState } from "../types";
-import { clearRelativeFilePathMapCache } from "../providerHelpers/activeEditorRelativeFilePath";
 import { readDoclinFile } from "../providerHelpers/doclinFile/readDoclinFile";
-import { clearAllThreadsCache } from "../providerHelpers/threadProviderHelper";
+import OrganizationCacheManager from "./cache/OrganizationCacheManager";
+import AllThreadsCacheManager from "./cache/AllThreadsCacheManager";
+import FileThreadCacheManager from "./cache/FileThreadCacheManager";
+import ProjectCacheMananger from "./cache/ProjectCacheManager";
+import DoclinRelativePathCacheManager from "./cache/DoclinRelativePathCacheManager";
+import AuthenticatedUserCacheManager from "./cache/AuthenticatedUserCacheManager";
 
 export const getExtensionState = async (): Promise<ExtensionState> => {
 	try {
@@ -35,12 +38,23 @@ export const getExtensionState = async (): Promise<ExtensionState> => {
 };
 
 export const reloadAndGetExtensionState = async (): Promise<ExtensionState> => {
-	await clearUserCache();
-	await clearProjectCache();
-	await clearOrganizationCache();
-	clearAllThreadsCache();
-	await clearFileThreadsCache();
-	await clearRelativeFilePathMapCache();
+	const authenticatedUserCacheManager = new AuthenticatedUserCacheManager;
+	await authenticatedUserCacheManager.clear();
+
+	const projectCacheManager = new ProjectCacheMananger();
+	await projectCacheManager.clear();
+	
+	const organizationCacheManager = new OrganizationCacheManager();
+	await organizationCacheManager.clear();
+
+	const allThreadsCacheManager = new AllThreadsCacheManager();
+	await allThreadsCacheManager.clear();
+
+	const fileThreadCacheManager = new FileThreadCacheManager();
+	await fileThreadCacheManager.clear();
+
+	const doclinRelativePathCacheManager = new DoclinRelativePathCacheManager();
+	await doclinRelativePathCacheManager.clear();
 
 	return await getExtensionState();
 };

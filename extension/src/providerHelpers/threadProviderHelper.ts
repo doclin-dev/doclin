@@ -1,16 +1,13 @@
 import * as vscode from 'vscode';
 import threadApi from "../api/threadApi";
-import { getCurrentOrganizationId } from "./organizationProviderHelper";
-import { getCurrentProjectId } from "./projectProviderHelper";
 import { compareSnippetsWithActiveEditor } from "../utils/snippetComparisonUtil";
 import { PostThread, Thread, UpdateThread } from "../types";
 import { getGitBranch } from "../utils/gitProviderUtil";
-import { clearThreadsCache, getCachedThreads, storeThreadsCache } from "../utils/threadCachingUtil";
 import { getDoclinRelativeFilePath } from "./activeEditorRelativeFilePath";
 import { fillUpThreadOrReplyMessageWithSnippet } from "../utils/fillUpThreadOrReplyMessageWithSnippet";
 import { readDoclinFile } from './doclinFile/readDoclinFile';
-
-let allThreadsCache: Record<number, Thread[]> = {};
+import AllThreadsCacheManager from '../utils/cache/AllThreadsCacheManager';
+import FileThreadCacheManager from "../utils/cache/FileThreadCacheManager";
 
 export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[], activeFilePath: string }> => {
 	const editor = vscode.window.activeTextEditor;
@@ -28,20 +25,22 @@ export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[],
 };
 
 export const getThreadsByFilePath = async(documentUri: vscode.Uri): Promise<Thread[]> => {
-	const cachedThreads = await getCachedThreads(documentUri.fsPath);
+	const fileThreadCacheManager = new FileThreadCacheManager();
+	const cachedThreads = await fileThreadCacheManager.get(documentUri.fsPath);
 
 	let threads: Thread[] = [];
 
 	if (cachedThreads) {
 		threads = cachedThreads;
 	} else {
-		const organizationId = await getCurrentOrganizationId();
-		const projectId = await getCurrentProjectId();
+		const doclinFile = await readDoclinFile();
+		const organizationId = doclinFile?.organizationId;
+		const projectId = doclinFile?.projectId;
 	
 		if (organizationId && projectId) {
 			const filePath = await getDoclinRelativeFilePath(documentUri);
 			threads = (await threadApi.getFileBasedThreads(organizationId, projectId, filePath))?.data?.threads;
-			storeThreadsCache(documentUri.fsPath, threads);
+			await fileThreadCacheManager.set(documentUri.fsPath, threads);
 		}
 	}
 
@@ -62,8 +61,11 @@ export const getAllThreads = async (): Promise<Thread[]> => {
 		return [];
 	}
 
-	if (allThreadsCache[projectId]) {
-		return allThreadsCache[projectId];
+	const allThreadsCacheManager = new AllThreadsCacheManager();
+	const cachedThreads = await allThreadsCacheManager.get(projectId);
+
+	if (cachedThreads) {
+		return cachedThreads;
 	}
 
 	return await apiFetchAllThreads(organizationId, projectId);
@@ -79,7 +81,8 @@ const apiFetchAllThreads = async (organizationId: string, projectId: number) => 
 		fillUpThreadOrReplyMessageWithSnippet(thread);
 	};
 
-	allThreadsCache[projectId] = threads;
+	const allThreadsCacheManager = new AllThreadsCacheManager();
+	await allThreadsCacheManager.set(projectId, threads);
 
 	return threads;
 };
@@ -115,10 +118,12 @@ export const postThread = async({ title, threadMessage, delta, snippets, mention
 	fillUpThreadOrReplyMessageWithSnippet(thread);
 
 	if (isFileThreadSelected && activeEditorUri) {
-		await clearThreadsCache(activeEditorUri.fsPath);
+		const fileThreadCacheManager = new FileThreadCacheManager();
+		await fileThreadCacheManager.clear(activeEditorUri.fsPath);
 	}
 
-	delete allThreadsCache[projectId];
+	const allThreadsCacheManager = new AllThreadsCacheManager();
+	await allThreadsCacheManager.clear(projectId);
 
 	return thread;
 };
@@ -151,10 +156,12 @@ export const updateThread = async({ title, threadMessage, threadId, snippets, de
 	fillUpThreadOrReplyMessageWithSnippet(thread);
 
 	if (activeEditorUri) {
-		await clearThreadsCache(activeEditorUri.fsPath);
+		const fileThreadCacheManager = new FileThreadCacheManager();
+		await fileThreadCacheManager.clear(activeEditorUri.fsPath);
 	}
 
-	delete allThreadsCache[projectId];
+	const allThreadsCacheManager = new AllThreadsCacheManager();
+	await allThreadsCacheManager.clear(projectId);
 
 	return thread;
 };
@@ -171,14 +178,12 @@ export const deleteThread = async({ threadId }: { threadId: number }) => {
 	const thread = response?.data?.thread;
 
 	if (activeEditorUri) {
-		await clearThreadsCache(activeEditorUri.fsPath);
+		const fileThreadCacheManager = new FileThreadCacheManager();
+		await fileThreadCacheManager.clear(activeEditorUri.fsPath);
 	}
 
-	delete allThreadsCache[projectId];
+	const allThreadsCacheManager = new AllThreadsCacheManager();
+	await allThreadsCacheManager.clear(projectId);
 
 	return thread;
-};
-
-export const clearAllThreadsCache = () => {
-	allThreadsCache = {};
 };
