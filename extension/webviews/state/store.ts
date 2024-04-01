@@ -18,8 +18,6 @@ export const replyContents = createState(WebviewStateType.REPLY_CONTENTS);
 
 export const threadSelected = createState<Thread|null>(WebviewStateType.THREAD_SELECTED);
 
-export const githubUrl = createState<string>(WebviewStateType.GITHUB_URL);
-
 export const activeTextEditor = createState<TextEditorType>(WebviewStateType.ACTIVE_TEXT_EDITOR);
 
 export const activeView = createState<ActiveView>(WebviewStateType.ACTIVE_VIEW, ActiveView.AllThreads);

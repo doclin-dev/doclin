@@ -6,7 +6,6 @@ import { getProject } from "../providerHelpers/projectProviderHelper";
 import logger from "./logger";
 import { getExistingDoclinFile } from "./doclinFileReadWriteUtil";
 import * as path from "path";
-import { getGithubUrl } from "./gitProviderUtil";
 import { getActiveEditorFolder, getWorkspaceFolder } from "./fileSystemUtil";
 import { ExtensionState } from "../types";
 import { readDoclinFile } from "../providerHelpers/doclinFile/readDoclinFile";
@@ -27,7 +26,6 @@ export const getExtensionState = async (): Promise<ExtensionState> => {
 			user: await getAuthenticatedUser(),
 			organization: organizationId ? await getOrganization(organizationId) : null,
 			project: (organizationId && projectId) ? await getProject(organizationId, projectId) : null,
-			githubUrl: await getGithubUrl(),
 			isFolderOrFileOpened: isFolderOrFileOpened()
 		};
 		

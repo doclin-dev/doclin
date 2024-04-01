@@ -7,7 +7,6 @@ import { deleteReply, getRepliesByThreadId, postReply, updateReply } from "./pro
 import { postOrganization, getExistingOrganizations, storeOrganizationId, getCurrentOrganizationUsers } from "./providerHelpers/organizationProviderHelper";
 import { getExtensionState, reloadAndGetExtensionState } from "./utils/extensionState";
 import { inviteUser, redeemInvitation } from "./providerHelpers/invitationProviderHelper";
-import { getGithubUrl } from "./utils/gitProviderUtil";
 import { WebviewMessageFunction } from "./types";
 import { onError, onInfo } from "./utils/loggerProviderUtil";
 import { handleGetSidebarLoadingStatus } from "./utils/waitForSidebarToShow";
@@ -15,7 +14,6 @@ import { handleGetSidebarLoadingStatus } from "./utils/waitForSidebarToShow";
 export const RESPONSE_PROVIDERS: Record<string, WebviewMessageFunction> = {
 	getExtensionState: getExtensionState,
 	reloadAndGetExtensionState: reloadAndGetExtensionState,
-	getGithubUrl: getGithubUrl,
 	getThreadsByActiveFilePath: getThreadsByActiveFilePath,
 	getAllThreads: getAllThreads,
 	postThread: postThread,

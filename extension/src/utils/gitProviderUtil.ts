@@ -1,12 +1,7 @@
 import { getActiveEditorFolder, getWorkspaceFolder } from "./fileSystemUtil";
 import { executeShellCommand } from "./excecuteShellCommandUtil";
 
-const GIT_URL_COMMAND = "git config --get remote.origin.url";
 const GIT_BRANCH_COMMAND = "git rev-parse --abbrev-ref HEAD";
-
-export const getGithubUrl = async () : Promise<string> => {
-	return await executeGitCommand(GIT_URL_COMMAND);
-};
 
 export const getGitBranch = async () : Promise<string> => {
 	return await executeGitCommand(GIT_BRANCH_COMMAND);

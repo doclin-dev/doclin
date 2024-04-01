@@ -10,7 +10,7 @@
     import AccessRequired from "./AccessRequired.svelte";
     import ViewerTopBar from "./ViewerTopBar.svelte";
     import RegisterEmail from "./RegisterEmail.svelte";
-    import { activeView, currentOrganization, currentProject, githubUrl, page, reload, threadSelected } from "../state/store";
+    import { activeView, currentOrganization, currentProject, page, reload, threadSelected } from "../state/store";
 
     let loading = true;
     let user: User | null = null;
@@ -31,7 +31,6 @@
         user = extensionState?.user;
         $currentOrganization = extensionState?.organization;
         $currentProject = extensionState?.project;
-        $githubUrl = extensionState?.githubUrl;
         const isFolderOrFileOpened = extensionState?.isFolderOrFileOpened;
 
         if (!user?.email) {

@@ -10,8 +10,7 @@ export const getProjects = async (req: any, res: any) => {
 
 	const responseProjects = projects.map(project => ({
 		id: project.id,
-		name: project.name,
-		url: project.url
+		name: project.name
 	}));
 
 	return res.send({ projects: responseProjects });
@@ -19,7 +18,6 @@ export const getProjects = async (req: any, res: any) => {
 
 export const postProject = async (req:any, res:any) => {
 	const name = req.body.name;
-	const url = req.body.url;
 	const organizationId = req.params.organizationId;
 
 	const organization = await OrganizationRepository.findOrganizationById(organizationId);
@@ -28,7 +26,6 @@ export const postProject = async (req:any, res:any) => {
 
 	const project = await Project.create({
 		name: name,
-		url: url,
 		organizationId: organizationId
 	}).save();
 
@@ -47,8 +44,7 @@ export const getProject = async (req: Request, res: Response) => {
 
 	const responseProject = {
 		id: project.id,
-		name: project.name,
-		url: project.url
+		name: project.name
 	};
 
 	res.send({ project: responseProject });

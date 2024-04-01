@@ -112,7 +112,6 @@ export type ExtensionState = {
     user?: User | undefined;
     organization?: any;
     project?: any;
-    githubUrl?: string;
     isFolderOrFileOpened?: boolean;
     error?: any;
 };

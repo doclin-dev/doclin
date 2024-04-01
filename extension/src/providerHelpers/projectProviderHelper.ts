@@ -56,14 +56,14 @@ export const getExistingProjects = async () => {
 	return projects;
 };
 
-export const postProject = async({ name, githubUrl }: { name: string, githubUrl: string }) => {
+export const postProject = async({ name }: { name: string }) => {
 	const organizationId = await getCurrentOrganizationId();
 
 	if (!organizationId) {
 		return { project: null };
 	}
 
-	const response = await projectApi.postProject(organizationId, name, githubUrl);
+	const response = await projectApi.postProject(organizationId, name);
 	const payload = response?.data;
 	const project = payload?.project;
 

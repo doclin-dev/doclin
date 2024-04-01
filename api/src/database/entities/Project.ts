@@ -15,24 +15,21 @@ import { Thread } from "./Thread";
 @Entity()
 export class Project extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  	id: number;
 
   @CreateDateColumn()
-  createdAt: Date;
+  	createdAt: Date;
 
   @Column("text")
-  name: string;
-
-  @Column({ type: "text", nullable: true })
-  url: string;
+  	name: string;
 
   @Column()
-  organizationId: string;
+  	organizationId: string;
 
   @ManyToOne(() => Organization, (organization) => organization.projects)
   @JoinColumn({ name: "organizationId" })
-  organization: Organization;
+  	organization: Organization;
 
   @OneToMany(() => Thread, (thread) => thread.project)
-  threads: Thread[];
+  	threads: Thread[];
 }
