@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import { registerHoverProvider } from './hoverProvider';
 import { registerCodeLensProvider } from './codeLensProvider';
-import { registerHighlightDecoration } from './highlightDecoration';
 
 let hiddenCodeLensRanges: vscode.Range[] = [];
 
