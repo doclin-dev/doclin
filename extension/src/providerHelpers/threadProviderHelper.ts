@@ -1,3 +1,4 @@
+import * as vscode from 'vscode';
 import threadApi from "../api/threadApi";
 import { getCurrentOrganizationId } from "./organizationProviderHelper";
 import { getCurrentProjectId } from "./projectProviderHelper";
@@ -5,23 +6,26 @@ import { compareSnippetsWithActiveEditor } from "../utils/snippetComparisonUtil"
 import { PostThread, Thread, UpdateThread } from "../types";
 import { getGitBranch } from "../utils/gitProviderUtil";
 import { clearThreadsCache, getCachedThreads, storeThreadsCache } from "../utils/threadCachingUtil";
-import { getActiveEditorRelativeFilePath } from "./activeEditorRelativeFilePath";
+import { getActiveEditorRelativeFilePath, getDoclinRelativeFilePath } from "./activeEditorRelativeFilePath";
 import { fillUpThreadOrReplyMessageWithSnippet } from "../utils/fillUpThreadOrReplyMessageWithSnippet";
 
 export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[], activeFilePath: string }> => {
-	const activeFilePath = await getActiveEditorRelativeFilePath();
-	
-	if (!activeFilePath) {
-		return { threads: [], activeFilePath: "" };
+	const editor = vscode.window.activeTextEditor;
+
+	if (editor) {
+		const threads = await getThreadsByFilePath(editor.document.uri);
+
+		return { 
+			threads, 
+			activeFilePath: await getDoclinRelativeFilePath(editor.document.uri) 
+		};
 	}
 
-	const threads = await getThreadsByFilePath(activeFilePath);
-
-	return { threads, activeFilePath };
+	return { threads: [], activeFilePath: "" };
 };
 
-export const getThreadsByFilePath = async(filePath: string): Promise<Thread[]> => {
-	const cachedThreads = await getCachedThreads(filePath);
+export const getThreadsByFilePath = async(documentUri: vscode.Uri): Promise<Thread[]> => {
+	const cachedThreads = await getCachedThreads(documentUri.fsPath);
 
 	let threads: Thread[] = [];
 
@@ -32,8 +36,9 @@ export const getThreadsByFilePath = async(filePath: string): Promise<Thread[]> =
 		const projectId = await getCurrentProjectId();
 	
 		if (organizationId && projectId) {
+			const filePath = await getDoclinRelativeFilePath(documentUri);
 			threads = (await threadApi.getFileBasedThreads(organizationId, projectId, filePath))?.data?.threads;
-			storeThreadsCache(filePath, threads);
+			storeThreadsCache(documentUri.fsPath, threads);
 		}
 	}
 

@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { getDoclinRelativeFilePath } from '../activeEditorRelativeFilePath';
 import { getThreadsByFilePath } from '../threadProviderHelper';
 import { Thread } from '../../types';
 import { DOCLIN_VIEW_FILE_THREADS, DOCLIN_VIEW_THREAD } from '../../commands';
@@ -19,8 +18,7 @@ export const registerCodeLensProvider = (context: vscode.ExtensionContext, hidde
 };
 
 const provideCodeLenses = async (document: vscode.TextDocument, hiddenCodeLensRanges: vscode.Range[]) => {
-	const filePath: string = await getDoclinRelativeFilePath(document.uri);
-	const threads: Thread[] = await getThreadsByFilePath(filePath);
+	const threads: Thread[] = await getThreadsByFilePath(document.uri);
 
 	if (threads.length === 0) {
 		return [];

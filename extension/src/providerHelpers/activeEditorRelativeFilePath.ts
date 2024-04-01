@@ -32,8 +32,8 @@ export const getDoclinRelativeFilePath = async (documentUri: vscode.Uri): Promis
 	const activeEditorFilePath: string = documentUri.fsPath;
 	const relativeFilePathMap = await getRelativeFilePathMapCache();
 
-	if (relativeFilePathMap['activeEditorFilePath']) {
-		return relativeFilePathMap['activeEditorFilePath'];
+	if (relativeFilePathMap[activeEditorFilePath]) {
+		return relativeFilePathMap[activeEditorFilePath];
 	}
 
 	const doclinFilePath = await getExistingDoclinFile();
@@ -46,7 +46,6 @@ export const getDoclinRelativeFilePath = async (documentUri: vscode.Uri): Promis
 		await updateRelativeFilePathMapCache(relativeFilePathMap);
 	
 		return doclinRelativePath;
-
 	}
 
 	return "";

@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { getDoclinRelativeFilePath } from '../activeEditorRelativeFilePath';
 import { getThreadsByFilePath } from '../threadProviderHelper';
 import { Thread } from '../../types';
 
@@ -18,8 +17,7 @@ export const registerHoverProvider = (context: vscode.ExtensionContext, hiddenCo
 };
 
 const provideHover = async (document: vscode.TextDocument, position: vscode.Position, hiddenCodeLensRanges: vscode.Range[]) => {
-	const filePath: string = await getDoclinRelativeFilePath(document.uri);
-	const threads: Thread[] = await getThreadsByFilePath(filePath);
+	const threads: Thread[] = await getThreadsByFilePath(document.uri);
 
 	for (const thread of threads) {
 		for (const snippet of thread.snippets) {
