@@ -7,18 +7,19 @@ import * as authenticationProviderHelper from '../../providerHelpers/authenticat
 import * as readDoclinFile from '../../providerHelpers/doclinFile/readDoclinFile';
 import { handleGetSidebarLoadingStatus } from '../../utils/waitForSidebarToShow';
 import { SidebarLoadingStatus } from '../../enums';
+import * as activeEditorRelativeFilePath from '../../providerHelpers/activeEditorRelativeFilePath';
 
 suite('Testing addCodeSnippet', () => {
 	let webviewView: vscode.WebviewView;
 	let sandbox: SinonSandbox;
 	let executeCommandStub: SinonStub;
 	let activeTextEditorStub: SinonStub;
-	let getActiveEditorRelativeFilePathStub: SinonStub;
 	let getTextStub: SinonStub;
 	let getGitBranchStub: SinonStub;
 	let postMessageStub: SinonStub;
 	let getAuthenticatedUserStub: SinonStub;
 	let readDoclinFileStub: SinonStub;
+	let getDoclinRelativeFilePathStub: SinonStub;
 
 	setup(() => {
 		sandbox = createSandbox();
@@ -29,6 +30,7 @@ suite('Testing addCodeSnippet', () => {
 		postMessageStub = sandbox.stub();
 		getAuthenticatedUserStub = sandbox.stub(authenticationProviderHelper, 'getAuthenticatedUser');
 		readDoclinFileStub = sandbox.stub(readDoclinFile, 'readDoclinFile');
+		getDoclinRelativeFilePathStub = sandbox.stub(activeEditorRelativeFilePath, 'getDoclinRelativeFilePath');
 
 		webviewView = {
 			webview: {
@@ -50,9 +52,9 @@ suite('Testing addCodeSnippet', () => {
 
 	test('should populate code snippet in the sidebar if there is an active text editor', async () => {
 		getTextStub.returns('originalSnippet');
-		getActiveEditorRelativeFilePathStub.resolves('filePath');
 		getGitBranchStub.resolves('gitBranch');
 		getAuthenticatedUserStub.resolves({ username: 'testuser' });
+		getDoclinRelativeFilePathStub.resolves('filePath');
 		readDoclinFileStub.resolves({
 			organizationId: 'test-id',
 			projectId: 54
@@ -74,7 +76,6 @@ suite('Testing addCodeSnippet', () => {
 
 		expect(readDoclinFileStub.calledOnce).to.be.true;
 		expect(getAuthenticatedUserStub.calledOnce).to.be.true;
-		expect(getActiveEditorRelativeFilePathStub.calledOnce).to.be.true;
 		expect(getTextStub.calledTwice).to.be.true;
 		expect(getGitBranchStub.calledOnce).to.be.true;
 		expect(postMessageStub.calledWithMatch({
@@ -95,7 +96,6 @@ suite('Testing addCodeSnippet', () => {
 
 		expect(readDoclinFileStub.called).to.be.false;
 		expect(getAuthenticatedUserStub.called).to.be.false;
-		expect(getActiveEditorRelativeFilePathStub.called).to.be.false;
 		expect(getTextStub.called).to.be.false;
 		expect(getGitBranchStub.called).to.be.false;
 		expect(postMessageStub.called).to.be.false;
@@ -119,7 +119,6 @@ suite('Testing addCodeSnippet', () => {
 
 		expect(readDoclinFileStub.called).to.be.false;
 		expect(getAuthenticatedUserStub.calledOnce).to.be.true;
-		expect(getActiveEditorRelativeFilePathStub.called).to.be.false;
 		expect(getTextStub.called).to.be.false;
 		expect(getGitBranchStub.called).to.be.false;
 		expect(postMessageStub.called).to.be.false;
