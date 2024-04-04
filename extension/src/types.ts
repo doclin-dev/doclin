@@ -59,11 +59,20 @@ export type Snippet = {
     gitBranch: string;
 };
 
+export type PostSnippetBlot = {
+    displaySnippet: string;
+    filePath: string;
+    gitBranch: string;
+    index: number;
+    lineStart: number;
+    originalSnippet: string;
+};
+
 export type PostThread = {
     title: string;
     threadMessage: string;
     delta: any;
-    snippets: any[];
+    snippets: PostSnippetBlot[];
     mentionedUserIds: number[];
     anonymous: boolean;
     isFileThreadSelected: boolean;

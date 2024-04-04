@@ -29,7 +29,7 @@ export const mapReplyResponse = (reply: Reply) => {
 		message: reply.message,
 		username: reply.anonymous ? ANONYMOUS_USER : reply.user?.name,
 		createdAt : reply.createdAt,
-		snippets: reply.snippets.map(mapSnippetResponse),
+		snippets: reply.snippets?.map(mapSnippetResponse),
 		delta: reply.delta
 	};
 };

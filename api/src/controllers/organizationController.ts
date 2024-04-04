@@ -4,6 +4,11 @@ import { UserRepository } from "../database/repositories/UserRepository";
 import { AppDataSource } from "../database/dataSource";
 import { Request, Response } from "express";
 import { mapUser } from "./utils/mapperUtils";
+import createDOMPurify from 'dompurify';
+import { JSDOM } from 'jsdom';
+
+const window = new JSDOM('').window;
+const DOMPurify = createDOMPurify(window);
 
 export const getOrganizations = async (req: Request, res: Response) => {
 	const organizations = await OrganizationRepository.findOrganizationsByUserId(req.userId);
@@ -17,13 +22,13 @@ export const getOrganizations = async (req: Request, res: Response) => {
 };
 
 export const postOrganization = async (req: Request, res: Response) => {
-	const name = req.body.name;
-
+	const name = DOMPurify.sanitize(req.body.name);
 	const organization = Organization.create({ name: name });
-
 	const user = await UserRepository.findUserById(req.userId);
 
-	if (!user) {return;}
+	if (!user) {
+		return;
+	}
 
 	organization.users = [user];
 	await AppDataSource.manager.save(organization);
