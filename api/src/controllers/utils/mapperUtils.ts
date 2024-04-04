@@ -18,7 +18,8 @@ export const mapThreadResponse = (thread: Thread) => {
 		snippets: thread.snippets?.map(mapSnippetResponse),
 		delta: thread.delta,
 		filePath: thread.filePath,
-		gitBranch: thread.gitBranch
+		gitBranch: thread.gitBranch,
+		replies: thread.replies?.map(mapReplyResponse)
 	};
 };
 
