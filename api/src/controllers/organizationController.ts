@@ -3,7 +3,7 @@ import { Organization } from "../database/entities/Organization";
 import { UserRepository } from "../database/repositories/UserRepository";
 import { AppDataSource } from "../database/dataSource";
 import { Request, Response } from "express";
-import { mapOrganizationUser } from "./utils/mapperUtils";
+import { mapUser } from "./utils/mapperUtils";
 
 export const getOrganizations = async (req: Request, res: Response) => {
 	const organizations = await OrganizationRepository.findOrganizationsByUserId(req.userId);
@@ -33,7 +33,7 @@ export const postOrganization = async (req: Request, res: Response) => {
 	const responseOrganization = {
 		id: organization.id,
 		name: organization.name,
-		members: members.map(mapOrganizationUser)
+		members: members.map(mapUser)
 	};
 
 	return res.send({ organization: responseOrganization });
@@ -59,7 +59,7 @@ export const getOrganization = async (req: Request, res: Response) => {
 	const responseOrganization = {
 		id: organization.id,
 		name: organization.name,
-		members: members?.map(mapOrganizationUser)
+		members: members?.map(mapUser)
 	};
 
 	res.send({ organization: responseOrganization });
