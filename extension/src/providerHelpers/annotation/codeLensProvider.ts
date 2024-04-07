@@ -33,7 +33,8 @@ const provideCodeLenses = async (document: vscode.TextDocument, hiddenCodeLensRa
 				continue;
 			}
 
-			if (hiddenCodeLensRanges.some(snippet.updatedRange.isEqual)) {
+			console.log(hiddenCodeLensRanges, snippet);
+			if ((hiddenCodeLensRanges.some(range => range.isEqual(snippet.updatedRange)))) {
 				continue;
 			}
 			

@@ -30,7 +30,7 @@ export const getExtensionState = async (): Promise<ExtensionState> => {
 		};
 		
 	} catch (error) {
-		logger.error(`Error during get extension ${error}`);
+		logger.error(`Error during get extension ${error}`, true);
 		return { error };
 	}
 };

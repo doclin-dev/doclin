@@ -17,6 +17,6 @@ export const viewFileThreadsCommand = async (webviewView: vscode.WebviewView | u
 			});
 		}
 	} catch (error) {
-		logger.error("Exception occured. " + error);
+		logger.error(`Errow while viewing file threads. ${error}`, true);
 	}
 };

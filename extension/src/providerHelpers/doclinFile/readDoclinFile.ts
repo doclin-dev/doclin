@@ -19,8 +19,9 @@ export const readDoclinFile = async (): Promise<DoclinFile> => {
 		return createDoclinFile();
         
 	} catch (error) {
-		logger.error("Error while reading .doclin file " + error);
-		return createDoclinFile();
+		const errorMessage = `Error while reading .doclin file ${error}`;
+		logger.error(errorMessage);
+		throw(new Error(errorMessage));
 	}
 };
 

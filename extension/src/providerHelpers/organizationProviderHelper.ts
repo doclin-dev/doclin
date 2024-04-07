@@ -31,7 +31,7 @@ export const postOrganization = async({ name }: { name: string }) => {
 		return organization;
 
 	} catch (error: any) {
-		logger.error(`Error posting organization ${error}`);
+		logger.error(`Error posting organization ${error}`, true);
 	}
 };
 

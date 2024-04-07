@@ -38,20 +38,20 @@ export const addCodeSnippet = async (webviewView: vscode.WebviewView | undefined
 			}
 		}
 	} catch (error) {
-		logger.error("Exception occured. " + error);
+		logger.error(`Error while adding adding comment ${error}`, true);
 	}
 };
 
 const isExtensionNotReadyForComment = async (activeTextEditor: vscode.TextEditor | undefined): Promise<boolean> => {  
 	if (!activeTextEditor) {
-		logger.error("No active file detected. Please open a file to add a comment.");
+		logger.error("No active file detected. Please open a file to add a comment.", true);
 		return true;
 	}
 
 	const user = await getAuthenticatedUser();
 
 	if (!user) {
-		logger.error("Please log in to your account before adding a comment.");
+		logger.error("Please log in to your account before adding a comment.", true);
 		return true;
 	}
 
@@ -60,12 +60,12 @@ const isExtensionNotReadyForComment = async (activeTextEditor: vscode.TextEditor
 	const projectId = doclinFile?.projectId;
 
 	if (!organizationId || !projectId) {
-		logger.error("Unable to add a comment. Please complete the organization and project setup first.");
+		logger.error("Unable to add a comment. Please complete the organization and project setup first.", true);
 		return true;
 	}
 
 	if (!activeTextEditor.document.getText(activeTextEditor.selection)) {
-		logger.error("Please highlight a section of code to add a comment.");
+		logger.error("Please highlight a section of code to add a comment.", true);
 		return true;
 	}
 

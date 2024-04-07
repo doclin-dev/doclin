@@ -30,13 +30,13 @@ const getToken = async (req: any, res: any, fn?: () => void) => {
 
 		if (!token) {
 			res.end(`Authentication unsuccessful. Please try again later.`);
-			logger.info("Authentication unsuccessful.");
+			logger.info("Authentication unsuccessful. Could not receive token.", true);
 			app.server?.close();
 			return;
 		}
 
 		res.end(`Authentication successful. You can close this now!`);
-		logger.info("Authentication successful.");
+		logger.info("Authentication successful.", true);
 
 		app.server?.close();
 
@@ -47,7 +47,7 @@ const getToken = async (req: any, res: any, fn?: () => void) => {
 		}
 
 	} catch (error) {
-		logger.error("An error occured when receiving token" + error);
+		logger.error(`An error occured when receiving token ${error}`, true);
 	}
 };
 
@@ -97,6 +97,6 @@ export const postUserEmail = async(email:string) => {
 		
 		return status;
 	} catch(error) {
-		logger.error(`An error occured when registering your email. ${error}`);
+		logger.error(`An error occured when registering your email. ${error}`, true);
 	}
 };

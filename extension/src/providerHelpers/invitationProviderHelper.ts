@@ -21,14 +21,14 @@ export const inviteUser = async({ email }: { email: string }) => {
 	const response = await invitationApi.inviteUser(projectId, organizationId, email);
 	const payload = response?.data;
 
-	logger.info(`${EMAIL_SENT_MSG} ${email}`);
+	logger.info(`${EMAIL_SENT_MSG} ${email}`, true);
 	
 	return payload;
 };
 
 const validateEmail = (email: string) : boolean => {
 	if (isEmailNotValid(email)) {
-		logger.info(`${EMAIL_INVALID_MSG} ${email}`);
+		logger.info(`${EMAIL_INVALID_MSG} ${email}`, true);
 		return false;
 	}
 
@@ -53,7 +53,7 @@ export const redeemInvitation = async ({ invitationCode } : { invitationCode: st
 
 		return payload;
 	} catch {
-		logger.info(INVITATION_EXPIRED_MSG);
+		logger.info(INVITATION_EXPIRED_MSG, true);
 		return INVITATION_EXPIRED;
 	}
 };

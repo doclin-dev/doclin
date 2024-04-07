@@ -19,6 +19,6 @@ export const viewThreadCommand = async (thread: Thread, webviewView: vscode.Webv
 			});
 		}
 	} catch (error) {
-		logger.error("Exception occured. " + error);
+		logger.error(`Error while viewing thread. ${error}`, true);
 	}
 };

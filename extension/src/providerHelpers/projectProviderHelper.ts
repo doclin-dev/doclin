@@ -85,6 +85,6 @@ export const storeProjectId = async (projectId: number) => {
 			await writeDoclinFile(fileJSON);
 		}
 	} catch (error: any) {
-		logger.error(`An error occurred: ${error.message}`);
+		logger.error(`An error occurred: ${error}`, true);
 	}
 };
