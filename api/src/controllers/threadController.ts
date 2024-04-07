@@ -14,7 +14,7 @@ const DOMPurify = createDOMPurify(window);
 export const postThread = async (req: any, res: any) => {
 	const title: string = DOMPurify.sanitize(req.body.title);
 	const threadMessage: string = DOMPurify.sanitize(req.body.threadMessage);
-	const snippets: RequestSnippetBlot[] = req.body.snippets?.map(domPurifySnippet);
+	const snippets: RequestSnippetBlot[] = req.body.snippets;
 	const delta: any = req.body.delta;
 	const userId: number = req.userId;
 	const projectId: number = req.body.projectId;
@@ -50,12 +50,6 @@ export const postThread = async (req: any, res: any) => {
 	const response = threadResponse ? mapThreadResponse(threadResponse) : null;
 
 	res.send({ thread: response });
-};
-
-const domPurifySnippet = (snippetblot: RequestSnippetBlot) => {
-	snippetblot.displaySnippet = DOMPurify.sanitize(snippetblot.displaySnippet);
-	snippetblot.originalSnippet = DOMPurify.sanitize(snippetblot.originalSnippet);
-	return snippetblot;
 };
 
 const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, snippetblots: RequestSnippetBlot[]) => {
@@ -99,7 +93,7 @@ export const updateThread = async (req: any, res: any) => {
 	const threadId: number = req.params.id;
 	const title: string = DOMPurify.sanitize(req.body.title);
 	const threadMessage: string = DOMPurify.sanitize(req.body.message);
-	const snippets: any[] = req.body.snippets?.map(domPurifySnippet);
+	const snippets: any[] = req.body.snippets;
 	const delta: any = req.body.delta;
 
 	const thread: Thread | null = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
