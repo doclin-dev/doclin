@@ -98,7 +98,6 @@
                 handleGetExtensionState(message.value);
                 break;
             case "reloadAndGetExtensionState":
-                console.log()
                 handleGetExtensionState(message.value);
                 break;
             case "getSidebarLoadingStatus":

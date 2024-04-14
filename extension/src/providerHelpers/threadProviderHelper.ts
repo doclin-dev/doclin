@@ -95,8 +95,6 @@ export const postThread = async({ title, threadMessage, delta, snippets, mention
 	const activeEditorDoclinRelativePath = activeEditorUri ? await getDoclinRelativeFilePath(activeEditorUri) : null;
 	const gitBranch = await getGitBranch();
 
-	console.log(snippets);
-
 	if (!organizationId || !projectId) {
 		return;
 	}

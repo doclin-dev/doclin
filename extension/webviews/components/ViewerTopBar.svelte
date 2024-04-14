@@ -17,7 +17,11 @@
 
     <div class='icon-container'>
         <Button icon="reload" type='text' onClick={reload}/>
-        <Button icon="invite" type='text' onClick={switchToInvitePage}/>
+
+        {#if ($page === Page.ThreadsViewer || $page === Page.ReplyViewer)}
+            <Button icon="invite" type='text' onClick={switchToInvitePage}/>
+        {/if}
+
         <Button icon="logout" type='text' onClick={logout}/>
     </div>
 </div>

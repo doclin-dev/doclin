@@ -19,6 +19,12 @@
         window.removeEventListener("message", messageEventListener)
     });
 
+    const preventEnter = (event: KeyboardEvent) => {
+        if (event.key === 'Enter' && (event.target as Element)?.nodeName !== 'TEXTAREA') {
+            event.preventDefault();
+        }
+    };
+
     const messageEventListener = async (event: any) => {
         const message = event.data;
         switch (message.type) {
@@ -69,9 +75,10 @@
 
 <div class='textEditorContainer mb-2'>
     <form
-        on:submit|preventDefault={submitThreadMessage}>
-        <input class="textEditorTitle" placeholder="Title" bind:value={title} />
-        <div id="textEditor" class="textEditor"></div>
+        on:submit|preventDefault={submitThreadMessage}
+        on:keydown={preventEnter}>
+        <input class="textEditorTitle" placeholder="Title" bind:value={title} tabindex="1"/>
+        <div id="textEditor" class="textEditor" tabindex="2"></div>
         <div id="submitContainer">
             <label class="checkbox">
                 <input type="checkbox" bind:checked={anonymousCheck}>

@@ -8,11 +8,7 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
 			.leftJoinAndSelect('thread.snippets', 'snippet')
 			.leftJoinAndSelect('thread.user', 'user')
 			.leftJoinAndSelect('thread.replies', 'reply')
-			.where('thread.projectId = :projectId', { projectId })
-			.andWhere(
-				queryBuilder => queryBuilder.where('thread.filePath = :filePath', { filePath })
-					.orWhere('snippet.filePath = :filePath', { filePath })
-			)
+			.where('thread.projectId = :projectId AND (thread.filePath = :filePath OR snippet.filePath = :filePath)', { projectId, filePath })
 			.orderBy('COALESCE(reply.createdAt, thread.createdAt)', 'DESC')
 			.loadRelationCountAndMap("thread.replyCount", "thread.replies")
 			.getMany();

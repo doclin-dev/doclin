@@ -85,7 +85,7 @@ export const getThreads = async (req: any, res: any) => {
 	}
 
 	const response = threads.map(mapThreadResponse);
-
+	
 	res.send({ threads: response });
 };
 

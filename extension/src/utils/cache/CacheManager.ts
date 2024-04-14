@@ -17,7 +17,6 @@ export default class CacheManager<K extends string | number, V> {
 	async get(key: K): Promise<V | undefined> {
 		try {
 			let cache: Record<K, CacheEntry<V>> = await GlobalStateManager.getState(this.stateType) ?? {};
-
 			const entry = cache[key];
 
 			if (entry && entry.expiry > Date.now()) {
