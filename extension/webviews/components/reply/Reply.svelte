@@ -1,18 +1,19 @@
 <script lang="ts">
     import OverlayCard from '../OverlayCard.svelte';
-    import { onMount, tick, onDestroy } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
     import { editedReplyId, editedThreadId } from '../../state/store';
     import moment from 'moment';
     import SeeMore from '../SeeMore.svelte';
     import ReplyEdit from './ReplyEdit.svelte';
+    import type { Reply } from '../../types';
 
-    export let reply: any;
+    export let reply: Reply;
     export let reloadReplies: () => void = () => {};
 
-    let replyCreationTime : string = moment.utc(reply?.replyCreationTime).fromNow();
+    let replyCreationTime : string = moment.utc(reply?.createdAt).fromNow();
 
     setInterval(()=>{
-        replyCreationTime = moment.utc(reply?.replyCreationTime).fromNow();
+        replyCreationTime = moment.utc(reply?.createdAt).fromNow();
     }, 60000);
 
     const handleEditButtonClick = async () => {

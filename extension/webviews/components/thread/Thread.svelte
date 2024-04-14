@@ -1,7 +1,7 @@
 <script lang="ts">
     import OverlayCard from '../OverlayCard.svelte';
     import Button from '../Button.svelte'
-    import { tick, onMount, onDestroy } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
     import { editedReplyId, editedThreadId, page, threadSelected } from '../../state/store';
     import { Page } from '../../enums';
     import moment from 'moment';
@@ -14,11 +14,11 @@
     export let reloadThreads: () => void = () => {};
     export let showReplyButton: boolean = true;
     let lastEdited : string | null = thread?.lastReplied ? moment.utc(thread.lastReplied).fromNow() : null;
-    let threadCreationTime : string = moment.utc(thread?.threadCreationTime).fromNow();
+    let threadCreationTime : string = moment.utc(thread?.createdAt).fromNow();
 
     setInterval(()=>{
         lastEdited = thread?.lastReplied ? moment.utc(thread.lastReplied).fromNow() : null;
-        threadCreationTime = moment.utc(thread?.threadCreationTime).fromNow();
+        threadCreationTime = moment.utc(thread?.createdAt).fromNow();
     }, 60000);
 
         
@@ -112,9 +112,15 @@
             {:else}
                 <div class="thread-title">{thread?.title ?? ""}</div>
 
-                <div><SeeMore content={thread?.displayMessage}/></div>
+                {#if $page === Page.ThreadsViewer}
+                    <SeeMore content={thread?.displayMessage}/>
+                {:else}
+                    <div>
+                        {@html thread?.displayMessage}
+                    </div>
+                {/if}
                 
-                {#if thread?.replyCount &&  $page === Page.ThreadsViewer}
+                {#if thread?.replyCount && $page === Page.ThreadsViewer}
                     <div class="number-of-replies-button">
                         <Button 
                             textAlignment="flex-start" 

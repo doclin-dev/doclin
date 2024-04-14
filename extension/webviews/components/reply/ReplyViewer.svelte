@@ -6,8 +6,9 @@
     import Reply from "./Reply.svelte";
     import { page, reload, threadSelected } from "../../state/store";
     import ReplyAddForm from "./ReplyAddForm.svelte";
+    import type { Reply as ReplyType } from "../../types";
 
-    let replies : Array<{message: string, id: number}> = [];
+    let replies : ReplyType[] = [];
 
     $: {
         if ($reload > 1) {
@@ -28,7 +29,6 @@
         $threadSelected = null;
         $page = Page.ThreadsViewer;
     }
-
 
     const messageEventListener = async (event: any) => {
         const message = event.data;

@@ -4,42 +4,27 @@
     import { ActiveView } from "../enums";
     import { activeView, currentOrganization, currentProject } from "../state/store";
     import Icon from "./Icon.svelte";
+  import type { Organization, Project } from "../types";
 
     export let filePath: string | null;
-    export let onFirstSegmentClick: () => void;
-    export let onSecondSegmentClick: () => void;
 
     let isCurrentFileView: boolean;
-    let selectedIndex: number;
     let organizationAndProjectName: string;
 
-    $: {
-        isCurrentFileView = $activeView === ActiveView.CurrentFileThreads;
-        selectedIndex = $activeView ?? 0;
-        organizationAndProjectName = getOrganizationAndProjectName();
-    }
-
-    const handleFirstSegmentClick = () => {
-        onFirstSegmentClick();
-        $activeView = ActiveView.AllThreads;
-    }
-
-    const handleSecondSegmentClick = () => {
-        onSecondSegmentClick();
-        $activeView = ActiveView.CurrentFileThreads;
-    }
+    $: isCurrentFileView = $activeView === ActiveView.CurrentFileThreads;
+    $: organizationAndProjectName = getOrganizationAndProjectName($currentOrganization, $currentProject);
     
-    const getOrganizationAndProjectName = () => {
-        const orgName = $currentOrganization?.name?.split(' ').join('');
-        return `${orgName} / ${$currentProject?.name}`
+    const getOrganizationAndProjectName = (organization: Organization|null, project: Project|null) => {
+        const orgName = organization?.name?.split(' ').join('');
+        return `${orgName} / ${project?.name}`
     }
 </script>
 
 <div>
     <div class="segmentedControlContainer">
-        <SegmentedControl selectedIndex={selectedIndex}>
-            <Segment onClick={handleFirstSegmentClick}>All Threads</Segment>
-            <Segment onClick={handleSecondSegmentClick}>File Threads</Segment>
+        <SegmentedControl selectedIndex={activeView}>
+            <Segment>All Threads</Segment>
+            <Segment>File Threads</Segment>
         </SegmentedControl>
     </div>
     
@@ -51,7 +36,7 @@
         </label>
 
         {#if isCurrentFileView}
-            <label class="filter-menu-label file-label" for="file" title="{filePath}">
+            <label class="filter-menu-label file-label" for="file" title="{filePath ?? ''}">
                 <Icon name='file' height={14} width={14}/>
                 <div class='overflow-ellipsis'>
                     {filePath}

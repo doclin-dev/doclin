@@ -61,14 +61,6 @@
     align-items: center;
 }
 
-.reply-count-line {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-}
-
 .reply-count-divider-left {
     height: 1px;
     background-color: var(--vscode-focusBorder);
@@ -110,23 +102,30 @@
 }
 
 .outdated-label {
-    border: 1.5px solid var(--vscode-inputValidation-warningBorder);
+    border: 1px solid var(--vscode-inputValidation-warningBorder);
     border-radius: 0.5em;
     font-size: 10px;
-    font-weight: bold;
     padding: 2px 5px;
     color: var(--vscode-inputValidation-warningBorder);
+    margin: 0px;
 }
 
 .thread-file-path {
     font-size: 12px;
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 0.25rem;
+    justify-content: space-between;
     padding: 0.25rem;
     border-bottom: 1px solid var(--vscode-editorGroup-border);
+}
+
+.thread-file-path-left {
+    display: flex;
+    justify-content: flex-start;
+    gap: 0.25rem;
+    align-items: center;
+    flex-direction: row;
+    width: 100%;
 }
 
 .thread-branch-text {
@@ -134,7 +133,7 @@
     white-space: nowrap;
     overflow: hidden;  
     text-overflow: ellipsis;
-    color: var(--vscode-descriptionForeground)
+    color: var(--vscode-descriptionForeground);
 }
 
 .thread-file-path-text {
@@ -143,7 +142,7 @@
     overflow: hidden;  
     text-overflow: ellipsis;
     direction: rtl;
-    color: var(--vscode-descriptionForeground)
+    color: var(--vscode-descriptionForeground);
 }
 
 .thread-title {
@@ -154,7 +153,6 @@
 #threads-viewer hr {
     margin: 0px -20px 0px -20px;
     background-color: var(--vscode-editorGroup-border);
-    height: 2px;
 }
 
 .textEditorContainer {
@@ -200,7 +198,7 @@
 .thread-snippet-container {
     background-color: var(--vscode-editor-background);
     border: 1px solid var(--vscode-editorGroup-border);
-    margin: 0.2em 0;
+    margin: 0.5em 0;
     border-radius: 0.2em;
 }
 

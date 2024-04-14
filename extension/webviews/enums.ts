@@ -36,7 +36,11 @@ export enum WebviewStateType {
   THREAD_CONTENTS = "threadContents",
   REPLY_CONTENTS = "replyContents",
   THREAD_SELECTED = "threadSelected",
-  GITHUB_URL = "githubUrl",
   ACTIVE_TEXT_EDITOR = "activeTextEditor",
   ACTIVE_VIEW = "activeView",
+}
+
+export enum SidebarLoadingStatus {
+  LOADING = 1,
+  LOADING_COMPLETE = 2
 }

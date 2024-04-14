@@ -18,7 +18,7 @@ export class TextEditor {
     	const defaultOptions: object = {
     		modules: {
     			toolbar: [
-    				['bold', 'italic', 'link', 'blockquote', 'code-block', { list: 'ordered' }, { list: 'bullet' }, { color: [] }, , { background: [] }]
+    				['bold', 'italic', 'link', 'blockquote', 'code-block', { list: 'ordered' }, { list: 'bullet' }, { color: [] }, , { background: [] }, 'clean',]
     			],
     			mention: {
     				allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,

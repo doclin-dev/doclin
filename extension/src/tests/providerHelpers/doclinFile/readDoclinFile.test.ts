@@ -3,22 +3,21 @@ import { expect } from 'chai';
 import { SinonStub, stub } from 'sinon';
 import { readDoclinFile } from '../../../providerHelpers/doclinFile/readDoclinFile';
 import { DoclinFile } from '../../../types';
-import { describe, it, beforeEach, afterEach } from 'mocha';
 import * as doclinFileReadWriteUtil from '../../../utils/doclinFileReadWriteUtil';
 import * as path from 'path';
 
-describe('Testing readDoclinFile', () => {
+suite('Testing readDoclinFile', () => {
 	let getExistingDoclinFilePathStub: SinonStub;
 
-	beforeEach(() => {
+	setup(() => {
 		getExistingDoclinFilePathStub = stub(doclinFileReadWriteUtil, 'getExistingDoclinFile');
 	});
 
-	afterEach(() => {
+	teardown(() => {
 		getExistingDoclinFilePathStub.restore();
 	});
 
-	it('should return DoclinFile from the existing doclin file path', async () => {
+	test('should return DoclinFile from the existing doclin file path', async () => {
 		const mockFilePath = path.resolve(__dirname, '../../../../testAssets/.doclin');
 		const mockDoclinFileUri = vscode.Uri.file(mockFilePath);
 		getExistingDoclinFilePathStub.resolves(mockDoclinFileUri);
@@ -30,7 +29,7 @@ describe('Testing readDoclinFile', () => {
 		expect(doclinFile.projectId).to.equal(5);
 	});
 
-	it('should return empty DoclinFile when doclin file does not exist', async () => {
+	test('should return empty DoclinFile when doclin file does not exist', async () => {
 		getExistingDoclinFilePathStub.resolves(null);
 
 		const doclinFile: DoclinFile = await readDoclinFile();

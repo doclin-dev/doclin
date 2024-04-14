@@ -4,16 +4,20 @@
     import Thread from './Thread.svelte';
     import { ActiveView, Page } from "../../enums";
     import FilterMenu from "../FilterMenu.svelte";
-    import { activeView, currentProject, page, reload, threadContents } from "../../state/store";
+    import { activeView, currentProject, page, reload } from "../../state/store";
     import ThreadAddForm from "./ThreadAddForm.svelte";
     
     let threads: Array<ThreadType> = [];
-    let activeFilePath: string;
+    let activeFilePath: string = '';
 
     $: {
         if ($reload > 1) {
             loadThreads();
         }
+    }
+    
+    $: if ($activeView != null && $activeView != undefined) {
+        loadThreads();
     }
 
     const loadThreads = () => {
@@ -47,7 +51,7 @@
                 threads = [message.value, ...threads];
                 break;
             case "switchActiveEditor":
-                if ($activeView === ActiveView.CurrentFileThreads){
+                if ($activeView === ActiveView.CurrentFileThreads) {
                     loadCurrentFileThreads();
                 }
                 break;
@@ -60,7 +64,6 @@
         }
 
         window.addEventListener("message", messageEventListener);
-        loadThreads();
     });
 
     onDestroy(() => {
@@ -68,7 +71,7 @@
     });
 </script>
 
-<FilterMenu filePath= {activeFilePath} onFirstSegmentClick={loadAllThreads} onSecondSegmentClick={loadCurrentFileThreads}/>
+<FilterMenu filePath={activeFilePath}/>
 
 <ThreadAddForm/>
 

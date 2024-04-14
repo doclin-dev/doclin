@@ -1,9 +1,9 @@
 <script lang='ts'>
     import { onMount, onDestroy } from "svelte";
-    import { activeTextEditor, activeView, currentOrganization, currentProject, page, reload, threadContents } from "../../state/store";
+    import { activeTextEditor, activeView, currentOrganization, currentProject, threadContents } from "../../state/store";
     import { TextEditor } from "../TextEditor";
-    import { TextEditorType, ActiveView, Page } from "../../enums";
-    import type { User, Thread as ThreadType } from "../../types";
+    import { TextEditorType, ActiveView } from "../../enums";
+    import type { User } from "../../types";
 
     let quillEditor: TextEditor;
     let anonymousCheck: boolean = false;
@@ -18,6 +18,12 @@
     onDestroy(() => {
         window.removeEventListener("message", messageEventListener)
     });
+
+    const preventEnter = (event: KeyboardEvent) => {
+        if (event.key === 'Enter' && (event.target as Element)?.nodeName !== 'TEXTAREA') {
+            event.preventDefault();
+        }
+    };
 
     const messageEventListener = async (event: any) => {
         const message = event.data;
@@ -69,9 +75,10 @@
 
 <div class='textEditorContainer mb-2'>
     <form
-        on:submit|preventDefault={submitThreadMessage}>
-        <input class="textEditorTitle" placeholder="Title" bind:value={title} />
-        <div id="textEditor" class="textEditor"></div>
+        on:submit|preventDefault={submitThreadMessage}
+        on:keydown={preventEnter}>
+        <input class="textEditorTitle" placeholder="Title" bind:value={title} tabindex="1"/>
+        <div id="textEditor" class="textEditor" tabindex="2"></div>
         <div id="submitContainer">
             <label class="checkbox">
                 <input type="checkbox" bind:checked={anonymousCheck}>

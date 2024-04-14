@@ -2,6 +2,11 @@ import { ProjectRepository } from "../database/repositories/ProjectRepository";
 import { Project } from "../database/entities/Project";
 import { OrganizationRepository } from "../database/repositories/OrganizationRepository";
 import { Request, Response } from "express";
+import createDOMPurify from 'dompurify';
+import { JSDOM } from 'jsdom';
+
+const window = new JSDOM('').window;
+const DOMPurify = createDOMPurify(window);
 
 export const getProjects = async (req: any, res: any) => {
 	const organizationId: string = req.params.organizationId;
@@ -10,25 +15,24 @@ export const getProjects = async (req: any, res: any) => {
 
 	const responseProjects = projects.map(project => ({
 		id: project.id,
-		name: project.name,
-		url: project.url
+		name: project.name
 	}));
 
 	return res.send({ projects: responseProjects });
 };
 
 export const postProject = async (req:any, res:any) => {
-	const name = req.body.name;
-	const url = req.body.url;
+	const name = DOMPurify.sanitize(req.body.name);
 	const organizationId = req.params.organizationId;
 
 	const organization = await OrganizationRepository.findOrganizationById(organizationId);
 
-	if (!organization) {return;}
+	if (!organization) {
+		return;
+	}
 
 	const project = await Project.create({
 		name: name,
-		url: url,
 		organizationId: organizationId
 	}).save();
 
@@ -47,8 +51,7 @@ export const getProject = async (req: Request, res: Response) => {
 
 	const responseProject = {
 		id: project.id,
-		name: project.name,
-		url: project.url
+		name: project.name
 	};
 
 	res.send({ project: responseProject });

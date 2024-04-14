@@ -57,3 +57,12 @@
     background-color: var(--vscode-editorGroup-border);
     height: 2px;
 }
+
+.reply-count-line {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 10px;
+}

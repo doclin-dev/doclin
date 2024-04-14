@@ -9,9 +9,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Changed
 - Updated thread addition behaviour under "File Threads" to attach to code file without snippet.
 - Redesigned UI.
+- Optimized threads loading.
+- Fixed unable to add comment when sidebar is not open.
 
 ### Added
+- Added comment annotation.
 - Added title to threads.
+- Added a key binding to add a comment.
 
 ## [0.1.3]
 

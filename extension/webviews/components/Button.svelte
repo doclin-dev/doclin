@@ -12,8 +12,6 @@
     export let children: string = "";
     export let childrenClassName: string = "";
 
-    let clicked: boolean;
-
     $: if (!['sm', 'md'].includes(size)) {
         size = 'sm';
     }
@@ -28,7 +26,7 @@
 
     function handleKeyPress(event: KeyboardEvent) {
         if (event.key === 'Enter') {
-            clicked = true;
+            onClick();
         }
     }
 

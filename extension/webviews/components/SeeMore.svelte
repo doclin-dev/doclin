@@ -24,7 +24,7 @@
             textContainer.style.maxHeight = "none";
             seeMoreLink.textContent = SEE_LESS_TEXT;
         } else {
-            textContainer.style.maxHeight = "125px"; // Set your max height here
+            textContainer.style.maxHeight = "125px";
             seeMoreLink.textContent = SEE_MORE_TEXT;
         }
     }
@@ -32,7 +32,7 @@
 
 <style>
     .text-container {
-        max-height: 250px;
+        max-height: 125px;
         overflow: hidden;
     }
 
@@ -42,9 +42,10 @@
     }
 </style>
 
-<div class="text-container" bind:this={textContainer}>
-    {@html content}
+<div>
+    <div class="text-container" bind:this={textContainer}>
+        {@html content}
+    </div>
+    
+    <a href='/' class='see-more' on:click={toggleText} bind:this={seeMoreLink}>{SEE_MORE_TEXT}</a>
 </div>
-
-<a href='/' class='see-more' on:click={toggleText} bind:this={seeMoreLink}>{SEE_MORE_TEXT}</a>
-
