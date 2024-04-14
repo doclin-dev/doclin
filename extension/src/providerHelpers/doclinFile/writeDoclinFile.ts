@@ -12,21 +12,21 @@ export const writeDoclinFile = async (fileJSON: DoclinFile) => {
 		const workingFolder = getActiveEditorFolder() ?? getWorkspaceFolder();
 
 		if (workingFolder && !isLocalWorkspace()) {
-			logger.error("Initializing doclin is not supported in virtual workspace.");
+			logger.error("Initializing doclin is not supported in virtual workspace.", true);
 			return;
 		}
 
 		const filePath = await getExistingDoclinFile() ?? await computeNewDoclinFileUri();
 
 		if (!filePath) {
-			logger.error("Could not compute write file path for doclin file.");
+			logger.error("Could not compute write file path for doclin file.", true);
 			return;
 		}
-        
+
 		await writeToFilePath(filePath, JSON.stringify(fileJSON));
 
 	} catch (error) {
-		logger.error("Error while creating .doclin file " + error);
+		logger.error(`Error while creating .doclin file ${error}`, true);
 	}
 };
 
@@ -43,7 +43,7 @@ const computeNewDoclinFileUriFromActiveEditor = async (): Promise<vscode.Uri | n
 		const activeEditorFolder = getActiveEditorFolder();
 
 		if (!activeEditorFolder) {
-			logger.error(`No folder or file is opened`);
+			logger.error(`No folder or file is opened`, true);
 			return null;
 		}
 
@@ -66,7 +66,7 @@ const computeNewDoclinFileUriFromWorkspace = async (): Promise<vscode.Uri | null
 		const workspaceFolder = getWorkspaceFolder();
 
 		if (!workspaceFolder) {
-			logger.error(`Error during computing new doclin file path`);
+			logger.error(`Error during computing new doclin file path`, true);
 			return null;
 		}
 
@@ -79,7 +79,7 @@ const computeNewDoclinFileUriFromWorkspace = async (): Promise<vscode.Uri | null
 		return vscode.Uri.joinPath(workspaceFolder, DOCLIN_FILE_NAME);
         
 	} catch (error) {
-		logger.error(`Error computing new doclin file path from workspace ${error}`);
+		logger.error(`Error computing new doclin file path from workspace ${error}`, true);
 		return null;
 	}
 };

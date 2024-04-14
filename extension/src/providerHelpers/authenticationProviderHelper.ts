@@ -5,16 +5,18 @@ import { SecretStorageManager } from "../SecretStorageManager";
 import authApi from "../api/authApi";
 import { SecretStorageType } from "../enums";
 import logger from "../utils/logger";
+import { User } from "../types";
+import AuthenticatedUserCacheManager from "../utils/cache/AuthenticatedUserCacheManager";
 
 const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github`);
 
 const app = polka();
 
-export const authenticate = (fn?: () => void) => {
+export const authenticate = (callback?: () => void) => {
 	try {
 		app.server?.close();
 
-		app.get(`/auth`, (req, res) => getToken(req, res, fn));
+		app.get(`/auth`, (req, res) => getToken(req, res, callback));
 
 		app.listen(54321, openApiUrl);
 	} catch (error) {
@@ -28,10 +30,15 @@ const getToken = async (req: any, res: any, fn?: () => void) => {
 
 		if (!token) {
 			res.end(`Authentication unsuccessful. Please try again later.`);
-			logger.info("Authentication unsuccessful.");
+			logger.info("Authentication unsuccessful. Could not receive token.", true);
 			app.server?.close();
 			return;
 		}
+
+		res.end(`Authentication successful. You can close this now!`);
+		logger.info("Authentication successful.", true);
+
+		app.server?.close();
 
 		await setTokenToStorage(token);
 
@@ -39,12 +46,8 @@ const getToken = async (req: any, res: any, fn?: () => void) => {
 			fn();
 		}
 
-		res.end(`Authentication successful. You can close this now!`);
-		logger.info("Authentication successful.");
-
-		app.server?.close();
 	} catch (error) {
-		logger.error("An error occured when receiving token" + error);
+		logger.error(`An error occured when receiving token ${error}`, true);
 	}
 };
 
@@ -56,10 +59,19 @@ const openApiUrl = (err: Error) => {
 	vscode.commands.executeCommand("vscode.open", AUTH_URL);
 };
 
-export const getAuthenticatedUser = async () => {
+export const getAuthenticatedUser = async (): Promise<User | undefined> => {
+	const autheticatedUserCacheManger = new AuthenticatedUserCacheManager();
+	const authenticatedUserCache = await autheticatedUserCacheManger.getAuthenticatedUser();
+
+	if (authenticatedUserCache) {
+		return authenticatedUserCache;
+	}
+
 	const response = await authApi.getAuthenticatedUser();
 	const payload = response?.data;
-	const user = payload?.user;
+	const user: User = payload?.user;
+
+	await autheticatedUserCacheManger.setAuthenticatedUser(user);
 
 	return user;
 };
@@ -74,15 +86,17 @@ const setTokenToStorage = async (token: string|null) => {
 
 export const logout = async () => {
 	await setTokenToStorage("");
+	const autheticatedUserCacheManger = new AuthenticatedUserCacheManager();
+	await autheticatedUserCacheManger.clearAuthenticatedUser();
 };
 
 export const postUserEmail = async(email:string) => {
 	try{
 		const response = await authApi.postUserEmail(email);
 		const status = response?.status;
-		logger.info('Email has been successfully registered.');
+		
 		return status;
 	} catch(error) {
-		logger.error(`An error occured when registering your email. ${error}`);
+		logger.error(`An error occured when registering your email. ${error}`, true);
 	}
 };

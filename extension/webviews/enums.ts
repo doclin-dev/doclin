@@ -11,7 +11,7 @@ export enum Page {
   RegisterEmail = "registerEmail"
 }
 
-export enum ActiveTextEditor {
+export enum TextEditorType {
   ThreadsViewerTextEditor = 1,
   ReplyViewerTextEditor = 2,
   ThreadTextEditor = 3,
@@ -36,7 +36,11 @@ export enum WebviewStateType {
   THREAD_CONTENTS = "threadContents",
   REPLY_CONTENTS = "replyContents",
   THREAD_SELECTED = "threadSelected",
-  GITHUB_URL = "githubUrl",
   ACTIVE_TEXT_EDITOR = "activeTextEditor",
   ACTIVE_VIEW = "activeView",
+}
+
+export enum SidebarLoadingStatus {
+  LOADING = 1,
+  LOADING_COMPLETE = 2
 }

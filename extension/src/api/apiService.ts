@@ -1,6 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
 import { PRODUCTION, API_BASE_URL as baseURL } from '../envConstants';
-import * as vscode from "vscode";
 import { SecretStorageManager } from '../SecretStorageManager';
 import { SecretStorageType } from '../enums';
 
@@ -18,10 +17,6 @@ export const createAxiosInstance = async () => {
 	instance.interceptors.response.use(
 		response => response,
 		error => {
-			if (error?.response?.status !== 403) {
-				vscode.window.showInformationMessage("Doclin: Error occured while connecting to server!");
-			}
-
 			return Promise.reject(error);
 		}
 	);

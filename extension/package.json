@@ -2,9 +2,9 @@
   "name": "doclin",
   "displayName": "Doclin",
   "publisher": "Doclin",
-  "description": "Doclin is a modern way of commenting on codebase.",
+  "description": "Doclin is a real-time commenting and discussion tool designed for codebases.",
   "icon": "media/doclinLogo.png",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "engines": {
     "vscode": "^1.52.0"
   },
@@ -20,7 +20,6 @@
   "activationEvents": [
     "onStartupFinished",
     "onCommand:doclin.addComment",
-    "onCommand:doclin.authenticate",
     "onView:doclin.sidebar"
   ],
   "main": "./dist/extension.js",
@@ -50,19 +49,32 @@
         "command": "doclin.addComment",
         "category": "Doclin",
         "title": "Add Comment"
-      },
+      }
+    ],
+    "keybindings": [
       {
-        "command": "doclin.authenticate",
-        "category": "Doclin",
-        "title": "Authenticate"
+        "command": "doclin.addComment",
+        "key": "ctrl+alt+c",
+        "mac": "cmd+alt+c",
+        "when": "editorTextFocus"
+      }
+    ],
+    "submenus": [
+      {
+        "id": "doclin.submenu",
+        "label": "Doclin"
       }
     ],
     "menus": {
       "editor/context": [
         {
-          "command": "doclin.addComment",
-          "when": "editorTextFocus",
+          "submenu": "doclin.submenu",
           "group": "doclin"
+        }
+      ],
+      "doclin.submenu": [
+        {
+          "command": "doclin.addComment"
         }
       ]
     }
@@ -79,7 +91,7 @@
     "test-compile": "tsc -p ./",
     "test-watch": "tsc -watch -p ./",
     "pretest": "npm run test-compile && npm run lint",
-    "lint": "eslint src --ext ts",
+    "lint": "eslint src --ext ts && svelte-check",
     "lint-fix": "eslint src --ext ts --fix",
     "test": "vscode-test",
     "svelte-check": "svelte-check"

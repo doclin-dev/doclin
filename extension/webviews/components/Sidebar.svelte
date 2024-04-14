@@ -1,16 +1,16 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte";
     import type { User } from "../types";
-    import { Page } from "../enums";
-    import ThreadsViewer from "./ThreadsViewer.svelte";
+    import { ActiveView, Page, SidebarLoadingStatus } from "../enums";
+    import ThreadsViewer from "./thread/ThreadsViewer.svelte";
     import InitializeProject from "./InitializeProject.svelte";
-    import ReplyViewer from "./ReplyViewer.svelte";
+    import ReplyViewer from "./reply/ReplyViewer.svelte";
     import InitializeOrganization from "./InitializeOrganization.svelte";
     import InviteUser from "./InviteUser.svelte";
     import AccessRequired from "./AccessRequired.svelte";
     import ViewerTopBar from "./ViewerTopBar.svelte";
     import RegisterEmail from "./RegisterEmail.svelte";
-    import { currentOrganization, currentProject, githubUrl, page, reload } from "../state/store";
+    import { activeView, currentOrganization, currentProject, page, reload, threadSelected } from "../state/store";
 
     let loading = true;
     let user: User | null = null;
@@ -26,11 +26,11 @@
     }
 
     const handleGetExtensionState = (extensionState: any) => {
+        $reload += 1;
         error = extensionState?.error;
         user = extensionState?.user;
         $currentOrganization = extensionState?.organization;
         $currentProject = extensionState?.project;
-        $githubUrl = extensionState?.githubUrl;
         const isFolderOrFileOpened = extensionState?.isFolderOrFileOpened;
 
         if (!user?.email) {
@@ -68,11 +68,27 @@
         }
 
         loading = false;
-        $reload += 1;
     }
 
     const getExtensionState = () => {
-        tsvscode.postMessage({ type: "getExtensionState", value: undefined });
+        tsvscode.postMessage({ type: "getExtensionState", value: null });
+    }
+
+    const reloadAndGetExtensionState = () => {
+        tsvscode.postMessage({ type: "reloadAndGetExtensionState", value: null });
+    }
+
+    const getSidebarLoadingStatus = () => {
+        let response = SidebarLoadingStatus.LOADING;
+
+        if (!loading) {
+            response = SidebarLoadingStatus.LOADING_COMPLETE
+        }
+
+        tsvscode.postMessage({
+            type: "getSidebarLoadingStatus",
+            value: response
+        });
     }
 
     const messageEventListener = async (event: any) => {
@@ -80,6 +96,20 @@
         switch (message.type) {
             case "getExtensionState":
                 handleGetExtensionState(message.value);
+                break;
+            case "reloadAndGetExtensionState":
+                handleGetExtensionState(message.value);
+                break;
+            case "getSidebarLoadingStatus":
+                getSidebarLoadingStatus();
+                break;
+            case "viewFileThreads":
+                $page = Page.ThreadsViewer;
+                $activeView = ActiveView.CurrentFileThreads;
+                break;
+            case "viewThread":
+                $threadSelected = message.value;
+                $page = Page.ReplyViewer;
                 break;
         }
     };
@@ -99,9 +129,9 @@
     <div>loading...</div>
 {:else if error}
     <div>Could not reach server. Please try again later!</div>
-    <button on:click={getExtensionState}>Reload</button>
+    <button on:click={reloadAndGetExtensionState}>Reload</button>
 {:else if user}
-    <ViewerTopBar username={user?.name} reload={getExtensionState} logout={logout}/>
+    <ViewerTopBar username={user?.name} reload={reloadAndGetExtensionState} logout={logout}/>
 
     {#if $page === Page.RegisterEmail}
         <RegisterEmail/>

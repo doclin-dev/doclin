@@ -1,32 +1,43 @@
+import { RequestSnippetBlot } from "src/types/types";
 import { Thread } from "../database/entities/Thread";
 import { ThreadSnippet } from "../database/entities/ThreadSnippet";
 import { ThreadRepository } from "../database/repositories/ThreadRepository";
 import { sendMentionEmailNotification } from "./emailNotificationController";
 import { mapThreadResponse } from "./utils/mapperUtils";
 import { MULTIPLE_LINE_BREAK_REGEX, SINGLE_LINE_BREAK, fillUpThreadOrReplyMessageWithSnippet, getSnippetTag } from "./utils/snippetUtils";
+import createDOMPurify from 'dompurify';
+import { JSDOM } from 'jsdom';
+
+const window = new JSDOM('').window;
+const DOMPurify = createDOMPurify(window);
 
 export const postThread = async (req: any, res: any) => {
-	const threadMessage: string = req.body.threadMessage;
-	const snippets: any[] = req.body.snippets;
+	const title: string = DOMPurify.sanitize(req.body.title);
+	const threadMessage: string = DOMPurify.sanitize(req.body.threadMessage);
+	const snippets: RequestSnippetBlot[] = req.body.snippets;
 	const delta: any = req.body.delta;
 	const userId: number = req.userId;
 	const projectId: number = req.body.projectId;
 	const anonymousPost: boolean = req.body.anonymous;
 	const mentionedUserIds: number[] = req.body.mentionedUserIds;
+	const filePath: string = DOMPurify.sanitize(req.body.filePath);
+	const gitBranch: string = DOMPurify.sanitize(req.body.gitBranch);
     
 	const { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage, snippets);
 
 	const thread = await Thread.create({
+		title: title,
 		message: updatedThreadMessage,
 		userId: userId,
 		projectId: projectId,
 		snippets: snippetEntities,
 		anonymous: anonymousPost,
-		delta: delta
+		delta: delta,
+		filePath: filePath,
+		gitBranch: gitBranch
 	}).save();
-
     
-	if (mentionedUserIds.length > 0){
+	if (mentionedUserIds.length > 0) {
 		sendMentionEmailNotification(
 			req.userId, 
 			mentionedUserIds, 
@@ -41,10 +52,8 @@ export const postThread = async (req: any, res: any) => {
 	res.send({ thread: response });
 };
 
-const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, snippetblots: any[]) => {
-	let updatedThreadMessage: string = "";
-
-	updatedThreadMessage = threadMessage.replace(MULTIPLE_LINE_BREAK_REGEX, SINGLE_LINE_BREAK);
+const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, snippetblots: RequestSnippetBlot[]) => {
+	let updatedThreadMessage: string = threadMessage.replace(MULTIPLE_LINE_BREAK_REGEX, SINGLE_LINE_BREAK);
 
 	const snippetEntities = [];
 
@@ -76,13 +85,14 @@ export const getThreads = async (req: any, res: any) => {
 	}
 
 	const response = threads.map(mapThreadResponse);
-
+	
 	res.send({ threads: response });
 };
 
 export const updateThread = async (req: any, res: any) => {
 	const threadId: number = req.params.id;
-	const threadMessage: string = req.body.message;
+	const title: string = DOMPurify.sanitize(req.body.title);
+	const threadMessage: string = DOMPurify.sanitize(req.body.message);
 	const snippets: any[] = req.body.snippets;
 	const delta: any = req.body.delta;
 
@@ -97,6 +107,7 @@ export const updateThread = async (req: any, res: any) => {
 
 	const { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(threadMessage, snippets);
 
+	thread.title = title;
 	thread.message = updatedThreadMessage;
 	thread.snippets = snippetEntities;
 	thread.delta = delta;

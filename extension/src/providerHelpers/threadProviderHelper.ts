@@ -1,82 +1,115 @@
-import * as vscode from "vscode";
+import * as vscode from 'vscode';
 import threadApi from "../api/threadApi";
-import { getCurrentOrganizationId } from "./organizationProviderHelper";
-import { getCurrentProjectId } from "./projectProviderHelper";
-import { compareSnippetsWithActiveEditor, fillUpThreadOrReplyMessageWithSnippet, highlightCode, addLineNumbers } from "../utils/snippetComparisonUtil";
+import { compareSnippetsWithActiveEditor } from "../utils/snippetComparisonUtil";
 import { PostThread, Thread, UpdateThread } from "../types";
-import { SidebarProvider } from "../SidebarProvider";
-import { getAuthenticatedUser } from "./authenticationProviderHelper";
-import logger from "../utils/logger";
-import * as path from 'path';
-import { getExistingDoclinFile } from "../utils/doclinFileReadWriteUtil";
 import { getGitBranch } from "../utils/gitProviderUtil";
-import { clearThreadsCache, getCachedThreads, storeThreadsCache } from "../utils/threadCachingUtil";
+import { getDoclinRelativeFilePath } from "./doclinRelativeFilePath";
+import { fillUpThreadOrReplyMessageWithSnippet } from "../utils/fillUpThreadOrReplyMessageWithSnippet";
+import { readDoclinFile } from './doclinFile/readDoclinFile';
+import AllThreadsCacheManager from '../utils/cache/AllThreadsCacheManager';
+import FileThreadCacheManager from "../utils/cache/FileThreadsCacheManager";
 
 export const getThreadsByActiveFilePath = async (): Promise<{ threads: Thread[], activeFilePath: string }> => {
-	const activeFilePath = await getActiveEditorFilePath();
-	const organizationId = await getCurrentOrganizationId();
-	const projectId = await getCurrentProjectId();
+	const editor = vscode.window.activeTextEditor;
 
-	if (!organizationId || !projectId || !activeFilePath) {
-		return { threads: [], activeFilePath: "" };
+	if (editor) {
+		const threads = await getThreadsByFilePath(editor.document.uri);
+
+		return { 
+			threads, 
+			activeFilePath: await getDoclinRelativeFilePath(editor.document.uri) 
+		};
 	}
 
-	const cachedThreads = await getCachedThreads(activeFilePath);
+	return { threads: [], activeFilePath: "" };
+};
 
-	let threads: Thread[];
+export const getThreadsByFilePath = async(documentUri: vscode.Uri): Promise<Thread[]> => {
+	const fileThreadCacheManager = new FileThreadCacheManager();
+	const cachedThreads = await fileThreadCacheManager.get(documentUri.fsPath);
+
+	let threads: Thread[] = [];
 
 	if (cachedThreads) {
 		threads = cachedThreads;
 	} else {
-		threads = (await threadApi.getFileBasedThreads(organizationId, projectId, activeFilePath))?.data?.threads;
-		storeThreadsCache(activeFilePath, threads);
+		const doclinFile = await readDoclinFile();
+		const organizationId = doclinFile?.organizationId;
+		const projectId = doclinFile?.projectId;
+	
+		if (organizationId && projectId) {
+			const filePath = await getDoclinRelativeFilePath(documentUri);
+			threads = (await threadApi.getFileBasedThreads(organizationId, projectId, filePath))?.data?.threads;
+			await fileThreadCacheManager.set(documentUri.fsPath, threads);
+		}
 	}
 
 	for (const thread of threads) {
 		await compareSnippetsWithActiveEditor(thread.snippets);
+		fillUpThreadOrReplyMessageWithSnippet(thread);
 	};
 
-	threads.forEach(fillUpThreadOrReplyMessageWithSnippet);
-
-	return { threads, activeFilePath };
+	return threads;
 };
 
+export const getAllThreads = async (): Promise<Thread[]> => {
+	const doclinFile = await readDoclinFile();
+	const organizationId = doclinFile.organizationId;
+	const projectId = doclinFile.projectId;
 
-export const getAllThreads = async (): Promise<Thread[] | undefined> => {
-	const organizationId = await getCurrentOrganizationId();
-	const projectId = await getCurrentProjectId();
+	if (!organizationId || !projectId) {
+		return [];
+	}
 
-	if (!organizationId || !projectId) {return;}
+	const allThreadsCacheManager = new AllThreadsCacheManager();
+	const cachedThreads = await allThreadsCacheManager.get(projectId);
 
+	if (cachedThreads) {
+		return cachedThreads;
+	}
+
+	return await apiFetchAllThreads(organizationId, projectId);
+};
+
+const apiFetchAllThreads = async (organizationId: string, projectId: number) => {
 	const response = await threadApi.getAllThreads(organizationId, projectId);
 	const payload = response?.data;
 	let threads: Thread[] = payload?.threads;
 
 	for (const thread of threads) {
 		await compareSnippetsWithActiveEditor(thread.snippets);
+		fillUpThreadOrReplyMessageWithSnippet(thread);
 	};
 
-	threads.forEach(fillUpThreadOrReplyMessageWithSnippet);
+	const allThreadsCacheManager = new AllThreadsCacheManager();
+	await allThreadsCacheManager.set(projectId, threads);
 
 	return threads;
 };
 
-export const postThread = async({ threadMessage, delta, snippets, mentionedUserIds, anonymous }: PostThread): Promise<Thread | undefined> => {
-	const organizationId = await getCurrentOrganizationId();
-	const projectId = await getCurrentProjectId();
-	const activeFilePath = await getActiveEditorFilePath();
+export const postThread = async({ title, threadMessage, delta, snippets, mentionedUserIds, anonymous, isFileThreadSelected }: PostThread): Promise<Thread | undefined> => {
+	const doclinFile = await readDoclinFile();
+	const organizationId = doclinFile.organizationId;
+	const projectId = doclinFile.projectId;
+	const activeEditorUri = vscode.window.activeTextEditor?.document.uri;
+	const activeEditorDoclinRelativePath = activeEditorUri ? await getDoclinRelativeFilePath(activeEditorUri) : null;
+	const gitBranch = await getGitBranch();
 
-	if (!organizationId || !projectId) {return;}
+	if (!organizationId || !projectId) {
+		return;
+	}
 
 	const response = await threadApi.postThread(
 		organizationId, 
-		projectId, 
+		projectId,
+		title,
 		threadMessage, 
 		delta, 
-		snippets, 
-		activeFilePath, 
+		snippets,
+		isFileThreadSelected ? gitBranch : null,
+		isFileThreadSelected ? activeEditorDoclinRelativePath : null,
 		mentionedUserIds,
-		anonymous
+		anonymous,
 	);
   
 	const thread: Thread = response?.data?.thread;
@@ -84,26 +117,37 @@ export const postThread = async({ threadMessage, delta, snippets, mentionedUserI
 	await compareSnippetsWithActiveEditor(thread.snippets);
 	fillUpThreadOrReplyMessageWithSnippet(thread);
 
-	await clearThreadsCache(activeFilePath);
+	if (activeEditorUri) {
+		const fileThreadCacheManager = new FileThreadCacheManager();
+		await fileThreadCacheManager.clear(activeEditorUri.fsPath);
+	}
+
+	const allThreadsCacheManager = new AllThreadsCacheManager();
+	await allThreadsCacheManager.clear(projectId);
 
 	return thread;
 };
 
-export const updateThread = async({ threadMessage, threadId, snippets, delta }: UpdateThread): Promise<Thread | undefined> => {
-	const organizationId = await getCurrentOrganizationId();
-	const projectId = await getCurrentProjectId();
-	const activeFilePath = await getActiveEditorFilePath();
+export const updateThread = async({ title, threadMessage, threadId, snippets, delta }: UpdateThread): Promise<Thread | undefined> => {
+	const doclinFile = await readDoclinFile();
+	const organizationId = doclinFile.organizationId;
+	const projectId = doclinFile.projectId;
+	const activeEditorUri = vscode.window.activeTextEditor?.document.uri;
+	const activeEditorDoclinRelativePath = activeEditorUri ? await getDoclinRelativeFilePath(activeEditorUri) : null;
 
-	if (!organizationId || !projectId) {return;}
+	if (!organizationId || !projectId) {
+		return;
+	}
 
 	const response = await threadApi.updateThread(
 		organizationId, 
 		projectId, 
-		threadId, 
+		threadId,
+		title,
 		threadMessage,
 		delta,
 		snippets,
-		activeFilePath
+		activeEditorDoclinRelativePath
 	);
 
 	const thread: Thread = response?.data?.thread;
@@ -111,130 +155,35 @@ export const updateThread = async({ threadMessage, threadId, snippets, delta }: 
 	await compareSnippetsWithActiveEditor(thread.snippets);
 	fillUpThreadOrReplyMessageWithSnippet(thread);
 
-	await clearThreadsCache(activeFilePath);
+	if (activeEditorUri) {
+		const fileThreadCacheManager = new FileThreadCacheManager();
+		await fileThreadCacheManager.clear(activeEditorUri.fsPath);
+	}
+
+	const allThreadsCacheManager = new AllThreadsCacheManager();
+	await allThreadsCacheManager.clear(projectId);
 
 	return thread;
 };
 
 export const deleteThread = async({ threadId }: { threadId: number }) => {
-	const organizationId = await getCurrentOrganizationId();
-	const projectId = await getCurrentProjectId();
-	const activeFilePath = await getActiveEditorFilePath();
+	const doclinFile = await readDoclinFile();
+	const organizationId = doclinFile.organizationId;
+	const projectId = doclinFile.projectId;
+	const activeEditorUri = vscode.window.activeTextEditor?.document.uri;
 
 	if (!organizationId || !projectId) {return;}
   
 	const response = await threadApi.deleteThread(organizationId, projectId, threadId);
 	const thread = response?.data?.thread;
 
-	await clearThreadsCache(activeFilePath);
+	if (activeEditorUri) {
+		const fileThreadCacheManager = new FileThreadCacheManager();
+		await fileThreadCacheManager.clear(activeEditorUri.fsPath);
+	}
+
+	const allThreadsCacheManager = new AllThreadsCacheManager();
+	await allThreadsCacheManager.clear(projectId);
 
 	return thread;
-};
-
-const getActiveEditorFilePath = async (): Promise<string> => {
-	try {
-		const editor = vscode.window.activeTextEditor;
-
-		if (editor) {
-			const activeEditorFilePath: string = editor.document.uri.fsPath;
-			const doclinFilePath = await getExistingDoclinFile();
-
-			if (!doclinFilePath) {
-				logger.error("Doclin file does not exist");
-				return "";
-			}
-
-			const doclinFolder = path.dirname(doclinFilePath.fsPath);
-
-			const relativePath = path.relative(doclinFolder, activeEditorFilePath);
-
-			if (isActiveEditorOutsideDoclinFolder(relativePath)) {
-				logger.error("Active file path does not belong in this project");
-				return "";
-			}
-
-			return relativePath;
-		}
-
-		return "";
-
-	} catch (error) {
-		logger.error("Error while fetching active editor filepath: " + error);
-		return "";
-	}
-};
-
-const isActiveEditorOutsideDoclinFolder = (relativePath: string) => {
-	return relativePath.startsWith('..');
-};
-
-export const addCodeSnippet = async (sidebarProvider: SidebarProvider) => {
-	try {
-		vscode.commands.executeCommand('workbench.view.extension.doclinSidebarView');
-
-		const activeTextEditor = vscode.window.activeTextEditor;
-
-		if (!isExtensionReadyForComment()) {
-			return;
-		}
-
-		if (activeTextEditor) {
-			const filePath = await getActiveEditorFilePath();
-			const lineStart = getLineStart(activeTextEditor);
-			const originalSnippet = activeTextEditor.document.getText(activeTextEditor.selection);
-			const displaySnippet = addLineNumbers(lineStart, highlightCode(originalSnippet));
-			const gitBranch = await getGitBranch();
-
-			await pauseExecution(); 
-
-			sidebarProvider._view?.webview.postMessage({
-				type: "populateCodeSnippet",
-				value: { filePath, lineStart, originalSnippet, displaySnippet, gitBranch },
-			});
-		}
-	} catch (error) {
-		logger.error("Exception occured. " + error);
-	}
-};
-
-const isExtensionReadyForComment = async (): Promise<boolean> => {
-	const activeTextEditor = vscode.window.activeTextEditor;
-  
-	if (!activeTextEditor) {
-		logger.error("No File Selected");
-		return false;
-	}
-
-	const user = await getAuthenticatedUser();
-
-	if (!user) {
-		logger.error("Need to login before adding any comment.");
-		return false;
-	}
-
-	const organizationId = await getCurrentOrganizationId();
-	const projectId = await getCurrentProjectId();
-
-	if (!organizationId || !projectId) {
-		logger.error("Need to complete organization and project setup before adding any comment.");
-		return false;
-	}
-
-	return true;
-};
-
-const getLineStart = (activeTextEditor: vscode.TextEditor): number => {
-	const selection = activeTextEditor.selection;
-
-	if (!selection.isEmpty) {
-		return selection.start.line + 1;
-	}
-
-	return 1;
-};
-
-const pauseExecution = () => {
-	return new Promise((resolve) => {
-		setTimeout(resolve, 500);
-	});
 };

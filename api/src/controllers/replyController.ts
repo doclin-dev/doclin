@@ -5,10 +5,15 @@ import { ThreadRepository } from "../database/repositories/ThreadRepository";
 import { MULTIPLE_LINE_BREAK_REGEX, SINGLE_LINE_BREAK, fillUpThreadOrReplyMessageWithSnippet, getSnippetTag } from "./utils/snippetUtils";
 import { mapReplyResponse } from "./utils/mapperUtils";
 import { sendMentionEmailNotification } from "./emailNotificationController";
+import createDOMPurify from 'dompurify';
+import { JSDOM } from 'jsdom';
+
+const window = new JSDOM('').window;
+const DOMPurify = createDOMPurify(window);
 
 export const postReply = async (req: any, res: any) => {
 	const threadId = req.params.threadId;
-	const replyMessage = req.body.replyMessage;
+	const replyMessage = DOMPurify.sanitize(req.body.replyMessage);
 	const thread = await ThreadRepository.findThreadById(threadId);
 	const anonymous = req.body.anonymous;
 	const snippets = req.body.snippets;
@@ -83,7 +88,7 @@ export const getReplies = async (req: any, res: any) => {
 
 export const updateReplyMessage = async (req: any, res: any) => {
 	const replyId: number = req.params.id;
-	const replyMessage: string = req.body.message;
+	const replyMessage: string = DOMPurify.sanitize(req.body.message);
 	const snippets: any[] = req.body.snippets;
 	const delta: any = req.body.delta;
 

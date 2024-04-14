@@ -21,6 +21,7 @@
         "eqeqeq": "warn",
         "no-throw-literal": "warn",
         "object-curly-spacing": ["warn", "always"],
-        "indent": ["warn", "tab"]
+        "indent": ["warn", "tab"],
+        "@typescript-eslint/no-unused-vars": ["warn"]
     }
 }

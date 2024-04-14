@@ -2,7 +2,7 @@
     import type { Project } from "../types";
     import { onMount, onDestroy } from "svelte";
     import { Page } from "../enums";
-    import { currentOrganization, currentProject, githubUrl, page } from "../state/store";
+    import { currentOrganization, currentProject, page } from "../state/store";
 
     let postProjectName: string = "";
     let existingProjects: Project[] = [];
@@ -25,7 +25,7 @@
             return;
         }
 
-        tsvscode.postMessage({ type: 'postProject', value: { name: postProjectName, githubUrl: $githubUrl }});
+        tsvscode.postMessage({ type: 'postProject', value: { name: postProjectName }});
     }
 
     const fetchExistingProjects = async () => {
@@ -87,7 +87,6 @@
 
         <form>
             <input class="my-1" placeholder="Enter project name" bind:value={postProjectName} />
-            <input class="my-1" placeholder="Github repo url" value={$githubUrl} disabled/>
             <button on:click|preventDefault={createNewProject}>Submit</button>
             <div class="text-danger">{error}</div>
         </form>

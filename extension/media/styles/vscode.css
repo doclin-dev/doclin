@@ -1,7 +1,7 @@
 :root {
   --container-paddding: 20px;
   --input-padding-vertical: 6px;
-  --input-padding-horizontal: 4px;
+  --input-padding-horizontal: 10px;
   --input-margin-vertical: 4px;
   --input-margin-horizontal: 0;
 }
@@ -79,6 +79,7 @@ textarea {
   color: var(--vscode-input-foreground);
   outline-color: var(--vscode-input-border);
   background-color: var(--vscode-input-background);
+  border-radius: 0.2em;
 }
 
 input::placeholder,
@@ -87,5 +88,7 @@ textarea::placeholder {
 }
 
 hr {
+  margin-left: -20px;
+  margin-right: -20px;
   background-color: var(--vscode-editorGroup-border);
 }
