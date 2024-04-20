@@ -1,5 +1,6 @@
 import { Thread } from "../entities/Thread";
 import { AppDataSource } from "../dataSource";
+import { Brackets } from "typeorm/query-builder/Brackets";
 
 export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
 	
@@ -54,5 +55,24 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
 		const users = [threadWithUsers.user, ...threadWithUsers.replies.map(reply => reply.user)];
 	
 		return users;
+	},
+
+	async searchThreads(searchText: string, projectId: number): Promise<Thread[]> {
+		const formattedSearchText = searchText.split(' ').join('&');
+
+		return this.createQueryBuilder('thread')
+			.leftJoinAndSelect('thread.snippets', 'snippet')
+			.leftJoinAndSelect('thread.user', 'user')
+			.leftJoinAndSelect('thread.replies', 'reply')
+			.where(`thread.projectId = :projectId`, { projectId })
+			.andWhere(new Brackets(qb => {
+				qb.where(`to_tsvector('english', thread.title) @@ to_tsquery('english', :formattedSearchText)`, { formattedSearchText })
+				  .orWhere(`to_tsvector('english', thread.message) @@ to_tsquery('english', :formattedSearchText)`, { formattedSearchText })
+				  .orWhere(`to_tsvector('english', reply.message) @@ to_tsquery('english', :formattedSearchText)`, { formattedSearchText });
+			}))
+			.orderBy(`ts_rank(to_tsvector('english', thread.title), to_tsquery('english', :formattedSearchText))`, 'DESC')
+			.addOrderBy(`ts_rank(to_tsvector('english', reply.message), to_tsquery('english', :formattedSearchText))`, 'DESC')
+			.loadRelationCountAndMap("thread.replyCount", "thread.replies")
+			.getMany();
 	}
 });

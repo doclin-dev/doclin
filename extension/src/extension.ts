@@ -8,13 +8,22 @@ import { DOCLIN_ADD_COMMENT, DOCLIN_VIEW_FILE_THREADS, DOCLIN_VIEW_THREAD } from
 import { viewFileThreadsCommand } from "./providerHelpers/annotation/viewFileThreadsCommand";
 import { viewThreadCommand } from "./providerHelpers/annotation/viewThreadCommand";
 import { Thread } from "./types";
+import { CopilotSidebarProvider } from "./CopilotSidebarProvider";
 
 export const DOCLIN_SIDEBAR = "doclin.sidebar";
+export const DOCLIN_COPILOT_SIDEBAR = "doclin.copilotSidebar";
 
 export function activate(context: vscode.ExtensionContext) {
   	SecretStorageManager.secretStorage = context.secrets;
   	GlobalStateManager.globalState = context.globalState;
 
+	initializeSidebarProvider(context);
+	initializeCopilotSidebarProvider(context);
+	createStatusBarItem();
+	initializeAnnotation(context);
+}
+
+const initializeSidebarProvider = (context: vscode.ExtensionContext) => {
 	const sidebarProvider = new SidebarProvider(context.extensionUri);
 
 	context.subscriptions.push(
@@ -32,10 +41,14 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.commands.registerCommand(DOCLIN_VIEW_THREAD, (thread: Thread) => viewThreadCommand(thread, sidebarProvider.getWebviewView()))
 	);
+};
 
-	createStatusBarItem();
-	initializeAnnotation(context);
-}
+const initializeCopilotSidebarProvider = (context: vscode.ExtensionContext) => {
+	const copilotSidebar = new CopilotSidebarProvider(context.extensionUri);
+	context.subscriptions.push(
+		vscode.window.registerWebviewViewProvider(DOCLIN_COPILOT_SIDEBAR, copilotSidebar)
+	);
+};
 
 const createStatusBarItem = () => {
 	const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);

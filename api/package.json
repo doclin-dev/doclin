@@ -22,6 +22,7 @@
     "express-session": "^1.17.3",
     "jsdom": "^24.0.0",
     "jsonwebtoken": "^8.5.1",
+    "openai": "^4.38.2",
     "passport": "^0.4.1",
     "passport-github": "^1.1.0",
     "pg": "^8.5.1",
