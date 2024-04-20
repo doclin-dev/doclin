@@ -73,6 +73,7 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
 			.orderBy(`ts_rank(to_tsvector('english', thread.title), to_tsquery('english', :formattedSearchText))`, 'DESC')
 			.addOrderBy(`ts_rank(to_tsvector('english', reply.message), to_tsquery('english', :formattedSearchText))`, 'DESC')
 			.loadRelationCountAndMap("thread.replyCount", "thread.replies")
+			.limit(5)
 			.getMany();
 	}
 });
