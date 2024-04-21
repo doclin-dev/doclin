@@ -77,8 +77,8 @@
     <form
         on:submit|preventDefault={submitThreadMessage}
         on:keydown={preventEnter}>
-        <input class="textEditorTitle" placeholder="Title" bind:value={title} tabindex="1"/>
-        <div id="textEditor" class="textEditor" tabindex="2"></div>
+        <input class="textEditorTitle" placeholder="Title" bind:value={title}/>
+        <div id="textEditor" class="textEditor"></div>
         <div id="submitContainer">
             <label class="checkbox">
                 <input type="checkbox" bind:checked={anonymousCheck}>

@@ -16,9 +16,5 @@ export const copilotPrompt = async (prompt: string) => {
 		prompt
 	);
   
-	const reply: string = response?.data?.reply;
-
-	console.log(reply);
-
-	return reply;
+	return response?.data?.reply;
 };

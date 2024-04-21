@@ -9,10 +9,20 @@ const openai = new OpenAI({
 });
 
 export const postPrompt = async (req: Request, res: Response) => {
-	const prompt: string = req.body.prompt;
+	const userPrompt: string = req.body.prompt;
 	const projectId: any = req.params.projectId;
 
-	const threads: Thread[] = await ThreadRepository.searchThreads(prompt, projectId);
+	const systemPrompt = await generateSystemPrompt(userPrompt, projectId);
+	const reply = await sendPromptToOpenAI(systemPrompt, userPrompt);
+
+	console.log(systemPrompt);
+	console.log(reply);
+
+	res.send({ reply: reply });
+};
+
+const generateSystemPrompt = async (userPrompt: string, projectId: number) => {
+	const threads: Thread[] = await ThreadRepository.searchThreads(userPrompt, projectId);
 
 	const threadTexts: string[] = threads.map((thread, threadIndex) => {
 		const replyTexts = thread.replies.map((reply, replyIndex) => `Reply ${replyIndex+1}: ${getThreadText(reply)}`).join('\n');
@@ -23,7 +33,10 @@ export const postPrompt = async (req: Request, res: Response) => {
 	systemPrompt += `---------\n\n`;
 	systemPrompt += `Answer user's prompt using the references above. Format your response in HTML`;
 
+	return systemPrompt;
+};
 
+const sendPromptToOpenAI = async (systemPrompt: string, userPrompt: string) => {
 	const response = await openai.chat.completions.create({
 		model: "gpt-3.5-turbo",
 		messages: [
@@ -33,20 +46,15 @@ export const postPrompt = async (req: Request, res: Response) => {
 			},
 			{
 				"role": "user",
-				"content": prompt
+				"content": userPrompt
 			}
 		],
 		temperature: 1,
-		max_tokens: 1024,
+		max_tokens: 4096,
 		top_p: 1,
 		frequency_penalty: 0,
 		presence_penalty: 0,
 	});
 
-	const reply = response.choices[0].message.content;
-
-	console.log(systemPrompt);
-	console.log(reply);
-
-	res.send({ reply: reply });
+	return response.choices[0].message.content;
 };
