@@ -22,11 +22,13 @@ export const fillUpThreadOrReplyMessageWithSnippet = (message: string, snippetbl
 export const getThreadText = (thread: Thread|Reply): string => {
 	let message = thread.message;
 
-	for (const snippet of thread.snippets) {
-		message = message.replace(
-			getSnippetTag(snippet.id), 
-			`\nIn ${snippet.filePath}:\n<pre>${snippet.text}</pre>\n`
-		);
+	if (thread.snippets) {
+		for (const snippet of thread.snippets) {
+			message = message.replace(
+				getSnippetTag(snippet.id), 
+				`\nIn ${snippet.filePath}:\n<pre>${snippet.text}</pre>\n`
+			);
+		}
 	}
 
 	return message;
