@@ -15,34 +15,34 @@ import { ReplySnippet } from "./ReplySnippet";
 @Entity()
 export class Reply extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  	id: number;
 
   @Column("text")
-  message: string;
+  	message: string;
 
-  @Column({nullable: true})
-  userId: number;
+  @Column({ nullable: true })
+  	userId: number;
 
   @Column()
-  threadId: number;
+  	threadId: number;
 
-  @Column({nullable: true})
-  anonymous: boolean;
+  @Column({ nullable: true })
+  	anonymous: boolean;
 
   @ManyToOne(() => User, (user) => user.replies)
   @JoinColumn({ name: "userId" })
-  user: User;
+  	user: User;
 
   @CreateDateColumn()
-  createdAt: Date;
+  	createdAt: Date;
 
   @ManyToOne(() => Thread, (thread) => thread.replies, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "threadId" })
-  thread: Thread;
+  	thread: Thread;
 
   @OneToMany(() => ReplySnippet, (snippet) => snippet.reply, { cascade: true })
-  snippets: ReplySnippet[];
+  	snippets: ReplySnippet[];
 
   @Column({ type: 'json', nullable: true })
-  delta: any;
+  	delta: any;
 }

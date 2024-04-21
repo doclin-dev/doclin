@@ -10,6 +10,7 @@ import { inviteUser, redeemInvitation } from "./providerHelpers/invitationProvid
 import { WebviewMessageFunction } from "./types";
 import { onError, onInfo } from "./utils/loggerProviderUtil";
 import { handleGetSidebarLoadingStatus } from "./utils/waitForSidebarToShow";
+import { copilotPrompt } from "./providerHelpers/copilotProvider";
 
 export const RESPONSE_PROVIDERS: Record<string, WebviewMessageFunction> = {
 	getExtensionState: getExtensionState,
@@ -32,7 +33,8 @@ export const RESPONSE_PROVIDERS: Record<string, WebviewMessageFunction> = {
 	inviteUser: inviteUser,
 	redeemInvitation: redeemInvitation,
 	getCurrentOrganizationUsers: getCurrentOrganizationUsers,
-	postUserEmail: postUserEmail
+	postUserEmail: postUserEmail,
+	copilotPrompt: copilotPrompt,
 };
 
 export const VOID_PROVIDERS: Record<string, WebviewMessageFunction> = {

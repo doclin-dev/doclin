@@ -20,7 +20,8 @@
   "activationEvents": [
     "onStartupFinished",
     "onCommand:doclin.addComment",
-    "onView:doclin.sidebar"
+    "onView:doclin.sidebar",
+    "onView:doclin.copilotSidebar"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -41,6 +42,13 @@
           "name": "Doclin",
           "icon": "media/doclinLogo.svg",
           "contextualTitle": "Doclin"
+        },
+        {
+          "type": "webview",
+          "id": "doclin.copilotSidebar",
+          "name": "Doclin Copilot",
+          "icon": "media/doclinLogo.svg",
+          "contextualTitle": "Doclin Copilot"
         }
       ]
     },

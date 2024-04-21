@@ -42,6 +42,7 @@ jobs:
                 --env SENDGRID_API_KEY=${{secrets.SENDGRID_API_KEY}} \
                 --env DB_HOST=${{secrets.DB_HOST}} \
                 --env DB_PASS=${{secrets.DB_PASS}} \
+                --env OPENAI_API_KEY=${{secrets.OPENAI_API_KEY}} \
                 --detach \
                 ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
   deploy-extension:
