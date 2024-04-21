@@ -68,10 +68,13 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
 			.andWhere(new Brackets(qb => {
 				qb.where(`to_tsvector('english', thread.title) @@ to_tsquery('english', :formattedSearchText)`, { formattedSearchText })
 				  .orWhere(`to_tsvector('english', thread.message) @@ to_tsquery('english', :formattedSearchText)`, { formattedSearchText })
-				  .orWhere(`to_tsvector('english', reply.message) @@ to_tsquery('english', :formattedSearchText)`, { formattedSearchText });
+				  .orWhere(`to_tsvector('english', reply.message) @@ to_tsquery('english', :formattedSearchText)`, { formattedSearchText })
+				  .orWhere(`to_tsvector('english', snippet.text) @@ to_tsquery('english', :formattedSearchText)`, { formattedSearchText });
 			}))
 			.orderBy(`ts_rank(to_tsvector('english', thread.title), to_tsquery('english', :formattedSearchText))`, 'DESC')
+			.addOrderBy(`ts_rank(to_tsvector('english', thread.message), to_tsquery('english', :formattedSearchText))`, 'DESC')
 			.addOrderBy(`ts_rank(to_tsvector('english', reply.message), to_tsquery('english', :formattedSearchText))`, 'DESC')
+			.addOrderBy(`ts_rank(to_tsvector('english', snippet.text), to_tsquery('english', :formattedSearchText))`, 'DESC')
 			.loadRelationCountAndMap("thread.replyCount", "thread.replies")
 			.limit(5)
 			.getMany();
