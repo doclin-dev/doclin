@@ -5,14 +5,33 @@ import { Brackets } from "typeorm/query-builder/Brackets";
 export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
 	
 	async findThreadByFilePathAndProjectId(filePath: string, projectId: number): Promise<Thread[]> {
-		return this.createQueryBuilder('thread')
+		const relevantThreads = await this.createQueryBuilder('thread')
+			.leftJoin('thread.snippets', 'snippet')
+			.where(queryBuilder => {
+				queryBuilder.where('thread.filePath = :filePath', { filePath })
+					.orWhere('snippet.filePath = :filePath', { filePath });
+
+			})
+			.andWhere('thread.projectId = :projectId', { projectId })
+			.getMany();
+
+		if (relevantThreads.length === 0) {
+			return relevantThreads;
+		}
+                                            
+		const threadIds = relevantThreads.map(thread => thread.id);
+
+		const relevantThreadsWithAllInfoPopulated =  this.createQueryBuilder('thread')
 			.leftJoinAndSelect('thread.snippets', 'snippet')
 			.leftJoinAndSelect('thread.user', 'user')
 			.leftJoinAndSelect('thread.replies', 'reply')
-			.where('thread.projectId = :projectId AND (thread.filePath = :filePath OR snippet.filePath = :filePath)', { projectId, filePath })
+			.where('thread.projectId = :projectId', { projectId })
+			.andWhere("thread.id IN (:...threadIds)", { threadIds })
 			.orderBy('COALESCE(reply.createdAt, thread.createdAt)', 'DESC')
 			.loadRelationCountAndMap("thread.replyCount", "thread.replies")
 			.getMany();
+
+		return relevantThreadsWithAllInfoPopulated;
 	},
 
 	async findAllThreadsByProjectId(projectId: number): Promise<Thread[]> {
