@@ -21,7 +21,7 @@ export const postPrompt = async (req: Request, res: Response) => {
 
 	let systemPrompt: string = `References: \n\n ${threadTexts.join('\n\n')} \n\n`;
 	systemPrompt += `---------\n\n`;
-	systemPrompt += `Answer user's prompt using the references above formatted in HTML`;
+	systemPrompt += `Answer user's prompt using the references above. Format your response in HTML`;
 
 
 	const response = await openai.chat.completions.create({
