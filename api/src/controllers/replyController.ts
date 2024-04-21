@@ -38,10 +38,16 @@ export const postReply = async (req: any, res: any) => {
 
 	const projectId = thread.projectId;
 
+	const relevantUserIds = (await ThreadRepository.findUsersByThreadId(threadId))
+		.map(user => user.id)
+		.filter(userId => userId !== req.userId);
+		
+	const allRelevantUserIds = [...new Set([...mentionedUserIds, ...relevantUserIds])];
+
 	if (mentionedUserIds.length > 0){
 		sendMentionEmailNotification(
 			req.userId, 
-			mentionedUserIds, 
+			allRelevantUserIds, 
 			projectId, 
 			fillUpThreadOrReplyMessageWithSnippet(replyMessage, snippets)
 		);
