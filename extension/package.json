@@ -13,8 +13,7 @@
   ],
   "capabilities": {
     "virtualWorkspaces": {
-      "supported": "limited",
-      "description": "In virtual workspaces, creating a doclin organization/project is not supported."
+      "supported": false
     }
   },
   "activationEvents": [

@@ -1,27 +1,33 @@
-# Doclin
+# Doclin - Real-time discussion on your IDE
 
-Tutorial: https://www.youtube.com/watch?v=a5DX5pQ9p5M&t
+Doclin is a real-time discussion tool on codebase. Currently only supports VS Code, but to be extended to other IDEs.
 
-# To Run
+To try out doclin live, visit [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=Doclin.doclin).
 
-## First run api:
+## Pre-requisites
 
-1. Fill up .env file with github app credentials
-2. Use a random string for ACCESS_TOKEN_SECRET
-3. Install postgres and create a database named doclin
-4. npm run watch
-5. npm run dev
+1. Node.js: Ensure you have Node.js installed (minimum version required: 14.x or higher).
+2. PostgreSQL: Make sure you have a PostgreSQL database set up and running.
 
-## To run extension 
+## Local Setup Instructions
 
-1. go to RUN > Debug. Or simply hit F5
+### Run the server
 
+1. Setup Database
+   1. Install Postgres locally
+   2. Create a database named doclin
+2. Fill up the credentials in .env file
+   1. ACCESS_TOKEN_SECRET - This is used to sign the JWT tokens. Use a random string for this.
+   2. GITHUB_CLIENT_SECRET and GITHUB_CLIENT_ID - These are used for the github login. Get these by creating a Github app.
+   3. SENDGRID_API_KEY - This is used for email notifications when someone is tagged on a thread. Get your own api key from Sendgrid.
+   4. DB_HOST and DB_PASS - These are credentials for your postgres server.
 
-## To Release in VSC
-1. Increase the version number in package.json under api and extension.
-2. Run npm i to update the package-lock.json.
-3. merge the branch to main first.
-4. then create a merge from main with branch name : `release-VERSION_NUMBER`
-5. create a PR against the prod branch and merge it.
-6. naviagte to vsc marketplace to confirm the publish.
+```
+cd api
+npm install
+npm run dev
+```
 
+### Run the extension
+
+On Visual Studio Code, open the repository. Then on the top bar, select Run, then Start Debugging (F5).
