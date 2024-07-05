@@ -15,7 +15,7 @@ Doclin is still in very early-stage. If you like the idea, please show support m
 
 ### Installation
 
-Currently only supports VS Code, but to be extended to other IDEs once we validate the concept. To try out Doclin, install extension in VS Code. [Link](https://marketplace.visualstudio.com/items?itemName=Doclin.doclin) to VS Code Marketplace.
+Currently only supports VS Code, but to be extended to other IDEs once we validate the concept. To try out Doclin, install extension in VS Code. [Link to VS Code Marketplace.](https://marketplace.visualstudio.com/items?itemName=Doclin.doclin)
 
 ## Local Setup Instructions
 
