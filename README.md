@@ -1,15 +1,29 @@
-# Doclin - Real-time discussion on your IDE
+<div align='center'>
+   <img src='https://github.com/doclin-dev/doclin/assets/24940719/dd865064-5b57-4793-9800-bbffdc391d67' alt='Doclin' width='300px' />
+   
+   Real-time code discussion and documentation on your IDE
+</div>
 
-Doclin is a real-time discussion tool on codebase. Currently only supports VS Code, but to be extended to other IDEs.
+## Getting Started
 
-To try out doclin live, visit [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=Doclin.doclin).
+### Purpose
 
-## Pre-requisites
+The purpose of this tool is to build code knowledgebase easily. Traditional code documentation methods is very inefficient. Developers write the documentation at the same time as their code, and it often resulted in unhelpful, missing important points, time-consuming and quickly got out of date. We realized it is more helpful to only document the answers when someone asks a question or faces a problem. This not only make sures the documentation is more meaningful, but we can spend less time in writing documentation.
+
+Doclin is still in very early-stage. If you like the idea, please show support my star-ring this repository!
+
+
+### Installation
+
+Currently only supports VS Code, but to be extended to other IDEs once we validate the concept. To try out Doclin, install extension in VS Code. [Link](https://marketplace.visualstudio.com/items?itemName=Doclin.doclin) to VS Code Marketplace.
+
+## Local Setup Instructions
+
+### Pre-requisites
 
 1. Node.js: Ensure you have Node.js installed (minimum version required: 14.x or higher).
 2. PostgreSQL: Make sure you have a PostgreSQL database set up and running.
-
-## Local Setup Instructions
+3. VS Code: Ensure you have the latest version of VS Code installed.
 
 ### Run the server
 
@@ -25,6 +39,7 @@ To try out doclin live, visit [VS Code Marketplace](https://marketplace.visualst
 ```
 cd api
 npm install
+npm run watch
 npm run dev
 ```
 
