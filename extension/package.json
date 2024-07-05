@@ -97,7 +97,7 @@
     "package": "npm run rollup && npm run webpack-prod",
     "test-compile": "tsc -p ./",
     "test-watch": "tsc -watch -p ./",
-    "pretest": "npm run test-compile && npm run lint",
+    "pretest": "npm run test-compile && npm run eslint",
     "eslint": "eslint src --ext ts",
     "eslint-fix": "eslint src --ext ts --fix",
     "svelte-check": "svelte-check",
