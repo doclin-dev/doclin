@@ -1,24 +1,17 @@
-import * as vscode from "vscode";
-import { API_BASE_URL } from "../envConstants";
-import { getNonce } from "./getNonce";
-
+import * as vscode from 'vscode';
+import { API_BASE_URL } from '../envConstants';
+import { getNonce } from './getNonce';
 
 export const getHtmlForWebview = (webview: vscode.Webview, extensionUri: vscode.Uri) => {
-	const styleUri = webview.asWebviewUri(
-		vscode.Uri.joinPath(extensionUri, "media", "styles", "main.css")
-	);
+  const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'media', 'styles', 'main.css'));
 
-	const scriptUri = webview.asWebviewUri(
-		vscode.Uri.joinPath(extensionUri, "out", "compiled/sidebar.js")
-	);
+  const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'out', 'compiled/sidebar.js'));
 
-	const styleMainUri = webview.asWebviewUri(
-		vscode.Uri.joinPath(extensionUri, "out", "compiled/sidebar.css")
-	);
+  const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'out', 'compiled/sidebar.css'));
 
-	const nonce = getNonce();
+  const nonce = getNonce();
 
-	return `<!DOCTYPE html>
+  return `<!DOCTYPE html>
 			<html lang="en">
 
 			<head>

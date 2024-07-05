@@ -1,52 +1,46 @@
-import * as vscode from "vscode";
-import { handleWebviewMessageReceive } from "./webviewMessageHandler";
-import { getNonce } from "./providerHelpers/getNonce";
-import { API_BASE_URL } from "./envConstants";
+import * as vscode from 'vscode';
+import { handleWebviewMessageReceive } from './webviewMessageHandler';
+import { getNonce } from './providerHelpers/getNonce';
+import { API_BASE_URL } from './envConstants';
 
 export class CopilotSidebarProvider implements vscode.WebviewViewProvider {
-	_view?: vscode.WebviewView;
-	_doc?: vscode.TextDocument;
+  _view?: vscode.WebviewView;
+  _doc?: vscode.TextDocument;
 
-	constructor(private readonly _extensionUri: vscode.Uri) {}
+  constructor(private readonly _extensionUri: vscode.Uri) {}
 
-	public resolveWebviewView(webviewView: vscode.WebviewView) {
-		this._view = webviewView;
+  public resolveWebviewView(webviewView: vscode.WebviewView) {
+    this._view = webviewView;
 
-		webviewView.webview.options = {
-			enableScripts: true,
-			localResourceRoots: [this._extensionUri],
-		};
+    webviewView.webview.options = {
+      enableScripts: true,
+      localResourceRoots: [this._extensionUri],
+    };
 
-		webviewView.webview.html = getHtmlForWebview(webviewView.webview, this._extensionUri);
+    webviewView.webview.html = getHtmlForWebview(webviewView.webview, this._extensionUri);
 
-		handleWebviewMessageReceive(webviewView.webview);
-	}
+    handleWebviewMessageReceive(webviewView.webview);
+  }
 
-	public getWebviewView(): vscode.WebviewView | undefined {
-		return this._view;
-	}
+  public getWebviewView(): vscode.WebviewView | undefined {
+    return this._view;
+  }
 
-	public revive(panel: vscode.WebviewView) {
-		this._view = panel;
-	}
+  public revive(panel: vscode.WebviewView) {
+    this._view = panel;
+  }
 }
 
 const getHtmlForWebview = (webview: vscode.Webview, extensionUri: vscode.Uri) => {
-	const styleUri = webview.asWebviewUri(
-		vscode.Uri.joinPath(extensionUri, "media", "styles", "main.css")
-	);
+  const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'media', 'styles', 'main.css'));
 
-	const scriptUri = webview.asWebviewUri(
-		vscode.Uri.joinPath(extensionUri, "out", "compiled/copilotSidebar.js")
-	);
+  const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'out', 'compiled/copilotSidebar.js'));
 
-	const styleMainUri = webview.asWebviewUri(
-		vscode.Uri.joinPath(extensionUri, "out", "compiled/copilotSidebar.css")
-	);
+  const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'out', 'compiled/copilotSidebar.css'));
 
-	const nonce = getNonce();
+  const nonce = getNonce();
 
-	return `<!DOCTYPE html>
+  return `<!DOCTYPE html>
 			<html lang="en">
 
 			<head>

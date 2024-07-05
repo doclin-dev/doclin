@@ -1,35 +1,34 @@
 import {
-	BaseEntity,
-	Column,
-	Entity,
-	OneToMany,
-	ManyToOne,
-	PrimaryGeneratedColumn,
-	CreateDateColumn,
-	JoinColumn
-} from "typeorm";
-import { Organization } from "./Organization";
-import { Thread } from "./Thread";
-
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  JoinColumn,
+} from 'typeorm';
+import { Organization } from './Organization';
+import { Thread } from './Thread';
 
 @Entity()
 export class Project extends BaseEntity {
   @PrimaryGeneratedColumn()
-  	id: number;
+  id: number;
 
   @CreateDateColumn()
-  	createdAt: Date;
+  createdAt: Date;
 
-  @Column("text")
-  	name: string;
+  @Column('text')
+  name: string;
 
   @Column()
-  	organizationId: string;
+  organizationId: string;
 
   @ManyToOne(() => Organization, (organization) => organization.projects)
-  @JoinColumn({ name: "organizationId" })
-  	organization: Organization;
+  @JoinColumn({ name: 'organizationId' })
+  organization: Organization;
 
   @OneToMany(() => Thread, (thread) => thread.project)
-  	threads: Thread[];
+  threads: Thread[];
 }

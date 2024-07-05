@@ -1,14 +1,6 @@
-import {
-	BaseEntity,
-	Column,
-	Entity,
-	PrimaryGeneratedColumn,
-	CreateDateColumn,
-	ManyToOne,
-	JoinColumn
-} from "typeorm";
-import { Organization } from "./Organization";
-import { Project } from "./Project";
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Organization } from './Organization';
+import { Project } from './Project';
 
 @Entity()
 export class Invitation extends BaseEntity {
@@ -31,13 +23,13 @@ export class Invitation extends BaseEntity {
   organizationId: string;
 
   @ManyToOne(() => Organization)
-  @JoinColumn({ name: "organizationId" })
+  @JoinColumn({ name: 'organizationId' })
   organization: Organization;
 
   @Column()
   projectId: number;
 
   @ManyToOne(() => Project)
-  @JoinColumn({ name: "projectId" })
+  @JoinColumn({ name: 'projectId' })
   project: Project;
 }

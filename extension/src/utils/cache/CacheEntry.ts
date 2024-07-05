@@ -1,4 +1,4 @@
 export interface CacheEntry<T> {
-	value: T;
-	expiry: number;
+  value: T;
+  expiry: number;
 }

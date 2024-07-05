@@ -1,71 +1,67 @@
-import { GlobalStateType } from "../../enums";
-import { GlobalStateManager } from "../../GlobalStateManager";
-import { CacheEntry } from "./CacheEntry";
-import logger from "../logger";
+import { GlobalStateType } from '../../enums';
+import { GlobalStateManager } from '../../GlobalStateManager';
+import { CacheEntry } from './CacheEntry';
+import logger from '../logger';
 
 const DEFAULT_TTL: number = 7 * 24 * 60 * 60 * 1000;
 
 export default class CacheManager<K extends string | number, V> {
-	private stateType: GlobalStateType;
-	private defaultTtl: number;
-  
-	constructor(stateType: GlobalStateType, defaultTtl: number = DEFAULT_TTL) {
-		this.stateType = stateType;
-		this.defaultTtl = defaultTtl;
-	}
-  
-	async get(key: K): Promise<V | undefined> {
-		try {
-			let cache: Record<K, CacheEntry<V>> = await GlobalStateManager.getState(this.stateType) ?? {};
-			const entry = cache[key];
+  private stateType: GlobalStateType;
+  private defaultTtl: number;
 
-			if (entry && entry.expiry > Date.now()) {
-				return entry.value;
-			}
-			
-			await this.clear(key);
-			return undefined;
+  constructor(stateType: GlobalStateType, defaultTtl: number = DEFAULT_TTL) {
+    this.stateType = stateType;
+    this.defaultTtl = defaultTtl;
+  }
 
-		} catch (error) {
-			logger.error(`Error during getting cache ${error}`);
-			throw error;
-		}
-	}
+  async get(key: K): Promise<V | undefined> {
+    try {
+      let cache: Record<K, CacheEntry<V>> = (await GlobalStateManager.getState(this.stateType)) ?? {};
+      const entry = cache[key];
 
-	async set(key: K, value: V, ttl: number = this.defaultTtl): Promise<void> {
-		try {
-			let cache: Record<K, CacheEntry<V>> = await GlobalStateManager.getState(this.stateType) ?? {};
+      if (entry && entry.expiry > Date.now()) {
+        return entry.value;
+      }
 
-			cache[key] = {
-				value: value,
-				expiry: Date.now() + ttl,
-			};
+      await this.clear(key);
+      return undefined;
+    } catch (error) {
+      logger.error(`Error during getting cache ${error}`);
+      throw error;
+    }
+  }
 
-			await GlobalStateManager.setState(this.stateType, cache);
+  async set(key: K, value: V, ttl: number = this.defaultTtl): Promise<void> {
+    try {
+      let cache: Record<K, CacheEntry<V>> = (await GlobalStateManager.getState(this.stateType)) ?? {};
 
-		} catch (error) {
-			logger.error(`Error during setting cache ${error}`);
-			throw error;
-		}
-	}
+      cache[key] = {
+        value: value,
+        expiry: Date.now() + ttl,
+      };
 
-	async clear(key?: K): Promise<void> {
-		try {
-			if (key) {
-				const cache: Record<K, V> = await GlobalStateManager.getState(this.stateType) ?? {};
+      await GlobalStateManager.setState(this.stateType, cache);
+    } catch (error) {
+      logger.error(`Error during setting cache ${error}`);
+      throw error;
+    }
+  }
 
-				if (cache) {
-					delete cache[key];
-					await GlobalStateManager.setState(this.stateType, cache);
-				}
+  async clear(key?: K): Promise<void> {
+    try {
+      if (key) {
+        const cache: Record<K, V> = (await GlobalStateManager.getState(this.stateType)) ?? {};
 
-			} else {
-				await GlobalStateManager.setState(this.stateType, {});
-			}
-
-		} catch (error) {
-			logger.error(`Error during clearing cache ${error}`);
-			throw error;
-		}
-	}
+        if (cache) {
+          delete cache[key];
+          await GlobalStateManager.setState(this.stateType, cache);
+        }
+      } else {
+        await GlobalStateManager.setState(this.stateType, {});
+      }
+    } catch (error) {
+      logger.error(`Error during clearing cache ${error}`);
+      throw error;
+    }
+  }
 }

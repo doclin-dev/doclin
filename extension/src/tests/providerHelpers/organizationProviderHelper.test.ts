@@ -5,31 +5,31 @@ import { SinonStub, createSandbox } from 'sinon';
 import { expect } from 'chai';
 
 suite('storeOrganizationId', () => {
-	let sandbox: sinon.SinonSandbox;
-	let readDoclinFileStub: SinonStub;
-	let writeDoclinFileStub: SinonStub;
+  let sandbox: sinon.SinonSandbox;
+  let readDoclinFileStub: SinonStub;
+  let writeDoclinFileStub: SinonStub;
 
-	setup(() => {
-		sandbox = createSandbox();
+  setup(() => {
+    sandbox = createSandbox();
 
-		// Stub the readDoclinFile and writeDoclinFile methods
-		readDoclinFileStub = sandbox.stub(readDoclinFile, 'readDoclinFile');
-		writeDoclinFileStub = sandbox.stub(writeDoclinFile, 'writeDoclinFile');
-	});
+    // Stub the readDoclinFile and writeDoclinFile methods
+    readDoclinFileStub = sandbox.stub(readDoclinFile, 'readDoclinFile');
+    writeDoclinFileStub = sandbox.stub(writeDoclinFile, 'writeDoclinFile');
+  });
 
-	teardown(() => {
-		sandbox.restore();
-	});
+  teardown(() => {
+    sandbox.restore();
+  });
 
-	test('should store organizationId in DoclinFile', async () => {
-		const mockOrganizationId = '123';
-		const mockDoclinFile = { organizationId: '' };
-		readDoclinFileStub.resolves(mockDoclinFile);
+  test('should store organizationId in DoclinFile', async () => {
+    const mockOrganizationId = '123';
+    const mockDoclinFile = { organizationId: '' };
+    readDoclinFileStub.resolves(mockDoclinFile);
 
-		await organizationProviderHelper.storeOrganizationId(mockOrganizationId);
+    await organizationProviderHelper.storeOrganizationId(mockOrganizationId);
 
-		expect(readDoclinFileStub.calledOnce).to.be.true;
-		expect(writeDoclinFileStub.calledOnce).to.be.true;
-		expect(writeDoclinFileStub.calledWith({ organizationId: mockOrganizationId })).to.be.true;
-	});
+    expect(readDoclinFileStub.calledOnce).to.be.true;
+    expect(writeDoclinFileStub.calledOnce).to.be.true;
+    expect(writeDoclinFileStub.calledWith({ organizationId: mockOrganizationId })).to.be.true;
+  });
 });

@@ -1,27 +1,20 @@
-import { LogType } from "../../types/enums";
-import {
-	BaseEntity,
-	Column,
-	Entity,
-	PrimaryGeneratedColumn,
-	CreateDateColumn
-} from "typeorm";
+import { LogType } from '../../types/enums';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
 
 @Entity()
 export class Log extends BaseEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
-  
-    @CreateDateColumn()
-    createdAt: Date;
-  
-    @Column()
-    type: LogType;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column("text")
-    message: string;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @Column({ nullable: true })
-    userId: number;
+  @Column()
+  type: LogType;
+
+  @Column('text')
+  message: string;
+
+  @Column({ nullable: true })
+  userId: number;
 }
-  

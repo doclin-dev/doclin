@@ -8,7 +8,9 @@
     "build": "tsc",
     "dev": "nodemon dist/index.js",
     "clean": "rm -rf node_modules && rm -rf dist && npm install",
-    "lint": "eslint src --ext ts"
+    "eslint": "eslint src --ext ts",
+    "eslint-fix": "eslint src --ext ts --fix",
+    "prettier-fix": "prettier --write ."
   },
   "keywords": [],
   "author": "",

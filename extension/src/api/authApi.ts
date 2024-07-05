@@ -1,21 +1,21 @@
-import { createAxiosInstance } from "./apiService";
+import { createAxiosInstance } from './apiService';
 
-const baseAuthUrl = "/auth/user";
+const baseAuthUrl = '/auth/user';
 
 const getAuthenticatedUser = async () => {
-	const apiService = await createAxiosInstance();
-	const response = await apiService.get(baseAuthUrl);
+  const apiService = await createAxiosInstance();
+  const response = await apiService.get(baseAuthUrl);
 
-	return response;
+  return response;
 };
 
 const postUserEmail = async (email: string) => {
-	const apiService = await createAxiosInstance();
-	const response = await apiService.post(baseAuthUrl, email);
-	return response;
+  const apiService = await createAxiosInstance();
+  const response = await apiService.post(baseAuthUrl, email);
+  return response;
 };
 
 export default {
-	getAuthenticatedUser,
-	postUserEmail
+  getAuthenticatedUser,
+  postUserEmail,
 };

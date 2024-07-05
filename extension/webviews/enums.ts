@@ -1,14 +1,14 @@
 export enum Page {
-  InitializeProject = "initializeProject",
-  ThreadsViewer = "threadViewer",
-  ReplyViewer = "replyViewer",
-  Contact = "contact",
-  InitializeOrganization = "initializeOrganization",
-  Login = "login",
-  NoFolderOrFile = "noFolderOrFileOpened",
-  AccessRequired = "accessRequired",
-  InviteUser = "inviteUser",
-  RegisterEmail = "registerEmail"
+  InitializeProject = 'initializeProject',
+  ThreadsViewer = 'threadViewer',
+  ReplyViewer = 'replyViewer',
+  Contact = 'contact',
+  InitializeOrganization = 'initializeOrganization',
+  Login = 'login',
+  NoFolderOrFile = 'noFolderOrFileOpened',
+  AccessRequired = 'accessRequired',
+  InviteUser = 'inviteUser',
+  RegisterEmail = 'registerEmail',
 }
 
 export enum TextEditorType {
@@ -19,9 +19,9 @@ export enum TextEditorType {
 }
 
 export enum IntializeOrganizationView {
-  CreateOrganization = "createOrganization",
-  EnterInvitation = "enterInvitation",
-  JoinOrganization = "joinOrganization"
+  CreateOrganization = 'createOrganization',
+  EnterInvitation = 'enterInvitation',
+  JoinOrganization = 'joinOrganization',
 }
 
 export enum ActiveView {
@@ -30,17 +30,17 @@ export enum ActiveView {
 }
 
 export enum WebviewStateType {
-  PAGE = "page",
-  CURRENT_ORGANIZATION = "currentOrganization",
-  CURRENT_PROJECT = "currentProject",
-  THREAD_CONTENTS = "threadContents",
-  REPLY_CONTENTS = "replyContents",
-  THREAD_SELECTED = "threadSelected",
-  ACTIVE_TEXT_EDITOR = "activeTextEditor",
-  ACTIVE_VIEW = "activeView",
+  PAGE = 'page',
+  CURRENT_ORGANIZATION = 'currentOrganization',
+  CURRENT_PROJECT = 'currentProject',
+  THREAD_CONTENTS = 'threadContents',
+  REPLY_CONTENTS = 'replyContents',
+  THREAD_SELECTED = 'threadSelected',
+  ACTIVE_TEXT_EDITOR = 'activeTextEditor',
+  ACTIVE_VIEW = 'activeView',
 }
 
 export enum SidebarLoadingStatus {
   LOADING = 1,
-  LOADING_COMPLETE = 2
+  LOADING_COMPLETE = 2,
 }

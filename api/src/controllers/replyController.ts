@@ -1,10 +1,15 @@
-import { ReplySnippet } from "../database/entities/ReplySnippet";
-import { Reply } from "../database/entities/Reply";
-import { ReplyRepository } from "../database/repositories/ReplyRepository";
-import { ThreadRepository } from "../database/repositories/ThreadRepository";
-import { MULTIPLE_LINE_BREAK_REGEX, SINGLE_LINE_BREAK, fillUpThreadOrReplyMessageWithSnippet, getSnippetTag } from "./utils/snippetUtils";
-import { mapReplyResponse } from "./utils/mapperUtils";
-import { sendMentionEmailNotification } from "./emailNotificationController";
+import { ReplySnippet } from '../database/entities/ReplySnippet';
+import { Reply } from '../database/entities/Reply';
+import { ReplyRepository } from '../database/repositories/ReplyRepository';
+import { ThreadRepository } from '../database/repositories/ThreadRepository';
+import {
+  MULTIPLE_LINE_BREAK_REGEX,
+  SINGLE_LINE_BREAK,
+  fillUpThreadOrReplyMessageWithSnippet,
+  getSnippetTag,
+} from './utils/snippetUtils';
+import { mapReplyResponse } from './utils/mapperUtils';
+import { sendMentionEmailNotification } from './emailNotificationController';
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 
@@ -12,129 +17,129 @@ const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
 export const postReply = async (req: any, res: any) => {
-	const threadId = req.params.threadId;
-	const replyMessage = DOMPurify.sanitize(req.body.replyMessage);
-	const thread = await ThreadRepository.findThreadById(threadId);
-	const anonymous = req.body.anonymous;
-	const snippets = req.body.snippets;
-	const delta = req.body.delta;
-	const mentionedUserIds: number[] = req.body.mentionedUserIds;
+  const threadId = req.params.threadId;
+  const replyMessage = DOMPurify.sanitize(req.body.replyMessage);
+  const thread = await ThreadRepository.findThreadById(threadId);
+  const anonymous = req.body.anonymous;
+  const snippets = req.body.snippets;
+  const delta = req.body.delta;
+  const mentionedUserIds: number[] = req.body.mentionedUserIds;
 
-	if(!thread) {
-		res.send({ reply: null });
-		return;
-	}
-    
-	let { updatedReplyMessage, snippetEntities } = await createSnippetEntitiesFromReplyMessage(replyMessage, snippets);
+  if (!thread) {
+    res.send({ reply: null });
+    return;
+  }
 
-	const reply = await Reply.create({
-		threadId: threadId,
-		message: updatedReplyMessage,
-		userId: req.userId,
-		anonymous: anonymous,
-		delta: delta,
-		snippets: snippetEntities
-	}).save();
+  let { updatedReplyMessage, snippetEntities } = await createSnippetEntitiesFromReplyMessage(replyMessage, snippets);
 
-	const projectId = thread.projectId;
+  const reply = await Reply.create({
+    threadId: threadId,
+    message: updatedReplyMessage,
+    userId: req.userId,
+    anonymous: anonymous,
+    delta: delta,
+    snippets: snippetEntities,
+  }).save();
 
-	const relevantUserIds = (await ThreadRepository.findUsersByThreadId(threadId))
-		.map(user => user.id)
-		.filter(userId => userId !== req.userId);
-		
-	const allRelevantUserIds = [...new Set([...mentionedUserIds, ...relevantUserIds])];
+  const projectId = thread.projectId;
 
-	if (mentionedUserIds.length > 0){
-		sendMentionEmailNotification(
-			req.userId, 
-			allRelevantUserIds, 
-			projectId, 
-			fillUpThreadOrReplyMessageWithSnippet(replyMessage, snippets)
-		);
-	}
+  const relevantUserIds = (await ThreadRepository.findUsersByThreadId(threadId))
+    .map((user) => user.id)
+    .filter((userId) => userId !== req.userId);
 
-	const replyResponse = await ReplyRepository.findReplyWithPropertiesById(reply.id);
-	const response = replyResponse ? mapReplyResponse(replyResponse) : null;
- 
-	res.send({ reply: response });
+  const allRelevantUserIds = [...new Set([...mentionedUserIds, ...relevantUserIds])];
+
+  if (mentionedUserIds.length > 0) {
+    sendMentionEmailNotification(
+      req.userId,
+      allRelevantUserIds,
+      projectId,
+      fillUpThreadOrReplyMessageWithSnippet(replyMessage, snippets)
+    );
+  }
+
+  const replyResponse = await ReplyRepository.findReplyWithPropertiesById(reply.id);
+  const response = replyResponse ? mapReplyResponse(replyResponse) : null;
+
+  res.send({ reply: response });
 };
 
 const createSnippetEntitiesFromReplyMessage = async (replyMessage: string, snippetblots: any[]) => {
-	let updatedReplyMessage: string = "";
+  let updatedReplyMessage: string = '';
 
-	updatedReplyMessage = replyMessage.replace(MULTIPLE_LINE_BREAK_REGEX, SINGLE_LINE_BREAK);
+  updatedReplyMessage = replyMessage.replace(MULTIPLE_LINE_BREAK_REGEX, SINGLE_LINE_BREAK);
 
-	const snippetEntities = [];
+  const snippetEntities = [];
 
-	for (const snippetblot of snippetblots) {
-		const snippet: ReplySnippet = await ReplySnippet.create({
-			text: snippetblot.originalSnippet,
-			filePath: snippetblot.filePath,
-			lineStart: snippetblot.lineStart,
-			gitBranch: snippetblot.gitBranch
-		}).save();
+  for (const snippetblot of snippetblots) {
+    const snippet: ReplySnippet = await ReplySnippet.create({
+      text: snippetblot.originalSnippet,
+      filePath: snippetblot.filePath,
+      lineStart: snippetblot.lineStart,
+      gitBranch: snippetblot.gitBranch,
+    }).save();
 
-		snippetEntities.push(snippet);
+    snippetEntities.push(snippet);
 
-		updatedReplyMessage = updatedReplyMessage.replace(getSnippetTag(snippetblot.index), getSnippetTag(snippet.id));
-	}
+    updatedReplyMessage = updatedReplyMessage.replace(getSnippetTag(snippetblot.index), getSnippetTag(snippet.id));
+  }
 
-	return { updatedReplyMessage, snippetEntities }; 
+  return { updatedReplyMessage, snippetEntities };
 };
 
 export const getReplies = async (req: any, res: any) => {
-	const threadId = req.params.threadId;
+  const threadId = req.params.threadId;
 
-	const replies = await ReplyRepository.findRepliesWithPropertiesByThreadId(threadId);
-    
-	const response = replies.map(mapReplyResponse);
+  const replies = await ReplyRepository.findRepliesWithPropertiesByThreadId(threadId);
 
-	res.send({ replies: response });
+  const response = replies.map(mapReplyResponse);
+
+  res.send({ replies: response });
 };
 
 export const updateReplyMessage = async (req: any, res: any) => {
-	const replyId: number = req.params.id;
-	const replyMessage: string = DOMPurify.sanitize(req.body.message);
-	const snippets: any[] = req.body.snippets;
-	const delta: any = req.body.delta;
+  const replyId: number = req.params.id;
+  const replyMessage: string = DOMPurify.sanitize(req.body.message);
+  const snippets: any[] = req.body.snippets;
+  const delta: any = req.body.delta;
 
-	const reply = await ReplyRepository.findReplyWithPropertiesById(replyId);
+  const reply = await ReplyRepository.findReplyWithPropertiesById(replyId);
 
-	if(!reply) {
-		res.send({ reply: null });
-		return;
-	}
+  if (!reply) {
+    res.send({ reply: null });
+    return;
+  }
 
-	reply.snippets.forEach(snippet => snippet.remove());
+  reply.snippets.forEach((snippet) => snippet.remove());
 
-	const { updatedReplyMessage, snippetEntities } = await createSnippetEntitiesFromReplyMessage(replyMessage, snippets);
+  const { updatedReplyMessage, snippetEntities } = await createSnippetEntitiesFromReplyMessage(replyMessage, snippets);
 
-	reply.message = updatedReplyMessage;
-	reply.snippets = snippetEntities;
-	reply.delta = delta;
-	await reply.save();
-    
-	const replyResponse = await ReplyRepository.findReplyWithPropertiesById(replyId);
-	const response = replyResponse ? mapReplyResponse(replyResponse) : null;
+  reply.message = updatedReplyMessage;
+  reply.snippets = snippetEntities;
+  reply.delta = delta;
+  await reply.save();
 
-	res.send({ reply: response });
+  const replyResponse = await ReplyRepository.findReplyWithPropertiesById(replyId);
+  const response = replyResponse ? mapReplyResponse(replyResponse) : null;
+
+  res.send({ reply: response });
 };
 
 export const deleteReply = async (req: any, res: any) => {
-	const replyId = req.params.id;
+  const replyId = req.params.id;
 
-	const reply = await ReplyRepository.findReplyWithPropertiesById(replyId);
+  const reply = await ReplyRepository.findReplyWithPropertiesById(replyId);
 
-	if(!reply) {
-		res.send({ reply: null });
-		return;
-	}
+  if (!reply) {
+    res.send({ reply: null });
+    return;
+  }
 
-	await reply.remove();
+  await reply.remove();
 
-	res.send({ 
-		reply: {
-			id: replyId
-		}
-	});
+  res.send({
+    reply: {
+      id: replyId,
+    },
+  });
 };

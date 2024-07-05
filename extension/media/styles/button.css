@@ -1,67 +1,67 @@
 .button {
-    display: flex;
-    align-items: center;
-    border-radius: 0.2em;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  border-radius: 0.2em;
+  cursor: pointer;
 }
-  
+
 .button:hover {
-    cursor: pointer;
-    background-color: var(--vscode-button-secondaryHoverBackground);
-    color: var(--vscode-button-secondaryForeground);
+  cursor: pointer;
+  background-color: var(--vscode-button-secondaryHoverBackground);
+  color: var(--vscode-button-secondaryForeground);
 }
 
 .button:hover .buttonChild {
-    color: var(--vscode-button-secondaryForeground);
+  color: var(--vscode-button-secondaryForeground);
 }
 
 .button.md {
-    padding: 0.5rem;
+  padding: 0.5rem;
 }
 
 .button.sm {
-    padding: 0.25rem;
+  padding: 0.25rem;
 }
 
 .button.text {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .button.submit {
-    padding: 5px;
-    background-color: none;
+  padding: 5px;
+  background-color: none;
 }
 
-.button.submit:hover{
-    background-color: var(--vscode-button-secondaryHoverBackground);
-    color: white;
+.button.submit:hover {
+  background-color: var(--vscode-button-secondaryHoverBackground);
+  color: white;
 }
 
 .button.danger {
-    color: red;
-    background-color: white;
+  color: red;
+  background-color: white;
 }
 
 .button.danger:hover {
-    background-color: rgb(246, 68, 68);
-    color: white;
+  background-color: rgb(246, 68, 68);
+  color: white;
 }
 
 .button.secondary {
-    border-radius: 0.2em;
+  border-radius: 0.2em;
 }
 
 .button.secondary:hover {
-    background-color: var(--vscode-button-hoverBackground); 
-    color: var(--vscode-button-secondaryForeground);
-    border-radius: 0.2em;
+  background-color: var(--vscode-button-hoverBackground);
+  color: var(--vscode-button-secondaryForeground);
+  border-radius: 0.2em;
 }
 
 .button .icon {
-    padding: 0;
-    margin-right: 2px;
-    align-items: center;
+  padding: 0;
+  margin-right: 2px;
+  align-items: center;
 }

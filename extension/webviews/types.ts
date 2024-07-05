@@ -47,10 +47,10 @@ export type Organization = {
   unauthorized: boolean | undefined;
 };
 
-export type TextEditorInsertSnippet = { 
-  filePath: string, 
-  lineStart: number, 
-  displaySnippet: string, 
-  originalSnippet: string,
-  gitBranch: string
+export type TextEditorInsertSnippet = {
+  filePath: string;
+  lineStart: number;
+  displaySnippet: string;
+  originalSnippet: string;
+  gitBranch: string;
 };
