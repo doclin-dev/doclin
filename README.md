@@ -2,6 +2,8 @@
    <img src='https://github.com/doclin-dev/doclin/assets/24940719/dd865064-5b57-4793-9800-bbffdc391d67' alt='Doclin' width='300px' />
    
    Real-time code discussion and documentation on your IDE
+   
+   ![Deploy Status](https://img.shields.io/github/actions/workflow/status/doclin-dev/doclin/deploy.yml?branch=main)
 </div>
 
 ## Getting Started
