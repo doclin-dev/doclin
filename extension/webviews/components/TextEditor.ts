@@ -1,172 +1,193 @@
 import Quill from 'quill';
 import { QuillSnippetBlot } from './QuillSnippetBlot';
 import type { TextEditorInsertSnippet, User } from '../types';
-import "quill-mention";
+import 'quill-mention';
 import { activeTextEditor } from '../state/store';
 import type { TextEditorType } from '../enums';
 
 Quill.register({
-	'formats/snippet': QuillSnippetBlot,
+  'formats/snippet': QuillSnippetBlot,
 });
 
 const Delta = Quill.import('delta');
 
 export class TextEditor {
-	private quillInstance: any;
-    
-	constructor(selector: string, suggestedUsersList: User[]=[], customOptions?: object) {
-    	const defaultOptions: object = {
-    		modules: {
-    			toolbar: [
-    				['bold', 'italic', 'link', 'blockquote', 'code-block', { list: 'ordered' }, { list: 'bullet' }, { color: [] }, , { background: [] }, 'clean',]
-    			],
-    			mention: {
-    				allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
-    				mentionDenotationChars: ["@"],
-    				source: function(searchTerm: string, renderList: any, mentionChar:string) {
-                    
-    					const values = suggestedUsersList.map(({ id, name })=> {
-    						return { id: id, value: name };
-    					});
+  private quillInstance: any;
 
-    					if (searchTerm.length === 0) {
-    						renderList(values, searchTerm);
-    					} else {
-    						const matches = [];
-    						for (let i = 0; i < values.length; i++)
-    						{if (
-    							~values[i].value.toLowerCase().indexOf(searchTerm.toLowerCase())
-    						)
-    						{matches.push(values[i]);}}
-    						renderList(matches, searchTerm);
-    					}
-    				},
-    			}
-    		},
-    		theme: 'snow',
-			placeholder: 'Message'
-    	};
-        
-    	const options = { ...defaultOptions, ...customOptions };
-        
-    	this.quillInstance = new Quill(selector, options);
-	};
+  constructor(selector: string, suggestedUsersList: User[] = [], customOptions?: object) {
+    const defaultOptions: object = {
+      modules: {
+        toolbar: [
+          [
+            'bold',
+            'italic',
+            'link',
+            'blockquote',
+            'code-block',
+            { list: 'ordered' },
+            { list: 'bullet' },
+            { color: [] },
+            ,
+            { background: [] },
+            'clean',
+          ],
+        ],
+        mention: {
+          allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
+          mentionDenotationChars: ['@'],
+          source: function (searchTerm: string, renderList: any, mentionChar: string) {
+            const values = suggestedUsersList.map(({ id, name }) => {
+              return { id: id, value: name };
+            });
 
-	setTextEditorType(activeEditor: TextEditorType): void {
-    	this.quillInstance.container.addEventListener('mousedown', () => {
-    		activeTextEditor.set(activeEditor);
-    	});
-	};
+            if (searchTerm.length === 0) {
+              renderList(values, searchTerm);
+            } else {
+              const matches = [];
+              for (let i = 0; i < values.length; i++) {
+                if (~values[i].value.toLowerCase().indexOf(searchTerm.toLowerCase())) {
+                  matches.push(values[i]);
+                }
+              }
+              renderList(matches, searchTerm);
+            }
+          },
+        },
+      },
+      theme: 'snow',
+      placeholder: 'Message',
+    };
 
-	getContents(): any {
-    	return JSON.stringify(this.quillInstance.getContents());
-	}
+    const options = { ...defaultOptions, ...customOptions };
 
-	setContents(delta: any): void {
-    	this.quillInstance.setContents(this.parseJSON(delta));
-	};
+    this.quillInstance = new Quill(selector, options);
+  }
 
-	setText(text: string): void {
-    	this.quillInstance.setText(text);
-	}
+  setTextEditorType(activeEditor: TextEditorType): void {
+    this.quillInstance.container.addEventListener('mousedown', () => {
+      activeTextEditor.set(activeEditor);
+    });
+  }
 
-	getStructuredText(): { delta: any, message: string, snippets: any, mentionedUserIds: number[] } {
-    	const delta = this.quillInstance.getContents();
+  getContents(): any {
+    return JSON.stringify(this.quillInstance.getContents());
+  }
 
-    	const { sanitizedDelta, mentionedUserIds } = this.sanitizeMentionDelta(delta);
-    	const { newDelta, snippets } = this.seperateSnippetBlotsFromDelta(sanitizedDelta);
-    	const message = this.getHtmlFromDelta(newDelta);
+  setContents(delta: any): void {
+    this.quillInstance.setContents(this.parseJSON(delta));
+  }
 
-    	return { delta: sanitizedDelta, message, snippets, mentionedUserIds };
-	}
+  setText(text: string): void {
+    this.quillInstance.setText(text);
+  }
 
-	private sanitizeMentionDelta(delta:any) {
-    	const mentionedUserIds: any[] = [];
-    	const sanitizedDelta = delta.map((op:any)=>{
-    		const mention = op.insert?.mention;
-    		if (mention) {
-    			const mentionedUserId = mention.id;
-    			mentionedUserIds.push(mentionedUserId);
-    			return { insert: { mention : JSON.parse(JSON.stringify(mention)) } };
-    		} 
-    		return op;
-    	});
-      
-    	return { sanitizedDelta, mentionedUserIds };
-	}
+  getStructuredText(): {
+    delta: any;
+    message: string;
+    snippets: any;
+    mentionedUserIds: number[];
+  } {
+    const delta = this.quillInstance.getContents();
 
-	private seperateSnippetBlotsFromDelta(delta: any) {
-    	const snippets: any[] = [];
-    	let count = 0;
+    const { sanitizedDelta, mentionedUserIds } = this.sanitizeMentionDelta(delta);
+    const { newDelta, snippets } = this.seperateSnippetBlotsFromDelta(sanitizedDelta);
+    const message = this.getHtmlFromDelta(newDelta);
 
-    	const newDelta = delta.map((op: any) => {
-    		const snippetblot = op.insert?.snippetblot;
+    return { delta: sanitizedDelta, message, snippets, mentionedUserIds };
+  }
 
-    		if (snippetblot) {
-    			snippetblot['index'] = count;
-    			snippets.push(snippetblot);
-    			return { insert: this.getSnippetTag(count++) };
-    		}
+  private sanitizeMentionDelta(delta: any) {
+    const mentionedUserIds: any[] = [];
+    const sanitizedDelta = delta.map((op: any) => {
+      const mention = op.insert?.mention;
+      if (mention) {
+        const mentionedUserId = mention.id;
+        mentionedUserIds.push(mentionedUserId);
+        return { insert: { mention: JSON.parse(JSON.stringify(mention)) } };
+      }
+      return op;
+    });
 
-    		return op;
-    	});
+    return { sanitizedDelta, mentionedUserIds };
+  }
 
-    	return { newDelta, snippets };
-	}
+  private seperateSnippetBlotsFromDelta(delta: any) {
+    const snippets: any[] = [];
+    let count = 0;
 
-	private getSnippetTag(index: number) {
-    	return `[snippet_${index}]`;
-	}
+    const newDelta = delta.map((op: any) => {
+      const snippetblot = op.insert?.snippetblot;
 
-	private getHtmlFromDelta(delta: any): string {
-    	const newQuill = new Quill(document.createElement('div'));
-    	newQuill.setContents(delta);
-    	return newQuill.root.innerHTML;
-	}
+      if (snippetblot) {
+        snippetblot['index'] = count;
+        snippets.push(snippetblot);
+        return { insert: this.getSnippetTag(count++) };
+      }
 
-	onTextChange(callback: () => void): void {
-    	this.quillInstance.on('text-change', callback);
-	};
+      return op;
+    });
 
-	removeToolbarTheme(): void {
-    	this.quillInstance.theme.modules.toolbar.container.style.display = 'none';
-	};
+    return { newDelta, snippets };
+  }
 
-	insertCodeSnippet({ filePath, lineStart, displaySnippet, originalSnippet, gitBranch }: TextEditorInsertSnippet): void {
-    	const editor = this.quillInstance;
-    	const selection = editor.getSelection(true);
-    	const cursorPosition: number = selection ? selection.index : editor.getLength();
+  private getSnippetTag(index: number) {
+    return `[snippet_${index}]`;
+  }
 
-    	editor.updateContents(new Delta()
-    		.retain(cursorPosition)
-    		.insert(
-    			{ 
-    				snippetblot: { 
-    					displaySnippet, 
-    					filePath, 
-    					lineStart, 
-    					originalSnippet,
-						gitBranch
-    				}
-    			}, 
-    			{ 
-    				'formats/snippet': true 
-    			}
-    		)
-    	);
-	};
+  private getHtmlFromDelta(delta: any): string {
+    const newQuill = new Quill(document.createElement('div'));
+    newQuill.setContents(delta);
+    return newQuill.root.innerHTML;
+  }
 
-	private parseJSON(data: any) {
-    	try {
-    		if (typeof data === 'string') {
-    			return JSON.parse(data);
-    		} else if (typeof data === 'object') {
-    			return JSON.parse(JSON.stringify(data));
-    		} else {
-    			throw new Error('Invalid data type. Expected string or object.');
-    		}
-    	} catch (error) {
-    		return null;
-    	}
-	}
+  onTextChange(callback: () => void): void {
+    this.quillInstance.on('text-change', callback);
+  }
+
+  removeToolbarTheme(): void {
+    this.quillInstance.theme.modules.toolbar.container.style.display = 'none';
+  }
+
+  insertCodeSnippet({
+    filePath,
+    lineStart,
+    displaySnippet,
+    originalSnippet,
+    gitBranch,
+  }: TextEditorInsertSnippet): void {
+    const editor = this.quillInstance;
+    const selection = editor.getSelection(true);
+    const cursorPosition: number = selection ? selection.index : editor.getLength();
+
+    editor.updateContents(
+      new Delta().retain(cursorPosition).insert(
+        {
+          snippetblot: {
+            displaySnippet,
+            filePath,
+            lineStart,
+            originalSnippet,
+            gitBranch,
+          },
+        },
+        {
+          'formats/snippet': true,
+        }
+      )
+    );
+  }
+
+  private parseJSON(data: any) {
+    try {
+      if (typeof data === 'string') {
+        return JSON.parse(data);
+      } else if (typeof data === 'object') {
+        return JSON.parse(JSON.stringify(data));
+      } else {
+        throw new Error('Invalid data type. Expected string or object.');
+      }
+    } catch (error) {
+      return null;
+    }
+  }
 }

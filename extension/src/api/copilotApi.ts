@@ -1,26 +1,21 @@
-import { createAxiosInstance } from "./apiService";
+import { createAxiosInstance } from './apiService';
 
 const getBaseCopilotUrl = (organizationId: string, projectId: number) => {
-	return `/organizations/${organizationId}/projects/${projectId}/copilot`;
+  return `/organizations/${organizationId}/projects/${projectId}/copilot`;
 };
 
-const postCopilotPrompt = async (
-	organizationId: string,
-	projectId: number,
-	prompt: string
-) => {
+const postCopilotPrompt = async (organizationId: string, projectId: number, prompt: string) => {
+  const data = {
+    prompt: prompt,
+  };
 
-	const data = {
-		prompt: prompt,
-	};
+  const apiService = await createAxiosInstance();
+  const baseThreadUrl = getBaseCopilotUrl(organizationId, projectId);
+  const response = await apiService.post(baseThreadUrl, data);
 
-	const apiService = await createAxiosInstance();
-	const baseThreadUrl = getBaseCopilotUrl(organizationId, projectId);
-	const response = await apiService.post(baseThreadUrl, data);
-
-	return response;
+  return response;
 };
 
 export default {
-	postCopilotPrompt
+  postCopilotPrompt,
 };

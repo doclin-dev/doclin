@@ -10,14 +10,14 @@ import git from '@iconify/icons-mdi/git';
 import file from '@iconify/icons-mdi/file-document';
 
 export const iconsMap = {
-	"reply": replyOutline,
-	"reload": reloadIcon,
-	"context-menu": dotsHorizontal,
-	"back-icon": keyboardBackspace,
-	"notification": bellOutline,
-	"open-in-new-window": openInNew,
-	"invite": accountPlusOutline,
-	"logout": logout,
-	"git": git,
-	"file": file
+  reply: replyOutline,
+  reload: reloadIcon,
+  'context-menu': dotsHorizontal,
+  'back-icon': keyboardBackspace,
+  notification: bellOutline,
+  'open-in-new-window': openInNew,
+  invite: accountPlusOutline,
+  logout: logout,
+  git: git,
+  file: file,
 };

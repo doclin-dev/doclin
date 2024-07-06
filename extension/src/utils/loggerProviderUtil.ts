@@ -1,9 +1,9 @@
-import logger from "./logger";
+import logger from './logger';
 
 export const onInfo = (message: any) => {
-	logger.info(message.value, true);
+  logger.info(message.value, true);
 };
 
 export const onError = (message: any) => {
-	logger.error(message.value, true);
+  logger.error(message.value, true);
 };

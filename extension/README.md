@@ -32,9 +32,9 @@ Welcome to Doclin, your new favorite real-time commenting and discussion tool de
 
 1. Open a file in VS Code with Doclin installed.
 2. Highlight a piece of code and click `Add Comment`. You can do this in three ways:
-    - Use the `Add Comment` button on the bottom-left status bar.
-    - Right-click in VS Code and click `Add Comment`.
-    - Use `CTRL + SHIFT + P` and type in `Add Comment`.
+   - Use the `Add Comment` button on the bottom-left status bar.
+   - Right-click in VS Code and click `Add Comment`.
+   - Use `CTRL + SHIFT + P` and type in `Add Comment`.
 3. To mention your teammates, type `@` followed by their names in the editor.
 4. Click `Submit`. Mentioned users will be notified via email.
 

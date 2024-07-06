@@ -1,63 +1,63 @@
 import {
-	BaseEntity,
-	Column,
-	Entity,
-	JoinColumn,
-	OneToMany,
-	ManyToOne,
-	PrimaryGeneratedColumn,
-	CreateDateColumn
-} from "typeorm";
-import { User } from "./User";
-import { Project } from "./Project";
-import { Reply } from "./Reply";
-import { ThreadSnippet } from "./ThreadSnippet";
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+} from 'typeorm';
+import { User } from './User';
+import { Project } from './Project';
+import { Reply } from './Reply';
+import { ThreadSnippet } from './ThreadSnippet';
 
 @Entity()
 export class Thread extends BaseEntity {
-	@PrimaryGeneratedColumn()
-		id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-	@CreateDateColumn()
-		createdAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
-	@Column({ type: "text", nullable: true }) 
-		title: string;
+  @Column({ type: 'text', nullable: true })
+  title: string;
 
-	@Column("text")
-		message: string;
+  @Column('text')
+  message: string;
 
-	@Column({ nullable: true })
-		userId: number;
+  @Column({ nullable: true })
+  userId: number;
 
-	@ManyToOne(() => User, (user) => user.threads)
-	@JoinColumn({ name: "userId" })
-		user: User;
+  @ManyToOne(() => User, (user) => user.threads)
+  @JoinColumn({ name: 'userId' })
+  user: User;
 
-	@Column({ nullable: true })
-		projectId: number;
+  @Column({ nullable: true })
+  projectId: number;
 
-	@Column ({ nullable: true })
-		anonymous: boolean;
+  @Column({ nullable: true })
+  anonymous: boolean;
 
-	@OneToMany(() => ThreadSnippet, (s) => s.thread, { cascade: true })
-		snippets: ThreadSnippet[];
+  @OneToMany(() => ThreadSnippet, (s) => s.thread, { cascade: true })
+  snippets: ThreadSnippet[];
 
-	@ManyToOne(() => Project, (project) => project.threads)
-	@JoinColumn({ name: "projectId" })
-		project: Project;
+  @ManyToOne(() => Project, (project) => project.threads)
+  @JoinColumn({ name: 'projectId' })
+  project: Project;
 
-	@OneToMany(() => Reply, (reply) => reply.thread, { cascade: true })
-		replies: Reply[];
+  @OneToMany(() => Reply, (reply) => reply.thread, { cascade: true })
+  replies: Reply[];
 
-	replyCount: number;
+  replyCount: number;
 
-	@Column({ type: 'json', nullable: true })
-		delta: any;
-	
-	@Column({ type: 'text', nullable: true })
-		filePath: string;
-	
-	@Column({ type: 'text', nullable: true })
-		gitBranch: string;
+  @Column({ type: 'json', nullable: true })
+  delta: any;
+
+  @Column({ type: 'text', nullable: true })
+  filePath: string;
+
+  @Column({ type: 'text', nullable: true })
+  gitBranch: string;
 }

@@ -1,27 +1,24 @@
 {
-    "root": true,
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaVersion": 6,
-        "sourceType": "module"
-    },
-    "plugins": [
-        "@typescript-eslint"
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "@typescript-eslint/naming-convention": [
+      "warn",
+      {
+        "selector": "variable",
+        "format": ["camelCase", "UPPER_CASE", "PascalCase"]
+      }
     ],
-    "rules": {
-        "@typescript-eslint/naming-convention": [
-            "warn",
-            {
-                "selector": "variable",
-                "format": ["camelCase", "UPPER_CASE", "PascalCase"]
-            }
-        ],
-        "@typescript-eslint/semi": 1,
-        "curly": "warn",
-        "eqeqeq": "warn",
-        "no-throw-literal": "warn",
-        "object-curly-spacing": ["warn", "always"],
-        "indent": ["warn", "tab"],
-        "@typescript-eslint/no-unused-vars": ["warn"]
-    }
+    "@typescript-eslint/semi": 1,
+    "curly": "warn",
+    "eqeqeq": "warn",
+    "no-throw-literal": "warn",
+    "object-curly-spacing": ["warn", "always"],
+    "@typescript-eslint/no-unused-vars": "warn"
+  }
 }

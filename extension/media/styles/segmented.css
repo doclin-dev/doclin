@@ -1,76 +1,78 @@
 :root {
-    --segmented-control-color-dark: var(--vscode-foreground);
+  --segmented-control-color-dark: var(--vscode-foreground);
 
-	--primary-background: grey;
-    --primary-foreground: #ccc;
+  --primary-background: grey;
+  --primary-foreground: #ccc;
 
-	--selected-item-background: var(--vscode-input-background);
-	--selected-item-foreground: var(--vscode-input-foreground);
-  }
+  --selected-item-background: var(--vscode-input-background);
+  --selected-item-foreground: var(--vscode-input-foreground);
+}
 
 .segmented-control {
-	width: 17rem;
-	max-width: 100%;
-	height: 2.75rem;
-	position: relative;
-	box-sizing: border-box;
-	display: inline-flex;
-	padding: 2px;
-	border-radius: 8px;
-	-webkit-backdrop-filter: blur(14px);
-	backdrop-filter: blur(14px);
-	background-color: var(--primary-background);
-	z-index: 1;
+  width: 17rem;
+  max-width: 100%;
+  height: 2.75rem;
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  padding: 2px;
+  border-radius: 8px;
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  background-color: var(--primary-background);
+  z-index: 1;
 }
 
 .segmented-control-background {
-	position: absolute;
-	height: 2.25rem;
-	top: 3px;
-	left: 0;
-	margin: 0;
-	padding: 0;
-	border-radius: 6px;
-	background-color: var(--selected-item-background);
-	transition: width 300ms, transform 300ms;
-	z-index: 1;
+  position: absolute;
+  height: 2.25rem;
+  top: 3px;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  border-radius: 6px;
+  background-color: var(--selected-item-background);
+  transition:
+    width 300ms,
+    transform 300ms;
+  z-index: 1;
 }
 
 .segmented-control-item {
-	position: relative;
-	box-sizing: border-box;
-	width: 100%;
-	height: 2rem;
-	margin: 0;
-	border: 0;
-	z-index: 2;
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 2rem;
+  margin: 0;
+  border: 0;
+  z-index: 2;
 
-	font-family: sans-serif;
-	font-size: 14px;
-	font-weight: 500;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+  font-family: sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
-	text-align: center;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
-	color: var(--primary-foreground);
-	transition: color 275ms;
-	background-color: transparent;
-	cursor: pointer;
+  color: var(--primary-foreground);
+  transition: color 275ms;
+  background-color: transparent;
+  cursor: pointer;
 }
 .segmented-control-item[aria-selected='true'] {
-	color: var(--selected-item-foreground);
-	cursor: default;
+  color: var(--selected-item-foreground);
+  cursor: default;
 }
 .segmented-control-item[aria-disabled='true'] {
-	color: var(--segmented-control-color-dark);
-	cursor: default;
+  color: var(--segmented-control-color-dark);
+  cursor: default;
 }
 
 .segmented-control-item:not(:focus-visible) {
-	outline: none;
-    --vscode-button-hoverBackground: none;
+  outline: none;
+  --vscode-button-hoverBackground: none;
 }

@@ -1,14 +1,14 @@
 <script>
-    import Icon from '@iconify/svelte';
-    import { iconsMap } from './icons';
+  import Icon from '@iconify/svelte';
+  import { iconsMap } from './icons';
 
-    export let name;
-    export let width = 20;
-    export let height = 20;
-    
-    const icon = iconsMap[name];
+  export let name;
+  export let width = 20;
+  export let height = 20;
+
+  const icon = iconsMap[name];
 </script>
 
 <span class="icon">
-    <Icon icon={icon} width={width} height={height} />
+  <Icon {icon} {width} {height} />
 </span>

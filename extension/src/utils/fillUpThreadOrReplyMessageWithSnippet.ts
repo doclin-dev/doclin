@@ -1,5 +1,5 @@
-import { Reply, Thread } from "../types";
-import { addLineNumbers, highlightCode } from "./snippetFormatUtil";
+import { Reply, Thread } from '../types';
+import { addLineNumbers, highlightCode } from './snippetFormatUtil';
 import { utc } from 'moment';
 
 const PRE_TAG_START: string = `<pre class="ql-syntax" spellcheck="false" contenteditable="false">`;
@@ -25,63 +25,56 @@ const FILE_ICON: string = `<span class="icon">
 							</span>`;
 
 export const fillUpThreadOrReplyMessageWithSnippet = (threadOrReply: Thread | Reply): void => {
-	threadOrReply.displayMessage = threadOrReply.message;
+  threadOrReply.displayMessage = threadOrReply.message;
 
-	for (const snippet of threadOrReply.snippets) {
-		threadOrReply.displayMessage = threadOrReply.displayMessage.replace(
-			getSnippetTag(snippet.id), 
-			getReadableCodeBlock(
-				snippet.filePath, 
-				snippet.lineStart,
-				snippet.text, 
-				snippet.outdated,
-				snippet.gitBranch
-			)
-		);
-	}
+  for (const snippet of threadOrReply.snippets) {
+    threadOrReply.displayMessage = threadOrReply.displayMessage.replace(
+      getSnippetTag(snippet.id),
+      getReadableCodeBlock(snippet.filePath, snippet.lineStart, snippet.text, snippet.outdated, snippet.gitBranch)
+    );
+  }
 
-	threadOrReply.hoverMessage = removeHtmlAndSnippetTags(threadOrReply.message);
-	threadOrReply.displayCreationTime = utc(threadOrReply?.createdAt).fromNow();
+  threadOrReply.hoverMessage = removeHtmlAndSnippetTags(threadOrReply.message);
+  threadOrReply.displayCreationTime = utc(threadOrReply?.createdAt).fromNow();
 };
 
 const getReadableCodeBlock = (
-	filePath: string,
-	lineStart: number,
-	snippetText: string,
-	outdated: boolean,
-	gitBranch: string
+  filePath: string,
+  lineStart: number,
+  snippetText: string,
+  outdated: boolean,
+  gitBranch: string
 ) => {
-	const outdatedText = outdated ? OUTDATED_LABEL : "";
+  const outdatedText = outdated ? OUTDATED_LABEL : '';
 
-	snippetText = highlightCode(snippetText);
-	snippetText = addLineNumbers(lineStart, snippetText);
+  snippetText = highlightCode(snippetText);
+  snippetText = addLineNumbers(lineStart, snippetText);
 
-	let output = `<div class="thread-snippet-container">`;
+  let output = `<div class="thread-snippet-container">`;
 
-	if (gitBranch || filePath) {
-		output += `<div class="thread-file-path">`;
-		output += `<div class="thread-file-path-left">`;
-		output += gitBranch ? `${GIT_ICON} <div class="thread-file-path-text" title='${gitBranch}'>${gitBranch}</div>` : ``;
-		output += filePath ? `${FILE_ICON} <div class="thread-file-path-text" title='${filePath}'>${filePath}</div>` : ``;
-		output += `</div>`;
-		output += `<div>${outdatedText}</div>`;
-		output += `</div>\n`;
-	}
+  if (gitBranch || filePath) {
+    output += `<div class="thread-file-path">`;
+    output += `<div class="thread-file-path-left">`;
+    output += gitBranch ? `${GIT_ICON} <div class="thread-file-path-text" title='${gitBranch}'>${gitBranch}</div>` : ``;
+    output += filePath ? `${FILE_ICON} <div class="thread-file-path-text" title='${filePath}'>${filePath}</div>` : ``;
+    output += `</div>`;
+    output += `<div>${outdatedText}</div>`;
+    output += `</div>\n`;
+  }
 
+  output += `${PRE_TAG_START}${snippetText}${PRE_TAG_END}`;
 
-	output += `${PRE_TAG_START}${snippetText}${PRE_TAG_END}`;
+  output += `</div>`;
 
-	output += `</div>`;
-
-	return output;
+  return output;
 };
 
 const getSnippetTag = (snippetId: number) => {
-	return `[snippet_${snippetId}]`;
+  return `[snippet_${snippetId}]`;
 };
 
 const removeHtmlAndSnippetTags = (threadMessage: string) => {
-	let result = threadMessage.replace(/<[^>]*>/g, '');
-	result = result.replace(/\[snippet_\d+\]/g, '');
-	return result;
+  let result = threadMessage.replace(/<[^>]*>/g, '');
+  result = result.replace(/\[snippet_\d+\]/g, '');
+  return result;
 };

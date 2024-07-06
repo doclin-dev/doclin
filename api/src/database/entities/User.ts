@@ -1,15 +1,7 @@
-import {
-	BaseEntity,
-	Column,
-	Entity,
-	OneToMany,
-	PrimaryGeneratedColumn,
-	CreateDateColumn,
-	ManyToMany
-} from "typeorm";
-import { Thread } from "./Thread";
-import { Reply } from "./Reply";
-import { Organization } from "./Organization";
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, ManyToMany } from 'typeorm';
+import { Thread } from './Thread';
+import { Reply } from './Reply';
+import { Organization } from './Organization';
 
 @Entity()
 export class User extends BaseEntity {
@@ -19,13 +11,13 @@ export class User extends BaseEntity {
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column("text", { nullable: false })
+  @Column('text', { nullable: false })
   name: string;
 
-  @Column("text", { unique: false })
+  @Column('text', { unique: false })
   githubId: string;
 
-  @Column("text", { nullable: true })
+  @Column('text', { nullable: true })
   email: string;
 
   @OneToMany(() => Thread, (thread) => thread.user)
@@ -34,6 +26,6 @@ export class User extends BaseEntity {
   @OneToMany(() => Reply, (t) => t.user)
   replies: Reply[];
 
-  @ManyToMany(() => Organization, organization => organization.users)
+  @ManyToMany(() => Organization, (organization) => organization.users)
   organizations: Organization[];
 }
