@@ -1,5 +1,5 @@
 <script lang="ts">
-  import OverlayCard from '../OverlayCard.svelte';
+  import DropdownMenu from '../DropdownMenu.svelte';
   import { onMount, onDestroy } from 'svelte';
   import { editedReplyId, editedThreadId } from '../../state/store';
   import moment from 'moment';
@@ -65,13 +65,13 @@
     </div>
 
     <div class="button-container">
-      <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick} />
+      <DropdownMenu handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick} />
     </div>
   </div>
 
   {#if $editedReplyId === reply.id}
     <ReplyEdit {reply} />
   {:else}
-    <div><SeeMore content={reply.displayMessage} /></div>
+    <div><SeeMore displayMessage={reply.displayMessage} /></div>
   {/if}
 </div>

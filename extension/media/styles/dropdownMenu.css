@@ -1,0 +1,30 @@
+.dropdown-btn {
+  border: none;
+  padding: 0 0.25rem;
+  align-items: center;
+}
+
+.dropdown-menu {
+  font-weight: 400;
+  min-width: 6rem;
+  padding: 0.25rem 0;
+}
+
+.dropdown-menu {
+  background-color: var(--vscode-input-background);
+  border: 1px solid var(--vscode-input-border);
+}
+
+.dropdown-item {
+  color: var(--vscode-input-foreground);
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: var(--vscode-editor-hoverHighlightBackground);
+}
+
+.dropdown-item.active,
+.dropdown-item:active {
+  background-color: var(--vscode-editor-hoverHighlightBackground);
+}

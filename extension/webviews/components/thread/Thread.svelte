@@ -1,5 +1,5 @@
 <script lang="ts">
-  import OverlayCard from '../OverlayCard.svelte';
+  import DropdownMenu from '../DropdownMenu.svelte';
   import Button from '../Button.svelte';
   import { onMount, onDestroy } from 'svelte';
   import { editedReplyId, editedThreadId, page, threadSelected } from '../../state/store';
@@ -83,7 +83,7 @@
           <Button icon="reply" onClick={handleReplyButtonClick} type="text" />
         {/if}
 
-        <OverlayCard handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick} />
+        <DropdownMenu handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick} />
       </div>
     </div>
 
@@ -112,7 +112,7 @@
         <div class="thread-title">{thread?.title ?? ''}</div>
 
         {#if $page === Page.ThreadsViewer}
-          <SeeMore content={thread?.displayMessage} />
+          <SeeMore displayMessage={thread?.displayMessage} />
         {:else}
           <div>
             {@html thread?.displayMessage}

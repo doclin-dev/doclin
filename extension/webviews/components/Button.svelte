@@ -6,9 +6,9 @@
   export let iconWidth = 20;
   export let iconHeight = 20;
   export let size = 'sm';
-  export let type = 'submit'; // [text, ]
-  export let variant = 'primary'; // [secondary, danger]
-  export let textAlignment = 'center'; // it's used to align the text inside the button. It takes the justify-content options.
+  export let type = 'submit';
+  export let variant = 'primary';
+  export let textAlignment = 'center';
   export let children: string = '';
   export let childrenClassName: string = '';
 

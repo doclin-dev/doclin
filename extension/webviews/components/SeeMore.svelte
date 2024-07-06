@@ -1,51 +1,30 @@
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte';
+  export let displayMessage: string;
+  let expanded = false;
+  const PRE_TAG = /<pre\b[^>]*>[\s\S]*?<\/pre>/gi;
+  const COLLAPSED_TEXT = '...';
 
-  export let content: string;
-  let showMore = false;
-  let textContainer: HTMLElement;
-  let seeMoreLink: HTMLAnchorElement;
-  const SEE_LESS_TEXT: string = 'See less';
-  const SEE_MORE_TEXT: string = '...See More';
+  const toggleExpand = () => {
+    expanded = !expanded;
+  };
 
-  onMount(() => {
-    if (textContainer.scrollHeight > textContainer.clientHeight) {
-      seeMoreLink.style.display = 'block';
-    }
-  });
-
-  onDestroy(() => {
-    seeMoreLink.removeEventListener('click', toggleText);
-  });
-
-  function toggleText() {
-    showMore = !showMore;
-    if (showMore) {
-      textContainer.style.maxHeight = 'none';
-      seeMoreLink.textContent = SEE_LESS_TEXT;
-    } else {
-      textContainer.style.maxHeight = '125px';
-      seeMoreLink.textContent = SEE_MORE_TEXT;
-    }
-  }
+  const getCollapsedText = (displayMessage: string) => {
+    return displayMessage.replace(PRE_TAG, COLLAPSED_TEXT);
+  };
 </script>
 
 <div>
-  <div class="text-container" bind:this={textContainer}>
-    {@html content}
-  </div>
-
-  <a href="/" class="see-more" on:click={toggleText} bind:this={seeMoreLink}>{SEE_MORE_TEXT}</a>
+  {#if expanded}
+    <p>{@html displayMessage}</p>
+  {:else}
+    <p class="show-less-container">{@html getCollapsedText(displayMessage)}</p>
+  {/if}
 </div>
 
-<style>
-  .text-container {
-    max-height: 125px;
-    overflow: hidden;
-  }
+{#if !expanded && displayMessage.length > 125}
+  <p class="show-more" on:click={toggleExpand} on:keydown={toggleExpand}>...See more</p>
+{/if}
 
-  .see-more {
-    display: none;
-    outline: none;
-  }
-</style>
+{#if expanded}
+  <p class="show-more" on:click={toggleExpand} on:keydown={toggleExpand}>Show less</p>
+{/if}
