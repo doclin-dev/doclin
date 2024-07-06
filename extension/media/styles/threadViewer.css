@@ -209,3 +209,13 @@
 .thread-body {
   margin-top: 0.5em;
 }
+
+.show-more {
+  cursor: pointer;
+  color: var(--vscode-textLink-foreground);
+}
+
+.show-less-container {
+  max-height: 200px;
+  overflow: hidden;
+}

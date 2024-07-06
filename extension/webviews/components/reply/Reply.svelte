@@ -72,6 +72,6 @@
   {#if $editedReplyId === reply.id}
     <ReplyEdit {reply} />
   {:else}
-    <div><SeeMore content={reply.displayMessage} /></div>
+    <div><SeeMore displayMessage={reply.displayMessage} /></div>
   {/if}
 </div>

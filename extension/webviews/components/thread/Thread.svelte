@@ -112,7 +112,7 @@
         <div class="thread-title">{thread?.title ?? ''}</div>
 
         {#if $page === Page.ThreadsViewer}
-          <SeeMore content={thread?.displayMessage} />
+          <SeeMore displayMessage={thread?.displayMessage} />
         {:else}
           <div>
             {@html thread?.displayMessage}

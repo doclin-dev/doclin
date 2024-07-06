@@ -27,6 +27,7 @@ export type Thread = {
   displayMessage: string;
   title: string;
   replyCount: number;
+  delta: any;
 };
 
 export type Reply = {
