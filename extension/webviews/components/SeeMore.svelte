@@ -22,7 +22,7 @@
 </div>
 
 {#if !expanded && displayMessage.length > 125}
-  <p class="show-more" on:click={toggleExpand} on:keydown={toggleExpand}>... See more</p>
+  <p class="show-more" on:click={toggleExpand} on:keydown={toggleExpand}>...See more</p>
 {/if}
 
 {#if expanded}
