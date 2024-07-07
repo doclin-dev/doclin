@@ -64,4 +64,4 @@ On Visual Studio Code, open the repository. Then on the top bar, select Run, the
 
 ## Contributing
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for ways you can contribute to Zed.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for ways you can contribute to Doclin.
