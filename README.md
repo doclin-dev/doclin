@@ -22,14 +22,14 @@ Doclin is still in very early-stage. If you like the idea, please show support m
 
 ### Usage
 
-1. Ask questions on code from your IDE!
-<img width="1111" alt="Ask question on Doclin" src="https://github.com/doclin-dev/doclin/assets/24940719/880b2c43-cb13-43eb-84f5-14d9ba37906c">
+1. Ask questions on code from your IDE!\
+   <img width="600" alt="Ask question on Doclin" src="https://github.com/doclin-dev/doclin/assets/24940719/880b2c43-cb13-43eb-84f5-14d9ba37906c">
 
-2. Get answers in real-time. 
-<img width="1106" alt="Get answers on Doclin" src="https://github.com/doclin-dev/doclin/assets/24940719/8bd27a48-e02f-4688-977f-46203f031e7d">
+2. Get answers in real-time.\
+   <img width="500" alt="Get answers on Doclin" src="https://github.com/doclin-dev/doclin/assets/24940719/8bd27a48-e02f-4688-977f-46203f031e7d">
 
-3. Discussions stay coupled with the code.
-<img width="983" alt="image" src="https://github.com/doclin-dev/doclin/assets/24940719/1ca5574f-7f59-44a6-9f65-c4474fd58b8b">
+3. Discussions stay coupled with the code.\
+   <img width="700" alt="image" src="https://github.com/doclin-dev/doclin/assets/24940719/1ca5574f-7f59-44a6-9f65-c4474fd58b8b">
 
 ## Local Setup Instructions
 
