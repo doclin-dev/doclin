@@ -11,7 +11,7 @@ const openai = new OpenAI({
 
 export const postPrompt = async (req: Request, res: Response) => {
   const userPrompt: string = req.body.prompt;
-  const projectId: any = req.params.projectId;
+  const projectId: number = parseInt(req.params.projectId);
 
   const systemPrompt = await generateSystemPrompt(userPrompt, projectId);
   const reply = await sendPromptToOpenAI(systemPrompt, userPrompt);

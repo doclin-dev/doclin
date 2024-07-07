@@ -12,21 +12,22 @@ import {
 } from './utils/snippetUtils';
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
+import { Request, Response } from 'express';
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
-export const postThread = async (req: any, res: any) => {
+export const postThread = async (req: Request, res: Response) => {
   const title: string = DOMPurify.sanitize(req.body.title);
   const threadMessage: string = DOMPurify.sanitize(req.body.threadMessage);
+  const filePath: string = DOMPurify.sanitize(req.body.filePath);
+  const gitBranch: string = DOMPurify.sanitize(req.body.gitBranch);
   const snippets: RequestSnippetBlot[] = req.body.snippets;
   const delta: any = req.body.delta;
   const userId: number = req.userId;
   const projectId: number = req.body.projectId;
   const anonymousPost: boolean = req.body.anonymous;
   const mentionedUserIds: number[] = req.body.mentionedUserIds;
-  const filePath: string = DOMPurify.sanitize(req.body.filePath);
-  const gitBranch: string = DOMPurify.sanitize(req.body.gitBranch);
 
   const { updatedThreadMessage, snippetEntities } = await createSnippetEntitiesFromThreadMessage(
     threadMessage,
@@ -62,8 +63,7 @@ export const postThread = async (req: any, res: any) => {
 
 const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, snippetblots: RequestSnippetBlot[]) => {
   let updatedThreadMessage: string = threadMessage.replace(MULTIPLE_LINE_BREAK_REGEX, SINGLE_LINE_BREAK);
-
-  const snippetEntities = [];
+  const snippetEntities: ThreadSnippet[] = [];
 
   for (const snippetblot of snippetblots) {
     const snippet: ThreadSnippet = await ThreadSnippet.create({
@@ -74,16 +74,15 @@ const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, sni
     }).save();
 
     snippetEntities.push(snippet);
-
     updatedThreadMessage = updatedThreadMessage.replace(getSnippetTag(snippetblot.index), getSnippetTag(snippet.id));
   }
 
   return { updatedThreadMessage, snippetEntities };
 };
 
-export const getThreads = async (req: any, res: any) => {
-  const filePath = req.query.filePath;
-  const projectId = req.query.projectId;
+export const getThreads = async (req: Request, res: Response) => {
+  const filePath: string = req.query.filePath as string;
+  const projectId: number = parseInt(req.query.projectId as string);
   let threads: Thread[];
 
   if (filePath) {
@@ -97,8 +96,8 @@ export const getThreads = async (req: any, res: any) => {
   res.send({ threads: response });
 };
 
-export const updateThread = async (req: any, res: any) => {
-  const threadId: number = req.params.id;
+export const updateThread = async (req: Request, res: Response) => {
+  const threadId: number = parseInt(req.params.id as string);
   const title: string = DOMPurify.sanitize(req.body.title);
   const threadMessage: string = DOMPurify.sanitize(req.body.message);
   const snippets: any[] = req.body.snippets;
@@ -130,8 +129,8 @@ export const updateThread = async (req: any, res: any) => {
   res.send({ thread: response });
 };
 
-export const deleteThread = async (req: any, res: any) => {
-  const threadId = req.params.id;
+export const deleteThread = async (req: Request, res: Response) => {
+  const threadId: number = parseInt(req.params.id as string);
 
   const thread = await ThreadRepository.findThreadById(threadId);
 

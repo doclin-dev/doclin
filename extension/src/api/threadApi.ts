@@ -1,3 +1,4 @@
+import { PostSnippetBlot } from '../types';
 import { createAxiosInstance } from './apiService';
 
 const getBaseThreadUrl = (organizationId: string, projectId: number) => {
@@ -35,7 +36,7 @@ const postThread = async (
   title: string,
   threadMessage: string,
   delta: any,
-  snippets: any[],
+  snippets: PostSnippetBlot[],
   gitBranch: string | null,
   filePath: string | null,
   mentionedUserIds: number[],
@@ -67,7 +68,7 @@ const updateThread = async (
   title: string,
   threadMessage: string,
   delta: any,
-  snippets: any[],
+  snippets: PostSnippetBlot[],
   activeEditorFilePath: string | null
 ) => {
   const data = {

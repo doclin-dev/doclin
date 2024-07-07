@@ -1,3 +1,4 @@
+import { PostSnippetBlot } from '../types';
 import { createAxiosInstance } from './apiService';
 
 const getBaseReplyUrl = async (
@@ -22,7 +23,7 @@ const postReply = async (
   replyMessage: string,
   threadId: number,
   anonymous: boolean,
-  snippets: any[],
+  snippets: PostSnippetBlot[],
   delta: any[],
   mentionedUserIds: number[]
 ) => {
@@ -46,7 +47,7 @@ const updateReply = async (
   projectId: number,
   replyId: number,
   threadMessage: string,
-  snippets: any[],
+  snippets: PostSnippetBlot[],
   delta: any[]
 ) => {
   const data = {
