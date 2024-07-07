@@ -1,12 +1,12 @@
-import { Request, Response } from "express";
-import { Thread } from "../database/entities/Thread";
-import { ThreadRepository } from "../database/repositories/ThreadRepository";
-import OpenAI from "openai";
-import { getThreadText } from "./utils/snippetUtils";
-import { OPENAI_API_KEY } from "../envConstants";
+import { Request, Response } from 'express';
+import { Thread } from '../database/entities/Thread';
+import { ThreadRepository } from '../database/repositories/ThreadRepository';
+import OpenAI from 'openai';
+import { getThreadText } from './utils/snippetUtils';
+import { OPENAI_API_KEY } from '../envConstants';
 
 const openai = new OpenAI({
-	apiKey: OPENAI_API_KEY,
+  apiKey: OPENAI_API_KEY,
 });
 
 export const postPrompt = async (req: Request, res: Response) => {
