@@ -83,7 +83,7 @@ export type UpdateThread = {
   title: string;
   threadMessage: string;
   threadId: number;
-  snippets: any[];
+  snippets: PostSnippetBlot[];
   delta: any;
 };
 
@@ -91,7 +91,7 @@ export type PostReply = {
   replyMessage: string;
   threadId: number;
   anonymous: boolean;
-  snippets: any[];
+  snippets: PostSnippetBlot[];
   delta: any;
   mentionedUserIds: number[];
 };
@@ -99,7 +99,7 @@ export type PostReply = {
 export type UpdateReply = {
   replyMessage: string;
   replyId: number;
-  snippets: any[];
+  snippets: PostSnippetBlot[];
   delta: any;
 };
 

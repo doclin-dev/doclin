@@ -1,5 +1,6 @@
 import { Reply } from 'src/database/entities/Reply';
 import { Thread } from '../../database/entities/Thread';
+import { RequestSnippetBlot } from 'src/types/types';
 
 export const MULTIPLE_LINE_BREAK_REGEX: RegExp = /(<p><br><\/p>)+/gi;
 export const SINGLE_LINE_BREAK: string = '<p><br></p>';
@@ -8,7 +9,7 @@ export const getSnippetTag = (snippetId: number) => {
   return `[snippet_${snippetId}]`;
 };
 
-export const fillUpThreadOrReplyMessageWithSnippet = (message: string, snippetblots: any[]): string => {
+export const fillUpThreadOrReplyMessageWithSnippet = (message: string, snippetblots: RequestSnippetBlot[]): string => {
   for (const snippet of snippetblots) {
     message = message.replace(
       getSnippetTag(snippet.index),

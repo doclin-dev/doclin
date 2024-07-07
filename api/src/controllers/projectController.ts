@@ -8,7 +8,7 @@ import { JSDOM } from 'jsdom';
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
-export const getProjects = async (req: any, res: any) => {
+export const getProjects = async (req: Request, res: Response) => {
   const organizationId: string = req.params.organizationId;
 
   const projects = await ProjectRepository.findProjectsByOrganizationId(organizationId);
@@ -21,7 +21,7 @@ export const getProjects = async (req: any, res: any) => {
   return res.send({ projects: responseProjects });
 };
 
-export const postProject = async (req: any, res: any) => {
+export const postProject = async (req: Request, res: Response) => {
   const name = DOMPurify.sanitize(req.body.name);
   const organizationId = req.params.organizationId;
 
