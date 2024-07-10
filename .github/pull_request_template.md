@@ -18,6 +18,6 @@ _Outline the steps to set up and validate the change._
 
 
 -----------------------------
-_Check this if you PR is ready to merge and a reviewer will merge it if they approve._
+_Check this if your PR is ready to merge and a reviewer will merge when approved._
 
 - [ ] Ready to merge
