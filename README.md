@@ -8,7 +8,7 @@
 
 ## Getting Started
 
-To try out Doclin, install extension in VS Code. [Link to VS Code Marketplace.](https://marketplace.visualstudio.com/items?itemName=Doclin.doclin)
+To try out Doclin, install the extension in VS Code. [Link to VS Code Marketplace.](https://marketplace.visualstudio.com/items?itemName=Doclin.doclin)
 
 Currently only supports VS Code, but to be extended to other IDEs once we validate the concept.
 
@@ -16,9 +16,9 @@ Currently only supports VS Code, but to be extended to other IDEs once we valida
 
 ### Purpose
 
-The purpose of this tool is to build code knowledgebase easily. Traditional code documentation methods is very inefficient. Writing code and documentation at the same time often resulted docs to be redundant, of no real-value, time-consuming and it quickly got out-of-date. We believe it is more helpful to document the answers when someone asks a question or faces a problem. This not only ensures the documentation is more meaningful, but we can spend less time in writing documentation.
+The purpose of this tool is to build code knowledgebase easily. Traditional code documentation methods are very inefficient. Developers write the documentation simultaneously as their code, which often results in documents that are time-consuming, unhelpful, and missing important points. Above all, it gets out of date quickly and becomes a burden to maintain it. We realized it is more helpful to only document the answers when someone asks a question or faces a problem. This ensures the documentation is more meaningful, and we can spend less time writing documentation.
 
-Doclin is still in very early-stage. If you like the idea, please show support my star-ring this repository!
+Doclin is still in a very early stage. If you like the idea, please star the repo to show support and use the discussions tab to leave feedback.
 
 ### Usage
 
