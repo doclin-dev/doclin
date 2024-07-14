@@ -1,0 +1,17 @@
+.copilot-container form {
+  padding-bottom: 20px;
+}
+
+.copilot-input-container {
+  display: flex;
+  align-items: center;
+  padding-bottom: 5px;
+}
+
+.copilot-container textarea {
+  flex-grow: 1;
+  height: auto;
+  resize: none;
+  overflow: hidden;
+  min-height: 25px;
+}

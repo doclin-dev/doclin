@@ -1,16 +1,20 @@
 import { Thread } from '../entities/Thread';
 import { AppDataSource } from '../dataSource';
-import { Brackets } from 'typeorm/query-builder/Brackets';
+import { createEmbedding } from '../../utils/embedding';
+import { Brackets, SelectQueryBuilder } from 'typeorm';
+import { getThreadMessageWithSnippet } from '../../utils/snippetUtils';
 
 export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
   async findThreadByFilePathAndProjectId(filePath: string, projectId: number): Promise<Thread[]> {
     const relevantThreads = await this.createQueryBuilder('thread')
       .leftJoin('thread.snippets', 'snippet')
-      .where((queryBuilder) => {
-        queryBuilder
-          .where('thread.filePath = :filePath', { filePath })
-          .orWhere('snippet.filePath = :filePath', { filePath });
-      })
+      .where(
+        new Brackets((queryBuilder) => {
+          queryBuilder
+            .where('thread.filePath = :filePath', { filePath })
+            .orWhere('snippet.filePath = :filePath', { filePath });
+        })
+      )
       .andWhere('thread.projectId = :projectId', { projectId })
       .getMany();
 
@@ -19,13 +23,9 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
     }
 
     const threadIds = relevantThreads.map((thread) => thread.id);
-
-    const relevantThreadsWithAllInfoPopulated = this.createQueryBuilder('thread')
-      .leftJoinAndSelect('thread.snippets', 'snippet')
-      .leftJoinAndSelect('thread.user', 'user')
-      .leftJoinAndSelect('thread.replies', 'reply')
+    const relevantThreadsWithAllInfoPopulated = await this.getThreadsWithProperties()
       .where('thread.projectId = :projectId', { projectId })
-      .andWhere('thread.id IN (:...threadIds)', { threadIds })
+      .andWhereInIds(threadIds)
       .orderBy('COALESCE(reply.createdAt, thread.createdAt)', 'DESC')
       .loadRelationCountAndMap('thread.replyCount', 'thread.replies')
       .getMany();
@@ -35,9 +35,10 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
 
   async findAllThreadsByProjectId(projectId: number): Promise<Thread[]> {
     return this.createQueryBuilder('thread')
-      .leftJoinAndSelect('thread.snippets', 'snippet')
+      .leftJoinAndSelect('thread.snippets', 'threadSnippet')
       .leftJoinAndSelect('thread.user', 'user')
       .leftJoinAndSelect('thread.replies', 'reply')
+      .leftJoinAndSelect('reply.snippets', 'replySnippet')
       .where('thread.projectId = :projectId', { projectId })
       .orderBy('COALESCE(reply.createdAt, thread.createdAt)', 'DESC')
       .loadRelationCountAndMap('thread.replyCount', 'thread.replies')
@@ -75,38 +76,52 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
     return users;
   },
 
-  async searchThreads(searchText: string, projectId: number): Promise<Thread[]> {
-    const formattedSearchText = searchText.split(' ').join('&');
+  async searchThreads(searchText: string, projectId: number, limit: number = 10): Promise<Thread[]> {
+    const targetVector: number[] = await createEmbedding(searchText);
+    const targetVectorString = targetVector.join(',');
 
+    const threads = await this.createQueryBuilder('thread')
+      .addSelect(`embedding::vector <-> ARRAY[${targetVectorString}]::vector`, 'similarity')
+      .where('thread.projectId = :projectId', { projectId })
+      .orderBy('similarity', 'ASC')
+      .limit(limit)
+      .getMany();
+
+    const threadIds = threads.map((thread) => thread.id);
+    const threadOrder = threadIds.join(',');
+
+    return await this.getThreadsWithProperties()
+      .where('thread.projectId = :projectId', { projectId })
+      .andWhereInIds(threadIds)
+      .orderBy(`ARRAY_POSITION(ARRAY[${threadOrder}], thread.id)`)
+      .getMany();
+  },
+
+  getThreadsWithProperties(): SelectQueryBuilder<Thread> {
     return this.createQueryBuilder('thread')
-      .leftJoinAndSelect('thread.snippets', 'snippet')
+      .leftJoinAndSelect('thread.snippets', 'threadSnippets')
       .leftJoinAndSelect('thread.user', 'user')
       .leftJoinAndSelect('thread.replies', 'reply')
-      .where(`thread.projectId = :projectId`, { projectId })
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where(`to_tsvector('english', thread.title) @@ to_tsquery('english', :formattedSearchText)`, {
-            formattedSearchText,
-          })
-            .orWhere(`to_tsvector('english', thread.message) @@ to_tsquery('english', :formattedSearchText)`, {
-              formattedSearchText,
-            })
-            .orWhere(`to_tsvector('english', reply.message) @@ to_tsquery('english', :formattedSearchText)`, {
-              formattedSearchText,
-            })
-            .orWhere(`to_tsvector('english', snippet.text) @@ to_tsquery('english', :formattedSearchText)`, {
-              formattedSearchText,
-            });
-        })
-      )
-      .orderBy(`ts_rank(to_tsvector('english', thread.title), to_tsquery('english', :formattedSearchText))`, 'DESC')
-      .addOrderBy(
-        `ts_rank(to_tsvector('english', thread.message), to_tsquery('english', :formattedSearchText))`,
-        'DESC'
-      )
-      .addOrderBy(`ts_rank(to_tsvector('english', reply.message), to_tsquery('english', :formattedSearchText))`, 'DESC')
-      .addOrderBy(`ts_rank(to_tsvector('english', snippet.text), to_tsquery('english', :formattedSearchText))`, 'DESC')
-      .loadRelationCountAndMap('thread.replyCount', 'thread.replies')
-      .getMany();
+      .leftJoinAndSelect('reply.snippets', 'replySnippets');
+  },
+
+  async updateEmbeddingsOfAllThreads(projectId: number): Promise<void> {
+    const threads = await this.findAllThreadsByProjectId(projectId);
+    const updatePromises = threads.map((thread) => this.updateSearchEmbeddingsForThread(thread));
+    await Promise.all(updatePromises);
+  },
+
+  async updateSearchEmbeddingsForThread(thread: Thread) {
+    let searchText = ``;
+    searchText += thread.title ?? '';
+    searchText += getThreadMessageWithSnippet(thread) ?? '';
+    searchText += thread.user.name ?? '';
+
+    thread.replies.forEach((reply) => {
+      searchText += getThreadMessageWithSnippet(reply) ?? '';
+    });
+
+    thread.embedding = await createEmbedding(searchText);
+    thread.save();
   },
 });

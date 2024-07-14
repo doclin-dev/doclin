@@ -60,4 +60,7 @@ export class Thread extends BaseEntity {
 
   @Column({ type: 'text', nullable: true })
   gitBranch: string;
+
+  @Column('double precision', { array: true, nullable: true })
+  embedding: number[];
 }
