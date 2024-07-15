@@ -8,7 +8,8 @@ import accountPlusOutline from '@iconify/icons-mdi/account-plus-outline';
 import logout from '@iconify/icons-mdi/logout';
 import git from '@iconify/icons-mdi/git';
 import file from '@iconify/icons-mdi/file-document';
-import send from '@iconify/icons-mdi/send'
+import send from '@iconify/icons-mdi/send';
+import trash from '@iconify/icons-mdi/trash';
 
 export const iconsMap = {
   reply: replyOutline,
@@ -21,5 +22,6 @@ export const iconsMap = {
   logout: logout,
   git: git,
   file: file,
-  send: send
+  send: send,
+  trash: trash,
 };

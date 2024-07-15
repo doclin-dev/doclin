@@ -2,9 +2,11 @@
   import { onDestroy, onMount } from 'svelte';
   import Button from '../Button.svelte';
   import { FormEventHandler } from 'svelte/elements';
+  import snarkdown from 'snarkdown';
+  import { CopilotMessage } from '../../types';
 
   let input: string = '';
-  let messages: string[] = [];
+  let messages: CopilotMessage[] = [];
   let disableSubmit: boolean = false;
   let referToDoclinThreads: boolean = true;
   let referToCodeFile: boolean = true;
@@ -17,15 +19,19 @@
   };
 
   const submitPrompt = () => {
-    if (disableSubmit) {
+    if (disableSubmit || !input) {
       return;
     }
 
     disableSubmit = true;
-    messages = [...messages, `<b>You</b><br>${input}`];
+    messages = [
+      ...messages, 
+      { author: 'user', message: input },
+      { author: 'copilot', message: 'typing...' }
+    ];
 
     tsvscode.postMessage({
-      type: 'copilotPrompt',
+      type: 'postCopilotPrompt',
       value: {
         prompt: input,
         referToDoclinThreads: referToDoclinThreads,
@@ -36,13 +42,21 @@
     input = '';
   };
 
+  const clearCopilotMessageHistory = () => {
+    tsvscode.postMessage({ type: 'clearCopilotMessageHistory', value: null });
+    messages = [];
+  }
+
   const messageEventListener = async (event: any) => {
     const message = event.data;
     switch (message.type) {
-      case 'copilotPrompt':
+      case 'postCopilotPrompt':
         const reply = message.value;
-        messages = [...messages, `<b>Copilot</b><br>${reply}`];
+        messages = [...messages.slice(0, messages.length - 1), {author: 'copilot', message: reply}];
         disableSubmit = false;
+        break;
+      case 'getCopilotMessageHistory':
+        messages = message.value;
         break;
     }
   };
@@ -55,6 +69,7 @@
 
   onMount(async () => {
     window.addEventListener('message', messageEventListener);
+    tsvscode.postMessage({ type: 'getCopilotMessageHistory', value: null });
   });
 
   onDestroy(() => {
@@ -64,30 +79,46 @@
 
 <div class="copilot-container">
   <div class="copilot-messages-body">
-    {#each messages as message, i (i)}
-      {@html message}
+    {#each messages as message}
+      {#if message.author === 'user'}
+        <b>You</b>
+        <br/>
+        {@html message.message}
+      {:else if message.author === 'copilot'}
+        <b>Copilot</b>
+        <br/>
+        {@html snarkdown(message.message)}
+      {/if}
       <hr />
     {/each}
   </div>
 
-  <form action="" on:keydown={handleKeyDown}>
-    <div class="copilot-input-container">
+  <div class="textEditorContainer mb-2">
+    <form on:submit|preventDefault={submitPrompt} on:keydown={handleKeyDown}>
       <textarea
         bind:value={input}
         placeholder="Type your prompt"
         on:input={autoResizeTextarea}
       />
-      <Button icon="send" type="text" on:click={submitPrompt}/>
-    </div>
+      <div id="submitContainer">
+        <div>
+          <label class="checkbox">
+              <input type="checkbox" bind:checked={referToDoclinThreads} />
+              Refer to doclin threads
+          </label>
+          
+          <label class="checkbox">
+            <input type="checkbox" bind:checked={referToCodeFile} />
+            Refer to currently open file
+          </label>
+        </div>
 
-    <div>
-      <input type="checkbox" bind:checked={referToDoclinThreads} />
-      Refer to doclin threads
-    </div>
-
-    <div>
-      <input type="checkbox" bind:checked={referToCodeFile} />
-      Refer to currently open file
-    </div>
-  </form>
+        <div>
+          <Button icon='trash' onClick={clearCopilotMessageHistory} />
+          <Button icon='send' onClick={submitPrompt} />
+        </div>
+      </div>
+    </form>
+  </div>
+  
 </div>

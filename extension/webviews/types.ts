@@ -55,3 +55,8 @@ export type TextEditorInsertSnippet = {
   originalSnippet: string;
   gitBranch: string;
 };
+
+export type CopilotMessage = {
+  author: 'user' | 'copilot';
+  message: string;
+}

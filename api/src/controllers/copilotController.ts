@@ -6,10 +6,12 @@ import { getThreadMessageWithSnippet } from '../utils/snippetUtils';
 import { OPENAI_API_KEY } from '../envConstants';
 import { Reply } from 'src/database/entities/Reply';
 
-const systemPrompt = `
+const SYSTEM_PROMPT = `
     You are an AI assistant helping helping understanding code using documentation and discussion.
-    Provide detailed and context-aware responses based on the input provided. Format your answer in HTML.
+    Provide detailed and context-aware responses based on the input provided. Format your answer in markdown only.
 `;
+
+const DIVIDER = `\n----------\n`;
 
 const openai = new OpenAI({
   apiKey: OPENAI_API_KEY,
@@ -18,11 +20,10 @@ const openai = new OpenAI({
 export const postPrompt = async (req: Request, res: Response) => {
   const userPrompt: string = req.body.prompt;
   const referToDoclinThreads: boolean = req.body.referToDoclinThreads;
-  // const referToCodeFile: boolean = req.body.referToCodeFile;
+  const referToCodeFile: boolean = req.body.referToCodeFile;
   const projectId: number = parseInt(req.params.projectId);
 
-  const completeUserPrompt = await generateUserPrompt(userPrompt, projectId, referToDoclinThreads);
-  console.log(completeUserPrompt);
+  const completeUserPrompt = await generateUserPrompt(userPrompt, projectId, referToDoclinThreads, referToCodeFile);
   const reply = await getResponseFromGPT(completeUserPrompt);
   res.send({ reply: reply });
 };
@@ -30,14 +31,21 @@ export const postPrompt = async (req: Request, res: Response) => {
 const generateUserPrompt = async (
   userPrompt: string,
   projectId: number,
-  referToDoclinThreads: boolean
+  referToDoclinThreads: boolean,
+  referToCodeFile: boolean
 ): Promise<string> => {
   let completeUserPrompt = `${userPrompt}\n`;
-  completeUserPrompt += `Answer the above question using the references below. Only use the reference if they are relevant to the question\n`;
+  completeUserPrompt += `Answer the above question from user.`;
+
+  if (referToDoclinThreads || referToCodeFile) {
+    completeUserPrompt += `Use the references below for your answer, only if they are relevant to the question\n`;
+    completeUserPrompt += DIVIDER;
+  }
 
   if (referToDoclinThreads) {
+    completeUserPrompt += `Previous discussion on the sytem:\n`;
     completeUserPrompt += (await getThreadsReference(userPrompt, projectId)) ?? `No relevant discussion threads found.`;
-    completeUserPrompt += `\n`;
+    completeUserPrompt += DIVIDER;
   }
 
   return completeUserPrompt;
@@ -51,7 +59,7 @@ const getThreadsReference = async (userPrompt: string, projectId: number): Promi
   }
 
   let response = `Discussion threads reference:\n`;
-  response += threads.slice(0, 10).map(getThreadReference).join('\n');
+  response += threads.map(getThreadReference).join('\n');
   response += '\n';
 
   return response;
@@ -61,7 +69,7 @@ const getThreadReference = (thread: Thread, index: number, threads: Thread[]): s
   let response = `Thread ${index + 1} of ${threads.length}\n`;
   response += `${thread.title ?? ''}\n`;
   response += `${getThreadMessageWithSnippet(thread)}\n`;
-  response += thread.replies.map(getReplyReference).join('\n');
+  response += thread.replies.slice(0, 3).map(getReplyReference).join('\n');
   return response;
 };
 
@@ -75,7 +83,7 @@ const getResponseFromGPT = async (userPrompt: string) => {
     messages: [
       {
         role: 'system',
-        content: systemPrompt,
+        content: SYSTEM_PROMPT,
       },
       {
         role: 'user',
