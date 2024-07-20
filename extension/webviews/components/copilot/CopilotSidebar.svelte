@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount } from 'svelte';
+  import { onDestroy, onMount, tick } from 'svelte';
   import Button from '../Button.svelte';
   import { FormEventHandler } from 'svelte/elements';
   import snarkdown from 'snarkdown';
@@ -10,6 +10,32 @@
   let disableSubmit: boolean = false;
   let referToDoclinThreads: boolean = true;
   let referToCodeFile: boolean = true;
+  let divElement: HTMLDivElement;
+
+  $: scrollToBottom(divElement), messages;
+
+  onMount(async () => {
+    window.addEventListener('message', messageEventListener);
+    tsvscode.postMessage({ type: 'getCopilotMessageHistory', value: null });
+  });
+
+  onDestroy(() => {
+    window.removeEventListener('message', messageEventListener);
+  });
+
+  const messageEventListener = async (event: Event) => {
+    const message = event.data;
+    switch (message.type) {
+      case 'postCopilotPrompt':
+        const reply = message.value;
+        messages = [...messages.slice(0, messages.length - 1), {author: 'copilot', message: reply}];
+        disableSubmit = false;
+        break;
+      case 'getCopilotMessageHistory':
+        messages = message.value;
+        break;
+    }
+  };
 
   const handleKeyDown = (event: KeyboardEvent): void => {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -18,7 +44,7 @@
     }
   };
 
-  const submitPrompt = () => {
+  const submitPrompt = async () => {
     if (disableSubmit || !input) {
       return;
     }
@@ -47,43 +73,25 @@
     messages = [];
   }
 
-  const messageEventListener = async (event: any) => {
-    const message = event.data;
-    switch (message.type) {
-      case 'postCopilotPrompt':
-        const reply = message.value;
-        messages = [...messages.slice(0, messages.length - 1), {author: 'copilot', message: reply}];
-        disableSubmit = false;
-        break;
-      case 'getCopilotMessageHistory':
-        messages = message.value;
-        break;
-    }
-  };
-
-  const autoResizeTextarea: FormEventHandler<HTMLTextAreaElement> = (event) => {
+  const autoResizeTextarea: FormEventHandler<HTMLTextAreaElement> = (event: Event) => {
     const textarea = event.target as HTMLTextAreaElement;
     textarea.style.height = 'auto';
     textarea.style.height = `${textarea.scrollHeight}px`;
   };
 
-  onMount(async () => {
-    window.addEventListener('message', messageEventListener);
-    tsvscode.postMessage({ type: 'getCopilotMessageHistory', value: null });
-  });
-
-  onDestroy(() => {
-    window.removeEventListener('message', messageEventListener);
-  });
+  const scrollToBottom = async (node: HTMLDivElement) => {
+    await tick();
+    node.scroll({ top: node.scrollHeight });
+  }; 
 </script>
 
-<div class="copilot-container">
+<div class="copilot-container" bind:this={divElement}>
   <div class="copilot-messages-body">
     {#each messages as message}
       {#if message.author === 'user'}
         <b>You</b>
         <br/>
-        {@html message.message}
+        {message.message}
       {:else if message.author === 'copilot'}
         <b>Copilot</b>
         <br/>

@@ -125,31 +125,33 @@
   });
 </script>
 
-{#if loading}
-  <div>loading...</div>
-{:else if error}
-  <div>Could not reach server. Please try again later!</div>
-  <button on:click={reloadAndGetExtensionState}>Reload</button>
-{:else if user}
-  <ViewerTopBar username={user?.name} reload={reloadAndGetExtensionState} {logout} />
+<div class="sidebar-container">
+  {#if loading}
+    <div>loading...</div>
+  {:else if error}
+    <div>Could not reach server. Please try again later!</div>
+    <button on:click={reloadAndGetExtensionState}>Reload</button>
+  {:else if user}
+    <ViewerTopBar username={user?.name} reload={reloadAndGetExtensionState} {logout} />
 
-  {#if $page === Page.RegisterEmail}
-    <RegisterEmail />
-  {:else if $page === Page.NoFolderOrFile}
-    <div>Open a file or a folder to use doclin features.</div>
-  {:else if $page === Page.AccessRequired}
-    <AccessRequired />
-  {:else if $page === Page.InitializeOrganization}
-    <InitializeOrganization />
-  {:else if $page === Page.InitializeProject}
-    <InitializeProject />
-  {:else if $page === Page.ThreadsViewer}
-    <ThreadsViewer />
-  {:else if $page === Page.ReplyViewer}
-    <ReplyViewer />
-  {:else if $page === Page.InviteUser}
-    <InviteUser />
+    {#if $page === Page.RegisterEmail}
+      <RegisterEmail />
+    {:else if $page === Page.NoFolderOrFile}
+      <div>Open a file or a folder to use doclin features.</div>
+    {:else if $page === Page.AccessRequired}
+      <AccessRequired />
+    {:else if $page === Page.InitializeOrganization}
+      <InitializeOrganization />
+    {:else if $page === Page.InitializeProject}
+      <InitializeProject />
+    {:else if $page === Page.ThreadsViewer}
+      <ThreadsViewer />
+    {:else if $page === Page.ReplyViewer}
+      <ReplyViewer />
+    {:else if $page === Page.InviteUser}
+      <InviteUser />
+    {/if}
+  {:else}
+    <button on:click={authenticate}>Login with GitHub</button>
   {/if}
-{:else}
-  <button on:click={authenticate}>Login with GitHub</button>
-{/if}
+</div>

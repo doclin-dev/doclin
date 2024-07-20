@@ -1,3 +1,9 @@
+.copilot-container {
+  padding: 0 var(--container-paddding);
+  overflow-y: scroll;
+  height: 100vh;
+}
+
 .copilot-container textarea {
   flex-grow: 1;
   height: auto;

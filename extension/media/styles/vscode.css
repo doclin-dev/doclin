@@ -7,7 +7,6 @@
 }
 
 body {
-  padding: 0 var(--container-paddding);
   color: var(--vscode-foreground);
   font-size: var(--vscode-font-size);
   font-weight: var(--vscode-font-weight);
@@ -91,4 +90,11 @@ hr {
   margin-left: -20px;
   margin-right: -20px;
   background-color: var(--vscode-editorGroup-border);
+}
+
+.sidebar-container {
+  padding: 0 var(--container-paddding);
+  width: 100%;
+  height: 100vh;
+  overflow-y: scroll;
 }
