@@ -21,12 +21,7 @@ import { inviteUser, redeemInvitation } from './providerHelpers/invitationProvid
 import { WebviewMessageFunction } from './types';
 import { onError, onInfo } from './utils/loggerProviderUtil';
 import { handleGetSidebarLoadingStatus } from './utils/waitForSidebarToShow';
-import {
-  clearCopilotMessageHistory,
-  getCopilotCache,
-  postCopilotPrompt,
-  updateCopilotIndicatorsCache,
-} from './providerHelpers/copilotProvider';
+import { postCopilotPrompt } from './providerHelpers/copilotProvider';
 
 export const RESPONSE_PROVIDERS: Record<string, WebviewMessageFunction> = {
   getExtensionState: getExtensionState,
@@ -51,9 +46,6 @@ export const RESPONSE_PROVIDERS: Record<string, WebviewMessageFunction> = {
   getCurrentOrganizationUsers: getCurrentOrganizationUsers,
   postUserEmail: postUserEmail,
   postCopilotPrompt: postCopilotPrompt,
-  getCopilotCache: getCopilotCache,
-  clearCopilotMessageHistory: clearCopilotMessageHistory,
-  updateCopilotIndicatorsCache: updateCopilotIndicatorsCache,
 };
 
 export const VOID_PROVIDERS: Record<string, WebviewMessageFunction> = {

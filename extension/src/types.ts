@@ -129,13 +129,3 @@ export type CopilotMessage = {
   author: 'user' | 'copilot';
   message: string;
 };
-
-export type CopilotIndicators = {
-  referToDoclinThreads: boolean;
-  referToCurrentlyOpenFile: boolean;
-};
-
-export type CopilotCache = {
-  messages: CopilotMessage[];
-  indicators: CopilotIndicators;
-};

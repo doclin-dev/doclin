@@ -2,17 +2,14 @@
   import { onDestroy, onMount, tick } from 'svelte';
   import Button from '../Button.svelte';
   import snarkdown from 'snarkdown';
+  import { copilotMessages, copilotReferToCodeFile, copilotReferToDoclinThreads } from '../../state/store';
   import type { FormEventHandler } from 'svelte/elements';
-  import type { CopilotMessage } from '../../types';
 
   let input: string = '';
-  let messages: CopilotMessage[] = [];
   let disableSubmit: boolean = false;
-  let referToDoclinThreads: boolean = true;
-  let referToCodeFile: boolean = true;
   let divElement: HTMLDivElement;
 
-  $: scrollToBottom(divElement), messages;
+  $: scrollToBottom(divElement), $copilotMessages;
 
   onMount(async () => {
     window.addEventListener('message', messageEventListener);
@@ -29,13 +26,8 @@
     switch (type) {
       case 'postCopilotPrompt':
         const reply = value;
-        messages = [...messages.slice(0, messages.length - 1), { author: 'copilot', message: reply }];
+        $copilotMessages = [...$copilotMessages.slice(0, $copilotMessages.length - 1), { author: 'copilot', message: reply }];
         disableSubmit = false;
-        break;
-      case 'getCopilotCache':
-        messages = value.messages;
-        referToDoclinThreads = value.indicators.referToDoclinThreads;
-        referToCodeFile = value.indicators.referToCodeFile;
         break;
     }
   };
@@ -53,33 +45,23 @@
     }
 
     disableSubmit = true;
-    messages = [...messages, { author: 'user', message: input }, { author: 'copilot', message: 'typing...' }];
+    $copilotMessages = [...$copilotMessages, { author: 'user', message: input }, { author: 'copilot', message: 'typing...' }];
 
     tsvscode.postMessage({
       type: 'postCopilotPrompt',
       value: {
         prompt: input,
-        referToDoclinThreads: referToDoclinThreads,
-        referToCodeFile: referToCodeFile,
+        referToDoclinThreads: $copilotReferToDoclinThreads,
+        referToCodeFile: $copilotReferToCodeFile,
       },
     });
 
     input = '';
   };
 
-  const handleIndicatorChange = (): void => {
-    tsvscode.postMessage({
-      type: 'updateCopilotIndicatorsCache',
-      value: {
-        referToDoclinThreads: referToDoclinThreads,
-        referToCodeFile: referToCodeFile,
-      },
-    });
-  };
-
   const clearCopilotMessageHistory = () => {
     tsvscode.postMessage({ type: 'clearCopilotMessageHistory', value: null });
-    messages = [];
+    $copilotMessages = [];
   };
 
   const autoResizeTextarea: FormEventHandler<HTMLTextAreaElement> = (event: Event) => {
@@ -96,7 +78,7 @@
 
 <div class="copilot-container" bind:this={divElement}>
   <div class="copilot-messages-body">
-    {#each messages as message}
+    {#each $copilotMessages as message}
       {#if message.author === 'user'}
         <b>You</b>
         <br />
@@ -116,12 +98,12 @@
       <div id="submitContainer">
         <div>
           <label class="checkbox">
-            <input type="checkbox" bind:checked={referToDoclinThreads} on:change={handleIndicatorChange} />
+            <input type="checkbox" bind:checked={$copilotReferToDoclinThreads} />
             Refer to doclin threads
           </label>
 
           <label class="checkbox">
-            <input type="checkbox" bind:checked={referToCodeFile} on:change={handleIndicatorChange} />
+            <input type="checkbox" bind:checked={$copilotReferToCodeFile} />
             Refer to currently open file
           </label>
         </div>
