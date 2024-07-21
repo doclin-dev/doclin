@@ -1,3 +1,5 @@
+import { CopilotRole } from './enums';
+
 export type User = {
   id: number;
   name: string;
@@ -57,6 +59,6 @@ export type TextEditorInsertSnippet = {
 };
 
 export type CopilotMessage = {
-  author: 'user' | 'copilot';
-  message: string;
+  role: CopilotRole;
+  content: string;
 };
