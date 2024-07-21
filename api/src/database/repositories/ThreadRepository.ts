@@ -34,7 +34,7 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
   },
 
   async findAllThreadsByProjectId(projectId: number): Promise<Thread[]> {
-    return this.createQueryBuilder('thread')
+    return await this.createQueryBuilder('thread')
       .leftJoinAndSelect('thread.snippets', 'threadSnippet')
       .leftJoinAndSelect('thread.user', 'user')
       .leftJoinAndSelect('thread.replies', 'reply')
@@ -45,8 +45,8 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
       .getMany();
   },
 
-  findThreadWithPropertiesByThreadId(threadId: number): Promise<Thread | null> {
-    return this.createQueryBuilder('thread')
+  async findThreadWithPropertiesByThreadId(threadId: number): Promise<Thread | null> {
+    return await this.createQueryBuilder('thread')
       .leftJoinAndSelect('thread.snippets', 'snippet')
       .leftJoinAndSelect('thread.user', 'user')
       .leftJoinAndSelect('thread.replies', 'reply')
@@ -55,8 +55,8 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
       .getOne();
   },
 
-  findThreadById(threadId: number): Promise<Thread | null> {
-    return this.findOneBy({ id: threadId });
+  async findThreadById(threadId: number): Promise<Thread | null> {
+    return await this.findOneBy({ id: threadId });
   },
 
   async findUsersByThreadId(threadId: number) {

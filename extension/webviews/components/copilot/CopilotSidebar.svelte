@@ -1,9 +1,9 @@
 <script lang="ts">
   import { onDestroy, onMount, tick } from 'svelte';
   import Button from '../Button.svelte';
-  import { FormEventHandler } from 'svelte/elements';
   import snarkdown from 'snarkdown';
-  import { CopilotMessage } from '../../types';
+  import type { FormEventHandler } from 'svelte/elements';
+  import type { CopilotMessage } from '../../types';
 
   let input: string = '';
   let messages: CopilotMessage[] = [];
@@ -16,7 +16,7 @@
 
   onMount(async () => {
     window.addEventListener('message', messageEventListener);
-    tsvscode.postMessage({ type: 'getCopilotMessageHistory', value: null });
+    tsvscode.postMessage({ type: 'getCopilotCache', value: null });
   });
 
   onDestroy(() => {
@@ -24,15 +24,18 @@
   });
 
   const messageEventListener = async (event: Event) => {
-    const message = event.data;
-    switch (message.type) {
+    const type = event.data.type;
+    const value = event.data.value;
+    switch (type) {
       case 'postCopilotPrompt':
-        const reply = message.value;
-        messages = [...messages.slice(0, messages.length - 1), {author: 'copilot', message: reply}];
+        const reply = value;
+        messages = [...messages.slice(0, messages.length - 1), { author: 'copilot', message: reply }];
         disableSubmit = false;
         break;
-      case 'getCopilotMessageHistory':
-        messages = message.value;
+      case 'getCopilotCache':
+        messages = value.messages;
+        referToDoclinThreads = value.indicators.referToDoclinThreads;
+        referToCodeFile = value.indicators.referToCodeFile;
         break;
     }
   };
@@ -50,28 +53,34 @@
     }
 
     disableSubmit = true;
-    messages = [
-      ...messages, 
-      { author: 'user', message: input },
-      { author: 'copilot', message: 'typing...' }
-    ];
+    messages = [...messages, { author: 'user', message: input }, { author: 'copilot', message: 'typing...' }];
 
     tsvscode.postMessage({
       type: 'postCopilotPrompt',
       value: {
         prompt: input,
         referToDoclinThreads: referToDoclinThreads,
-        referToCodeFile: referToCodeFile
+        referToCodeFile: referToCodeFile,
       },
     });
 
     input = '';
   };
 
+  const handleIndicatorChange = (): void => {
+    tsvscode.postMessage({
+      type: 'updateCopilotIndicatorsCache',
+      value: {
+        referToDoclinThreads: referToDoclinThreads,
+        referToCodeFile: referToCodeFile,
+      },
+    });
+  };
+
   const clearCopilotMessageHistory = () => {
     tsvscode.postMessage({ type: 'clearCopilotMessageHistory', value: null });
     messages = [];
-  }
+  };
 
   const autoResizeTextarea: FormEventHandler<HTMLTextAreaElement> = (event: Event) => {
     const textarea = event.target as HTMLTextAreaElement;
@@ -82,7 +91,7 @@
   const scrollToBottom = async (node: HTMLDivElement) => {
     await tick();
     node.scroll({ top: node.scrollHeight });
-  }; 
+  };
 </script>
 
 <div class="copilot-container" bind:this={divElement}>
@@ -90,11 +99,11 @@
     {#each messages as message}
       {#if message.author === 'user'}
         <b>You</b>
-        <br/>
+        <br />
         {message.message}
       {:else if message.author === 'copilot'}
         <b>Copilot</b>
-        <br/>
+        <br />
         {@html snarkdown(message.message)}
       {/if}
       <hr />
@@ -103,30 +112,25 @@
 
   <div class="textEditorContainer mb-2">
     <form on:submit|preventDefault={submitPrompt} on:keydown={handleKeyDown}>
-      <textarea
-        bind:value={input}
-        placeholder="Type your prompt"
-        on:input={autoResizeTextarea}
-      />
+      <textarea bind:value={input} placeholder="Type your prompt" on:input={autoResizeTextarea} />
       <div id="submitContainer">
         <div>
           <label class="checkbox">
-              <input type="checkbox" bind:checked={referToDoclinThreads} />
-              Refer to doclin threads
+            <input type="checkbox" bind:checked={referToDoclinThreads} on:change={handleIndicatorChange} />
+            Refer to doclin threads
           </label>
-          
+
           <label class="checkbox">
-            <input type="checkbox" bind:checked={referToCodeFile} />
+            <input type="checkbox" bind:checked={referToCodeFile} on:change={handleIndicatorChange} />
             Refer to currently open file
           </label>
         </div>
 
         <div>
-          <Button icon='trash' onClick={clearCopilotMessageHistory} />
-          <Button icon='send' onClick={submitPrompt} />
+          <Button icon="trash" onClick={clearCopilotMessageHistory} />
+          <Button icon="send" onClick={submitPrompt} />
         </div>
       </div>
     </form>
   </div>
-  
 </div>

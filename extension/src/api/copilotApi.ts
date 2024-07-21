@@ -8,17 +8,20 @@ export const postCopilotPrompt = async ({
   organizationId,
   projectId,
   prompt,
+  activeEditorText,
   referToDoclinThreads,
   referToCodeFile,
 }: {
   organizationId: string;
   projectId: number;
   prompt: string;
+  activeEditorText: string | undefined;
   referToDoclinThreads: boolean;
   referToCodeFile: boolean;
 }) => {
   const data = {
     prompt: prompt,
+    activeEditorText: activeEditorText,
     referToDoclinThreads: referToDoclinThreads,
     referToCodeFile: referToCodeFile,
   };

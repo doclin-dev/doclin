@@ -59,4 +59,4 @@ export type TextEditorInsertSnippet = {
 export type CopilotMessage = {
   author: 'user' | 'copilot';
   message: string;
-}
+};

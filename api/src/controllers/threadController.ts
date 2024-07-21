@@ -58,7 +58,7 @@ export const postThread = async (req: Request, res: Response) => {
   const threadResponse = await ThreadRepository.findThreadWithPropertiesByThreadId(thread.id);
 
   if (threadResponse) {
-    await ThreadRepository.updateSearchEmbeddingsForThread(thread);
+    await ThreadRepository.updateSearchEmbeddingsForThread(threadResponse);
   }
 
   const response = threadResponse ? mapThreadResponse(threadResponse) : null;

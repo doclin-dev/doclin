@@ -12,6 +12,7 @@ export enum GlobalStateType {
   PROJECT_MAP_CACHE = 'projectMapCache',
   USER_MAP_CACHE = 'authenticatedUserCache',
   COPILOT_MESSAGES_MAP_CACHE = 'copilotMessagesMapCache',
+  COPILOT_INDICATORS_MAP_CACHE = 'copilotIndicatorsMapCache',
 }
 
 export enum LogType {

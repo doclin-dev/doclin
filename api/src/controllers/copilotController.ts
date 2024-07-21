@@ -21,9 +21,18 @@ export const postPrompt = async (req: Request, res: Response) => {
   const userPrompt: string = req.body.prompt;
   const referToDoclinThreads: boolean = req.body.referToDoclinThreads;
   const referToCodeFile: boolean = req.body.referToCodeFile;
+  const activeEditorText: string | undefined = req.body.activeEditorText;
   const projectId: number = parseInt(req.params.projectId);
 
-  const completeUserPrompt = await generateUserPrompt(userPrompt, projectId, referToDoclinThreads, referToCodeFile);
+  console.log(activeEditorText);
+
+  const completeUserPrompt = await generateUserPrompt(
+    userPrompt,
+    projectId,
+    referToDoclinThreads,
+    referToCodeFile,
+    activeEditorText
+  );
   const reply = await getResponseFromGPT(completeUserPrompt);
   res.send({ reply: reply });
 };
@@ -32,7 +41,8 @@ const generateUserPrompt = async (
   userPrompt: string,
   projectId: number,
   referToDoclinThreads: boolean,
-  referToCodeFile: boolean
+  referToCodeFile: boolean,
+  activeEditorText: string | undefined
 ): Promise<string> => {
   let completeUserPrompt = `${userPrompt}\n`;
   completeUserPrompt += `Answer the above question from user.`;
@@ -46,6 +56,11 @@ const generateUserPrompt = async (
     completeUserPrompt += `Previous discussion on the sytem:\n`;
     completeUserPrompt += (await getThreadsReference(userPrompt, projectId)) ?? `No relevant discussion threads found.`;
     completeUserPrompt += DIVIDER;
+  }
+
+  if (referToCodeFile && activeEditorText) {
+    completeUserPrompt += `Currently opened code file:\n`;
+    completeUserPrompt += activeEditorText;
   }
 
   return completeUserPrompt;
