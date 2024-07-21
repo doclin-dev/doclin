@@ -4,7 +4,9 @@ import { ThreadRepository } from '../database/repositories/ThreadRepository';
 import OpenAI from 'openai';
 import { getThreadMessageWithSnippet } from '../utils/snippetUtils';
 import { OPENAI_API_KEY } from '../envConstants';
-import { Reply } from 'src/database/entities/Reply';
+import { Reply } from '../database/entities/Reply';
+import { CopilotMessage } from '../types/types';
+import { CopilotRole } from '../types/enums';
 
 const SYSTEM_PROMPT = `
     You are an AI assistant helping helping understanding code using documentation and discussion.
@@ -18,22 +20,25 @@ const openai = new OpenAI({
 });
 
 export const postPrompt = async (req: Request, res: Response) => {
-  const userPrompt: string = req.body.prompt;
+  const messages: CopilotMessage[] = req.body.messages;
   const referToDoclinThreads: boolean = req.body.referToDoclinThreads;
   const referToCodeFile: boolean = req.body.referToCodeFile;
   const activeEditorText: string | undefined = req.body.activeEditorText;
   const projectId: number = parseInt(req.params.projectId);
+  const userMessage = messages.pop();
 
-  console.log(activeEditorText);
+  if (userMessage?.role !== CopilotRole.USER) {
+    throw new Error('Unexpected user role');
+  }
 
   const completeUserPrompt = await generateUserPrompt(
-    userPrompt,
+    userMessage.content,
     projectId,
     referToDoclinThreads,
     referToCodeFile,
     activeEditorText
   );
-  const reply = await getResponseFromGPT(completeUserPrompt);
+  const reply = await getResponseFromGPT(completeUserPrompt, messages);
   res.send({ reply: reply });
 };
 
@@ -92,7 +97,7 @@ const getReplyReference = (reply: Reply, index: number, replies: Reply[]): strin
   return `Reply ${index + 1} of ${replies.length}: ${getThreadMessageWithSnippet(reply)}`;
 };
 
-const getResponseFromGPT = async (userPrompt: string) => {
+const getResponseFromGPT = async (userPrompt: string, previousMessages: CopilotMessage[]) => {
   const response = await openai.chat.completions.create({
     model: 'gpt-4o',
     messages: [
@@ -100,6 +105,7 @@ const getResponseFromGPT = async (userPrompt: string) => {
         role: 'system',
         content: SYSTEM_PROMPT,
       },
+      ...previousMessages,
       {
         role: 'user',
         content: userPrompt,

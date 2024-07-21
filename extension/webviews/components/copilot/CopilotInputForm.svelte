@@ -58,7 +58,7 @@
     tsvscode.postMessage({
       type: 'postCopilotPrompt',
       value: {
-        prompt: input,
+        messages: $copilotMessages.slice(-4, -1),
         referToDoclinThreads: $copilotReferToDoclinThreads,
         referToCodeFile: $copilotReferToCodeFile,
       },

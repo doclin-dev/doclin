@@ -1,3 +1,4 @@
+import { CopilotMessage } from '../types';
 import { createAxiosInstance } from './apiService';
 
 const getBaseCopilotUrl = (organizationId: string, projectId: number) => {
@@ -7,20 +8,20 @@ const getBaseCopilotUrl = (organizationId: string, projectId: number) => {
 export const postCopilotPrompt = async ({
   organizationId,
   projectId,
-  prompt,
+  messages,
   activeEditorText,
   referToDoclinThreads,
   referToCodeFile,
 }: {
   organizationId: string;
   projectId: number;
-  prompt: string;
+  messages: CopilotMessage[];
   activeEditorText: string | undefined;
   referToDoclinThreads: boolean;
   referToCodeFile: boolean;
 }) => {
   const data = {
-    prompt: prompt,
+    messages: messages,
     activeEditorText: activeEditorText,
     referToDoclinThreads: referToDoclinThreads,
     referToCodeFile: referToCodeFile,

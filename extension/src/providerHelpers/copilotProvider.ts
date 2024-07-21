@@ -2,9 +2,10 @@ import * as vscode from 'vscode';
 import * as copilotApi from '../api/copilotApi';
 import logger from '../utils/logger';
 import { readDoclinFile } from './doclinFile/readDoclinFile';
+import { CopilotMessage } from '../types';
 
 export const postCopilotPrompt = async (webviewMessage: {
-  prompt: string;
+  messages: CopilotMessage[];
   referToDoclinThreads: boolean;
   referToCodeFile: boolean;
 }) => {
