@@ -1,4 +1,4 @@
-import { CopilotRole } from "./enums";
+import { CopilotRole } from './enums';
 
 export type RequestSnippetBlot = {
   displaySnippet: string;

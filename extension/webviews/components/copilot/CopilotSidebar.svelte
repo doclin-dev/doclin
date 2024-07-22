@@ -30,6 +30,6 @@
       <hr />
     {/each}
   </div>
-  
-  <CopilotInputForm/>
+
+  <CopilotInputForm />
 </div>
