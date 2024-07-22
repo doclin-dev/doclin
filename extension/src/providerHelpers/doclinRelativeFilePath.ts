@@ -16,10 +16,11 @@ export const getDoclinRelativeFilePath = async (documentUri: vscode.Uri): Promis
 
   if (doclinFilePath) {
     const doclinFolder = path.dirname(doclinFilePath.fsPath);
-    const doclinRelativePath = path.relative(doclinFolder, activeEditorFilePath);
+    const normalizedDoclinFolder = doclinFolder.split(path.sep).join(path.posix.sep);
+    const normalizedActiveEditorFilePath = activeEditorFilePath.split(path.sep).join(path.posix.sep);
+    const doclinRelativePath = path.posix.relative(normalizedDoclinFolder, normalizedActiveEditorFilePath);
 
     await doclinRelativePathCacheManager.set(activeEditorFilePath, doclinRelativePath);
-
     return doclinRelativePath;
   }
 
