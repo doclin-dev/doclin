@@ -2,6 +2,7 @@
   padding: 0 var(--container-paddding);
   overflow-y: scroll;
   height: 100vh;
+  scrollbar-color: var(--vscode-scrollbarSlider-activeBackground) rgba(130, 130, 130, 0.1);
 }
 
 .copilot-container textarea {
