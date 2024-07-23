@@ -48,6 +48,7 @@ export const postThread = async (req: Request, res: Response) => {
 
   if (mentionedUserIds.length > 0) {
     sendMentionEmailNotification(
+      anonymousPost,
       req.userId,
       mentionedUserIds,
       projectId,
