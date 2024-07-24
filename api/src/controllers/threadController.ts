@@ -48,11 +48,11 @@ export const postThread = async (req: Request, res: Response) => {
 
   if (mentionedUserIds.length > 0) {
     sendMentionEmailNotification(
-      anonymousPost,
       req.userId,
       mentionedUserIds,
       projectId,
-      fillUpThreadOrReplyMessageWithSnippet(threadMessage, snippets)
+      fillUpThreadOrReplyMessageWithSnippet(threadMessage, snippets),
+      anonymousPost,
     );
   }
 
