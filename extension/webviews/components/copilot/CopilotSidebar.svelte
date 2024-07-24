@@ -1,13 +1,50 @@
 <script lang="ts">
-  import { tick } from 'svelte';
-  import snarkdown from 'snarkdown';
+  import { onDestroy, onMount, tick } from 'svelte';
   import { copilotMessages } from '../../state/store';
-  import { CopilotRole } from '../../enums';
   import CopilotInputForm from './CopilotInputForm.svelte';
+  import CopilotMessagesBody from './CopilotMessagesBody.svelte';
+  import { ExtensionState } from '../../types';
 
   let divElement: HTMLDivElement;
+  let error: any;
+  let projectNotInitialized: boolean = false;
 
   $: scrollToBottom(divElement), $copilotMessages;
+
+  onMount(async () => {
+    window.addEventListener('message', messageEventListener);
+    getExtensionState();
+  });
+
+  onDestroy(() => {
+    window.removeEventListener('message', messageEventListener);
+  });
+
+  const messageEventListener = async (event: any) => {
+    const message = event.data;
+    switch (message.type) {
+      case 'getExtensionState':
+        handleGetExtensionState(message.value);
+        break;
+    }
+  };
+
+  const getExtensionState = () => {
+    tsvscode.postMessage({ type: 'getExtensionState', value: null });
+  };
+
+  const handleGetExtensionState = (extensionState: ExtensionState) => {
+    error = extensionState?.error;
+    const organization = extensionState?.organization;
+    const project = extensionState?.project;
+    const user = extensionState?.user;
+
+    if (!user || !organization || !project || organization && organization?.unauthorized) {
+      projectNotInitialized = true;
+    } else {
+      projectNotInitialized = false;
+    }
+  }
 
   const scrollToBottom = async (node: HTMLDivElement) => {
     await tick();
@@ -16,20 +53,13 @@
 </script>
 
 <div class="copilot-container" bind:this={divElement}>
-  <div class="copilot-messages-body">
-    {#each $copilotMessages as message}
-      {#if message.role === CopilotRole.USER}
-        <b>You</b>
-        <br />
-        {message.content}
-      {:else if message.role === CopilotRole.ASSISTANT}
-        <b>Copilot</b>
-        <br />
-        {@html snarkdown(message.content)}
-      {/if}
-      <hr />
-    {/each}
-  </div>
-
-  <CopilotInputForm />
+  {#if error}
+    <div>Could not reach server. Please try again later!</div>
+    <button on:click={getExtensionState}>Reload</button>
+  {:else if projectNotInitialized}
+    <div>Complete the steps in the main Doclin sidebar before using Copilot.</div>
+  {:else}
+      <CopilotMessagesBody />
+      <CopilotInputForm />
+  {/if}
 </div>

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
-  import type { User } from '../types';
+  import type { ExtensionState, User } from '../types';
   import { ActiveView, Page, SidebarLoadingStatus } from '../enums';
   import ThreadsViewer from './thread/ThreadsViewer.svelte';
   import InitializeProject from './InitializeProject.svelte';
@@ -25,7 +25,7 @@
     tsvscode.postMessage({ type: 'logout', value: undefined });
   };
 
-  const handleGetExtensionState = (extensionState: any) => {
+  const handleGetExtensionState = (extensionState: ExtensionState) => {
     $reload += 1;
     error = extensionState?.error;
     user = extensionState?.user;
