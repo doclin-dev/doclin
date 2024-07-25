@@ -6,20 +6,21 @@ import DoclinRelativePathCacheManager from '../utils/cache/DoclinRelativePathCac
 export const getDoclinRelativeFilePath = async (documentUri: vscode.Uri): Promise<string> => {
   const activeEditorFilePath: string = documentUri.fsPath;
   const doclinRelativePathCacheManager = new DoclinRelativePathCacheManager();
-  const cachedRelativePath = await doclinRelativePathCacheManager.get(activeEditorFilePath);
+  const cachedRelativePath: string | undefined = await doclinRelativePathCacheManager.get(activeEditorFilePath);
 
   if (cachedRelativePath) {
     return cachedRelativePath;
   }
 
-  const doclinFilePath = await getExistingDoclinFile();
+  const doclinFilePath: vscode.Uri | null = await getExistingDoclinFile();
 
   if (doclinFilePath) {
-    const doclinFolder = path.dirname(doclinFilePath.fsPath);
-    const doclinRelativePath = path.relative(doclinFolder, activeEditorFilePath);
+    const doclinFolder: string = path.dirname(doclinFilePath.fsPath);
+    const normalizedDoclinFolder: string = doclinFolder.split(path.sep).join(path.posix.sep);
+    const normalizedActiveEditorFilePath: string = activeEditorFilePath.split(path.sep).join(path.posix.sep);
+    const doclinRelativePath: string = path.posix.relative(normalizedDoclinFolder, normalizedActiveEditorFilePath);
 
     await doclinRelativePathCacheManager.set(activeEditorFilePath, doclinRelativePath);
-
     return doclinRelativePath;
   }
 

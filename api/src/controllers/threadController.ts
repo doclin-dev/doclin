@@ -51,7 +51,8 @@ export const postThread = async (req: Request, res: Response) => {
       req.userId,
       mentionedUserIds,
       projectId,
-      fillUpThreadOrReplyMessageWithSnippet(threadMessage, snippets)
+      fillUpThreadOrReplyMessageWithSnippet(threadMessage, snippets),
+      anonymousPost
     );
   }
 
