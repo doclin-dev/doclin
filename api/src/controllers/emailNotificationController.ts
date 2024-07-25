@@ -7,7 +7,7 @@ import logger from '../logger';
 const SENDER_EMAIL: string = 'noreply@doclin.dev';
 const SENDER_NAME: string = 'Doclin';
 const MENTION_EMAIL_SUBJECT = 'has mentioned you in doclin.';
-const ANONYMOUS_USER='Anonymous User'
+const ANONYMOUS_USER = 'Anonymous User';
 export const sendEmailFromDoclin = (recipientEmails: string[], subject: string, message: string, sender?: string) => {
   if (!SENDGRID_API_KEY) {
     throw new Error('Sendgrid API key not set');
@@ -37,12 +37,11 @@ export const sendEmailFromDoclin = (recipientEmails: string[], subject: string, 
 };
 
 export const sendMentionEmailNotification = async (
-
   senderId: number,
   targetUserIds: number[],
   projectId: number,
   message: string,
-  anonymous: boolean=false,
+  anonymous: boolean = false
 ) => {
   let senderName: string | undefined = ANONYMOUS_USER;
   if (!anonymous) {

@@ -52,7 +52,7 @@ export const postThread = async (req: Request, res: Response) => {
       mentionedUserIds,
       projectId,
       fillUpThreadOrReplyMessageWithSnippet(threadMessage, snippets),
-      anonymousPost,
+      anonymousPost
     );
   }
 
