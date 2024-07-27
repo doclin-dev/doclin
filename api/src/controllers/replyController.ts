@@ -63,7 +63,7 @@ const sendEmailNotification = async (
 
   const allRelevantUserIds = [...new Set([...mentionedUserIds, ...relevantUserIds])];
 
-  if (mentionedUserIds.length > 0) {
+  if (allRelevantUserIds.length > 0) {
     sendMentionEmailNotification(
       userId,
       allRelevantUserIds,
