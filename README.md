@@ -62,6 +62,11 @@ npm run dev
 
 On Visual Studio Code, open the repository. Then on the top bar, select Run, then Start Debugging (F5).
 
+```
+cd extension
+npm install
+```
+
 ## Contributing
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for ways you can contribute to Doclin.
