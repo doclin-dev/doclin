@@ -61,6 +61,11 @@ npm run dev
 
 ### Run the extension
 
+```
+cd extension
+npm install
+```
+
 On Visual Studio Code, open the repository. Then on the top bar, select Run, then Start Debugging (F5).
 
 ## How to Contribute
