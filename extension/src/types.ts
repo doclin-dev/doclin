@@ -124,3 +124,8 @@ export type ExtensionState = {
   isFolderOrFileOpened?: boolean;
   error?: any;
 };
+
+export type CopilotMessage = {
+  author: 'user' | 'copilot';
+  message: string;
+};

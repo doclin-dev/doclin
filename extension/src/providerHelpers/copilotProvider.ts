@@ -1,16 +1,35 @@
-import copilotApi from '../api/copilotApi';
+import * as vscode from 'vscode';
+import * as copilotApi from '../api/copilotApi';
+import logger from '../utils/logger';
 import { readDoclinFile } from './doclinFile/readDoclinFile';
+import { CopilotMessage } from '../types';
 
-export const copilotPrompt = async (prompt: string) => {
+export const postCopilotPrompt = async (webviewMessage: {
+  messages: CopilotMessage[];
+  referToDoclinThreads: boolean;
+  referToCodeFile: boolean;
+}) => {
   const doclinFile = await readDoclinFile();
   const organizationId = doclinFile.organizationId;
   const projectId = doclinFile.projectId;
 
   if (!organizationId || !projectId) {
+    logger.error('Must complete organization and project setup before using copilot!', true);
     return;
   }
 
-  const response = await copilotApi.postCopilotPrompt(organizationId, projectId, prompt);
+  try {
+    const activeEditorText = vscode.window.activeTextEditor?.document.getText();
+    const response = await copilotApi.postCopilotPrompt({
+      organizationId,
+      projectId,
+      activeEditorText,
+      ...webviewMessage,
+    });
 
-  return response?.data?.reply;
+    return response?.data?.reply;
+  } catch (e: any) {
+    logger.error(e);
+    return 'An error occurred';
+  }
 };

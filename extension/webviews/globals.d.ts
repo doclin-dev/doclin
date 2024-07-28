@@ -6,5 +6,10 @@ declare global {
     getState: () => any;
     setState: (state: any) => void;
   };
+
   const apiBaseUrl: string;
+
+  interface Event {
+    data: { type: string; value?: any };
+  }
 }

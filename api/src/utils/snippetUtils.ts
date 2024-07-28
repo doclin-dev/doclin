@@ -1,5 +1,5 @@
 import { Reply } from 'src/database/entities/Reply';
-import { Thread } from '../../database/entities/Thread';
+import { Thread } from '../database/entities/Thread';
 import { RequestSnippetBlot } from 'src/types/types';
 
 export const MULTIPLE_LINE_BREAK_REGEX: RegExp = /(<p><br><\/p>)+/gi;
@@ -20,7 +20,7 @@ export const fillUpThreadOrReplyMessageWithSnippet = (message: string, snippetbl
   return message;
 };
 
-export const getThreadText = (thread: Thread | Reply): string => {
+export const getThreadMessageWithSnippet = (thread: Thread | Reply): string => {
   let message = thread.message;
 
   if (thread.snippets) {
