@@ -23,5 +23,6 @@
     "baseUrl": "."
   },
   "exclude": ["node_modules"],
-  "include": ["./src/**/*.tsx", "./src/**/*.ts"]
+  "include": ["./src/**/*.tsx", "./src/**/*.ts", "./tests/**/*.ts"],
+  "files": ["src/types/extend-express.d.ts"]
 }
