@@ -51,6 +51,7 @@ Please read and adhere to our [Code of Conduct](CODE_OF_CONDUCT.md) to ensure a 
    3. GITHUB_CLIENT_SECRET and GITHUB_CLIENT_ID - These are used for the github login. Get these by creating a Github app.
    4. SENDGRID_API_KEY - Optional. This is used for email notifications when someone is tagged on a thread. Get your own api key from Sendgrid.
    5. OPENAI_API_KEY - Optional. This is used for the copilot.
+
 ```
 cd api
 npm install
@@ -60,11 +61,12 @@ npm run dev
 
 ### Run the extension
 
-On Visual Studio Code, open the repository. Then on the top bar, select Run, then Start Debugging (F5).
 ```
 cd extension
 npm install
 ```
+
+On Visual Studio Code, open the repository. Then on the top bar, select Run, then Start Debugging (F5).
 
 ## How to Contribute
 
