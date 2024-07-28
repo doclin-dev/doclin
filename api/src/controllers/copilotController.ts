@@ -7,6 +7,7 @@ import { OPENAI_API_KEY } from '../envConstants';
 import { Reply } from '../database/entities/Reply';
 import { CopilotMessage } from '../types/types';
 import { CopilotRole } from '../types/enums';
+import logger from '../logger';
 
 const SYSTEM_PROMPT = `
     You are an AI assistant helping helping understanding code using documentation and discussion.
@@ -14,6 +15,7 @@ const SYSTEM_PROMPT = `
 `;
 
 const DIVIDER = `\n----------\n`;
+const ERROR_MESSAGE = 'An error occured when communicating with GPT. Please try again.';
 
 const openai = new OpenAI({
   apiKey: OPENAI_API_KEY,
@@ -38,6 +40,7 @@ export const postPrompt = async (req: Request, res: Response) => {
     referToCodeFile,
     activeEditorText
   );
+
   const reply = await getResponseFromGPT(completeUserPrompt, messages);
   res.send({ reply: reply });
 };
@@ -97,22 +100,27 @@ const getReplyReference = (reply: Reply, index: number, replies: Reply[]): strin
   return `Reply ${index + 1} of ${replies.length}: ${getThreadMessageWithSnippet(reply)}`;
 };
 
-const getResponseFromGPT = async (userPrompt: string, previousMessages: CopilotMessage[]) => {
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o',
-    messages: [
-      {
-        role: 'system',
-        content: SYSTEM_PROMPT,
-      },
-      ...previousMessages,
-      {
-        role: 'user',
-        content: userPrompt,
-      },
-    ],
-    temperature: 0.7,
-  });
+const getResponseFromGPT = async (userPrompt: string, previousMessages: CopilotMessage[]): Promise<string | null> => {
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [
+        {
+          role: 'system',
+          content: SYSTEM_PROMPT,
+        },
+        ...previousMessages,
+        {
+          role: 'user',
+          content: userPrompt,
+        },
+      ],
+      temperature: 0.7,
+    });
 
-  return response.choices[0].message.content;
+    return response.choices[0].message.content;
+  } catch (error) {
+    logger.error(error);
+    return ERROR_MESSAGE;
+  }
 };
