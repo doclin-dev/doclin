@@ -1,37 +1,68 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import type { Thread as ThreadType } from '../types';
-  import { Page } from '../enums';
-  import { page } from '../state/store';
+    import { Page } from '../enums';
+    import { currentProject, page } from '../state/store';
+    import Thread from './thread/Thread.svelte';
+    import Button from './Button.svelte';
 
     let searchQuery: string = '';
-    let items:Array<string>  = [];
+    let threads: Array<ThreadType> = [];
 
-    // Function to filter items based on search query
-    function filterItems() {
-        return items.filter(item => item.toLowerCase().includes(searchQuery.toLowerCase()));
-    }
-
-    // Function to handle search query change
-    function handleSearchQueryChange(event:any) {
-        searchQuery = event.target?.value;
-        $page = Page.SearchViewer;
+    const handleSearchQuery = (event: any) => {
+        searchQuery = event.target.value;
         console.log(searchQuery);
-    }
+        if ($currentProject) {
+            tsvscode.postMessage({ type: 'searchThreads', value: {searchText: searchQuery, projectId: $currentProject.id} });
+        }
+    };
 
-    // Lifecycle hook to initialize items
-    onMount(() => {
-        // Fetch items from API or set them manually
-        items = ['item 1', 'item 2', 'item 3'];
+    const handleCancelButtonClick = () => {
+        searchQuery = '';
+        $page = Page.ThreadsViewer;
+    };
+
+    const messageEventListener = async (event: any) => {
+        const message = event.data;
+        switch (message.type) {
+            case 'searchThreads':
+                threads = message.value;
+                console.log('m', message, threads);
+                break;
+            };
+    };
+
+    console.log('threads',threads);
+
+    onMount(async () => {
+        if ($currentProject === null) {
+            $page = Page.InitializeProject;
+        };
+        window.addEventListener('message', messageEventListener);
     });
 </script>
 
+<style>
+    .search-container{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+    }
+</style>
 <div>
-    <input type="text" bind:value={searchQuery} on:input={handleSearchQueryChange} placeholder="Search items" />
+    <div class="search-container">
+        <input class="search-field" type="text" bind:value={searchQuery} on:input={handleSearchQuery} placeholder="Search threads" />
+        <Button title="Cancel" onClick={handleCancelButtonClick}/>
+    </div>
 
-    <ul>
-        {#each filterItems() as item}
-            <li>{item}</li>
+    Showing search results:
+    {#if threads.length > 0}
+        {#each threads as thread (thread.id)}
+            <hr />
+            <Thread {thread} reloadThreads={() => {}} />
         {/each}
-    </ul>
+        <hr />
+    {/if}
 </div>

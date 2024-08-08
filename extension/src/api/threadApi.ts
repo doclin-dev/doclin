@@ -94,10 +94,26 @@ const deleteThread = async (organizationId: string, projectId: number, threadId:
   return response;
 };
 
+const searchThreads = async (searchText: string, projectId: number, organizationId: string) => {
+  const data = {
+    searchText: searchText,
+    projectId: projectId,
+  };
+
+  const apiService = await createAxiosInstance();
+  const baseThreadUrl = getBaseThreadUrl(organizationId, projectId);
+  const response = await apiService.get(`${baseThreadUrl}/search`, { data } );
+
+  console.log('re',response);
+
+  return response;
+};
+
 export default {
   getFileBasedThreads,
   getAllThreads,
   postThread,
   updateThread,
   deleteThread,
+  searchThreads,
 };
