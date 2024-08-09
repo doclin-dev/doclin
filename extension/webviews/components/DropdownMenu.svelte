@@ -2,7 +2,7 @@
   import 'bootstrap';
   import Icon from './Icon.svelte';
 
-  export let options: { key: string, label: string, handler: () => void, className?: string }[] = [];
+  export let options: { key: string; label: string; handler: () => void; className?: string }[] = [];
 </script>
 
 <div class="dropdown">

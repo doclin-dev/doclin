@@ -12,7 +12,6 @@
     $page = Page.InviteUser;
   };
 
-
   const showInviteButton = $page === Page.ThreadsViewer || $page === Page.ReplyViewer;
 
   const dropdownOptions = [
@@ -21,11 +20,15 @@
       label: 'Logout',
       handler: logout,
     },
-    ...(showInviteButton ? [{
-      key: 'invite',
-      label: 'Invite',
-      handler: switchToInvitePage,
-    }] : []),
+    ...(showInviteButton
+      ? [
+          {
+            key: 'invite',
+            label: 'Invite',
+            handler: switchToInvitePage,
+          },
+        ]
+      : []),
   ];
 
   const handleSearchButtonClick = () => {
@@ -39,9 +42,9 @@
 
     <div class="icon-container">
       {#if $currentProject}
-        <Button icon='search' type="text" onClick={handleSearchButtonClick}/>
+        <Button icon="search" type="text" onClick={handleSearchButtonClick} />
       {/if}
-      
+
       <Button icon="reload" type="text" onClick={reload} />
 
       <DropdownMenu options={dropdownOptions} />
