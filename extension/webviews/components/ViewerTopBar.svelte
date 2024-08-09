@@ -39,7 +39,7 @@
 
     <div class="icon-container">
       {#if $currentProject}
-        <Button icon='search' onClick={handleSearchButtonClick}/>
+        <Button icon='search' type="text" onClick={handleSearchButtonClick}/>
       {/if}
       
       <Button icon="reload" type="text" onClick={reload} />

@@ -152,17 +152,13 @@ export const deleteThread = async (req: Request, res: Response) => {
 export const searchThreads = async (req: Request, res: Response) => {
   const searchText = DOMPurify.sanitize(req.body.searchText);
   const projectId = req.body.projectId;
-  console.log('sear',{ searchText, projectId });
 
   let searchResults: Array<Thread> = [];
 
   if (searchText) {
     searchResults = await ThreadRepository.searchThreads(searchText, projectId);
-    console.log('inside',searchResults);
   }
   searchResults = await ThreadRepository.findAllThreadsByProjectId(projectId);
 
-  console.log('oka', searchResults);
-
-  res.send(searchResults);
+  res.send(searchResults.map(mapThreadResponse));
 };

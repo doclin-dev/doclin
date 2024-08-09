@@ -212,7 +212,11 @@ export const searchThreads = async ({ searchText, projectId } : {searchText: str
   const organizationId = doclinFile?.organizationId ?? "";
   const response = await threadApi.searchThreads( searchText, projectId, organizationId );
   const threads: Array<Thread> = response.data;
-  console.log('helper', threads);
+  
+  for (const thread of threads) {
+    await compareSnippetsWithActiveEditor(thread.snippets);
+    fillUpThreadOrReplyMessageWithSnippet(thread);
+  }
 
   return threads;
 };

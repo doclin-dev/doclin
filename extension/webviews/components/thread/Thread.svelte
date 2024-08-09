@@ -16,8 +16,6 @@
   let lastEdited: string | null = thread?.lastReplied ? moment.utc(thread.lastReplied).fromNow() : null;
   let threadCreationTime: string = moment.utc(thread?.createdAt).fromNow();
 
-  console.log('t',thread);
-
   setInterval(() => {
     lastEdited = thread?.lastReplied ? moment.utc(thread.lastReplied).fromNow() : null;
     threadCreationTime = moment.utc(thread?.createdAt).fromNow();

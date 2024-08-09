@@ -10,10 +10,11 @@
     let threads: Array<ThreadType> = [];
 
     const handleSearchQuery = (event: any) => {
-        searchQuery = event.target.value;
-        console.log(searchQuery);
-        if ($currentProject) {
-            tsvscode.postMessage({ type: 'searchThreads', value: {searchText: searchQuery, projectId: $currentProject.id} });
+        if (event.key === 'Enter') {
+            searchQuery = event.target.value;
+            if ($currentProject) {
+                tsvscode.postMessage({ type: 'searchThreads', value: {searchText: searchQuery, projectId: $currentProject.id} });
+            }
         }
     };
 
@@ -27,12 +28,9 @@
         switch (message.type) {
             case 'searchThreads':
                 threads = message.value;
-                console.log('m', message, threads);
                 break;
             };
     };
-
-    console.log('threads',threads);
 
     onMount(async () => {
         if ($currentProject === null) {
@@ -53,11 +51,10 @@
 </style>
 <div>
     <div class="search-container">
-        <input class="search-field" type="text" bind:value={searchQuery} on:input={handleSearchQuery} placeholder="Search threads" />
+        <input class="search-field" type="text" bind:value={searchQuery} on:keydown={handleSearchQuery} placeholder="Search threads" />
         <Button title="Cancel" onClick={handleCancelButtonClick}/>
     </div>
-
-    Showing search results:
+    <div style="padding-top: 0.75rem;">Showing search results: </div>
     {#if threads.length > 0}
         {#each threads as thread (thread.id)}
             <hr />

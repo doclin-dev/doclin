@@ -77,7 +77,6 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
 
   async searchThreads(searchText: string, projectId: number): Promise<Thread[]> {
     const formattedSearchText = searchText.split(' ').join('&');
-    console.log('f',formattedSearchText);
 
     return this.createQueryBuilder('thread')
       .leftJoinAndSelect('thread.snippets', 'snippet')

@@ -104,8 +104,6 @@ const searchThreads = async (searchText: string, projectId: number, organization
   const baseThreadUrl = getBaseThreadUrl(organizationId, projectId);
   const response = await apiService.get(`${baseThreadUrl}/search`, { data } );
 
-  console.log('re',response);
-
   return response;
 };
 
