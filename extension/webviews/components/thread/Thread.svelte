@@ -61,6 +61,20 @@
     }
   };
 
+  const dropdownOptions = [
+    {
+      key: 'edit',
+      label: 'Edit',
+      handler: handleEditButtonClick,
+    },
+    {
+      key: 'delete',
+      label: 'Delete',
+      handler: handleDeleteButtonClick,
+      className: 'text-danger',
+    },
+  ];
+
   onMount(async () => {
     window.addEventListener('message', messageEventListener);
   });
@@ -83,7 +97,7 @@
           <Button icon="reply" onClick={handleReplyButtonClick} type="text" />
         {/if}
 
-        <DropdownMenu handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick} />
+        <DropdownMenu options={dropdownOptions} />
       </div>
     </div>
 

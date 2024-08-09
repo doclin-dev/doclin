@@ -61,7 +61,7 @@
 }
 
 .button .icon {
+  display: flex;
   padding: 0;
-  margin-right: 2px;
   align-items: center;
 }

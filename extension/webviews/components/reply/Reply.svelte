@@ -29,6 +29,20 @@
     });
   };
 
+  const dropdownOptions = [
+    {
+      key: 'edit',
+      label: 'Edit',
+      handler: handleEditButtonClick,
+    },
+    {
+      key: 'delete',
+      label: 'Delete',
+      handler: handleDeleteButtonClick,
+      className: 'text-danger',
+    },
+  ];
+
   const messageEventListener = async (event: any) => {
     const message = event.data;
     switch (message.type) {
@@ -65,7 +79,7 @@
     </div>
 
     <div class="button-container">
-      <DropdownMenu handleEdit={handleEditButtonClick} handleDelete={handleDeleteButtonClick} />
+      <DropdownMenu options={dropdownOptions} />
     </div>
   </div>
 

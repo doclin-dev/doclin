@@ -10,6 +10,7 @@
   import AccessRequired from './AccessRequired.svelte';
   import ViewerTopBar from './ViewerTopBar.svelte';
   import RegisterEmail from './RegisterEmail.svelte';
+  import SearchViewer from './SearchViewer.svelte';
   import { activeView, currentOrganization, currentProject, page, reload, threadSelected } from '../state/store';
 
   let loading = true;
@@ -147,6 +148,8 @@
     <ThreadsViewer />
   {:else if $page === Page.ReplyViewer}
     <ReplyViewer />
+  {:else if $page === Page.SearchViewer}
+    <SearchViewer />
   {:else if $page === Page.InviteUser}
     <InviteUser />
   {/if}

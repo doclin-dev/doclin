@@ -21,7 +21,7 @@
 
 .dropdown-item:hover,
 .dropdown-item:focus {
-  background-color: var(--vscode-editor-hoverHighlightBackground);
+  background-color: var(--vscode-input-foreground);
 }
 
 .dropdown-item.active,
