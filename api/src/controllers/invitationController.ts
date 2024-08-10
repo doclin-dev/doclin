@@ -65,6 +65,10 @@ export const redeemInvitation = async (req: Request, res: Response) => {
   const invitationCode = req.body.invitationCode;
   const userId = req.userId;
 
+  if (!userId) {
+    return;
+  }
+
   const user: User | null = await UserRepository.findUserById(userId);
   const invitation: Invitation | null = await InvitationRepository.findUnexpiredInvitationByCode(invitationCode);
 
