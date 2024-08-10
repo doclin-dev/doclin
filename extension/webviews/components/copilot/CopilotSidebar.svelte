@@ -20,7 +20,7 @@
     window.removeEventListener('message', messageEventListener);
   });
 
-  const messageEventListener = async (event: any) => {
+  const messageEventListener = async (event: Event) => {
     const message = event.data;
     switch (message.type) {
       case 'getExtensionState':
