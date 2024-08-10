@@ -112,8 +112,7 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
   },
 
   async updateSearchEmbeddingsForThread(thread: Thread) {
-    let searchText = ``;
-    searchText += thread.title ?? '';
+    let searchText = thread.title ?? '';
     searchText += getThreadMessageWithSnippet(thread) ?? '';
     searchText += thread.user.name ?? '';
 

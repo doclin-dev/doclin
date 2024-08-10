@@ -10,7 +10,7 @@ import { CopilotRole } from '../types/enums';
 import logger from '../logger';
 
 const SYSTEM_PROMPT = `
-    You are an AI assistant helping helping understanding code using documentation and discussion.
+    You are an AI assistant helping understanding code using documentation and discussion.
     Provide detailed and context-aware responses based on the input provided. Format your answer in markdown only.
 `;
 
