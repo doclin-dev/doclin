@@ -26,6 +26,7 @@ export const postReply = async (req: Request, res: Response) => {
   const snippets: RequestSnippetBlot[] = req.body.snippets;
   const delta: any = req.body.delta;
   const mentionedUserIds: number[] = req.body.mentionedUserIds;
+  const userId: number | undefined = req.userId;
   const { updatedReplyMessage, snippetEntities } = await createSnippetEntitiesFromReplyMessage(replyMessage, snippets);
   const thread: Thread | null = await ThreadRepository.findThreadById(threadId);
 
@@ -37,13 +38,13 @@ export const postReply = async (req: Request, res: Response) => {
   const reply = await Reply.create({
     threadId: threadId,
     message: updatedReplyMessage,
-    userId: req.userId,
+    userId: userId,
     anonymous: anonymous,
     delta: delta,
     snippets: snippetEntities,
   }).save();
 
-  sendEmailNotification(thread, req.userId, mentionedUserIds, replyMessage, snippets);
+  sendEmailNotification(thread, userId, mentionedUserIds, replyMessage, snippets);
   const replyResponse = await ReplyRepository.findReplyWithPropertiesById(reply.id);
   const response = replyResponse ? mapReplyResponse(replyResponse) : null;
 
@@ -52,11 +53,15 @@ export const postReply = async (req: Request, res: Response) => {
 
 const sendEmailNotification = async (
   thread: Thread,
-  userId: number,
+  userId: number | undefined,
   mentionedUserIds: number[],
   replyMessage: string,
   snippets: RequestSnippetBlot[]
 ) => {
+  if (!userId) {
+    return;
+  }
+
   const relevantUserIds = (await ThreadRepository.findUsersByThreadId(thread.id))
     .filter((user) => user.id !== userId)
     .map((user) => user.id);
@@ -101,7 +106,7 @@ export const getReplies = async (req: Request, res: Response) => {
 };
 
 export const updateReplyMessage = async (req: Request, res: Response) => {
-  const replyId: number = parseInt(req.params.id as string);
+  const replyId: number = parseInt(req.params.replyId as string);
   const replyMessage: string = DOMPurify.sanitize(req.body.message);
   const snippets: RequestSnippetBlot[] = req.body.snippets;
   const delta: any = req.body.delta;
@@ -127,7 +132,7 @@ export const updateReplyMessage = async (req: Request, res: Response) => {
 };
 
 export const deleteReply = async (req: Request, res: Response) => {
-  const replyId: number = parseInt(req.params.id as string);
+  const replyId: number = parseInt(req.params.replyId as string);
 
   const reply = await ReplyRepository.findReplyWithPropertiesById(replyId);
 

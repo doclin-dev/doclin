@@ -24,7 +24,7 @@ export const postThread = async (req: Request, res: Response) => {
   const gitBranch: string = DOMPurify.sanitize(req.body.gitBranch);
   const snippets: RequestSnippetBlot[] = req.body.snippets;
   const delta: any = req.body.delta;
-  const userId: number = req.userId;
+  const userId: number | undefined = req.userId;
   const projectId: number = req.body.projectId;
   const anonymousPost: boolean = req.body.anonymous;
   const mentionedUserIds: number[] = req.body.mentionedUserIds;
@@ -46,9 +46,9 @@ export const postThread = async (req: Request, res: Response) => {
     gitBranch: gitBranch,
   }).save();
 
-  if (mentionedUserIds.length > 0) {
+  if (userId && mentionedUserIds.length > 0) {
     sendMentionEmailNotification(
-      req.userId,
+      userId,
       mentionedUserIds,
       projectId,
       fillUpThreadOrReplyMessageWithSnippet(threadMessage, snippets),
@@ -98,7 +98,7 @@ export const getThreads = async (req: Request, res: Response) => {
 };
 
 export const updateThread = async (req: Request, res: Response) => {
-  const threadId: number = parseInt(req.params.id as string);
+  const threadId: number = parseInt(req.params.threadId as string);
   const title: string = DOMPurify.sanitize(req.body.title);
   const threadMessage: string = DOMPurify.sanitize(req.body.message);
   const snippets: any[] = req.body.snippets;
@@ -131,7 +131,7 @@ export const updateThread = async (req: Request, res: Response) => {
 };
 
 export const deleteThread = async (req: Request, res: Response) => {
-  const threadId: number = parseInt(req.params.id as string);
+  const threadId: number = parseInt(req.params.threadId as string);
 
   const thread = await ThreadRepository.findThreadById(threadId);
 
