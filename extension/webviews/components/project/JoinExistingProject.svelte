@@ -2,7 +2,7 @@
   import { onDestroy, onMount } from 'svelte';
   import { Page } from '../../enums';
   import { currentProject, page } from '../../state/store';
-  import { Project } from '../../types';
+  import type { Project } from '../../types';
 
   export let newProjectView: boolean;
   export let existingProjects: Project[] = [];

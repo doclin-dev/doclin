@@ -3,7 +3,7 @@
   import { Page } from '../enums';
   import { currentOrganization, currentProject, currentUser, page } from '../state/store';
   import DropdownMenu from './DropdownMenu.svelte';
-  import { DropdownMenuOption, User } from '../types';
+  import type { DropdownMenuOption, User } from '../types';
 
   export let reload: () => void;
   export let logout: () => void;
