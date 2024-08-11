@@ -148,3 +148,17 @@ export const deleteThread = async (req: Request, res: Response) => {
     },
   });
 };
+
+export const searchThreads = async (req: Request, res: Response) => {
+  const searchText = DOMPurify.sanitize(req.body.searchText);
+  const projectId = req.body.projectId;
+
+  let searchResults: Array<Thread> = [];
+
+  if (searchText) {
+    searchResults = await ThreadRepository.searchThreads(searchText, projectId);
+  }
+  searchResults = await ThreadRepository.findAllThreadsByProjectId(projectId);
+
+  res.send(searchResults.map(mapThreadResponse));
+};

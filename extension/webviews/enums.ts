@@ -9,6 +9,7 @@ export enum Page {
   AccessRequired = 'accessRequired',
   InviteUser = 'inviteUser',
   RegisterEmail = 'registerEmail',
+  SearchViewer = 'searchViewer',
 }
 
 export enum TextEditorType {
