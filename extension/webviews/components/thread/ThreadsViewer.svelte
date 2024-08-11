@@ -39,9 +39,8 @@
     const message = event.data;
     switch (message.type) {
       case 'getThreadsByActiveFilePath':
-        const { threads: threadsByFile, activeFilePath: filePath } = message.value;
+        const { threads: threadsByFile } = message.value;
         threads = threadsByFile;
-        activeFilePath = filePath;
         break;
       case 'getAllThreads':
         threads = message.value;
