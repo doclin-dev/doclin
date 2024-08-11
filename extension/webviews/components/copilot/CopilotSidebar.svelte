@@ -48,7 +48,9 @@
 
   const scrollToBottom = async (node: HTMLDivElement) => {
     await tick();
-    node.scroll({ top: node.scrollHeight });
+    if (node) {
+      node.scroll({ top: node.scrollHeight });
+    }
   };
 </script>
 
