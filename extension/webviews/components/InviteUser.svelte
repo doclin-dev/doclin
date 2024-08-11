@@ -48,7 +48,7 @@
 <div>
   <div class="topbar">
     <div class="button-container">
-      <Button icon="back-icon" type="text" onClick={switchPageToThreadsViewer} />
+      <Button icon="back-icon" type="text" variant='secondary' onClick={switchPageToThreadsViewer} />
     </div>
   </div>
 

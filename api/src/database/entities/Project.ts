@@ -26,7 +26,7 @@ export class Project extends BaseEntity {
   organizationId: string;
 
   @Column({ type: 'boolean', default: true })
-  private: boolean;
+  privateProject: boolean;
 
   @ManyToOne(() => Organization, (organization) => organization.projects)
   @JoinColumn({ name: 'organizationId' })

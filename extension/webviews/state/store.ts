@@ -1,6 +1,8 @@
 import { TextEditorType, ActiveView, Page, WebviewStateType } from '../enums';
-import type { Project, Organization, Thread } from '../types';
+import { type Project, type Organization, type Thread, User } from '../types';
 import { createState } from './createState';
+
+export const currentUser = createState<User | null>(WebviewStateType.CURRENT_USER);
 
 export const editedThreadId = createState<number | null>(null, null);
 

@@ -12,7 +12,7 @@ export const verifyProjectVisibility = async (req: Request, res: Response, next:
     return;
   }
 
-  if (project.private) {
+  if (project.privateProject) {
     verifyOrganizationAccess(req, res, next);
     return;
   }

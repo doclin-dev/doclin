@@ -78,9 +78,11 @@
       <span class="creation-time">{replyCreationTime}</span>
     </div>
 
-    <div class="button-container">
-      <DropdownMenu options={dropdownOptions} />
-    </div>
+    {#if reply.canEdit}
+      <div class="button-container">
+        <DropdownMenu options={dropdownOptions} />
+      </div>
+    {/if}
   </div>
 
   {#if $editedReplyId === reply.id}

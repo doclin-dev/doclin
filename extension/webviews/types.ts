@@ -28,6 +28,7 @@ export type Thread = {
   title: string;
   replyCount: number;
   delta: any;
+  canEdit: boolean;
 };
 
 export type Reply = {
@@ -39,6 +40,7 @@ export type Reply = {
   username: string;
   createdAt: Date;
   displayCreationTime: Date;
+  canEdit: boolean;
 };
 
 export type Organization = {

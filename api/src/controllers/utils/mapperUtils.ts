@@ -1,3 +1,4 @@
+import { Project } from 'src/database/entities/Project';
 import { Reply } from 'src/database/entities/Reply';
 import { ReplySnippet } from 'src/database/entities/ReplySnippet';
 import { Thread } from 'src/database/entities/Thread';
@@ -6,7 +7,7 @@ import { User } from 'src/database/entities/User';
 
 const ANONYMOUS_USER: string = 'Anonymous User';
 
-export const mapThreadResponse = (thread: Thread) => {
+export const mapThreadResponse = (thread: Thread, project: Project, userId: number | undefined) => {
   return {
     id: thread.id,
     title: thread.title,
@@ -19,11 +20,12 @@ export const mapThreadResponse = (thread: Thread) => {
     delta: thread.delta,
     filePath: thread.filePath,
     gitBranch: thread.gitBranch,
-    replies: thread.replies?.map(mapReplyResponse),
+    replies: thread.replies?.map((reply) => mapReplyResponse(reply, project, userId)),
+    canEdit: project.privateProject || thread.userId === userId,
   };
 };
 
-export const mapReplyResponse = (reply: Reply) => {
+export const mapReplyResponse = (reply: Reply, project: Project, userId: number | undefined) => {
   return {
     id: reply.id,
     message: reply.message,
@@ -31,6 +33,7 @@ export const mapReplyResponse = (reply: Reply) => {
     createdAt: reply.createdAt,
     snippets: reply.snippets?.map(mapSnippetResponse),
     delta: reply.delta,
+    canEdit: project.privateProject || reply.userId === userId,
   };
 };
 

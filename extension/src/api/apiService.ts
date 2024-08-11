@@ -1,3 +1,4 @@
+import * as vscode from 'vscode';
 import axios, { AxiosInstance } from 'axios';
 import { PRODUCTION, API_BASE_URL as baseURL } from '../envConstants';
 import { SecretStorageManager } from '../SecretStorageManager';
@@ -17,6 +18,7 @@ export const createAxiosInstance = async () => {
   instance.interceptors.response.use(
     (response) => response,
     (error) => {
+      vscode.window.showErrorMessage(`An error occured. ${error}`);
       return Promise.reject(error);
     }
   );

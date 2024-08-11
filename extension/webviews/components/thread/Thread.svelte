@@ -94,10 +94,12 @@
 
       <div class="button-container">
         {#if showReplyButton}
-          <Button icon="reply" onClick={handleReplyButtonClick} type="text" />
+          <Button icon="reply" variant="secondary" onClick={handleReplyButtonClick} type="text" />
         {/if}
 
-        <DropdownMenu options={dropdownOptions} />
+        {#if thread.canEdit}
+          <DropdownMenu options={dropdownOptions} />
+        {/if}
       </div>
     </div>
 
@@ -137,7 +139,7 @@
           <div class="number-of-replies-button">
             <Button
               textAlignment="flex-start"
-              variant="primary"
+              variant="secondary"
               onClick={handleReplyButtonClick}
               title={thread?.replyCount + ` ${thread?.replyCount > 1 ? 'replies' : 'reply'}`}
               children={lastEdited ?? ''}

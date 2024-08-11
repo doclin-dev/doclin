@@ -1,12 +1,16 @@
 <script type="ts">
   import Button from './Button.svelte';
   import { Page } from '../enums';
-  import { currentProject, page } from '../state/store';
+  import { currentOrganization, currentProject, currentUser, page } from '../state/store';
   import DropdownMenu from './DropdownMenu.svelte';
 
-  export let username: string;
   export let reload: () => void;
   export let logout: () => void;
+  let organizationName: string | undefined;
+  let projectName: string | undefined;
+
+  $: organizationName = $currentOrganization?.name?.split(' ').join('-').toLowerCase();
+  $: projectName = $currentProject?.name.split(' ').join('-').toLowerCase();
 
   const switchToInvitePage = () => {
     $page = Page.InviteUser;
@@ -34,18 +38,26 @@
   const handleSearchButtonClick = () => {
     $page = Page.SearchViewer;
   };
+
+  const authenticate = () => {
+    tsvscode.postMessage({ type: 'authenticate', value: undefined });
+  };
 </script>
 
 <div class="header">
   {#if $page !== Page.SearchViewer}
-    <div>Welcome <span class="name-header">{username}</span></div>
+    <div><span class="name-header">{organizationName}</span>/{projectName}</div>
 
     <div class="icon-container">
-      {#if $currentProject}
-        <Button icon="search" type="text" onClick={handleSearchButtonClick} />
+      {#if !$currentUser}
+        <Button type="text" title="Login" variant="primary" size="md" onClick={authenticate} />
       {/if}
 
-      <Button icon="reload" type="text" onClick={reload} />
+      {#if $currentProject}
+        <Button icon="search" type="text" variant="secondary" onClick={handleSearchButtonClick} />
+      {/if}
+
+      <Button icon="reload" type="text" variant="secondary" onClick={reload} />
 
       <DropdownMenu options={dropdownOptions} />
     </div>

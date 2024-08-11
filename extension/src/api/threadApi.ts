@@ -7,7 +7,6 @@ const getBaseThreadUrl = (organizationId: string, projectId: number) => {
 
 const getFileBasedThreads = async (organizationId: string, projectId: number, filePath: string) => {
   const params = {
-    projectId: projectId,
     filePath: filePath,
   };
 
@@ -19,13 +18,9 @@ const getFileBasedThreads = async (organizationId: string, projectId: number, fi
 };
 
 const getAllThreads = async (organizationId: string, projectId: number) => {
-  const params = {
-    projectId: projectId,
-  };
-
   const apiService = await createAxiosInstance();
   const baseThreadUrl = getBaseThreadUrl(organizationId, projectId);
-  const response = await apiService.get(baseThreadUrl, { params });
+  const response = await apiService.get(baseThreadUrl);
 
   return response;
 };
@@ -47,7 +42,6 @@ const postThread = async (
     title: title,
     threadMessage: threadMessage,
     snippets: snippets,
-    projectId: projectId,
     filePath: filePath,
     mentionedUserIds: mentionedUserIds,
     anonymous: anonymous,
@@ -97,7 +91,6 @@ const deleteThread = async (organizationId: string, projectId: number, threadId:
 const searchThreads = async (searchText: string, projectId: number, organizationId: string) => {
   const data = {
     searchText: searchText,
-    projectId: projectId,
   };
 
   const apiService = await createAxiosInstance();

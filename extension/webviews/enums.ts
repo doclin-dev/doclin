@@ -39,6 +39,7 @@ export enum WebviewStateType {
   THREAD_SELECTED = 'threadSelected',
   ACTIVE_TEXT_EDITOR = 'activeTextEditor',
   ACTIVE_VIEW = 'activeView',
+  CURRENT_USER = 'currentUser',
 }
 
 export enum SidebarLoadingStatus {
