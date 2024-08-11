@@ -16,9 +16,9 @@
     $page = Page.InviteUser;
   };
 
-  const showInviteButton = $page === Page.ThreadsViewer || $page === Page.ReplyViewer;
+  $: showInviteButton = $page === Page.ThreadsViewer || $page === Page.ReplyViewer;
 
-  const dropdownOptions = [
+  $: contextMenuDropdownOptions = [
     {
       key: 'logout',
       label: 'Logout',
@@ -59,7 +59,7 @@
 
       <Button icon="reload" type="text" variant="secondary" onClick={reload} />
 
-      <DropdownMenu options={dropdownOptions} />
+      <DropdownMenu options={contextMenuDropdownOptions} />
     </div>
   {/if}
 </div>

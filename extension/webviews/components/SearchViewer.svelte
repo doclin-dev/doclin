@@ -15,7 +15,7 @@
       if ($currentProject) {
         tsvscode.postMessage({
           type: 'searchThreads',
-          value: { searchText: searchQuery, projectId: $currentProject.id },
+          value: { searchText: searchQuery },
         });
       }
     }
@@ -54,8 +54,8 @@
     />
     <Button title="Cancel" onClick={handleCancelButtonClick} />
   </div>
-  <div style="padding-top: 0.75rem;">Showing search results:</div>
   {#if threads.length > 0}
+    <div style="padding-top: 0.75rem;">Showing search results:</div>
     {#each threads as thread (thread.id)}
       <hr />
       <Thread {thread} reloadThreads={() => {}} />
