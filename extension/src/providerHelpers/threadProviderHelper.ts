@@ -207,15 +207,15 @@ export const deleteThread = async ({ threadId }: { threadId: number }) => {
   return thread;
 };
 
-export const searchThreads = async ({
-  searchText,
-  projectId,
-}: {
-  searchText: string;
-  projectId: number;
-}): Promise<Thread[]> => {
+export const searchThreads = async ({ searchText }: { searchText: string }): Promise<Thread[] | undefined> => {
   const doclinFile = await readDoclinFile();
-  const organizationId = doclinFile?.organizationId ?? '';
+  const organizationId = doclinFile.organizationId ?? '';
+  const projectId = doclinFile.projectId;
+
+  if (!organizationId || !projectId) {
+    return;
+  }
+
   const response = await threadApi.searchThreads(searchText, projectId, organizationId);
   const threads: Array<Thread> = response.data;
 
