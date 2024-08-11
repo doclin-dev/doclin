@@ -3,37 +3,43 @@
   import { Page } from '../enums';
   import { currentOrganization, currentProject, currentUser, page } from '../state/store';
   import DropdownMenu from './DropdownMenu.svelte';
+  import { DropdownMenuOption, User } from '../types';
 
   export let reload: () => void;
   export let logout: () => void;
   let organizationName: string | undefined;
   let projectName: string | undefined;
+  let contextMenuDropdownOptions: DropdownMenuOption[];
 
-  $: organizationName = $currentOrganization?.name?.split(' ').join('-').toLowerCase();
-  $: projectName = $currentProject?.name.split(' ').join('-').toLowerCase();
+  $: organizationName = $currentOrganization?.name ? $currentOrganization?.name.split(' ').join('-').toLowerCase() : '';
+  $: projectName = $currentProject?.name ? $currentProject?.name.split(' ').join('-').toLowerCase() : '';
+  $: contextMenuDropdownOptions = getContextMenuOptions($currentUser, $page);
 
   const switchToInvitePage = () => {
     $page = Page.InviteUser;
   };
 
-  $: showInviteButton = $page === Page.ThreadsViewer || $page === Page.ReplyViewer;
+  const getContextMenuOptions = (currentUser: User | null, page: Page) => {
+    const options: DropdownMenuOption[] = [];
 
-  $: contextMenuDropdownOptions = [
-    {
-      key: 'logout',
-      label: 'Logout',
-      handler: logout,
-    },
-    ...(showInviteButton
-      ? [
-          {
-            key: 'invite',
-            label: 'Invite',
-            handler: switchToInvitePage,
-          },
-        ]
-      : []),
-  ];
+    if (currentUser) {
+      options.push({
+        key: 'logout',
+        label: 'Logout',
+        handler: logout,
+      });
+    }
+
+    if (page === Page.ThreadsViewer || page === Page.ReplyViewer) {
+      options.push({
+        key: 'invite',
+        label: 'Invite',
+        handler: switchToInvitePage,
+      });
+    }
+
+    return options;
+  };
 
   const handleSearchButtonClick = () => {
     $page = Page.SearchViewer;
@@ -46,7 +52,11 @@
 
 <div class="header">
   {#if $page !== Page.SearchViewer}
-    <div><span class="name-header">{organizationName}</span>/{projectName}</div>
+    <div>
+      {#if organizationName || projectName}
+        <span class="name-header">{organizationName}</span>/{projectName}
+      {/if}
+    </div>
 
     <div class="icon-container">
       {#if !$currentUser}

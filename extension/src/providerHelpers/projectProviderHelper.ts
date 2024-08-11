@@ -43,7 +43,8 @@ const apiFetchProject = async (
     await projectCacheManager.set(project.id, project);
 
     return project;
-  } catch {
+  } catch (error) {
+    console.log(error);
     return UNAUTHORIZED;
   }
 };

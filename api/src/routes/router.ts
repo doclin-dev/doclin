@@ -7,7 +7,6 @@ import { organizationRouter } from './organizationRouter';
 import { redeemInvitation } from '../controllers/invitationController';
 import { log } from '../controllers/loggerController';
 import { printEndpointsOnLocal } from '../middlewares/localMiddleware';
-import { verifyOrganizationAccess } from '../middlewares/organizationMiddleware';
 
 const BASE_ORGANIZATION_ROUTE = '/organizations';
 

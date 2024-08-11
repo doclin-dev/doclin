@@ -57,3 +57,9 @@ export type TextEditorInsertSnippet = {
   originalSnippet: string;
   gitBranch: string;
 };
+
+export type DropdownMenuOption = {
+  key: string;
+  label: string;
+  handler: () => void;
+};

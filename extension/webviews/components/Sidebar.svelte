@@ -52,7 +52,19 @@
       return;
     }
 
-    if ($currentOrganization && $currentOrganization?.unauthorized) {
+    if (!$currentUser && !$currentOrganization) {
+      $page = Page.Login;
+      loading = false;
+      return;
+    }
+
+    if (!$currentUser && ($currentOrganization?.unauthorized || $currentProject?.unauthorized)) {
+      $page = Page.Login;
+      loading = false;
+      return;
+    }
+
+    if ($currentUser && $currentProject && $currentProject?.unauthorized) {
       $page = Page.AccessRequired;
       loading = false;
       return;
@@ -118,6 +130,9 @@
         $threadSelected = message.value;
         $page = Page.ReplyViewer;
         break;
+      case 'logout':
+        handleGetExtensionState(message.value);
+        break;
     }
   };
 
@@ -137,6 +152,8 @@
 {:else if error}
   <div>Could not reach server. Please try again later!</div>
   <button on:click={reloadAndGetExtensionState}>Reload</button>
+{:else if $page === Page.Login}
+  <button on:click={authenticate}>Login</button>
 {:else}
   <ViewerTopBar reload={reloadAndGetExtensionState} {logout} />
 

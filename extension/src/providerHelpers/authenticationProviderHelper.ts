@@ -7,6 +7,8 @@ import { SecretStorageType } from '../enums';
 import logger from '../utils/logger';
 import { User } from '../types';
 import AuthenticatedUserCacheManager from '../utils/cache/AuthenticatedUserCacheManager';
+import { getExtensionState } from '../utils/extensionState';
+import AllThreadsCacheManager from '../utils/cache/AllThreadsCacheManager';
 
 const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github`);
 
@@ -39,8 +41,9 @@ const getToken = async (req: any, res: any, fn?: () => void) => {
     logger.info('Authentication successful.', true);
 
     app.server?.close();
-
     await setTokenToStorage(token);
+    const allThreadsCacheManager = new AllThreadsCacheManager();
+    await allThreadsCacheManager.clear();
 
     if (fn) {
       fn();
@@ -87,6 +90,9 @@ export const logout = async () => {
   await setTokenToStorage('');
   const autheticatedUserCacheManger = new AuthenticatedUserCacheManager();
   await autheticatedUserCacheManger.clearAuthenticatedUser();
+  const allThreadsCacheManager = new AllThreadsCacheManager();
+  await allThreadsCacheManager.clear();
+  return await getExtensionState();
 };
 
 export const postUserEmail = async (email: string) => {
