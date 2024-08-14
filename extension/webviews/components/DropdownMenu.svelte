@@ -2,8 +2,7 @@
   import 'bootstrap';
   import Icon from './Icon.svelte';
 
-  export let handleEdit: () => void = () => {};
-  export let handleDelete: () => void = () => {};
+  export let options: { key: string; label: string; handler: () => void; className?: string }[] = [];
 </script>
 
 <div class="dropdown">
@@ -11,7 +10,8 @@
     <Icon name="context-menu" height={18} />
   </div>
   <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton1">
-    <a class="dropdown-item" href="/" on:click={handleEdit}>Edit</a>
-    <a class="dropdown-item text-danger" href="/" on:click={handleDelete}>Delete</a>
+    {#each options as option (option.key)}
+      <a class="dropdown-item {option.className}" href="/" on:click={option.handler}>{option.label}</a>
+    {/each}
   </ul>
 </div>

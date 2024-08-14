@@ -6,6 +6,7 @@ import {
   getThreadsByActiveFilePath,
   updateThread,
   getAllThreads,
+  searchThreads,
 } from './providerHelpers/threadProviderHelper';
 import { storeProjectId } from './providerHelpers/projectProviderHelper';
 import { getExistingProjects, postProject } from './providerHelpers/projectProviderHelper';
@@ -46,6 +47,7 @@ export const RESPONSE_PROVIDERS: Record<string, WebviewMessageFunction> = {
   getCurrentOrganizationUsers: getCurrentOrganizationUsers,
   postUserEmail: postUserEmail,
   postCopilotPrompt: postCopilotPrompt,
+  searchThreads: searchThreads,
 };
 
 export const VOID_PROVIDERS: Record<string, WebviewMessageFunction> = {
