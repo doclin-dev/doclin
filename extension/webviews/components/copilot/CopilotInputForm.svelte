@@ -106,7 +106,7 @@
         </label>
       </div>
 
-      <div>
+      <div class="copilot-button-container">
         <Button icon="trash" onClick={clearCopilotMessageHistory} />
         <Button icon="send" onClick={submitPrompt} />
       </div>

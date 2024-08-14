@@ -33,6 +33,8 @@ export const postPrompt = async (req: Request, res: Response) => {
     throw new Error('Unexpected user role');
   }
 
+  await ThreadRepository.updateEmbeddingsOfAllThreadsWithNoEmbedding(projectId);
+
   const completeUserPrompt = await generateUserPrompt(
     userMessage.content,
     projectId,
@@ -103,7 +105,7 @@ const getReplyReference = (reply: Reply, index: number, replies: Reply[]): strin
 const getResponseFromGPT = async (userPrompt: string, previousMessages: CopilotMessage[]): Promise<string | null> => {
   try {
     const response = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'gpt-4o-2024-08-06',
       messages: [
         {
           role: 'system',

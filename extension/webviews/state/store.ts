@@ -1,5 +1,5 @@
 import { TextEditorType, ActiveView, Page, WebviewStateType } from '../enums';
-import { type Project, type Organization, type Thread, CopilotMessage } from '../types';
+import type { Project, Organization, Thread, CopilotMessage } from '../types';
 import { createState } from './createState';
 
 export const editedThreadId = createState<number | null>(null, null);

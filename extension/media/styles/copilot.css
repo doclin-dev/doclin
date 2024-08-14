@@ -31,3 +31,7 @@
 .copilot-container .text-editor-container {
   flex: 0 0 auto;
 }
+
+.copilot-button-container {
+  display: flex;
+}

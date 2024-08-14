@@ -23,7 +23,7 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
     }
 
     const threadIds = relevantThreads.map((thread) => thread.id);
-    const relevantThreadsWithAllInfoPopulated = await this.getThreadsWithProperties()
+    const relevantThreadsWithAllInfoPopulated = await this.getThreadsWithPropertiesQueryBuilder()
       .where('thread.projectId = :projectId', { projectId })
       .andWhereInIds(threadIds)
       .orderBy('COALESCE(reply.createdAt, thread.createdAt)', 'DESC')
@@ -34,11 +34,7 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
   },
 
   async findAllThreadsByProjectId(projectId: number): Promise<Thread[]> {
-    return await this.createQueryBuilder('thread')
-      .leftJoinAndSelect('thread.snippets', 'threadSnippet')
-      .leftJoinAndSelect('thread.user', 'user')
-      .leftJoinAndSelect('thread.replies', 'reply')
-      .leftJoinAndSelect('reply.snippets', 'replySnippet')
+    return await this.getThreadsWithPropertiesQueryBuilder()
       .where('thread.projectId = :projectId', { projectId })
       .orderBy('COALESCE(reply.createdAt, thread.createdAt)', 'DESC')
       .loadRelationCountAndMap('thread.replyCount', 'thread.replies')
@@ -87,17 +83,21 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
       .limit(limit)
       .getMany();
 
+    if (threads.length === 0) {
+      return [];
+    }
+
     const threadIds = threads.map((thread) => thread.id);
     const threadOrder = threadIds.join(',');
 
-    return await this.getThreadsWithProperties()
+    return await this.getThreadsWithPropertiesQueryBuilder()
       .where('thread.projectId = :projectId', { projectId })
       .andWhereInIds(threadIds)
       .orderBy(`ARRAY_POSITION(ARRAY[${threadOrder}], thread.id)`)
       .getMany();
   },
 
-  getThreadsWithProperties(): SelectQueryBuilder<Thread> {
+  getThreadsWithPropertiesQueryBuilder(): SelectQueryBuilder<Thread> {
     return this.createQueryBuilder('thread')
       .leftJoinAndSelect('thread.snippets', 'threadSnippets')
       .leftJoinAndSelect('thread.user', 'user')
@@ -105,8 +105,12 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
       .leftJoinAndSelect('reply.snippets', 'replySnippets');
   },
 
-  async updateEmbeddingsOfAllThreads(projectId: number): Promise<void> {
-    const threads = await this.findAllThreadsByProjectId(projectId);
+  async updateEmbeddingsOfAllThreadsWithNoEmbedding(projectId: number): Promise<void> {
+    const threads = await this.getThreadsWithPropertiesQueryBuilder()
+      .where('thread.projectId = :projectId', { projectId })
+      .andWhere('thread.embedding IS NULL')
+      .getMany();
+
     const updatePromises = threads.map((thread) => this.updateSearchEmbeddingsForThread(thread));
     await Promise.all(updatePromises);
   },
