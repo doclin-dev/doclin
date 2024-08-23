@@ -39,9 +39,17 @@ export enum WebviewStateType {
   THREAD_SELECTED = 'threadSelected',
   ACTIVE_TEXT_EDITOR = 'activeTextEditor',
   ACTIVE_VIEW = 'activeView',
+  COPILOT_MESSAGES = 'copilotMessages',
+  COPILOT_REFER_TO_DOCLIN_THREADS = 'copilotReferToDoclinThreads',
+  COPILOT_REFER_TO_CODE_FILE = 'referToCodeFile',
 }
 
 export enum SidebarLoadingStatus {
   LOADING = 1,
   LOADING_COMPLETE = 2,
+}
+
+export enum CopilotRole {
+  USER = 'user',
+  ASSISTANT = 'assistant',
 }

@@ -3,3 +3,8 @@ export enum LogType {
   WARNING = 'warning',
   ERROR = 'error',
 }
+
+export enum CopilotRole {
+  USER = 'user',
+  ASSISTANT = 'assistant',
+}
