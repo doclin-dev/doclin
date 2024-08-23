@@ -1,6 +1,6 @@
 import { Thread } from '../entities/Thread';
 import { AppDataSource } from '../dataSource';
-import { Brackets } from 'typeorm/query-builder/Brackets';
+import { Brackets } from 'typeorm/query-builder/Brackets.js';
 
 export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
   async findThreadByFilePathAndProjectId(filePath: string, projectId: number): Promise<Thread[]> {

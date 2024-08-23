@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Thread } from '../database/entities/Thread';
 import { ThreadRepository } from '../database/repositories/ThreadRepository';
-import OpenAI from 'openai';
+import OpenAI from 'openai/index.mjs';
 import { getThreadText } from './utils/snippetUtils';
 import { OPENAI_API_KEY } from '../envConstants';
 
