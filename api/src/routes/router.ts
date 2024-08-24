@@ -21,7 +21,9 @@ if (!PRODUCTION) {
 }
 
 router.get('/', (_req, res) => res.send('doclin-api'));
-router.get('/auth/github', passport.authenticate('github', { session: false }));
+router.get('/auth/github', (req, res, next) => {
+  passport.authenticate('github', { state: 'vscode' })(req, res, next);
+});
 router.get('/auth/github/callback', passport.authenticate('github', { session: false }), githubCallback);
 router.get('/auth/user', getCurrentUser);
 router.post('/auth/user', postUserEmail);

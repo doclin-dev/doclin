@@ -21,3 +21,5 @@ export const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 
 export const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 export const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+export const PYTHON_API_HOST = process.env.PYTHON_API_HOST || 'http://python-api:3001';

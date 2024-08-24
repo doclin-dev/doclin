@@ -163,10 +163,11 @@ export const searchThreads = async (req: Request, res: Response) => {
 
   let searchResults: Array<Thread> = [];
 
+  await ThreadRepository.updateEmbeddingsOfAllThreadsWithNoEmbedding(projectId);
+
   if (searchText) {
     searchResults = await ThreadRepository.searchThreads(searchText, projectId);
   }
-  searchResults = await ThreadRepository.findAllThreadsByProjectId(projectId);
 
   res.send(searchResults.map(mapThreadResponse));
 };

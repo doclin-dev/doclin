@@ -1,4 +1,3 @@
-require('dotenv-safe').config({ allowEmptyValues: true });
 import 'reflect-metadata';
 import express, { Application } from 'express';
 import https from 'https';
@@ -7,7 +6,7 @@ import passport from 'passport';
 import cors from 'cors';
 import router from './routes/router';
 import session from 'express-session';
-import { AppDataSource } from './database/dataSource';
+import { initializeDatabase } from './database/createDatabase';
 import { githubOAuthConfig, githubLogin } from './controllers/githubAuthController';
 import fs from 'fs';
 import {
@@ -35,15 +34,6 @@ const main = async () => {
     listenToProductionPort(app);
   } else {
     listenToDevelopmentPort(app);
-  }
-};
-
-const initializeDatabase = async () => {
-  try {
-    await AppDataSource.initialize();
-    logger.info('Data Source has been initialized!');
-  } catch (error) {
-    logger.error('Error during Data Source initialization' + error);
   }
 };
 

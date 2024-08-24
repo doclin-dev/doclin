@@ -1,6 +1,6 @@
-FROM node:lts-alpine
+FROM node:20.17.0-alpine
 
-WORKDIR /doclin-api
+WORKDIR /api
 COPY . .
 
 RUN npm install -g pm2
