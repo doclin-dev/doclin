@@ -22,7 +22,7 @@ import { inviteUser, redeemInvitation } from './providerHelpers/invitationProvid
 import { WebviewMessageFunction } from './types';
 import { onError, onInfo } from './utils/loggerProviderUtil';
 import { handleGetSidebarLoadingStatus } from './utils/waitForSidebarToShow';
-import { copilotPrompt } from './providerHelpers/copilotProvider';
+import { postCopilotPrompt } from './providerHelpers/copilotProvider';
 
 export const RESPONSE_PROVIDERS: Record<string, WebviewMessageFunction> = {
   getExtensionState: getExtensionState,
@@ -46,7 +46,7 @@ export const RESPONSE_PROVIDERS: Record<string, WebviewMessageFunction> = {
   redeemInvitation: redeemInvitation,
   getCurrentOrganizationUsers: getCurrentOrganizationUsers,
   postUserEmail: postUserEmail,
-  copilotPrompt: copilotPrompt,
+  postCopilotPrompt: postCopilotPrompt,
   searchThreads: searchThreads,
 };
 
