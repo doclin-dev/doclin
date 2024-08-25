@@ -63,6 +63,7 @@ export const postThread = async (req: Request, res: Response) => {
   const project: Project | null = await ProjectRepository.findProjectById(projectId);
 
   if (threadResponse && project) {
+    ThreadRepository.updateSearchEmbeddingsForThread(threadResponse);
     response = mapThreadResponse(threadResponse, project, userId);
   }
 
@@ -91,8 +92,6 @@ const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, sni
 export const getThreads = async (req: Request, res: Response) => {
   const filePath: string = req.query.filePath as string;
   const projectId: number = parseInt(req.params.projectId as string);
-
-  console.log(projectId);
 
   const userId: number | undefined = req.userId;
   let threads: Thread[];
@@ -145,7 +144,7 @@ export const updateThread = async (req: Request, res: Response) => {
   const threadResponse = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
 
   if (threadResponse) {
-    await ThreadRepository.updateSearchEmbeddingsForThread(threadResponse);
+    ThreadRepository.updateSearchEmbeddingsForThread(threadResponse);
   }
 
   const project: Project | null = await ProjectRepository.findProjectById(projectId);

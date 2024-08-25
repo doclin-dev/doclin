@@ -35,7 +35,6 @@
 
   function handleRadioChange(event: Event) {
     const input = event.target as HTMLInputElement;
-    console.log(input.value);
     privateProject = input.value === 'true';
   }
 

@@ -44,7 +44,6 @@ const apiFetchProject = async (
 
     return project;
   } catch (error) {
-    console.log(error);
     return UNAUTHORIZED;
   }
 };

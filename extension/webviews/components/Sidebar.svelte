@@ -34,7 +34,6 @@
   };
 
   const handleGetExtensionState = (extensionState: ExtensionState) => {
-    console.log(extensionState);
     $reload += 1;
     error = extensionState?.error;
     $currentUser = extensionState?.user;
