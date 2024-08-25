@@ -41,7 +41,7 @@ Doclin is still in a very early stage. If you like the idea, please star the rep
 
 ### Run the server
 
-1. Install docker.
+1. Install docker version >= 27.1.1
 2. Fill up the credentials in .env file
    1. GITHUB_CLIENT_SECRET and GITHUB_CLIENT_ID - These are used for the github login. Get these by creating a Github app.
    2. SENDGRID_API_KEY - This is used for email notifications when someone is tagged on a thread. Get your own api key from Sendgrid.
