@@ -3,13 +3,13 @@ import { Thread } from '../database/entities/Thread';
 import { ThreadSnippet } from '../database/entities/ThreadSnippet';
 import { ThreadRepository } from '../database/repositories/ThreadRepository';
 import { sendMentionEmailNotification } from './emailNotificationController';
-import { mapThreadResponse } from './utils/mapperUtils';
+import { mapThreadResponse } from '../utils/mapperUtils';
 import {
   MULTIPLE_LINE_BREAK_REGEX,
   SINGLE_LINE_BREAK,
   fillUpThreadOrReplyMessageWithSnippet,
   getSnippetTag,
-} from './utils/snippetUtils';
+} from '../utils/snippetUtils';
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import { Request, Response } from 'express';
@@ -36,7 +36,7 @@ export const postThread = async (req: Request, res: Response) => {
     snippets
   );
 
-  const thread = await Thread.create({
+  const thread = await ThreadRepository.create({
     title: title,
     message: updatedThreadMessage,
     userId: userId,
@@ -143,13 +143,17 @@ export const updateThread = async (req: Request, res: Response) => {
   await thread.save();
 
   const threadResponse = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
+
+  if (threadResponse) {
+    await ThreadRepository.updateSearchEmbeddingsForThread(threadResponse);
+  }
+
   const project: Project | null = await ProjectRepository.findProjectById(projectId);
   let response;
 
   if (threadResponse && project) {
     response = mapThreadResponse(threadResponse, project, userId);
   }
-
   res.send({ thread: response });
 };
 

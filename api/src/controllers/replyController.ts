@@ -7,8 +7,8 @@ import {
   SINGLE_LINE_BREAK,
   fillUpThreadOrReplyMessageWithSnippet,
   getSnippetTag,
-} from './utils/snippetUtils';
-import { mapReplyResponse } from './utils/mapperUtils';
+} from '../utils/snippetUtils';
+import { mapReplyResponse } from '../utils/mapperUtils';
 import { sendMentionEmailNotification } from './emailNotificationController';
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
@@ -45,6 +45,12 @@ export const postReply = async (req: Request, res: Response) => {
     delta: delta,
     snippets: snippetEntities,
   }).save();
+
+  const threadWithProperties = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
+
+  if (threadWithProperties) {
+    await ThreadRepository.updateSearchEmbeddingsForThread(threadWithProperties);
+  }
 
   sendEmailNotification(thread, userId, mentionedUserIds, replyMessage, snippets);
   const replyResponse = await ReplyRepository.findReplyWithPropertiesById(reply.id);
@@ -138,11 +144,16 @@ export const updateReplyMessage = async (req: Request, res: Response) => {
 
   reply.snippets.forEach((snippet) => snippet.remove());
   const { updatedReplyMessage, snippetEntities } = await createSnippetEntitiesFromReplyMessage(replyMessage, snippets);
-
   reply.message = updatedReplyMessage;
   reply.snippets = snippetEntities;
   reply.delta = delta;
   await reply.save();
+
+  const threadWithProperties = await ThreadRepository.findThreadWithPropertiesByThreadId(reply.threadId);
+
+  if (threadWithProperties) {
+    await ThreadRepository.updateSearchEmbeddingsForThread(threadWithProperties);
+  }
 
   const replyResponse = await ReplyRepository.findReplyWithPropertiesById(replyId);
   const project = await ProjectRepository.findProjectById(projectId);

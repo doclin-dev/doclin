@@ -2,6 +2,7 @@
   border-radius: 0.2em 0.2em 0 0;
 }
 
+pre,
 pre.ql-syntax,
 .ql-snow .ql-editor pre.ql-syntax {
   background-color: var(--vscode-editor-background);
@@ -67,4 +68,8 @@ pre.ql-syntax hr {
   font-size: var(--vscode-font-size);
   font-weight: var(--vscode-font-weight);
   font-family: var(--vscode-font-family);
+}
+
+code {
+  background-color: transparent;
 }

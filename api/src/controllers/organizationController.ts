@@ -3,7 +3,7 @@ import { Organization } from '../database/entities/Organization';
 import { UserRepository } from '../database/repositories/UserRepository';
 import { AppDataSource } from '../database/dataSource';
 import { Request, Response } from 'express';
-import { mapUser } from './utils/mapperUtils';
+import { mapUser } from '../utils/mapperUtils';
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
+  import type { ExtensionState, User } from '../types';
   import { ActiveView, Page, SidebarLoadingStatus } from '../enums';
   import ThreadsViewer from './thread/ThreadsViewer.svelte';
   import InitializeProject from './InitializeProject.svelte';
@@ -32,7 +33,7 @@
     tsvscode.postMessage({ type: 'logout', value: undefined });
   };
 
-  const handleGetExtensionState = (extensionState: any) => {
+  const handleGetExtensionState = (extensionState: ExtensionState) => {
     $reload += 1;
     error = extensionState?.error;
     $currentUser = extensionState?.user;
@@ -147,33 +148,35 @@
   });
 </script>
 
-{#if loading}
-  <div>loading...</div>
-{:else if error}
-  <div>Could not reach server. Please try again later!</div>
-  <button on:click={reloadAndGetExtensionState}>Reload</button>
-{:else if $page === Page.Login}
+<div class="sidebar-container">
+  {#if loading}
+    <div>loading...</div>
+  {:else if error}
+    <div>Could not reach server. Please try again later!</div>
+    <button on:click={reloadAndGetExtensionState}>Reload</button>
+  {:else if $page === Page.Login}
   <button on:click={authenticate}>Login</button>
 {:else}
-  <ViewerTopBar reload={reloadAndGetExtensionState} {logout} />
+    <ViewerTopBar reload={reloadAndGetExtensionState} {logout} />
 
-  {#if $page === Page.RegisterEmail}
-    <RegisterEmail />
-  {:else if $page === Page.NoFolderOrFile}
-    <div>Open a file or a folder to use doclin features.</div>
-  {:else if $page === Page.AccessRequired}
-    <AccessRequired />
-  {:else if $page === Page.InitializeOrganization}
-    <InitializeOrganization />
-  {:else if $page === Page.InitializeProject}
-    <InitializeProject />
-  {:else if $page === Page.ThreadsViewer}
-    <ThreadsViewer />
-  {:else if $page === Page.ReplyViewer}
-    <ReplyViewer />
+    {#if $page === Page.RegisterEmail}
+      <RegisterEmail />
+    {:else if $page === Page.NoFolderOrFile}
+      <div>Open a file or a folder to use doclin features.</div>
+    {:else if $page === Page.AccessRequired}
+      <AccessRequired />
+    {:else if $page === Page.InitializeOrganization}
+      <InitializeOrganization />
+    {:else if $page === Page.InitializeProject}
+      <InitializeProject />
+    {:else if $page === Page.ThreadsViewer}
+      <ThreadsViewer />
+    {:else if $page === Page.ReplyViewer}
+      <ReplyViewer />
   {:else if $page === Page.SearchViewer}
     <SearchViewer />
   {:else if $page === Page.InviteUser}
     <InviteUser />
   {/if}
 {/if}
+</div>

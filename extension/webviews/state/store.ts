@@ -1,5 +1,5 @@
 import { TextEditorType, ActiveView, Page, WebviewStateType } from '../enums';
-import type { Project, Organization, Thread, User } from '../types';
+import type { Project, Organization, Thread, User, CopilotMessage } from '../types';
 import { createState } from './createState';
 
 export const currentUser = createState<User | null>(WebviewStateType.CURRENT_USER);
@@ -25,3 +25,9 @@ export const activeTextEditor = createState<TextEditorType>(WebviewStateType.ACT
 export const activeView = createState<ActiveView>(WebviewStateType.ACTIVE_VIEW, ActiveView.AllThreads);
 
 export const reload = createState<number>(null, 0);
+
+export const copilotMessages = createState<CopilotMessage[]>(WebviewStateType.COPILOT_MESSAGES, []);
+
+export const copilotReferToDoclinThreads = createState<boolean>(WebviewStateType.COPILOT_REFER_TO_DOCLIN_THREADS, true);
+
+export const copilotReferToCodeFile = createState<boolean>(WebviewStateType.COPILOT_REFER_TO_CODE_FILE, true);

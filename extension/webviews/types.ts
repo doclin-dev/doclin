@@ -1,3 +1,5 @@
+import type { CopilotRole } from './enums';
+
 export type User = {
   id: number;
   name: string;
@@ -56,6 +58,19 @@ export type TextEditorInsertSnippet = {
   displaySnippet: string;
   originalSnippet: string;
   gitBranch: string;
+};
+
+export type CopilotMessage = {
+  role: CopilotRole;
+  content: string;
+};
+
+export type ExtensionState = {
+  project: Project;
+  organization: Organization;
+  error: any;
+  user: User;
+  isFolderOrFileOpened: boolean;
 };
 
 export type DropdownMenuOption = {
