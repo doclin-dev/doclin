@@ -7,56 +7,56 @@ jobs:
   deploy-server:
     runs-on: ubuntu-latest
     steps:
-        - name: Checkout code
-          uses: actions/checkout@v3
-        - name: Set up Node.js
-          uses: actions/setup-node@v4
-          with:
-            node-version: '20'
-        - name: Build and push docker image
-          run: |
-            cd api
-            docker build --tag doclin-api .
-            docker tag doclin-api:latest ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
-            docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
-            docker push ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
-        - name: SSH into EC2 instance and pull docker image
-          uses: appleboy/ssh-action@master
-          with:
-            host: ${{secrets.EC2_HOST}}
-            username: ${{secrets.EC2_USERNAME}}
-            key: ${{secrets.MY_EC2_SSH_KEY}}
-            script: |
-              sudo docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
-              sudo docker pull ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
-              sudo docker stop doclin-container || true
-              sudo docker rm doclin-container || true
-              sudo docker run \
-                --name doclin-container \
-                --volume /etc/letsencrypt:/doclin-api/letsencrypt \
-                --publish 443:443 \
-                --env NODE_ENV=production \
-                --env ACCESS_TOKEN_SECRET=${{secrets.ACCESS_TOKEN_SECRET}} \
-                --env GITHUB_CLIENT_SECRET=${{secrets.GIT_CLIENT_SECRET}} \
-                --env GITHUB_CLIENT_ID=${{secrets.GIT_CLIENT_ID}} \
-                --env SENDGRID_API_KEY=${{secrets.SENDGRID_API_KEY}} \
-                --env DB_HOST=${{secrets.DB_HOST}} \
-                --env DB_PASS=${{secrets.DB_PASS}} \
-                --env OPENAI_API_KEY=${{secrets.OPENAI_API_KEY}} \
-                --detach \
-                ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Build and push docker image
+        run: |
+          cd api
+          docker build --tag doclin-api .
+          docker tag doclin-api:latest ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
+          docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+          docker push ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
+      - name: SSH into EC2 instance and pull docker image
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.EC2_HOST}}
+          username: ${{secrets.EC2_USERNAME}}
+          key: ${{secrets.MY_EC2_SSH_KEY}}
+          script: |
+            sudo docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+            sudo docker pull ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
+            sudo docker stop doclin-container || true
+            sudo docker rm doclin-container || true
+            sudo docker run \
+              --name doclin-container \
+              --volume /etc/letsencrypt:/doclin-api/letsencrypt \
+              --publish 443:443 \
+              --env NODE_ENV=production \
+              --env ACCESS_TOKEN_SECRET=${{secrets.ACCESS_TOKEN_SECRET}} \
+              --env GITHUB_CLIENT_SECRET=${{secrets.GIT_CLIENT_SECRET}} \
+              --env GITHUB_CLIENT_ID=${{secrets.GIT_CLIENT_ID}} \
+              --env SENDGRID_API_KEY=${{secrets.SENDGRID_API_KEY}} \
+              --env DB_HOST=${{secrets.DB_HOST}} \
+              --env DB_PASS=${{secrets.DB_PASS}} \
+              --env OPENAI_API_KEY=${{secrets.OPENAI_API_KEY}} \
+              --detach \
+              ${{secrets.DOCKER_REPO_URL}}/doclin-api:latest
   deploy-extension:
     runs-on: ubuntu-latest
     steps:
-        - name: Checkout code
-          uses: actions/checkout@v3
-        - name: Set up Node.js
-          uses: actions/setup-node@v4
-          with:
-            node-version: '20'
-        - name: Publish extension to VS Code Marketplace
-          run: |
-            cd extension
-            npm install
-            npm install -g vsce
-            vsce publish -p ${{ secrets.VSCE_TOKEN }}
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Publish extension to VS Code Marketplace
+        run: |
+          cd extension
+          npm ci
+          npm install -g vsce
+          vsce publish -p ${{ secrets.VSCE_TOKEN }}

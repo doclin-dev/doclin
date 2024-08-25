@@ -2,7 +2,6 @@ name: 'doclin'
 
 services:
   backend:
-    platform: linux/x86_64
     build:
       context: ./api
       dockerfile: Dockerfile
@@ -24,7 +23,7 @@ services:
     volumes:
       - ./api:/api
     working_dir: /api
-    command: sh -c "npm install && npm run dev"
+    command: sh -c "npm ci && npm run dev"
     depends_on:
       - database
 
@@ -33,16 +32,19 @@ services:
     volumes:
       - ./extension:/extension
     working_dir: /extension
-    command: sh -c "npm install && npm run watch"
+    command: sh -c "npm ci && npm run watch"
 
   webapp:
     build:
       context: ./webapp
-      dockerfile: Dockerfile
-    volumes:
-      - ./webapp:/webapp
+    environment:
+      NODE_ENV: development
     ports:
       - '3002:3002'
+    volumes:
+      - ./webapp:/webapp
+    working_dir: /webapp
+    command: sh -c "npm ci && npm run dev"
 
   database:
     image: pgvector/pgvector:pg16
@@ -60,7 +62,7 @@ services:
       context: ./python-api
     command: sh -c "uvicorn main:app --reload --port=3001 --host=0.0.0.0"
     ports:
-      - 3001:3001
+      - '3001:3001'
     volumes:
       - ./python-api:/python-api
 

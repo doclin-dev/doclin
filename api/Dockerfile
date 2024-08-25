@@ -4,7 +4,7 @@ WORKDIR /api
 COPY . .
 
 RUN npm install -g pm2
-RUN npm install
+RUN npm ci
 RUN npm run build
 
 EXPOSE 3000
