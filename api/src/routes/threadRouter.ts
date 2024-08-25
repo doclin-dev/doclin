@@ -1,6 +1,6 @@
 import express from 'express';
 import { deleteThread, getThreads, postThread, searchThreads, updateThread } from '../controllers/threadController';
-import replyRouter from './replyRouter';
+import { replyRouter } from './replyRouter';
 import { verifyProjectVisibility } from '../middlewares/projectMiddleware';
 import { verifyThreadOwnerOrOrganizationMember } from '../middlewares/threadMiddleware';
 import { verifyAuthentication } from '../middlewares/authenticationMiddleware';

@@ -4,11 +4,9 @@ import { verifyAuthentication } from '../middlewares/authenticationMiddleware';
 import { verifyProjectVisibility } from '../middlewares/projectMiddleware';
 import { verifyReplyOwnerOrOrganizationMember } from '../middlewares/replyMiddleware';
 
-const replyRouter = express.Router({ mergeParams: true });
+export const replyRouter = express.Router({ mergeParams: true });
 
 replyRouter.post('/', [verifyAuthentication, verifyProjectVisibility], postReply);
 replyRouter.get('/', verifyProjectVisibility, getReplies);
 replyRouter.put('/:replyId', verifyReplyOwnerOrOrganizationMember, updateReplyMessage);
 replyRouter.delete('/:replyId', verifyReplyOwnerOrOrganizationMember, deleteReply);
-
-export default replyRouter;

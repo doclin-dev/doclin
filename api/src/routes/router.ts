@@ -10,7 +10,7 @@ import { printEndpointsOnLocal } from '../middlewares/localMiddleware';
 
 const BASE_ORGANIZATION_ROUTE = '/organizations';
 
-const router = express.Router();
+export const router = express.Router();
 router.use([printEndpointsOnLocal, setUserIdOnReq]);
 
 router.get('/', (_req, res) => res.send('doclin-api'));
@@ -22,5 +22,3 @@ router.post('/redeemInvitation', verifyAuthentication, redeemInvitation);
 router.post('/log', log);
 
 router.use(BASE_ORGANIZATION_ROUTE, organizationRouter);
-
-export default router;
