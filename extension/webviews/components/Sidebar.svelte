@@ -34,6 +34,7 @@
   };
 
   const handleGetExtensionState = (extensionState: ExtensionState) => {
+    console.log(extensionState);
     $reload += 1;
     error = extensionState?.error;
     $currentUser = extensionState?.user;
@@ -155,8 +156,8 @@
     <div>Could not reach server. Please try again later!</div>
     <button on:click={reloadAndGetExtensionState}>Reload</button>
   {:else if $page === Page.Login}
-  <button on:click={authenticate}>Login</button>
-{:else}
+    <button on:click={authenticate}>Login</button>
+  {:else}
     <ViewerTopBar reload={reloadAndGetExtensionState} {logout} />
 
     {#if $page === Page.RegisterEmail}
@@ -173,10 +174,10 @@
       <ThreadsViewer />
     {:else if $page === Page.ReplyViewer}
       <ReplyViewer />
-  {:else if $page === Page.SearchViewer}
-    <SearchViewer />
-  {:else if $page === Page.InviteUser}
-    <InviteUser />
+    {:else if $page === Page.SearchViewer}
+      <SearchViewer />
+    {:else if $page === Page.InviteUser}
+      <InviteUser />
+    {/if}
   {/if}
-{/if}
 </div>

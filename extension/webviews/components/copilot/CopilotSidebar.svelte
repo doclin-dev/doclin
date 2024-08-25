@@ -7,7 +7,8 @@
 
   let divElement: HTMLDivElement;
   let error: any;
-  let projectNotInitialized: boolean = false;
+  let isUnauthenticated: boolean = true;
+  let isUnauthorized: boolean = true;
 
   $: scrollToBottom(divElement), $copilotMessages;
 
@@ -39,12 +40,9 @@
     const project = extensionState?.project;
     const user = extensionState?.user;
 
-    if (!user || !organization || !project || organization && organization?.unauthorized) {
-      projectNotInitialized = true;
-    } else {
-      projectNotInitialized = false;
-    }
-  }
+    isUnauthenticated = !user;
+    isUnauthorized = !organization || !project || !!organization?.unauthorized || !!project?.unauthorized;
+  };
 
   const scrollToBottom = async (node: HTMLDivElement) => {
     await tick();
@@ -52,16 +50,22 @@
       node.scroll({ top: node.scrollHeight });
     }
   };
+
+  const authenticate = () => {
+    tsvscode.postMessage({ type: 'authenticate', value: undefined });
+  };
 </script>
 
 <div class="copilot-container" bind:this={divElement}>
   {#if error}
     <div>Could not reach server. Please try again later!</div>
     <button on:click={getExtensionState}>Reload</button>
-  {:else if projectNotInitialized}
+  {:else if isUnauthenticated}
+    <button on:click={authenticate}>Login</button>
+  {:else if isUnauthorized}
     <div>Complete the steps in the main Doclin sidebar before using Copilot.</div>
   {:else}
-      <CopilotMessagesBody />
-      <CopilotInputForm />
+    <CopilotMessagesBody />
+    <CopilotInputForm />
   {/if}
 </div>
