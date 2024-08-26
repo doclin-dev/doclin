@@ -7,6 +7,7 @@ import { SecretStorageType } from '../enums';
 import logger from '../utils/logger';
 import { User } from '../types';
 import AuthenticatedUserCacheManager from '../utils/cache/AuthenticatedUserCacheManager';
+import { getExtensionState } from '../utils/extensionState';
 
 const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github`);
 
@@ -89,12 +90,14 @@ export const logout = async () => {
   await autheticatedUserCacheManger.clearAuthenticatedUser();
 };
 
-export const postUserEmail = async (email: string) => {
+export const registerEmail = async (email: string) => {
   try {
-    const response = await authApi.postUserEmail(email);
-    const status = response?.status;
+    await authApi.postUserEmail(email);
 
-    return status;
+    const authenticatedUserCacheManager = new AuthenticatedUserCacheManager();
+    await authenticatedUserCacheManager.clear();
+
+    return getExtensionState();
   } catch (error) {
     logger.error(`An error occured when registering your email. ${error}`, true);
   }
