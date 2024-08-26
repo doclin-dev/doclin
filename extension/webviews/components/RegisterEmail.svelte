@@ -18,8 +18,8 @@
     return emailRegex.test(email);
   };
 
-  const getExtensionState = () => {
-    tsvscode.postMessage({ type: 'getExtensionState', value: undefined });
+  const reloadAndGetExtensionState = () => {
+    tsvscode.postMessage({ type: 'reloadAndGetExtensionState', value: undefined });
   };
 
   const messageEventListener = async (event: any) => {
@@ -27,7 +27,7 @@
     switch (message.type) {
       case 'postUserEmail':
         if (message.value === 200) {
-          getExtensionState();
+          reloadAndGetExtensionState();
         }
         break;
     }
