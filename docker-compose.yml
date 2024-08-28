@@ -27,13 +27,6 @@ services:
     depends_on:
       - database
 
-  vscode-extension:
-    image: node:20.17.0-alpine
-    volumes:
-      - ./extension:/extension
-    working_dir: /extension
-    command: sh -c "npm ci && npm run watch"
-
   webapp:
     build:
       context: ./webapp

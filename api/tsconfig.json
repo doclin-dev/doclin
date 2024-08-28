@@ -20,8 +20,23 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["shared/*"]
+    }
   },
   "exclude": ["node_modules"],
-  "include": ["./src/**/*.tsx", "./src/**/*.ts"]
+  "include": [
+    "./src/**/*.tsx",
+    "./src/**/*.ts",
+    "../shared/**/*",
+    "../extension/src/api/authApi.ts",
+    "../extension/src/api/copilotApi.ts",
+    "../extension/src/api/invitationApi.ts",
+    "../extension/src/api/loggerApi.ts",
+    "../extension/src/api/organizationApi.ts",
+    "../extension/src/api/projectApi.ts",
+    "../extension/src/api/replyApi.ts",
+    "../extension/src/api/threadApi.ts"
+  ]
 }

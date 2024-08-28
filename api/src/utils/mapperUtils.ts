@@ -3,10 +3,14 @@ import { ReplySnippet } from 'src/database/entities/ReplySnippet';
 import { Thread } from 'src/database/entities/Thread';
 import { ThreadSnippet } from 'src/database/entities/ThreadSnippet';
 import { User } from 'src/database/entities/User';
+import { SnippetDTO } from '../../../shared/types/SnippetResponseDTO';
+import { ReplyDTO } from '../../../shared/types/ReplyDTO';
+import { ThreadResponseDTO } from '../../../shared/types/ThreadResponseDTO';
+import { UserDTO } from '../../../shared/types/UserDTO';
 
 const ANONYMOUS_USER: string = 'Anonymous User';
 
-export const mapThreadResponse = (thread: Thread) => {
+export const mapThreadResponse = (thread: Thread): ThreadResponseDTO => {
   return {
     id: thread.id,
     title: thread.title,
@@ -23,7 +27,7 @@ export const mapThreadResponse = (thread: Thread) => {
   };
 };
 
-export const mapReplyResponse = (reply: Reply) => {
+export const mapReplyResponse = (reply: Reply): ReplyDTO => {
   return {
     id: reply.id,
     message: reply.message,
@@ -34,7 +38,7 @@ export const mapReplyResponse = (reply: Reply) => {
   };
 };
 
-export const mapSnippetResponse = (snippet: ThreadSnippet | ReplySnippet) => {
+export const mapSnippetResponse = (snippet: ThreadSnippet | ReplySnippet): SnippetDTO => {
   return {
     id: snippet.id,
     text: snippet.text,
@@ -44,7 +48,7 @@ export const mapSnippetResponse = (snippet: ThreadSnippet | ReplySnippet) => {
   };
 };
 
-export const mapUser = (user: User) => {
+export const mapUser = (user: User): UserDTO => {
   return {
     id: user.id,
     name: user.name,

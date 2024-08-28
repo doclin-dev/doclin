@@ -5,21 +5,6 @@ export type DoclinFile = {
   projectId: number | null;
 };
 
-export type Organization = {
-  id: string;
-  name?: string;
-  members?: User[];
-  unauthorized?: boolean;
-};
-
-export type Project = {
-  id?: number;
-  name?: string;
-  url?: string;
-  userId?: number;
-  unauthorized?: boolean;
-};
-
 export type Thread = {
   id: number;
   title: string;

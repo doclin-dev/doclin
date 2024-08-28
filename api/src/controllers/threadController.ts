@@ -1,4 +1,3 @@
-import { RequestSnippetBlot } from 'src/types/types';
 import { Thread } from '../database/entities/Thread';
 import { ThreadSnippet } from '../database/entities/ThreadSnippet';
 import { ThreadRepository } from '../database/repositories/ThreadRepository';
@@ -13,19 +12,23 @@ import {
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import { Request, Response } from 'express';
+import { ThreadResponseDTO } from '../../../shared/types/ThreadResponseDTO';
+import { ThreadRequestDTO } from '../../../shared/types/ThreadRequestDTO';
+import { ThreadRouteParam } from '../types/ThreadRouteParam';
+import { SnippetRequestDTO } from '../../../shared/types/SnippetRequestDTO';
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
-export const postThread = async (req: Request, res: Response) => {
+export const postThread = async (req: Request<ThreadRouteParam, {}, ThreadRequestDTO>, res: Response) => {
   const title: string = DOMPurify.sanitize(req.body.title);
-  const threadMessage: string = DOMPurify.sanitize(req.body.threadMessage);
-  const filePath: string = DOMPurify.sanitize(req.body.filePath);
-  const gitBranch: string = DOMPurify.sanitize(req.body.gitBranch);
-  const snippets: RequestSnippetBlot[] = req.body.snippets;
+  const threadMessage: string = DOMPurify.sanitize(req.body.message);
+  const filePath: string | undefined = req.body.filePath ? DOMPurify.sanitize(req.body.filePath) : undefined;
+  const gitBranch: string | undefined = req.body.gitBranch ? DOMPurify.sanitize(req.body.gitBranch) : undefined;
+  const snippets: SnippetRequestDTO[] = req.body.snippets;
   const delta: any = req.body.delta;
   const userId: number = req.userId;
-  const projectId: number = req.body.projectId;
+  const projectId: number = req.params.projectId;
   const anonymousPost: boolean = req.body.anonymous;
   const mentionedUserIds: number[] = req.body.mentionedUserIds;
 
@@ -62,8 +65,12 @@ export const postThread = async (req: Request, res: Response) => {
     await ThreadRepository.updateSearchEmbeddingsForThread(threadResponse);
   }
 
-  const response = threadResponse ? mapThreadResponse(threadResponse) : null;
-  res.send({ thread: response });
+  if (threadResponse) {
+    const response: ThreadResponseDTO = mapThreadResponse(threadResponse);
+    res.send(response);
+  } else {
+    throw new Error('Error posting thread');
+  }
 };
 
 const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, snippetblots: RequestSnippetBlot[]) => {
@@ -96,13 +103,13 @@ export const getThreads = async (req: Request, res: Response) => {
     threads = await ThreadRepository.findAllThreadsByProjectId(projectId);
   }
 
-  const response = threads.map(mapThreadResponse);
+  const response: ThreadResponseDTO[] = threads.map(mapThreadResponse);
 
-  res.send({ threads: response });
+  res.send(response);
 };
 
-export const updateThread = async (req: Request, res: Response) => {
-  const threadId: number = parseInt(req.params.id as string);
+export const updateThread = async (req: Request<ThreadRouteParam, {}, ThreadRequestDTO>, res: Response) => {
+  const threadId: number = req.params.threadId;
   const title: string = DOMPurify.sanitize(req.body.title);
   const threadMessage: string = DOMPurify.sanitize(req.body.message);
   const snippets: any[] = req.body.snippets;

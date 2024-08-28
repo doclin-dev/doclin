@@ -3,8 +3,9 @@ import { getCurrentOrganizationId } from './organizationProviderHelper';
 import { readDoclinFile } from './doclinFile/readDoclinFile';
 import { writeDoclinFile } from './doclinFile/writeDoclinFile';
 import logger from '../utils/logger';
-import { DoclinFile, Project } from '../types';
+import { DoclinFile } from '../types';
 import ProjectCacheMananger from '../utils/cache/ProjectCacheManager';
+import { ProjectDTO } from '@shared/types/ProjectDTO';
 
 const UNAUTHORIZED = {
   unauthorized: true,
@@ -19,7 +20,7 @@ export const getCurrentProjectId = async (): Promise<number | null> => {
 export const getProject = async (
   organizationId: string,
   projectId: number
-): Promise<Project | { unauthorized: boolean }> => {
+): Promise<ProjectDTO | { unauthorized: boolean }> => {
   const projectCacheManager = new ProjectCacheMananger();
   const cachedProject = await projectCacheManager.get(projectId);
 
@@ -33,7 +34,7 @@ export const getProject = async (
 const apiFetchProject = async (
   organizationId: string,
   projectId: number
-): Promise<Project | { unauthorized: boolean }> => {
+): Promise<ProjectDTO | { unauthorized: boolean }> => {
   try {
     const response = await projectApi.getProject(projectId, organizationId);
     const payload = response?.data;

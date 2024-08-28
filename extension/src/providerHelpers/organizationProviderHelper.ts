@@ -2,8 +2,9 @@ import organizationApi from '../api/organizationApi';
 import { readDoclinFile } from './doclinFile/readDoclinFile';
 import { writeDoclinFile } from './doclinFile/writeDoclinFile';
 import logger from '../utils/logger';
-import { DoclinFile, Organization, User } from '../types';
+import { DoclinFile, User } from '../types';
 import OrganizationCacheManager from '../utils/cache/OrganizationCacheManager';
+import { OrganizationDTO } from '@shared/types/OrganizationDTO';
 
 const UNAUTHORIZED = {
   unauthorized: true,
@@ -21,7 +22,7 @@ export const postOrganization = async ({ name }: { name: string }) => {
   try {
     const response = await organizationApi.postOrganization(name);
     const payload = response?.data;
-    const organization: Organization = payload?.organization;
+    const organization: OrganizationDTO = payload?.organization;
 
     const organizationCacheManager = new OrganizationCacheManager();
     await organizationCacheManager.set(organization.id, organization);
@@ -40,7 +41,7 @@ export const getCurrentOrganizationId = async (): Promise<string | null> => {
   return fileJSON?.organizationId;
 };
 
-export const getOrganization = async (organizationId: string): Promise<Organization | { unauthorized: boolean }> => {
+export const getOrganization = async (organizationId: string): Promise<OrganizationDTO | { unauthorized: boolean }> => {
   const organizationCacheManager = new OrganizationCacheManager();
   const cachedOrganization = await organizationCacheManager.get(organizationId);
 
@@ -59,7 +60,7 @@ const apiFetchOrganization = async (organizationId: string) => {
   try {
     const response = await organizationApi.getOrganization(organizationId);
     const payload = response?.data;
-    const organization: Organization = payload?.organization;
+    const organization: OrganizationDTO = payload?.organization;
 
     const organizationCacheManager = new OrganizationCacheManager();
     await organizationCacheManager.set(organization.id, organization);

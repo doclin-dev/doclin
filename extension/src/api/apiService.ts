@@ -3,7 +3,7 @@ import { PRODUCTION, API_BASE_URL as baseURL } from '../envConstants';
 import { SecretStorageManager } from '../SecretStorageManager';
 import { SecretStorageType } from '../enums';
 
-export const createAxiosInstance = async () => {
+export const createAxiosInstance = async (): Promise<AxiosInstance> => {
   const token: string | null = await getToken();
 
   const instance: AxiosInstance = axios.create({ baseURL });

@@ -74,20 +74,25 @@ export const getAllThreads = async (): Promise<Thread[]> => {
   return await apiFetchAllThreads(organizationId, projectId);
 };
 
-const apiFetchAllThreads = async (organizationId: string, projectId: number) => {
-  const response = await threadApi.getAllThreads(organizationId, projectId);
-  const payload = response?.data;
-  let threads: Thread[] = payload?.threads;
+const apiFetchAllThreads = async (organizationId: string, projectId: number): Promise<Thread[]> => {
+  try {
+    const response = await threadApi.getAllThreads(organizationId, projectId);
+    const payload = response?.data;
+    let threads: Thread[] = payload?.threads;
 
-  for (const thread of threads) {
-    await compareSnippetsWithActiveEditor(thread.snippets);
-    fillUpThreadOrReplyMessageWithSnippet(thread);
+    for (const thread of threads) {
+      await compareSnippetsWithActiveEditor(thread.snippets);
+      fillUpThreadOrReplyMessageWithSnippet(thread);
+    }
+
+    const allThreadsCacheManager = new AllThreadsCacheManager();
+    await allThreadsCacheManager.set(projectId, threads);
+
+    return threads;
+  } catch (error) {
+    vscode.window.showErrorMessage(`Error fetching threads. ${error}`);
+    return [];
   }
-
-  const allThreadsCacheManager = new AllThreadsCacheManager();
-  await allThreadsCacheManager.set(projectId, threads);
-
-  return threads;
 };
 
 export const postThread = async ({
@@ -99,44 +104,48 @@ export const postThread = async ({
   anonymous,
   isFileThreadSelected,
 }: PostThread): Promise<Thread | undefined> => {
-  const doclinFile = await readDoclinFile();
-  const organizationId = doclinFile.organizationId;
-  const projectId = doclinFile.projectId;
-  const activeEditorUri = vscode.window.activeTextEditor?.document.uri;
-  const activeEditorDoclinRelativePath = activeEditorUri ? await getDoclinRelativeFilePath(activeEditorUri) : null;
-  const gitBranch = await getGitBranch();
+  try {
+    const doclinFile = await readDoclinFile();
+    const organizationId = doclinFile.organizationId;
+    const projectId = doclinFile.projectId;
+    const activeEditorUri = vscode.window.activeTextEditor?.document.uri;
+    const activeEditorDoclinRelativePath = activeEditorUri ? await getDoclinRelativeFilePath(activeEditorUri) : null;
+    const gitBranch = await getGitBranch();
 
-  if (!organizationId || !projectId) {
-    return;
+    if (!organizationId || !projectId) {
+      return;
+    }
+
+    const response = await threadApi.postThread(
+      organizationId,
+      projectId,
+      title,
+      threadMessage,
+      delta,
+      snippets,
+      isFileThreadSelected ? gitBranch : null,
+      isFileThreadSelected ? activeEditorDoclinRelativePath : null,
+      mentionedUserIds,
+      anonymous
+    );
+
+    const thread: Thread = response?.data?.thread;
+
+    await compareSnippetsWithActiveEditor(thread.snippets);
+    fillUpThreadOrReplyMessageWithSnippet(thread);
+
+    if (activeEditorUri) {
+      const fileThreadCacheManager = new FileThreadCacheManager();
+      await fileThreadCacheManager.clear(activeEditorUri.fsPath);
+    }
+
+    const allThreadsCacheManager = new AllThreadsCacheManager();
+    await allThreadsCacheManager.clear(projectId);
+
+    return thread;
+  } catch (error) {
+    vscode.window.showErrorMessage(`Error posting thread. ${error}`);
   }
-
-  const response = await threadApi.postThread(
-    organizationId,
-    projectId,
-    title,
-    threadMessage,
-    delta,
-    snippets,
-    isFileThreadSelected ? gitBranch : null,
-    isFileThreadSelected ? activeEditorDoclinRelativePath : null,
-    mentionedUserIds,
-    anonymous
-  );
-
-  const thread: Thread = response?.data?.thread;
-
-  await compareSnippetsWithActiveEditor(thread.snippets);
-  fillUpThreadOrReplyMessageWithSnippet(thread);
-
-  if (activeEditorUri) {
-    const fileThreadCacheManager = new FileThreadCacheManager();
-    await fileThreadCacheManager.clear(activeEditorUri.fsPath);
-  }
-
-  const allThreadsCacheManager = new AllThreadsCacheManager();
-  await allThreadsCacheManager.clear(projectId);
-
-  return thread;
 };
 
 export const updateThread = async ({
