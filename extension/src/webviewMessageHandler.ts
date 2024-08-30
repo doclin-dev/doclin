@@ -15,20 +15,28 @@ export const handleWebviewMessageReceive = (webview: vscode.Webview) => {
 };
 
 const respondToMessage = (message: WebviewMessage, webview: vscode.Webview) => {
-  const result = RESPONSE_PROVIDERS[message.type](message.value);
+  try {
+    const result = RESPONSE_PROVIDERS[message.type](message.value);
 
-  if (result instanceof Promise) {
-    result.then((value) => {
+    if (result instanceof Promise) {
+      result
+        .then((value) => {
+          webview.postMessage({
+            type: message.type,
+            value: value,
+          });
+        })
+        .catch((error) => {
+          vscode.window.showErrorMessage(`An error occured ${error}`);
+        });
+    } else {
       webview.postMessage({
         type: message.type,
-        value: value,
+        value: result,
       });
-    });
-  } else {
-    webview.postMessage({
-      type: message.type,
-      value: result,
-    });
+    }
+  } catch (error) {
+    vscode.window.showErrorMessage(`An error occured ${error}`);
   }
 };
 

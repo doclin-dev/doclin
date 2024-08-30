@@ -18,7 +18,7 @@ export const getCurrentUser = async (req: Request, res: Response) => {
   res.send({ user });
 };
 
-export const getUserIdFromAuthHeader = (authHeader: string | undefined) => {
+export const getUserIdFromAuthHeader = (authHeader: string | undefined): number | null => {
   if (!authHeader) {
     return null;
   }
@@ -48,14 +48,18 @@ export const postUserEmail = async (req: Request, res: Response) => {
     const userId = getUserIdFromAuthHeader(authHeader);
     const email = req.body.email;
 
+    if (!userId) {
+      throw Error('User is not authenticated');
+    }
+
     const user = await UserRepository.findUserById(userId);
 
     if (user) {
       user.email = email;
       await user.save();
     }
-    logger.info('User email has been successfully registered.');
 
+    logger.info('User email has been successfully registered.');
     res.send({ email });
   } catch (error) {
     logger.error(`User email wasn't resgitered. error: ${error}`);

@@ -11,7 +11,13 @@ const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
 export const getOrganizations = async (req: Request, res: Response) => {
-  const organizations = await OrganizationRepository.findOrganizationsByUserId(req.userId);
+  const userId = req.userId;
+
+  if (!userId) {
+    throw Error('userId is not defined');
+  }
+
+  const organizations = await OrganizationRepository.findOrganizationsByUserId(userId);
 
   const responseOrganizations = organizations.map((organization) => ({
     id: organization.id,
@@ -24,10 +30,17 @@ export const getOrganizations = async (req: Request, res: Response) => {
 export const postOrganization = async (req: Request, res: Response) => {
   const name = DOMPurify.sanitize(req.body.name);
   const organization = Organization.create({ name: name });
-  const user = await UserRepository.findUserById(req.userId);
+
+  const userId = req.userId;
+
+  if (!userId) {
+    throw Error('userId is not defined');
+  }
+
+  const user = await UserRepository.findUserById(userId);
 
   if (!user) {
-    return;
+    throw Error('user do not exist');
   }
 
   organization.users = [user];

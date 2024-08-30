@@ -11,10 +11,17 @@
   import ViewerTopBar from './ViewerTopBar.svelte';
   import RegisterEmail from './RegisterEmail.svelte';
   import SearchViewer from './SearchViewer.svelte';
-  import { activeView, currentOrganization, currentProject, page, reload, threadSelected } from '../state/store';
+  import {
+    activeView,
+    currentOrganization,
+    currentProject,
+    currentUser,
+    page,
+    reload,
+    threadSelected,
+  } from '../state/store';
 
   let loading = true;
-  let user: User | null = null;
   let error: any;
 
   const authenticate = () => {
@@ -22,19 +29,19 @@
   };
 
   const logout = () => {
-    user = null;
+    $currentUser = null;
     tsvscode.postMessage({ type: 'logout', value: undefined });
   };
 
   const handleGetExtensionState = (extensionState: ExtensionState) => {
     $reload += 1;
     error = extensionState?.error;
-    user = extensionState?.user;
+    $currentUser = extensionState?.user;
     $currentOrganization = extensionState?.organization;
     $currentProject = extensionState?.project;
     const isFolderOrFileOpened = extensionState?.isFolderOrFileOpened;
 
-    if (!user?.email) {
+    if ($currentUser && !$currentUser?.email) {
       $page = Page.RegisterEmail;
       loading = false;
       return;
@@ -46,7 +53,19 @@
       return;
     }
 
-    if ($currentOrganization && $currentOrganization?.unauthorized) {
+    if (!$currentUser && !$currentOrganization) {
+      $page = Page.Login;
+      loading = false;
+      return;
+    }
+
+    if (!$currentUser && ($currentOrganization?.unauthorized || $currentProject?.unauthorized)) {
+      $page = Page.Login;
+      loading = false;
+      return;
+    }
+
+    if ($currentUser && $currentProject && $currentProject?.unauthorized) {
       $page = Page.AccessRequired;
       loading = false;
       return;
@@ -112,6 +131,9 @@
         $threadSelected = message.value;
         $page = Page.ReplyViewer;
         break;
+      case 'logout':
+        handleGetExtensionState(message.value);
+        break;
     }
   };
 
@@ -132,8 +154,10 @@
   {:else if error}
     <div>Could not reach server. Please try again later!</div>
     <button on:click={reloadAndGetExtensionState}>Reload</button>
-  {:else if user}
-    <ViewerTopBar username={user?.name} reload={reloadAndGetExtensionState} {logout} />
+  {:else if $page === Page.Login}
+    <button on:click={authenticate}>Login</button>
+  {:else}
+    <ViewerTopBar reload={reloadAndGetExtensionState} {logout} />
 
     {#if $page === Page.RegisterEmail}
       <RegisterEmail />
@@ -149,12 +173,10 @@
       <ThreadsViewer />
     {:else if $page === Page.ReplyViewer}
       <ReplyViewer />
-  {:else if $page === Page.SearchViewer}
-    <SearchViewer />
+    {:else if $page === Page.SearchViewer}
+      <SearchViewer />
     {:else if $page === Page.InviteUser}
       <InviteUser />
     {/if}
-  {:else}
-    <button on:click={authenticate}>Login with GitHub</button>
   {/if}
 </div>

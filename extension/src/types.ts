@@ -20,6 +20,7 @@ export type Thread = {
   lastReplied: Date;
   filePath: string;
   gitBranch: string;
+  canEdit: boolean;
 };
 
 export type Reply = {
@@ -32,6 +33,7 @@ export type Reply = {
   username: string;
   createdAt: Date;
   displayCreationTime: string;
+  canEdit: boolean;
 };
 
 export type Snippet = {

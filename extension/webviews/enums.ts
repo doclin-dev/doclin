@@ -42,6 +42,7 @@ export enum WebviewStateType {
   COPILOT_MESSAGES = 'copilotMessages',
   COPILOT_REFER_TO_DOCLIN_THREADS = 'copilotReferToDoclinThreads',
   COPILOT_REFER_TO_CODE_FILE = 'referToCodeFile',
+  CURRENT_USER = 'currentUser',
 }
 
 export enum SidebarLoadingStatus {

@@ -30,6 +30,7 @@ export type Thread = {
   title: string;
   replyCount: number;
   delta: any;
+  canEdit: boolean;
 };
 
 export type Reply = {
@@ -41,6 +42,7 @@ export type Reply = {
   username: string;
   createdAt: Date;
   displayCreationTime: Date;
+  canEdit: boolean;
 };
 
 export type Organization = {
@@ -69,4 +71,10 @@ export type ExtensionState = {
   error: any;
   user: User;
   isFolderOrFileOpened: boolean;
+};
+
+export type DropdownMenuOption = {
+  key: string;
+  label: string;
+  handler: () => void;
 };

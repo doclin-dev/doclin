@@ -13,9 +13,10 @@ const getProjects = async (organizationId: string) => {
   return response;
 };
 
-const postProject = async (organizationId: string, name: string) => {
+const postProject = async (organizationId: string, name: string, privateProject: boolean) => {
   const data = {
     name: name,
+    privateProject: privateProject,
   };
 
   const apiService = await createAxiosInstance();

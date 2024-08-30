@@ -4,6 +4,7 @@ import { OrganizationRepository } from '../database/repositories/OrganizationRep
 import { Request, Response } from 'express';
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
+import { Organization } from 'src/database/entities/Organization';
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
@@ -22,10 +23,11 @@ export const getProjects = async (req: Request, res: Response) => {
 };
 
 export const postProject = async (req: Request, res: Response) => {
-  const name = DOMPurify.sanitize(req.body.name);
-  const organizationId = req.params.organizationId;
+  const name: string = DOMPurify.sanitize(req.body.name);
+  const organizationId: string = req.params.organizationId;
+  const privateProject: boolean = req.body.privateProject;
 
-  const organization = await OrganizationRepository.findOrganizationById(organizationId);
+  const organization: Organization | null = await OrganizationRepository.findOrganizationById(organizationId);
 
   if (!organization) {
     return;
@@ -34,6 +36,7 @@ export const postProject = async (req: Request, res: Response) => {
   const project = await Project.create({
     name: name,
     organizationId: organizationId,
+    privateProject: privateProject,
   }).save();
 
   return res.send({ project });

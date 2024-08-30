@@ -44,7 +44,7 @@ const apiFetchProject = async (
     await projectCacheManager.set(project.id, project);
 
     return project;
-  } catch {
+  } catch (error) {
     return UNAUTHORIZED;
   }
 };
@@ -63,14 +63,14 @@ export const getExistingProjects = async () => {
   return projects;
 };
 
-export const postProject = async ({ name }: { name: string }) => {
+export const postProject = async ({ name, privateProject }: { name: string; privateProject: boolean }) => {
   const organizationId = await getCurrentOrganizationId();
 
   if (!organizationId) {
     return { project: null };
   }
 
-  const response = await projectApi.postProject(organizationId, name);
+  const response = await projectApi.postProject(organizationId, name, privateProject);
   const payload = response?.data;
   const project = payload?.project;
 

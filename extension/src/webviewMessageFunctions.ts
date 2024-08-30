@@ -48,10 +48,10 @@ export const RESPONSE_PROVIDERS: Record<string, WebviewMessageFunction> = {
   postUserEmail: postUserEmail,
   postCopilotPrompt: postCopilotPrompt,
   searchThreads: searchThreads,
+  logout: logout,
 };
 
 export const VOID_PROVIDERS: Record<string, WebviewMessageFunction> = {
-  logout: logout,
   onInfo: onInfo,
   onError: onError,
   getSidebarLoadingStatus: handleGetSidebarLoadingStatus,

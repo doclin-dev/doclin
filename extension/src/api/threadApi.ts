@@ -13,7 +13,6 @@ const getBaseThreadUrl = (organizationId: string, projectId: number) => {
 const searchThreads = async (searchText: string, projectId: number, organizationId: string) => {
   const data = {
     searchText: searchText,
-    projectId: projectId,
   };
 
   const apiService = await createAxiosInstance();

@@ -12,6 +12,8 @@ import {
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import { Request, Response } from 'express';
+import { ProjectRepository } from '../database/repositories/ProjectRepository';
+import { Project } from '../database/entities/Project';
 import { ThreadResponseDTO } from '../../../shared/types/ThreadResponseDTO';
 import { ThreadRequestDTO } from '../../../shared/types/ThreadRequestDTO';
 import { ThreadRouteParam } from '../types/ThreadRouteParam';
@@ -49,9 +51,9 @@ export const postThread = async (req: Request<ThreadRouteParam, {}, ThreadReques
     gitBranch: gitBranch,
   }).save();
 
-  if (mentionedUserIds.length > 0) {
+  if (userId && mentionedUserIds.length > 0) {
     sendMentionEmailNotification(
-      req.userId,
+      userId,
       mentionedUserIds,
       projectId,
       fillUpThreadOrReplyMessageWithSnippet(threadMessage, snippets),
@@ -59,10 +61,13 @@ export const postThread = async (req: Request<ThreadRouteParam, {}, ThreadReques
     );
   }
 
-  const threadResponse = await ThreadRepository.findThreadWithPropertiesByThreadId(thread.id);
+  let response;
+  const threadResponse: Thread | null = await ThreadRepository.findThreadWithPropertiesByThreadId(thread.id);
+  const project: Project | null = await ProjectRepository.findProjectById(projectId);
 
-  if (threadResponse) {
-    await ThreadRepository.updateSearchEmbeddingsForThread(threadResponse);
+  if (threadResponse && project) {
+    ThreadRepository.updateSearchEmbeddingsForThread(threadResponse);
+    response = mapThreadResponse(threadResponse, project, userId);
   }
 
   if (threadResponse) {
@@ -94,7 +99,9 @@ const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, sni
 
 export const getThreads = async (req: Request, res: Response) => {
   const filePath: string = req.query.filePath as string;
-  const projectId: number = parseInt(req.query.projectId as string);
+  const projectId: number = parseInt(req.params.projectId as string);
+
+  const userId: number | undefined = req.userId;
   let threads: Thread[];
 
   if (filePath) {
@@ -103,7 +110,12 @@ export const getThreads = async (req: Request, res: Response) => {
     threads = await ThreadRepository.findAllThreadsByProjectId(projectId);
   }
 
-  const response: ThreadResponseDTO[] = threads.map(mapThreadResponse);
+  const project: Project | null = await ProjectRepository.findProjectById(projectId);
+  let response;
+
+  if (project) {
+    response = threads.map((thread) => mapThreadResponse(thread, project, userId));
+  }
 
   res.send(response);
 };
@@ -114,6 +126,8 @@ export const updateThread = async (req: Request<ThreadRouteParam, {}, ThreadRequ
   const threadMessage: string = DOMPurify.sanitize(req.body.message);
   const snippets: any[] = req.body.snippets;
   const delta: any = req.body.delta;
+  const projectId: number = parseInt(req.params.projectId as string);
+  const userId: number | undefined = req.userId;
 
   const thread: Thread | null = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
 
@@ -138,15 +152,20 @@ export const updateThread = async (req: Request<ThreadRouteParam, {}, ThreadRequ
   const threadResponse = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
 
   if (threadResponse) {
-    await ThreadRepository.updateSearchEmbeddingsForThread(threadResponse);
+    ThreadRepository.updateSearchEmbeddingsForThread(threadResponse);
   }
 
-  const response = threadResponse ? mapThreadResponse(threadResponse) : null;
+  const project: Project | null = await ProjectRepository.findProjectById(projectId);
+  let response;
+
+  if (threadResponse && project) {
+    response = mapThreadResponse(threadResponse, project, userId);
+  }
   res.send({ thread: response });
 };
 
 export const deleteThread = async (req: Request, res: Response) => {
-  const threadId: number = parseInt(req.params.id as string);
+  const threadId: number = parseInt(req.params.threadId as string);
 
   const thread = await ThreadRepository.findThreadById(threadId);
 
@@ -165,8 +184,9 @@ export const deleteThread = async (req: Request, res: Response) => {
 };
 
 export const searchThreads = async (req: Request, res: Response) => {
-  const searchText = DOMPurify.sanitize(req.body.searchText);
-  const projectId = req.body.projectId;
+  const searchText: string = DOMPurify.sanitize(req.body.searchText);
+  const projectId: number = parseInt(req.params.projectId as string);
+  const userId = req.userId;
 
   let searchResults: Array<Thread> = [];
 
@@ -176,5 +196,12 @@ export const searchThreads = async (req: Request, res: Response) => {
     searchResults = await ThreadRepository.searchThreads(searchText, projectId);
   }
 
-  res.send(searchResults.map(mapThreadResponse));
+  const project: Project | null = await ProjectRepository.findProjectById(projectId);
+  let response;
+
+  if (project) {
+    response = searchResults.map((thread) => mapThreadResponse(thread, project, userId));
+  }
+
+  res.send(response);
 };
