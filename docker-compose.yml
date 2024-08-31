@@ -34,7 +34,7 @@ services:
     build:
       context: .
     working_dir: /extension
-    command: sh -c "npm ci && && npm run watch"
+    command: sh -c "npm ci && npm run watch"
     volumes:
       - ./extension:/extension
       - ./shared:/shared
