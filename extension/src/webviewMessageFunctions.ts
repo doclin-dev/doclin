@@ -19,7 +19,7 @@ import {
 } from './providerHelpers/organizationProviderHelper';
 import { getExtensionState, reloadAndGetExtensionState } from './utils/extensionState';
 import { inviteUser, redeemInvitation } from './providerHelpers/invitationProviderHelper';
-import { WebviewMessageFunction } from './types';
+import { WebviewMessage, WebviewMessageFunction } from './types';
 import { onError, onInfo } from './utils/loggerProviderUtil';
 import { handleGetSidebarLoadingStatus } from './utils/waitForSidebarToShow';
 import { postCopilotPrompt } from './providerHelpers/copilotProvider';
@@ -56,7 +56,7 @@ export const VOID_PROVIDERS: Record<string, WebviewMessageFunction> = {
   getSidebarLoadingStatus: handleGetSidebarLoadingStatus,
 };
 
-export const executeRemainingHandlers = async (message: any, webview: vscode.Webview) => {
+export const executeRemainingHandlers = async (message: WebviewMessage, webview: vscode.Webview) => {
   switch (message.type) {
     case 'authenticate':
       authenticate(async () => {
