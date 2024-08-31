@@ -1,17 +1,17 @@
-import organizationApi from '../api/organizationApi';
 import { readDoclinFile } from './doclinFile/readDoclinFile';
 import { writeDoclinFile } from './doclinFile/writeDoclinFile';
 import logger from '../utils/logger';
 import { DoclinFile, User } from '../types';
 import OrganizationCacheManager from '../utils/cache/OrganizationCacheManager';
 import { OrganizationDTO } from '../../../shared/types/OrganizationDTO';
+import { apiService } from '../apiService';
 
 const UNAUTHORIZED = {
   unauthorized: true,
 };
 
 export const getExistingOrganizations = async () => {
-  const response = await organizationApi.getOrganizations();
+  const response = await apiService.organization.getOrganizations();
   const payload = response?.data;
   const organizations = payload?.organizations;
 
@@ -20,7 +20,7 @@ export const getExistingOrganizations = async () => {
 
 export const postOrganization = async ({ name }: { name: string }) => {
   try {
-    const response = await organizationApi.postOrganization(name);
+    const response = await apiService.organization.postOrganization(name);
     const payload = response?.data;
     const organization: OrganizationDTO = payload?.organization;
 
@@ -58,7 +58,7 @@ export const getOrganization = async (organizationId: string): Promise<Organizat
 
 const apiFetchOrganization = async (organizationId: string) => {
   try {
-    const response = await organizationApi.getOrganization(organizationId);
+    const response = await apiService.organization.getOrganization(organizationId);
     const payload = response?.data;
     const organization: OrganizationDTO = payload?.organization;
 
@@ -92,7 +92,7 @@ export const getCurrentOrganizationUsers = async (): Promise<User | undefined> =
     return;
   }
 
-  const response = await organizationApi.getOrganizationUsers(organizationId);
+  const response = await apiService.organization.getOrganizationUsers(organizationId);
   const payload = response?.data;
   const members = payload?.organization?.members;
 

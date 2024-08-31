@@ -1,4 +1,3 @@
-import projectApi from '../api/projectApi';
 import { getCurrentOrganizationId } from './organizationProviderHelper';
 import { readDoclinFile } from './doclinFile/readDoclinFile';
 import { writeDoclinFile } from './doclinFile/writeDoclinFile';
@@ -6,6 +5,7 @@ import logger from '../utils/logger';
 import { DoclinFile } from '../types';
 import ProjectCacheMananger from '../utils/cache/ProjectCacheManager';
 import { ProjectDTO } from '../../../shared/types/ProjectDTO';
+import { apiService } from '../apiService';
 
 const UNAUTHORIZED = {
   unauthorized: true,
@@ -36,7 +36,7 @@ const apiFetchProject = async (
   projectId: number
 ): Promise<ProjectDTO | { unauthorized: boolean }> => {
   try {
-    const response = await projectApi.getProject(projectId, organizationId);
+    const response = await apiService.project.getProject(projectId, organizationId);
     const payload = response?.data;
     const project = payload?.project;
 
@@ -56,7 +56,7 @@ export const getExistingProjects = async () => {
     return { projects: null };
   }
 
-  const response = await projectApi.getProjects(organizationId);
+  const response = await apiService.project.getProjects(organizationId);
   const payload = response?.data;
   const projects = payload?.projects;
 
@@ -70,7 +70,7 @@ export const postProject = async ({ name, privateProject }: { name: string; priv
     return { project: null };
   }
 
-  const response = await projectApi.postProject(organizationId, name, privateProject);
+  const response = await apiService.project.postProject(organizationId, name, privateProject);
   const payload = response?.data;
   const project = payload?.project;
 

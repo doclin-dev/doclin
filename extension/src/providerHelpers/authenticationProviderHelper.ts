@@ -2,13 +2,14 @@ import * as vscode from 'vscode';
 import { API_BASE_URL, PRODUCTION } from '../envConstants';
 import * as polka from 'polka';
 import { SecretStorageManager } from '../SecretStorageManager';
-import authApi from '../api/authApi';
+
 import { SecretStorageType } from '../enums';
 import logger from '../utils/logger';
 import { User } from '../types';
 import AuthenticatedUserCacheManager from '../utils/cache/AuthenticatedUserCacheManager';
 import { reloadAndGetExtensionState } from '../utils/extensionState';
 import AllThreadsCacheManager from '../utils/cache/AllThreadsCacheManager';
+import { apiService } from '../apiService';
 
 const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github`);
 
@@ -69,7 +70,7 @@ export const getAuthenticatedUser = async (): Promise<User | undefined> => {
     return authenticatedUserCache;
   }
 
-  const response = await authApi.getAuthenticatedUser();
+  const response = await apiService.auth.getAuthenticatedUser();
   const payload = response?.data;
   const user: User = payload?.user;
 
@@ -93,7 +94,7 @@ export const logout = async () => {
 
 export const postUserEmail = async (email: string) => {
   try {
-    const response = await authApi.postUserEmail(email);
+    const response = await apiService.auth.postUserEmail(email);
     const status = response?.status;
 
     return status;

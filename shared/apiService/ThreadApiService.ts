@@ -1,16 +1,11 @@
 import { ThreadResponseDTO } from '../types/ThreadResponseDTO';
 import { ThreadCreateDTO } from '../types/ThreadCreateDTO';
-import { AxiosInstance, AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import { ThreadUpdateDTO } from '../types/ThreadUpdateDTO';
 import { ThreadGetQueryDTO } from '../types/ThreadGetQueryDTO';
+import { AbstracApiService } from './AbstractApiService';
 
-export class ThreadApiService {
-  private axiosInstance: AxiosInstance;
-
-  constructor(axiosInstance: AxiosInstance) {
-    this.axiosInstance = axiosInstance;
-  }
-
+export class ThreadApiService extends AbstracApiService {
   private getBaseThreadUrl(organizationId: string, projectId: number) {
     return `/organizations/${organizationId}/projects/${projectId}/threads`;
   }

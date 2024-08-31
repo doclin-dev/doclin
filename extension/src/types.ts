@@ -111,8 +111,3 @@ export interface ExtensionState {
   isFolderOrFileOpened?: boolean;
   error?: any;
 }
-
-export interface CopilotMessage {
-  author: 'user' | 'copilot';
-  message: string;
-}

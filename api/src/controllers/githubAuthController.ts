@@ -13,7 +13,6 @@ import logger from '../logger';
 const SERVER_URL = PRODUCTION ? PRODUCTION_SERVER_URL : DEVELOPMENT_SERVER_URL;
 
 export const githubCallback = (req: any, res: any) => {
-  console.log(req.query);
   res.redirect(`http://localhost:54321/auth?token=${req.user.accessToken}`);
 };
 

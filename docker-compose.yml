@@ -6,7 +6,7 @@ services:
     build:
       context: .
     working_dir: /api
-    command: sh -c "npm ci && npm run dev"
+    command: sh -c "npm i && npm run dev"
     environment:
       NODE_ENV: development
       DB_HOST: database
@@ -34,7 +34,7 @@ services:
     build:
       context: .
     working_dir: /extension
-    command: sh -c "npm ci && npm run watch"
+    command: sh -c "npm i && npm run watch"
     volumes:
       - ./extension:/extension
       - ./shared:/shared
@@ -46,7 +46,7 @@ services:
     build:
       context: .
     working_dir: /webapp
-    command: sh -c "npm ci && npm run dev"
+    command: sh -c "npm i && npm run dev"
     environment:
       NODE_ENV: development
     ports:
@@ -77,14 +77,14 @@ services:
 
   shared:
     image: node:20.17.0-alpine
-    command: npm ci
+    command: npm i
     volumes:
       - ./shared:/shared
     working_dir: /shared
 
   root:
     image: node:20.17.0-alpine
-    command: npm ci
+    command: npm i
     volumes:
       - ./:/doclin
     working_dir: /doclin

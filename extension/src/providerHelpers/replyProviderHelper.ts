@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
-import replyApi from '../api/replyApi';
 import { PostReply, Reply, UpdateReply } from '../types';
 import AllThreadsCacheManager from '../utils/cache/AllThreadsCacheManager';
 import FileThreadCacheManager from '../utils/cache/FileThreadsCacheManager';
 import { fillUpThreadOrReplyMessageWithSnippet } from '../utils/fillUpThreadOrReplymessage';
 import { compareSnippetsWithActiveEditor } from '../utils/snippetComparisonUtil';
 import { readDoclinFile } from './doclinFile/readDoclinFile';
+import { apiService } from '../apiService';
 
 export const getRepliesByThreadId = async ({ threadId }: { threadId: number }): Promise<any> => {
   const doclinFile = await readDoclinFile();
@@ -16,7 +16,7 @@ export const getRepliesByThreadId = async ({ threadId }: { threadId: number }): 
     return;
   }
 
-  const response = await replyApi.getReplies(organizationId, projectId, threadId);
+  const response = await apiService.reply.getReplies(organizationId, projectId, threadId);
   const payload = response?.data;
   const replies: Reply[] = payload?.replies;
 
@@ -44,7 +44,7 @@ export const postReply = async ({
     return;
   }
 
-  const response = await replyApi.postReply(
+  const response = await apiService.reply.postReply(
     organizationId,
     projectId,
     replyMessage,
@@ -86,7 +86,14 @@ export const updateReply = async ({ replyMessage, replyId, snippets, delta }: Up
     return;
   }
 
-  const response = await replyApi.updateReply(organizationId, projectId, replyId, replyMessage, snippets, delta);
+  const response = await apiService.reply.updateReply(
+    organizationId,
+    projectId,
+    replyId,
+    replyMessage,
+    snippets,
+    delta
+  );
   const reply: Reply = response?.data?.reply;
 
   await compareSnippetsWithActiveEditor(reply.snippets);
@@ -104,7 +111,7 @@ export const deleteReply = async ({ replyId }: { replyId: number }) => {
     return;
   }
 
-  const response = await replyApi.deleteReply(organizationId, projectId, replyId);
+  const response = await apiService.reply.deleteReply(organizationId, projectId, replyId);
   const reply = response?.data?.reply;
 
   return reply;

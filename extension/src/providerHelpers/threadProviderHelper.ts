@@ -44,10 +44,8 @@ export const getThreadsByFilePath = async (documentUri: vscode.Uri): Promise<Thr
 
     if (organizationId && projectId) {
       const filePath = await getDoclinRelativeFilePath(documentUri);
-      const threads: ThreadResponseDTO[] = (
-        await apiService.thread.getThreadsByFilePath(organizationId, projectId, filePath)
-      )?.data;
-      await fileThreadCacheManager.set(documentUri.fsPath, threads);
+      threadDTOs = (await apiService.thread.getThreadsByFilePath(organizationId, projectId, filePath))?.data;
+      await fileThreadCacheManager.set(documentUri.fsPath, threadDTOs);
     }
   }
 

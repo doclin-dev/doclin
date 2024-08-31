@@ -5,8 +5,6 @@ import { getDisplayMessage } from './threadDisplayMessageMapper';
 import { utc } from 'moment';
 
 export const mapThreadResponseDTOToThread = async (threadDTO: ThreadResponseDTO): Promise<Thread> => {
-  console.log(threadDTO);
-
   const snippetsPromise: Promise<Snippet>[] = threadDTO.snippets.map((snippetResponseDTOs) =>
     mapSnippetResponseDTOToSnippet(snippetResponseDTOs)
   );
