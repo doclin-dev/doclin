@@ -1,4 +1,4 @@
-export interface ApiClientOptions {
+export interface ApiServiceOptions {
   token?: string;
   baseURL: string;
 }

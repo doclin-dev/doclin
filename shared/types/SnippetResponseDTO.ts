@@ -1,7 +1,7 @@
-export interface SnippetDTO {
+export interface SnippetResponseDTO {
   id: number;
   text: string;
-  filePath: string | null;
-  lineStart: number | null;
+  filePath: string;
+  lineStart: number;
   gitBranch: string;
 }

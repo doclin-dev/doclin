@@ -1,4 +1,4 @@
-import { ProjectDTO } from '@shared/types/ProjectDTO';
+import { ProjectDTO } from '../../../../shared/types/ProjectDTO';
 import { GlobalStateType } from '../../enums';
 import CacheManager from './CacheManager';
 

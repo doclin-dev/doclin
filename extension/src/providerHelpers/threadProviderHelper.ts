@@ -1,13 +1,15 @@
 import * as vscode from 'vscode';
-import threadApi from '../api/threadApi';
-import { compareSnippetsWithActiveEditor } from '../utils/snippetComparisonUtil';
 import { PostThread, Thread, UpdateThread } from '../types';
 import { getGitBranch } from '../utils/gitProviderUtil';
 import { getDoclinRelativeFilePath } from './doclinRelativeFilePath';
-import { fillUpThreadOrReplyMessageWithSnippet } from '../utils/fillUpThreadOrReplyMessageWithSnippet';
 import { readDoclinFile } from './doclinFile/readDoclinFile';
 import AllThreadsCacheManager from '../utils/cache/AllThreadsCacheManager';
 import FileThreadCacheManager from '../utils/cache/FileThreadsCacheManager';
+import { ThreadResponseDTO } from '../../../shared/types/ThreadResponseDTO';
+import { mapThreadResponseDTOToThread } from '../mappers/threadResponseDTOToThreadMapper';
+import { ThreadCreateDTO } from '../../../shared/types/ThreadCreateDTO';
+import { ThreadUpdateDTO } from '../../../shared/types/ThreadUpdateDTO';
+import { apiService } from '../apiService';
 
 export const getThreadsByActiveFilePath = async (): Promise<{
   threads: Thread[];
@@ -31,10 +33,10 @@ export const getThreadsByFilePath = async (documentUri: vscode.Uri): Promise<Thr
   const fileThreadCacheManager = new FileThreadCacheManager();
   const cachedThreads = await fileThreadCacheManager.get(documentUri.fsPath);
 
-  let threads: Thread[] = [];
+  let threadDTOs: ThreadResponseDTO[] = [];
 
   if (cachedThreads) {
-    threads = cachedThreads;
+    threadDTOs = cachedThreads;
   } else {
     const doclinFile = await readDoclinFile();
     const organizationId = doclinFile?.organizationId;
@@ -42,16 +44,15 @@ export const getThreadsByFilePath = async (documentUri: vscode.Uri): Promise<Thr
 
     if (organizationId && projectId) {
       const filePath = await getDoclinRelativeFilePath(documentUri);
-      threads = (await threadApi.getFileBasedThreads(organizationId, projectId, filePath))?.data?.threads;
+      const threads: ThreadResponseDTO[] = (
+        await apiService.thread.getThreadsByFilePath(organizationId, projectId, filePath)
+      )?.data;
       await fileThreadCacheManager.set(documentUri.fsPath, threads);
     }
   }
 
-  for (const thread of threads) {
-    await compareSnippetsWithActiveEditor(thread.snippets);
-    fillUpThreadOrReplyMessageWithSnippet(thread);
-  }
-
+  const threadsPromise: Promise<Thread>[] = threadDTOs.map((threadDTO) => mapThreadResponseDTOToThread(threadDTO));
+  const threads: Thread[] = await Promise.all(threadsPromise);
   return threads;
 };
 
@@ -76,14 +77,11 @@ export const getAllThreads = async (): Promise<Thread[]> => {
 
 const apiFetchAllThreads = async (organizationId: string, projectId: number): Promise<Thread[]> => {
   try {
-    const response = await threadApi.getAllThreads(organizationId, projectId);
-    const payload = response?.data;
-    let threads: Thread[] = payload?.threads;
+    const response = await apiService.thread.getAllThreads(organizationId, projectId);
+    const threadDTOs: ThreadResponseDTO[] = response?.data;
 
-    for (const thread of threads) {
-      await compareSnippetsWithActiveEditor(thread.snippets);
-      fillUpThreadOrReplyMessageWithSnippet(thread);
-    }
+    const threadsPromise: Promise<Thread>[] = threadDTOs.map((threadDTO) => mapThreadResponseDTOToThread(threadDTO));
+    const threads: Thread[] = await Promise.all(threadsPromise);
 
     const allThreadsCacheManager = new AllThreadsCacheManager();
     await allThreadsCacheManager.set(projectId, threads);
@@ -109,30 +107,28 @@ export const postThread = async ({
     const organizationId = doclinFile.organizationId;
     const projectId = doclinFile.projectId;
     const activeEditorUri = vscode.window.activeTextEditor?.document.uri;
-    const activeEditorDoclinRelativePath = activeEditorUri ? await getDoclinRelativeFilePath(activeEditorUri) : null;
-    const gitBranch = await getGitBranch();
+    const filePath =
+      activeEditorUri && isFileThreadSelected ? await getDoclinRelativeFilePath(activeEditorUri) : undefined;
+    const gitBranch = isFileThreadSelected ? await getGitBranch() : undefined;
 
     if (!organizationId || !projectId) {
       return;
     }
 
-    const response = await threadApi.postThread(
-      organizationId,
-      projectId,
-      title,
-      threadMessage,
-      delta,
-      snippets,
-      isFileThreadSelected ? gitBranch : null,
-      isFileThreadSelected ? activeEditorDoclinRelativePath : null,
-      mentionedUserIds,
-      anonymous
-    );
+    const data: ThreadCreateDTO = {
+      title: title,
+      message: threadMessage,
+      delta: delta,
+      snippets: snippets,
+      gitBranch: gitBranch,
+      filePath: filePath,
+      mentionedUserIds: mentionedUserIds,
+      anonymous: anonymous,
+    };
 
-    const thread: Thread = response?.data?.thread;
-
-    await compareSnippetsWithActiveEditor(thread.snippets);
-    fillUpThreadOrReplyMessageWithSnippet(thread);
+    const response = await apiService.thread.postThread(organizationId, projectId, data);
+    const threadDTO: ThreadResponseDTO = response?.data;
+    const thread: Thread = await mapThreadResponseDTOToThread(threadDTO);
 
     if (activeEditorUri) {
       const fileThreadCacheManager = new FileThreadCacheManager();
@@ -159,27 +155,21 @@ export const updateThread = async ({
   const organizationId = doclinFile.organizationId;
   const projectId = doclinFile.projectId;
   const activeEditorUri = vscode.window.activeTextEditor?.document.uri;
-  const activeEditorDoclinRelativePath = activeEditorUri ? await getDoclinRelativeFilePath(activeEditorUri) : null;
 
   if (!organizationId || !projectId) {
     return;
   }
 
-  const response = await threadApi.updateThread(
-    organizationId,
-    projectId,
-    threadId,
-    title,
-    threadMessage,
-    delta,
-    snippets,
-    activeEditorDoclinRelativePath
-  );
+  const data: ThreadUpdateDTO = {
+    title: title,
+    message: threadMessage,
+    delta: delta,
+    snippets: snippets,
+  };
 
-  const thread: Thread = response?.data?.thread;
-
-  await compareSnippetsWithActiveEditor(thread.snippets);
-  fillUpThreadOrReplyMessageWithSnippet(thread);
+  const response = await apiService.thread.updateThread(organizationId, projectId, threadId, data);
+  const threadDTO: ThreadResponseDTO = response?.data;
+  const thread: Thread = await mapThreadResponseDTOToThread(threadDTO);
 
   if (activeEditorUri) {
     const fileThreadCacheManager = new FileThreadCacheManager();
@@ -202,8 +192,8 @@ export const deleteThread = async ({ threadId }: { threadId: number }) => {
     return;
   }
 
-  const response = await threadApi.deleteThread(organizationId, projectId, threadId);
-  const thread = response?.data?.thread;
+  const response = await apiService.thread.deleteThread(organizationId, projectId, threadId);
+  const thread: ThreadResponseDTO = response?.data;
 
   if (activeEditorUri) {
     const fileThreadCacheManager = new FileThreadCacheManager();
@@ -225,13 +215,10 @@ export const searchThreads = async ({ searchText }: { searchText: string }): Pro
     return;
   }
 
-  const response = await threadApi.searchThreads(searchText, projectId, organizationId);
-  const threads: Array<Thread> = response.data;
-
-  for (const thread of threads) {
-    await compareSnippetsWithActiveEditor(thread.snippets);
-    fillUpThreadOrReplyMessageWithSnippet(thread);
-  }
+  const response = await apiService.thread.searchThreads(searchText, projectId, organizationId);
+  const threadDTOs: ThreadResponseDTO[] = response.data;
+  const threadsPromise: Promise<Thread>[] = threadDTOs.map((threadDTO) => mapThreadResponseDTOToThread(threadDTO));
+  const threads: Thread[] = await Promise.all(threadsPromise);
 
   return threads;
 };

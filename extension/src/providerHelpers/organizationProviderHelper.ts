@@ -4,7 +4,7 @@ import { writeDoclinFile } from './doclinFile/writeDoclinFile';
 import logger from '../utils/logger';
 import { DoclinFile, User } from '../types';
 import OrganizationCacheManager from '../utils/cache/OrganizationCacheManager';
-import { OrganizationDTO } from '@shared/types/OrganizationDTO';
+import { OrganizationDTO } from '../../../shared/types/OrganizationDTO';
 
 const UNAUTHORIZED = {
   unauthorized: true,

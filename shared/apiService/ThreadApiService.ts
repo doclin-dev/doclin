@@ -1,6 +1,8 @@
 import { ThreadResponseDTO } from '../types/ThreadResponseDTO';
-import { ThreadRequestDTO } from '../types/ThreadRequestDTO';
+import { ThreadCreateDTO } from '../types/ThreadCreateDTO';
 import { AxiosInstance, AxiosResponse } from 'axios';
+import { ThreadUpdateDTO } from '../types/ThreadUpdateDTO';
+import { ThreadGetQueryDTO } from '../types/ThreadGetQueryDTO';
 
 export class ThreadApiService {
   private axiosInstance: AxiosInstance;
@@ -9,49 +11,77 @@ export class ThreadApiService {
     this.axiosInstance = axiosInstance;
   }
 
-  public async getAllThreads(
-    organizationId: string,
-    projectId: number
-  ): Promise<AxiosResponse<ThreadResponseDTO, any>> {
-    const params = {
-      projectId: projectId,
-    };
+  private getBaseThreadUrl(organizationId: string, projectId: number) {
+    return `/organizations/${organizationId}/projects/${projectId}/threads`;
+  }
 
+  public async getAllThreads(organizationId: string, projectId: number): Promise<AxiosResponse<ThreadResponseDTO[]>> {
     const baseThreadUrl = this.getBaseThreadUrl(organizationId, projectId);
-    const response: AxiosResponse<ThreadResponseDTO, any> = await this.axiosInstance.get(baseThreadUrl, { params });
+    const response: AxiosResponse<ThreadResponseDTO[]> = await this.axiosInstance.get(baseThreadUrl);
     return response;
   }
 
-  public async getThreadsByFilePath(organizationId: string, projectId: number, filePath: string) {
-    const params = {
-      projectId: projectId,
+  public async getThreadsByFilePath(
+    organizationId: string,
+    projectId: number,
+    filePath: string
+  ): Promise<AxiosResponse<ThreadResponseDTO[]>> {
+    const params: ThreadGetQueryDTO = {
       filePath: filePath,
     };
 
     const baseThreadUrl = this.getBaseThreadUrl(organizationId, projectId);
-    const response: AxiosResponse<ThreadResponseDTO, any> = await this.axiosInstance.get(baseThreadUrl, { params });
+    const response: AxiosResponse<ThreadResponseDTO[]> = await this.axiosInstance.get(baseThreadUrl, { params });
     return response;
   }
 
-  public async deleteThread(organizationId: string, projectId: number, threadId: number) {
+  public async deleteThread(
+    organizationId: string,
+    projectId: number,
+    threadId: number
+  ): Promise<AxiosResponse<ThreadResponseDTO>> {
     const baseThreadUrl = this.getBaseThreadUrl(organizationId, projectId);
-    const response = await this.axiosInstance.delete(`${baseThreadUrl}/${threadId}`);
+    const response: AxiosResponse<ThreadResponseDTO> = await this.axiosInstance.delete(`${baseThreadUrl}/${threadId}`);
     return response;
   }
 
-  public async postThread(organizationId: string, projectId: number, data: ThreadRequestDTO) {
+  public async postThread(
+    organizationId: string,
+    projectId: number,
+    data: ThreadCreateDTO
+  ): Promise<AxiosResponse<ThreadResponseDTO>> {
     const baseThreadUrl = this.getBaseThreadUrl(organizationId, projectId);
-    const response: AxiosResponse<ThreadResponseDTO, any> = await this.axiosInstance.post(baseThreadUrl, data);
+    const response: AxiosResponse<ThreadResponseDTO> = await this.axiosInstance.post(baseThreadUrl, data);
     return response;
   }
 
-  public async updateThread(organizationId: string, projectId: number, threadId: number, data: ThreadRequestDTO) {
+  public async updateThread(
+    organizationId: string,
+    projectId: number,
+    threadId: number,
+    data: ThreadUpdateDTO
+  ): Promise<AxiosResponse<ThreadResponseDTO>> {
     const baseThreadUrl = this.getBaseThreadUrl(organizationId, projectId);
-    const response: AxiosResponse<ThreadResponseDTO, any> = await this.axiosInstance.put(`${baseThreadUrl}/${threadId}`, data);
+    const response: AxiosResponse<ThreadResponseDTO> = await this.axiosInstance.put(
+      `${baseThreadUrl}/${threadId}`,
+      data
+    );
     return response;
   }
 
-  private getBaseThreadUrl(organizationId: string, projectId: number) {
-    return `/organizations/${organizationId}/projects/${projectId}/threads`;
+  public async searchThreads(
+    searchText: string,
+    projectId: number,
+    organizationId: string
+  ): Promise<AxiosResponse<ThreadResponseDTO[]>> {
+    const data = {
+      searchText: searchText,
+    };
+
+    const baseThreadUrl = this.getBaseThreadUrl(organizationId, projectId);
+    const response: AxiosResponse<ThreadResponseDTO[]> = await this.axiosInstance.get(`${baseThreadUrl}/search`, {
+      data,
+    });
+    return response;
   }
 }

@@ -1,4 +1,4 @@
-import { OrganizationDTO } from '@shared/types/OrganizationDTO';
+import { OrganizationDTO } from '../../../../shared/types/OrganizationDTO';
 import { GlobalStateType } from '../../enums';
 import CacheManager from './CacheManager';
 

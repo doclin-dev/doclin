@@ -3,7 +3,7 @@ import replyApi from '../api/replyApi';
 import { PostReply, Reply, UpdateReply } from '../types';
 import AllThreadsCacheManager from '../utils/cache/AllThreadsCacheManager';
 import FileThreadCacheManager from '../utils/cache/FileThreadsCacheManager';
-import { fillUpThreadOrReplyMessageWithSnippet } from '../utils/fillUpThreadOrReplyMessageWithSnippet';
+import { fillUpThreadOrReplyMessageWithSnippet } from '../utils/fillUpThreadOrReplymessage';
 import { compareSnippetsWithActiveEditor } from '../utils/snippetComparisonUtil';
 import { readDoclinFile } from './doclinFile/readDoclinFile';
 

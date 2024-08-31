@@ -4,7 +4,7 @@ import { OrganizationRepository } from '../database/repositories/OrganizationRep
 import { Request, Response } from 'express';
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
-import { Organization } from 'src/database/entities/Organization';
+import { Organization } from '../database/entities/Organization';
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);

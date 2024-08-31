@@ -1,11 +1,11 @@
-import { Project } from 'src/database/entities/Project';
-import { Reply } from 'src/database/entities/Reply';
-import { ReplySnippet } from 'src/database/entities/ReplySnippet';
-import { Thread } from 'src/database/entities/Thread';
-import { ThreadSnippet } from 'src/database/entities/ThreadSnippet';
-import { User } from 'src/database/entities/User';
-import { SnippetDTO } from '../../../shared/types/SnippetResponseDTO';
-import { ReplyDTO } from '../../../shared/types/ReplyDTO';
+import { Project } from '../database/entities/Project';
+import { Reply } from '../database/entities/Reply';
+import { ReplySnippet } from '../database/entities/ReplySnippet';
+import { Thread } from '../database/entities/Thread';
+import { ThreadSnippet } from '../database/entities/ThreadSnippet';
+import { User } from '../database/entities/User';
+import { SnippetResponseDTO } from '../../../shared/types/SnippetResponseDTO';
+import { ReplyResponseDTO } from '../../../shared/types/ReplyResponseDTO';
 import { ThreadResponseDTO } from '../../../shared/types/ThreadResponseDTO';
 import { UserDTO } from '../../../shared/types/UserDTO';
 
@@ -19,7 +19,7 @@ export const mapThreadResponse = (thread: Thread, project: Project, userId: numb
     username: thread.anonymous ? ANONYMOUS_USER : thread.user?.name,
     replyCount: thread.replyCount,
     createdAt: thread.createdAt,
-    lastReplied: thread.replies?.length > 0 ? thread.replies[0].createdAt : null,
+    lastReplied: thread.replies?.length > 0 ? thread.replies[0].createdAt : undefined,
     snippets: thread.snippets?.map(mapSnippetResponse),
     delta: thread.delta,
     filePath: thread.filePath,
@@ -29,7 +29,7 @@ export const mapThreadResponse = (thread: Thread, project: Project, userId: numb
   };
 };
 
-export const mapReplyResponse = (reply: Reply, project: Project, userId: number | undefined): ReplyDTO => {
+export const mapReplyResponse = (reply: Reply, project: Project, userId: number | undefined): ReplyResponseDTO => {
   return {
     id: reply.id,
     message: reply.message,
@@ -41,7 +41,7 @@ export const mapReplyResponse = (reply: Reply, project: Project, userId: number 
   };
 };
 
-export const mapSnippetResponse = (snippet: ThreadSnippet | ReplySnippet): SnippetDTO => {
+export const mapSnippetResponse = (snippet: ThreadSnippet | ReplySnippet): SnippetResponseDTO => {
   return {
     id: snippet.id,
     text: snippet.text,

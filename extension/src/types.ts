@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 
-export type DoclinFile = {
+export interface DoclinFile {
   organizationId: string | null;
   projectId: number | null;
-};
+}
 
-export type Thread = {
+export interface Thread {
   id: number;
   title: string;
   snippets: Snippet[];
@@ -17,13 +17,13 @@ export type Thread = {
   replyCount: number;
   createdAt: Date;
   displayCreationTime: string;
-  lastReplied: Date;
+  lastReplied?: Date;
   filePath: string;
   gitBranch: string;
   canEdit: boolean;
-};
+}
 
-export type Reply = {
+export interface Reply {
   id: number;
   snippets: Snippet[];
   message: string;
@@ -34,9 +34,9 @@ export type Reply = {
   createdAt: Date;
   displayCreationTime: string;
   canEdit: boolean;
-};
+}
 
-export type Snippet = {
+export interface Snippet {
   id: number;
   text: string;
   filePath: string;
@@ -44,18 +44,18 @@ export type Snippet = {
   updatedRange: vscode.Range;
   outdated: boolean;
   gitBranch: string;
-};
+}
 
-export type PostSnippetBlot = {
+export interface PostSnippetBlot {
   displaySnippet: string;
   filePath: string;
   gitBranch: string;
   index: number;
   lineStart: number;
   originalSnippet: string;
-};
+}
 
-export type PostThread = {
+export interface PostThread {
   title: string;
   threadMessage: string;
   delta: any;
@@ -64,55 +64,55 @@ export type PostThread = {
   anonymous: boolean;
   isFileThreadSelected: boolean;
   gitBranch: string;
-};
+}
 
-export type UpdateThread = {
+export interface UpdateThread {
   title: string;
   threadMessage: string;
   threadId: number;
   snippets: PostSnippetBlot[];
   delta: any;
-};
+}
 
-export type PostReply = {
+export interface PostReply {
   replyMessage: string;
   threadId: number;
   anonymous: boolean;
   snippets: PostSnippetBlot[];
   delta: any;
   mentionedUserIds: number[];
-};
+}
 
-export type UpdateReply = {
+export interface UpdateReply {
   replyMessage: string;
   replyId: number;
   snippets: PostSnippetBlot[];
   delta: any;
-};
+}
 
 export type WebviewMessageFunction = (value: any) => any | Promise<any>;
 
-export type WebviewMessage = {
+export interface WebviewMessage {
   type: any;
   value: any;
-};
+}
 
-export type User = {
+export interface User {
   id: number;
   name: string;
   email: string;
   githubId: number;
-};
+}
 
-export type ExtensionState = {
+export interface ExtensionState {
   user?: User | undefined;
   organization?: any;
   project?: any;
   isFolderOrFileOpened?: boolean;
   error?: any;
-};
+}
 
-export type CopilotMessage = {
+export interface CopilotMessage {
   author: 'user' | 'copilot';
   message: string;
-};
+}

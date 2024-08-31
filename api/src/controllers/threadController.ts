@@ -14,23 +14,31 @@ import { JSDOM } from 'jsdom';
 import { Request, Response } from 'express';
 import { ProjectRepository } from '../database/repositories/ProjectRepository';
 import { Project } from '../database/entities/Project';
-import { ThreadResponseDTO } from '../../../shared/types/ThreadResponseDTO';
-import { ThreadRequestDTO } from '../../../shared/types/ThreadRequestDTO';
-import { ThreadRouteParam } from '../types/ThreadRouteParam';
+import { ThreadCreateDTO } from '../../../shared/types/ThreadCreateDTO';
 import { SnippetRequestDTO } from '../../../shared/types/SnippetRequestDTO';
+import { ThreadUpdateDTO } from '../../../shared/types/ThreadUpdateDTO';
+import { ThreadResponseDTO } from '../../../shared/types/ThreadResponseDTO';
+import { ThreadDeleteResponseDTO } from '../../../shared/types/ThreadDeleteResponseDTO';
+import { ThreadSearchDTO } from '../../../shared/types/ThreadSearchDTO';
+import { ParamsDictionary } from '../types/ParamsDictionary';
+import { ThreadGetQueryDTO } from '../../../shared/types/ThreadGetQueryDTO';
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
-export const postThread = async (req: Request<ThreadRouteParam, {}, ThreadRequestDTO>, res: Response) => {
+export const postThread = async (
+  req: Request<ParamsDictionary, ThreadResponseDTO, ThreadCreateDTO>,
+  res: Response<ThreadResponseDTO>
+) => {
   const title: string = DOMPurify.sanitize(req.body.title);
   const threadMessage: string = DOMPurify.sanitize(req.body.message);
   const filePath: string | undefined = req.body.filePath ? DOMPurify.sanitize(req.body.filePath) : undefined;
   const gitBranch: string | undefined = req.body.gitBranch ? DOMPurify.sanitize(req.body.gitBranch) : undefined;
   const snippets: SnippetRequestDTO[] = req.body.snippets;
   const delta: any = req.body.delta;
-  const userId: number = req.userId;
-  const projectId: number = req.params.projectId;
+  const userId: number | undefined = req.userId;
+  const projectId: number = parseInt(req.params.projectId);
+
   const anonymousPost: boolean = req.body.anonymous;
   const mentionedUserIds: number[] = req.body.mentionedUserIds;
 
@@ -68,17 +76,13 @@ export const postThread = async (req: Request<ThreadRouteParam, {}, ThreadReques
   if (threadResponse && project) {
     ThreadRepository.updateSearchEmbeddingsForThread(threadResponse);
     response = mapThreadResponse(threadResponse, project, userId);
-  }
-
-  if (threadResponse) {
-    const response: ThreadResponseDTO = mapThreadResponse(threadResponse);
     res.send(response);
   } else {
     throw new Error('Error posting thread');
   }
 };
 
-const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, snippetblots: RequestSnippetBlot[]) => {
+const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, snippetblots: SnippetRequestDTO[]) => {
   let updatedThreadMessage: string = threadMessage.replace(MULTIPLE_LINE_BREAK_REGEX, SINGLE_LINE_BREAK);
   const snippetEntities: ThreadSnippet[] = [];
 
@@ -97,9 +101,12 @@ const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, sni
   return { updatedThreadMessage, snippetEntities };
 };
 
-export const getThreads = async (req: Request, res: Response) => {
-  const filePath: string = req.query.filePath as string;
-  const projectId: number = parseInt(req.params.projectId as string);
+export const getThreads = async (
+  req: Request<ParamsDictionary, ThreadResponseDTO[], {}, ThreadGetQueryDTO>,
+  res: Response<ThreadResponseDTO[]>
+) => {
+  const filePath: string = req.query.filePath;
+  const projectId: number = parseInt(req.params.projectId);
 
   const userId: number | undefined = req.userId;
   let threads: Thread[];
@@ -111,29 +118,31 @@ export const getThreads = async (req: Request, res: Response) => {
   }
 
   const project: Project | null = await ProjectRepository.findProjectById(projectId);
-  let response;
 
   if (project) {
-    response = threads.map((thread) => mapThreadResponse(thread, project, userId));
+    const response: ThreadResponseDTO[] = threads.map((thread) => mapThreadResponse(thread, project, userId));
+    res.send(response);
+  } else {
+    throw new Error('Could not find project while getting threads');
   }
-
-  res.send(response);
 };
 
-export const updateThread = async (req: Request<ThreadRouteParam, {}, ThreadRequestDTO>, res: Response) => {
-  const threadId: number = req.params.threadId;
+export const updateThread = async (
+  req: Request<ParamsDictionary, ThreadResponseDTO, ThreadUpdateDTO>,
+  res: Response<ThreadResponseDTO>
+) => {
+  const threadId: number = parseInt(req.params.threadId);
   const title: string = DOMPurify.sanitize(req.body.title);
   const threadMessage: string = DOMPurify.sanitize(req.body.message);
   const snippets: any[] = req.body.snippets;
   const delta: any = req.body.delta;
-  const projectId: number = parseInt(req.params.projectId as string);
+  const projectId: number = parseInt(req.params.projectId);
   const userId: number | undefined = req.userId;
 
   const thread: Thread | null = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
 
   if (!thread) {
-    res.send({ thread: null });
-    return;
+    throw new Error('Error posting thread');
   }
 
   thread.snippets.forEach((snippet) => snippet.remove());
@@ -153,55 +162,51 @@ export const updateThread = async (req: Request<ThreadRouteParam, {}, ThreadRequ
 
   if (threadResponse) {
     ThreadRepository.updateSearchEmbeddingsForThread(threadResponse);
+  } else {
+    throw new Error('Could not find thread while updating thread');
   }
 
   const project: Project | null = await ProjectRepository.findProjectById(projectId);
-  let response;
 
-  if (threadResponse && project) {
-    response = mapThreadResponse(threadResponse, project, userId);
+  if (project) {
+    const response: ThreadResponseDTO = mapThreadResponse(threadResponse, project, userId);
+    res.send(response);
+  } else {
+    throw new Error('Could not find project while updating thread');
   }
-  res.send({ thread: response });
 };
 
-export const deleteThread = async (req: Request, res: Response) => {
-  const threadId: number = parseInt(req.params.threadId as string);
-
-  const thread = await ThreadRepository.findThreadById(threadId);
+export const deleteThread = async (req: Request<ParamsDictionary, {}>, res: Response<ThreadDeleteResponseDTO>) => {
+  const threadId: number = parseInt(req.params.threadId);
+  const thread: Thread | null = await ThreadRepository.findThreadById(threadId);
 
   if (!thread) {
-    res.send({ thread: null });
-    return;
+    throw new Error('Thread not found while deleting.');
   }
 
   await thread.remove();
 
   res.send({
-    thread: {
-      id: threadId,
-    },
+    id: threadId,
   });
 };
 
-export const searchThreads = async (req: Request, res: Response) => {
+export const searchThreads = async (
+  req: Request<ParamsDictionary, ThreadResponseDTO[], ThreadSearchDTO>,
+  res: Response<ThreadResponseDTO[]>
+) => {
   const searchText: string = DOMPurify.sanitize(req.body.searchText);
   const projectId: number = parseInt(req.params.projectId as string);
-  const userId = req.userId;
-
-  let searchResults: Array<Thread> = [];
+  const userId: number | undefined = req.userId;
 
   await ThreadRepository.updateEmbeddingsOfAllThreadsWithNoEmbedding(projectId);
-
-  if (searchText) {
-    searchResults = await ThreadRepository.searchThreads(searchText, projectId);
-  }
-
+  const searchResults: Thread[] = await ThreadRepository.searchThreads(searchText, projectId);
   const project: Project | null = await ProjectRepository.findProjectById(projectId);
-  let response;
 
   if (project) {
-    response = searchResults.map((thread) => mapThreadResponse(thread, project, userId));
+    const response: ThreadResponseDTO[] = searchResults.map((thread) => mapThreadResponse(thread, project, userId));
+    res.send(response);
+  } else {
+    throw new Error('Could not find project while searching threads');
   }
-
-  res.send(response);
 };

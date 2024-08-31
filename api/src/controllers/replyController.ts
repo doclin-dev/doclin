@@ -13,9 +13,9 @@ import { sendMentionEmailNotification } from './emailNotificationController';
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import { Request, Response } from 'express';
-import { RequestSnippetBlot } from '../types/types';
 import { Thread } from '../database/entities/Thread';
 import { ProjectRepository } from '../database/repositories/ProjectRepository';
+import { SnippetRequestDTO } from '../../../shared/types/SnippetRequestDTO';
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
@@ -24,7 +24,7 @@ export const postReply = async (req: Request, res: Response) => {
   const threadId: number = parseInt(req.params.threadId);
   const replyMessage: string = DOMPurify.sanitize(req.body.replyMessage);
   const anonymous: boolean = req.body.anonymous;
-  const snippets: RequestSnippetBlot[] = req.body.snippets;
+  const snippets: SnippetRequestDTO[] = req.body.snippets;
   const delta: any = req.body.delta;
   const mentionedUserIds: number[] = req.body.mentionedUserIds;
   const userId: number | undefined = req.userId;
@@ -69,7 +69,7 @@ const sendEmailNotification = async (
   userId: number | undefined,
   mentionedUserIds: number[],
   replyMessage: string,
-  snippets: RequestSnippetBlot[]
+  snippets: SnippetRequestDTO[]
 ) => {
   if (!userId) {
     return;
@@ -91,7 +91,7 @@ const sendEmailNotification = async (
   }
 };
 
-const createSnippetEntitiesFromReplyMessage = async (replyMessage: string, snippetblots: RequestSnippetBlot[]) => {
+const createSnippetEntitiesFromReplyMessage = async (replyMessage: string, snippetblots: SnippetRequestDTO[]) => {
   let updatedReplyMessage: string = '';
   updatedReplyMessage = replyMessage.replace(MULTIPLE_LINE_BREAK_REGEX, SINGLE_LINE_BREAK);
   const snippetEntities = [];
@@ -130,7 +130,7 @@ export const getReplies = async (req: Request, res: Response) => {
 export const updateReplyMessage = async (req: Request, res: Response) => {
   const replyId: number = parseInt(req.params.replyId as string);
   const replyMessage: string = DOMPurify.sanitize(req.body.message);
-  const snippets: RequestSnippetBlot[] = req.body.snippets;
+  const snippets: SnippetRequestDTO[] = req.body.snippets;
   const delta: any = req.body.delta;
   const projectId: number = parseInt(req.params.projectId as string);
   const userId: number | undefined = req.userId;

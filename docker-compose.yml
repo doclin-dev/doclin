@@ -1,10 +1,12 @@
 name: 'doclin'
 
 services:
-  backend:
+  api:
+    image: node:20.17.0-alpine
     build:
-      context: ./api
-      dockerfile: Dockerfile
+      context: .
+    working_dir: /api
+    command: sh -c "npm ci && npm run dev"
     environment:
       NODE_ENV: development
       DB_HOST: database
@@ -22,22 +24,36 @@ services:
       - '3000:3000'
     volumes:
       - ./api:/api
-    working_dir: /api
-    command: sh -c "npm ci && npm run dev"
+      - ./shared:/shared
     depends_on:
       - database
+      - shared
+
+  vscode-extension:
+    image: node:20.17.0-alpine
+    build:
+      context: .
+    working_dir: /extension
+    command: sh -c "npm ci && && npm run watch"
+    volumes:
+      - ./extension:/extension
+      - ./shared:/shared
+    depends_on:
+      - shared
 
   webapp:
+    image: node:20.17.0-alpine
     build:
-      context: ./webapp
+      context: .
+    working_dir: /webapp
+    command: sh -c "npm ci && npm run dev"
     environment:
       NODE_ENV: development
     ports:
       - '3002:3002'
     volumes:
       - ./webapp:/webapp
-    working_dir: /webapp
-    command: sh -c "npm ci && npm run dev"
+      - ./shared:/shared
 
   database:
     image: pgvector/pgvector:pg16
@@ -58,6 +74,20 @@ services:
       - '3001:3001'
     volumes:
       - ./python-api:/python-api
+
+  shared:
+    image: node:20.17.0-alpine
+    command: npm ci
+    volumes:
+      - ./shared:/shared
+    working_dir: /shared
+
+  root:
+    image: node:20.17.0-alpine
+    command: npm ci
+    volumes:
+      - ./:/doclin
+    working_dir: /doclin
 
 volumes:
   postgres-data:

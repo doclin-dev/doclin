@@ -6,7 +6,7 @@
   "scripts": {
     "watch": "tsc -w",
     "build": "tsc",
-    "dev": "concurrently \"npm run watch\" \"nodemon dist/index.js\"",
+    "dev": "concurrently \"npm run watch\" \"nodemon dist/api/src/index.js\"",
     "clean": "rm -rf node_modules && rm -rf dist && npm install",
     "eslint": "eslint src --ext ts",
     "eslint-fix": "eslint src --ext ts --fix",
