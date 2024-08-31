@@ -7,7 +7,7 @@ import cors from 'cors';
 import { router } from './routes/router';
 import session from 'express-session';
 import { initializeDatabase } from './database/createDatabase';
-import { githubOAuthConfig, githubLogin } from './controllers/githubAuthController';
+import { vscodeGithubOAuthConfig, githubLogin, webappGithubOAuthConfig } from './controllers/githubAuthController';
 import fs from 'fs';
 import {
   PRODUCTION,
@@ -70,7 +70,8 @@ const initializePassportAuthentication = (app: Application) => {
   });
 
   app.use(passport.initialize());
-  passport.use(new GitHubStrategy(githubOAuthConfig, githubLogin));
+  passport.use('github-vscode', new GitHubStrategy(vscodeGithubOAuthConfig, githubLogin));
+  passport.use('github-webapp', new GitHubStrategy(webappGithubOAuthConfig, githubLogin));
 };
 
 const initializeJsonCommunication = (app: Application) => {

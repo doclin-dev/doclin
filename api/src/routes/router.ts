@@ -2,7 +2,7 @@ import express from 'express';
 import passport from 'passport';
 import { getCurrentUser, postUserEmail } from '../controllers/userController';
 import { setUserIdOnReq, verifyAuthentication } from '../middlewares/authenticationMiddleware';
-import { githubCallback } from '../controllers/githubAuthController';
+import { vscodeGithubCallback } from '../controllers/githubAuthController';
 import { organizationRouter } from './organizationRouter';
 import { redeemInvitation } from '../controllers/invitationController';
 import { log } from '../controllers/loggerController';
@@ -14,10 +14,10 @@ export const router = express.Router();
 router.use([printEndpointsOnLocal, setUserIdOnReq]);
 
 router.get('/', (_req, res) => res.send('doclin-api'));
-router.get('/auth/github', (req, res, next) => {
-  passport.authenticate('github', { state: 'vscode' })(req, res, next);
-});
-router.get('/auth/github/callback', passport.authenticate('github', { session: false }), githubCallback);
+router.get('/auth/github/vscode', passport.authenticate('github-vscode', { session: false }));
+router.get('/auth/github/webapp', passport.authenticate('github-webapp', { session: false }));
+router.get('/auth/github/callback/vscode', passport.authenticate('github', { session: false }), vscodeGithubCallback);
+router.get('/auth/github/callback/webapp', passport.authenticate('github', { session: false }), vscodeGithubCallback);
 router.get('/auth/user', getCurrentUser);
 router.post('/auth/user', verifyAuthentication, postUserEmail);
 router.post('/redeemInvitation', verifyAuthentication, redeemInvitation);

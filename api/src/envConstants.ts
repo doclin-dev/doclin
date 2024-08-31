@@ -23,3 +23,5 @@ export const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 export const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 export const PYTHON_API_HOST = process.env.PYTHON_API_HOST || 'http://python-api:3001';
+
+export const WEBAPP_URL = process.env.WEBAPP_URL || 'http://localhost:3002';
