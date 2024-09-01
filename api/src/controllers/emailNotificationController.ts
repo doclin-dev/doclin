@@ -51,12 +51,8 @@ export const sendMentionEmailNotification = async (
     senderName = sender.name;
   }
 
-  const targetUsers: Promise<string>[] = targetUserIds.map(async (mentionedUserId) => {
-    const user: User = await UserRepository.findUserById(mentionedUserId);
-    return user.email;
-  });
-
-  const targetUserEmails: string[] = (await Promise.all(targetUsers)).filter((email) => email !== null) as string[];
+  const targetUsers: User[] = await UserRepository.findUsersByIds(targetUserIds);
+  const targetUserEmails: string[] = targetUsers.map((user) => user.email).filter((email) => email !== null);
 
   const project: Project = await ProjectRepository.findProjectById(projectId);
   const projectName: string = project.name;
