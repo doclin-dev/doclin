@@ -74,7 +74,7 @@ export const postThread = async (
   ThreadRepository.updateSearchEmbeddingsForThread(threadResponse);
   const response = mapThreadResponse(threadResponse, project, userId);
 
-  res.send({ thread: response });
+  res.send(response);
 };
 
 const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, snippetblots: SnippetRequestDTO[]) => {
@@ -112,7 +112,7 @@ export const getThreads = async (
     threads = await ThreadRepository.findAllThreadsByProjectId(projectId);
   }
 
-  const project: Project | null = await ProjectRepository.findProjectById(projectId);
+  const project: Project = await ProjectRepository.findProjectById(projectId);
   const response: ThreadResponseDTO[] = threads.map((thread) => mapThreadResponse(thread, project, userId));
   res.send(response);
 };
@@ -153,7 +153,7 @@ export const updateThread = async (
   res.send(response);
 };
 
-export const deleteThread = async (req: Request, res: Response) => {
+export const deleteThread = async (req: Request<ParamsDictionary, {}>, res: Response<ThreadDeleteResponseDTO>) => {
   const threadId: number = parseInt(req.params.threadId as string);
 
   const thread: Thread = await ThreadRepository.findThreadById(threadId);
