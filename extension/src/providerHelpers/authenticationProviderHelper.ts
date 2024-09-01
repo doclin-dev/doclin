@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import { API_BASE_URL, PRODUCTION } from '../envConstants';
 import * as polka from 'polka';
 import { SecretStorageManager } from '../SecretStorageManager';
-
 import { SecretStorageType } from '../enums';
 import logger from '../utils/logger';
 import { User } from '../types';
@@ -12,7 +11,7 @@ import AllThreadsCacheManager from '../utils/cache/AllThreadsCacheManager';
 import { apiService } from '../apiService';
 import { getExtensionState } from '../utils/extensionState';
 
-const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github`);
+const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github/vscode`);
 
 const app = polka();
 

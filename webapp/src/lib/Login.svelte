@@ -1,11 +1,13 @@
 <script>
   import Icon from '@iconify/svelte';
-  import githubIcon from '@iconify/icons-mdi/github'; // Import the GitHub icon
-  export let loginUrl = '#'; // Replace with your GitHub OAuth URL
+  import githubIcon from '@iconify/icons-mdi/github';
+  import { API_URL } from '../envConstants';
 
-  function handleLogin() {
-    window.location.href = loginUrl;
-  }
+  const GITHUB_OAUTH_URL = `${API_URL}/auth/github/webapp`;
+
+  const handleLogin = () => {
+    window.location.href = GITHUB_OAUTH_URL;
+  };
 </script>
 
 <div class="flex items-center justify-center min-h-screen bg-gray-100">
