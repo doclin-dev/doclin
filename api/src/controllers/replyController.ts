@@ -13,8 +13,10 @@ import { sendMentionEmailNotification } from './emailNotificationController';
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import { Request, Response } from 'express';
-import { RequestSnippetBlot } from 'src/types/types';
-import { Thread } from 'src/database/entities/Thread';
+import { RequestSnippetBlot } from '../types/types';
+import { Thread } from '../database/entities/Thread';
+import { ProjectRepository } from '../database/repositories/ProjectRepository';
+import { Project } from '../database/entities/Project';
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
@@ -26,8 +28,10 @@ export const postReply = async (req: Request, res: Response) => {
   const snippets: RequestSnippetBlot[] = req.body.snippets;
   const delta: any = req.body.delta;
   const mentionedUserIds: number[] = req.body.mentionedUserIds;
+  const userId: number | undefined = req.userId;
   const { updatedReplyMessage, snippetEntities } = await createSnippetEntitiesFromReplyMessage(replyMessage, snippets);
   const thread: Thread | null = await ThreadRepository.findThreadById(threadId);
+  const projectId: number = parseInt(req.params.projectId as string);
 
   if (!thread) {
     res.send({ reply: null });
@@ -37,31 +41,33 @@ export const postReply = async (req: Request, res: Response) => {
   const reply = await Reply.create({
     threadId: threadId,
     message: updatedReplyMessage,
-    userId: req.userId,
+    userId: userId,
     anonymous: anonymous,
     delta: delta,
     snippets: snippetEntities,
   }).save();
 
-  const threadWithProperties = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
+  const threadWithProperties: Thread = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
+  await ThreadRepository.updateSearchEmbeddingsForThread(threadWithProperties);
 
-  if (threadWithProperties) {
-    await ThreadRepository.updateSearchEmbeddingsForThread(threadWithProperties);
-  }
-
-  sendEmailNotification(thread, req.userId, mentionedUserIds, replyMessage, snippets);
-  const replyResponse = await ReplyRepository.findReplyWithPropertiesById(reply.id);
-  const response = replyResponse ? mapReplyResponse(replyResponse) : null;
+  sendEmailNotification(thread, userId, mentionedUserIds, replyMessage, snippets);
+  const replyResponse: Reply = await ReplyRepository.findReplyWithPropertiesById(reply.id);
+  const project: Project = await ProjectRepository.findProjectById(projectId);
+  const response = mapReplyResponse(replyResponse, project, userId);
   res.send({ reply: response });
 };
 
 const sendEmailNotification = async (
   thread: Thread,
-  userId: number,
+  userId: number | undefined,
   mentionedUserIds: number[],
   replyMessage: string,
   snippets: RequestSnippetBlot[]
 ) => {
+  if (!userId) {
+    return;
+  }
+
   const relevantUserIds = (await ThreadRepository.findUsersByThreadId(thread.id))
     .filter((user) => user.id !== userId)
     .map((user) => user.id);
@@ -100,22 +106,25 @@ const createSnippetEntitiesFromReplyMessage = async (replyMessage: string, snipp
 
 export const getReplies = async (req: Request, res: Response) => {
   const threadId: number = parseInt(req.params.threadId);
-  const replies = await ReplyRepository.findRepliesWithPropertiesByThreadId(threadId);
-  const response = replies.map(mapReplyResponse);
+  const projectId: number = parseInt(req.params.projectId as string);
+  const userId: number | undefined = req.userId;
+
+  const replies: Reply[] = await ReplyRepository.findRepliesWithPropertiesByThreadId(threadId);
+  const project: Project = await ProjectRepository.findProjectById(projectId);
+  const response = replies.map((reply) => mapReplyResponse(reply, project, userId));
+
   res.send({ replies: response });
 };
 
 export const updateReplyMessage = async (req: Request, res: Response) => {
-  const replyId: number = parseInt(req.params.id as string);
+  const replyId: number = parseInt(req.params.replyId as string);
   const replyMessage: string = DOMPurify.sanitize(req.body.message);
   const snippets: RequestSnippetBlot[] = req.body.snippets;
   const delta: any = req.body.delta;
-  const reply = await ReplyRepository.findReplyWithPropertiesById(replyId);
+  const projectId: number = parseInt(req.params.projectId as string);
+  const userId: number | undefined = req.userId;
 
-  if (!reply) {
-    res.send({ reply: null });
-    return;
-  }
+  const reply: Reply = await ReplyRepository.findReplyWithPropertiesById(replyId);
 
   reply.snippets.forEach((snippet) => snippet.remove());
   const { updatedReplyMessage, snippetEntities } = await createSnippetEntitiesFromReplyMessage(replyMessage, snippets);
@@ -124,27 +133,19 @@ export const updateReplyMessage = async (req: Request, res: Response) => {
   reply.delta = delta;
   await reply.save();
 
-  const threadWithProperties = await ThreadRepository.findThreadWithPropertiesByThreadId(reply.threadId);
+  const threadWithProperties: Thread = await ThreadRepository.findThreadWithPropertiesByThreadId(reply.threadId);
+  await ThreadRepository.updateSearchEmbeddingsForThread(threadWithProperties);
 
-  if (threadWithProperties) {
-    await ThreadRepository.updateSearchEmbeddingsForThread(threadWithProperties);
-  }
+  const replyResponse: Reply = await ReplyRepository.findReplyWithPropertiesById(replyId);
+  const project: Project = await ProjectRepository.findProjectById(projectId);
+  const response = mapReplyResponse(replyResponse, project, userId);
 
-  const replyResponse = await ReplyRepository.findReplyWithPropertiesById(replyId);
-  const response = replyResponse ? mapReplyResponse(replyResponse) : null;
   res.send({ reply: response });
 };
 
 export const deleteReply = async (req: Request, res: Response) => {
-  const replyId: number = parseInt(req.params.id as string);
-
-  const reply = await ReplyRepository.findReplyWithPropertiesById(replyId);
-
-  if (!reply) {
-    res.send({ reply: null });
-    return;
-  }
-
+  const replyId: number = parseInt(req.params.replyId as string);
+  const reply: Reply = await ReplyRepository.findReplyWithPropertiesById(replyId);
   await reply.remove();
 
   res.send({

@@ -1,6 +1,6 @@
-import { Reply } from 'src/database/entities/Reply';
+import { Reply } from '../database/entities/Reply';
 import { Thread } from '../database/entities/Thread';
-import { RequestSnippetBlot } from 'src/types/types';
+import { RequestSnippetBlot } from '../types/types';
 
 export const MULTIPLE_LINE_BREAK_REGEX: RegExp = /(<p><br><\/p>)+/gi;
 export const SINGLE_LINE_BREAK: string = '<p><br></p>';

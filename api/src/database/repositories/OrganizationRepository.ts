@@ -4,7 +4,7 @@ import { User } from '../entities/User';
 
 export const OrganizationRepository = AppDataSource.getRepository(Organization).extend({
   findOrganizationById(id: string) {
-    return this.findOneBy({ id: id });
+    return this.findOneByOrFail({ id: id });
   },
 
   findOrganizationsByUserId(userId: number) {

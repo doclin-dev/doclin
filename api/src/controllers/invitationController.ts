@@ -65,10 +65,14 @@ export const redeemInvitation = async (req: Request, res: Response) => {
   const invitationCode = req.body.invitationCode;
   const userId = req.userId;
 
-  const user: User | null = await UserRepository.findUserById(userId);
+  if (!userId) {
+    throw new Error('User not authenticated');
+  }
+
+  const user: User = await UserRepository.findUserById(userId);
   const invitation: Invitation | null = await InvitationRepository.findUnexpiredInvitationByCode(invitationCode);
 
-  if (!invitation || !user) {
+  if (!invitation) {
     return res.status(403).send({ error: INVITATION_EXPIRED_MSG });
   }
 

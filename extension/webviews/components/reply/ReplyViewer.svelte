@@ -4,7 +4,7 @@
   import Thread from '../thread/Thread.svelte';
   import { onMount, onDestroy } from 'svelte';
   import Reply from './Reply.svelte';
-  import { page, reload, threadSelected } from '../../state/store';
+  import { currentUser, page, reload, threadSelected } from '../../state/store';
   import ReplyAddForm from './ReplyAddForm.svelte';
   import type { Reply as ReplyType } from '../../types';
 
@@ -70,7 +70,7 @@
 <div class="reply-viewer">
   <div class="topbar">
     <div class="button-container">
-      <Button icon="back-icon" title=" Back to threads" type="text" onClick={handleBackClick} />
+      <Button icon="back-icon" title=" Back to threads" variant="secondary" type="text" onClick={handleBackClick} />
     </div>
   </div>
 
@@ -95,5 +95,9 @@
     {/if}
   </div>
 
-  <ReplyAddForm />
+  {#if $currentUser}
+    <ReplyAddForm />
+  {:else}
+    Login to reply to this thread.
+  {/if}
 </div>

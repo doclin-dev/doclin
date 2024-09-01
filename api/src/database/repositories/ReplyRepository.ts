@@ -2,6 +2,10 @@ import { AppDataSource } from '../dataSource';
 import { Reply } from '../entities/Reply';
 
 export const ReplyRepository = AppDataSource.getRepository(Reply).extend({
+  findReplyById(replyId: number): Promise<Reply | null> {
+    return this.findOneBy({ id: replyId });
+  },
+
   findRepliesWithPropertiesByThreadId(threadId: number) {
     return this.createQueryBuilder('reply')
       .leftJoinAndSelect('reply.user', 'user')
@@ -11,11 +15,11 @@ export const ReplyRepository = AppDataSource.getRepository(Reply).extend({
       .getMany();
   },
 
-  findReplyWithPropertiesById(replyId: number) {
+  findReplyWithPropertiesById(replyId: number): Promise<Reply> {
     return this.createQueryBuilder('reply')
       .leftJoinAndSelect('reply.user', 'user')
       .leftJoinAndSelect('reply.snippets', 'snippet')
       .where('reply.id = :replyId', { replyId })
-      .getOne();
+      .getOneOrFail();
   },
 });

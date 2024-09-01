@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { UserRepository } from '../database/repositories/UserRepository';
 import { ACCESS_TOKEN_SECRET } from '../envConstants';
 import logger from '../logger';
+import { User } from '../database/entities/User';
 
 export const getCurrentUser = async (req: Request, res: Response) => {
   const authHeader = req.headers.authorization;
@@ -13,12 +14,12 @@ export const getCurrentUser = async (req: Request, res: Response) => {
     return;
   }
 
-  const user = await UserRepository.findUserById(userId);
+  const user: User = await UserRepository.findUserById(userId);
 
   res.send({ user });
 };
 
-export const getUserIdFromAuthHeader = (authHeader: string | undefined) => {
+export const getUserIdFromAuthHeader = (authHeader: string | undefined): number | null => {
   if (!authHeader) {
     return null;
   }
@@ -48,14 +49,15 @@ export const postUserEmail = async (req: Request, res: Response) => {
     const userId = getUserIdFromAuthHeader(authHeader);
     const email = req.body.email;
 
-    const user = await UserRepository.findUserById(userId);
-
-    if (user) {
-      user.email = email;
-      await user.save();
+    if (!userId) {
+      throw Error('User is not authenticated');
     }
-    logger.info('User email has been successfully registered.');
 
+    const user: User = await UserRepository.findUserById(userId);
+    user.email = email;
+    await user.save();
+
+    logger.info('User email has been successfully registered.');
     res.send({ email });
   } catch (error) {
     logger.error(`User email wasn't resgitered. error: ${error}`);

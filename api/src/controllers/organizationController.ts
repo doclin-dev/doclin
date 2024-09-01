@@ -6,12 +6,19 @@ import { Request, Response } from 'express';
 import { mapUser } from '../utils/mapperUtils';
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
+import { User } from '../database/entities/User';
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
 export const getOrganizations = async (req: Request, res: Response) => {
-  const organizations = await OrganizationRepository.findOrganizationsByUserId(req.userId);
+  const userId = req.userId;
+
+  if (!userId) {
+    throw Error('userId is not defined');
+  }
+
+  const organizations = await OrganizationRepository.findOrganizationsByUserId(userId);
 
   const responseOrganizations = organizations.map((organization) => ({
     id: organization.id,
@@ -24,12 +31,14 @@ export const getOrganizations = async (req: Request, res: Response) => {
 export const postOrganization = async (req: Request, res: Response) => {
   const name = DOMPurify.sanitize(req.body.name);
   const organization = Organization.create({ name: name });
-  const user = await UserRepository.findUserById(req.userId);
 
-  if (!user) {
-    return;
+  const userId = req.userId;
+
+  if (!userId) {
+    throw Error('userId is not defined');
   }
 
+  const user: User = await UserRepository.findUserById(userId);
   organization.users = [user];
   await AppDataSource.manager.save(organization);
 

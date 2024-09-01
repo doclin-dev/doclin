@@ -7,6 +7,6 @@ export const ProjectRepository = AppDataSource.getRepository(Project).extend({
   },
 
   findProjectById(projectId: number) {
-    return this.findOneBy({ id: projectId });
+    return this.findOneByOrFail({ id: projectId });
   },
 });

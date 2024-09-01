@@ -4,11 +4,10 @@
   import Thread from './Thread.svelte';
   import { ActiveView, Page } from '../../enums';
   import FilterMenu from '../FilterMenu.svelte';
-  import { activeView, currentProject, page, reload } from '../../state/store';
+  import { activeView, currentProject, currentUser, page, reload } from '../../state/store';
   import ThreadAddForm from './ThreadAddForm.svelte';
 
   let threads: Array<ThreadType> = [];
-  let activeFilePath: string = '';
 
   $: {
     if ($reload > 1) {
@@ -40,9 +39,8 @@
     const message = event.data;
     switch (message.type) {
       case 'getThreadsByActiveFilePath':
-        const { threads: threadsByFile, activeFilePath: filePath } = message.value;
+        const { threads: threadsByFile } = message.value;
         threads = threadsByFile;
-        activeFilePath = filePath;
         break;
       case 'getAllThreads':
         threads = message.value;
@@ -71,9 +69,11 @@
   });
 </script>
 
-<FilterMenu filePath={activeFilePath} />
+<FilterMenu />
 
-<ThreadAddForm />
+{#if $currentUser}
+  <ThreadAddForm />
+{/if}
 
 <div id="threads-viewer">
   {#if threads.length > 0}
@@ -82,5 +82,7 @@
       <Thread {thread} reloadThreads={loadThreads} />
     {/each}
     <hr />
+  {:else}
+    No threads found.
   {/if}
 </div>

@@ -1,6 +1,5 @@
 import { ProjectRepository } from '../database/repositories/ProjectRepository';
 import { Project } from '../database/entities/Project';
-import { OrganizationRepository } from '../database/repositories/OrganizationRepository';
 import { Request, Response } from 'express';
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
@@ -22,18 +21,14 @@ export const getProjects = async (req: Request, res: Response) => {
 };
 
 export const postProject = async (req: Request, res: Response) => {
-  const name = DOMPurify.sanitize(req.body.name);
-  const organizationId = req.params.organizationId;
-
-  const organization = await OrganizationRepository.findOrganizationById(organizationId);
-
-  if (!organization) {
-    return;
-  }
+  const name: string = DOMPurify.sanitize(req.body.name);
+  const organizationId: string = req.params.organizationId;
+  const privateProject: boolean = req.body.privateProject;
 
   const project = await Project.create({
     name: name,
     organizationId: organizationId,
+    privateProject: privateProject,
   }).save();
 
   return res.send({ project });
@@ -42,12 +37,7 @@ export const postProject = async (req: Request, res: Response) => {
 export const getProject = async (req: Request, res: Response) => {
   const projectId: number = parseInt(req.params.projectId);
 
-  const project = await ProjectRepository.findProjectById(projectId);
-
-  if (!project) {
-    res.send({ project: null });
-    return;
-  }
+  const project: Project = await ProjectRepository.findProjectById(projectId);
 
   const responseProject = {
     id: project.id,

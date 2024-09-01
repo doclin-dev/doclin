@@ -47,10 +47,10 @@ export const RESPONSE_PROVIDERS: Record<string, WebviewMessageFunction> = {
   getCurrentOrganizationUsers: getCurrentOrganizationUsers,
   postCopilotPrompt: postCopilotPrompt,
   searchThreads: searchThreads,
+  logout: logout,
 };
 
 export const VOID_PROVIDERS: Record<string, WebviewMessageFunction> = {
-  logout: logout,
   onInfo: onInfo,
   onError: onError,
   getSidebarLoadingStatus: handleGetSidebarLoadingStatus,

@@ -7,6 +7,8 @@ import { SecretStorageType } from '../enums';
 import logger from '../utils/logger';
 import { User } from '../types';
 import AuthenticatedUserCacheManager from '../utils/cache/AuthenticatedUserCacheManager';
+import { reloadAndGetExtensionState } from '../utils/extensionState';
+import AllThreadsCacheManager from '../utils/cache/AllThreadsCacheManager';
 import { getExtensionState } from '../utils/extensionState';
 
 const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github`);
@@ -21,7 +23,7 @@ export const authenticate = (callback?: () => void) => {
 
     app.listen(54321, openApiUrl);
   } catch (error) {
-    logger.error('An error occured when listening for authentication response' + error);
+    logger.error(`An error occured when listening for authentication response. ${error}`, true);
   }
 };
 
@@ -40,8 +42,9 @@ const getToken = async (req: any, res: any, fn?: () => void) => {
     logger.info('Authentication successful.', true);
 
     app.server?.close();
-
     await setTokenToStorage(token);
+    const allThreadsCacheManager = new AllThreadsCacheManager();
+    await allThreadsCacheManager.clear();
 
     if (fn) {
       fn();
@@ -86,8 +89,7 @@ const setTokenToStorage = async (token: string | null) => {
 
 export const logout = async () => {
   await setTokenToStorage('');
-  const autheticatedUserCacheManger = new AuthenticatedUserCacheManager();
-  await autheticatedUserCacheManger.clearAuthenticatedUser();
+  return await reloadAndGetExtensionState();
 };
 
 export const registerEmail = async (email: string) => {

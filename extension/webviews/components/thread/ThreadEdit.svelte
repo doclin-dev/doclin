@@ -74,6 +74,6 @@
   <div id="thread-editor" class="textEditor"></div>
   <div class="thread-editor-footer">
     <Button variant="secondary" size="sm" onClick={onCancel} title="Cancel" />
-    <Button variant="secondary" size="sm" onClick={onSubmit} title="Submit" />
+    <Button variant="primary" size="sm" onClick={onSubmit} title="Submit" />
   </div>
 </div>

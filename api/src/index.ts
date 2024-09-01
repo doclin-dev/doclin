@@ -5,7 +5,7 @@ import https from 'https';
 import { Strategy as GitHubStrategy } from 'passport-github';
 import passport from 'passport';
 import cors from 'cors';
-import router from './routes/router';
+import { router } from './routes/router';
 import session from 'express-session';
 import { AppDataSource } from './database/dataSource';
 import { githubOAuthConfig, githubLogin } from './controllers/githubAuthController';

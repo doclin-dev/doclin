@@ -71,6 +71,6 @@
   <div id="reply-card-editor"></div>
   <div class="reply-card-footer">
     <Button variant="secondary" onClick={onCancel} title="Cancel" />
-    <Button variant="secondary" onClick={onSubmit} title="Submit" />
+    <Button variant="primary" onClick={onSubmit} title="Submit" />
   </div>
 </div>
