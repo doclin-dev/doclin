@@ -3,6 +3,8 @@ import { SENDGRID_API_KEY } from '../envConstants';
 import { UserRepository } from '../database/repositories/UserRepository';
 import { ProjectRepository } from '../database/repositories/ProjectRepository';
 import logger from '../logger';
+import { User } from '../database/entities/User';
+import { Project } from '../database/entities/Project';
 
 const SENDER_EMAIL: string = 'noreply@doclin.dev';
 const SENDER_NAME: string = 'Doclin';
@@ -45,20 +47,19 @@ export const sendMentionEmailNotification = async (
 ) => {
   let senderName: string | undefined = ANONYMOUS_USER;
   if (!anonymous) {
-    const sender = await UserRepository.findUserById(senderId);
-    senderName = sender?.name;
+    const sender: User = await UserRepository.findUserById(senderId);
+    senderName = sender.name;
   }
 
-  const targetUsers = targetUserIds.map(async (mentionedUserId) => {
-    const user = await UserRepository.findUserById(mentionedUserId);
-    return user ? user.email : null;
+  const targetUsers: Promise<string>[] = targetUserIds.map(async (mentionedUserId) => {
+    const user: User = await UserRepository.findUserById(mentionedUserId);
+    return user.email;
   });
 
-  const targetUserEmails = (await Promise.all(targetUsers)).filter((email) => email !== null) as string[];
+  const targetUserEmails: string[] = (await Promise.all(targetUsers)).filter((email) => email !== null) as string[];
 
-  const project = await ProjectRepository.findProjectById(projectId);
-  const projectName = project?.name;
-
+  const project: Project = await ProjectRepository.findProjectById(projectId);
+  const projectName: string = project.name;
   const emailSubject = `${senderName} ${MENTION_EMAIL_SUBJECT}`;
   const emailMessage = `${senderName} has mentioned you on a thread in project ${projectName}. 
 					${message}`;

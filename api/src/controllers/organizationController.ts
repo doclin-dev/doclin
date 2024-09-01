@@ -6,6 +6,7 @@ import { Request, Response } from 'express';
 import { mapUser } from '../utils/mapperUtils';
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
+import { User } from '../database/entities/User';
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
@@ -37,12 +38,7 @@ export const postOrganization = async (req: Request, res: Response) => {
     throw Error('userId is not defined');
   }
 
-  const user = await UserRepository.findUserById(userId);
-
-  if (!user) {
-    throw Error('user do not exist');
-  }
-
+  const user: User = await UserRepository.findUserById(userId);
   organization.users = [user];
   await AppDataSource.manager.save(organization);
 

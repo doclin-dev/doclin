@@ -69,17 +69,12 @@ export const postThread = async (
     );
   }
 
-  let response;
-  const threadResponse: Thread | null = await ThreadRepository.findThreadWithPropertiesByThreadId(thread.id);
-  const project: Project | null = await ProjectRepository.findProjectById(projectId);
+  const threadResponse: Thread = await ThreadRepository.findThreadWithPropertiesByThreadId(thread.id);
+  const project: Project = await ProjectRepository.findProjectById(projectId);
+  ThreadRepository.updateSearchEmbeddingsForThread(threadResponse);
+  const response = mapThreadResponse(threadResponse, project, userId);
 
-  if (threadResponse && project) {
-    ThreadRepository.updateSearchEmbeddingsForThread(threadResponse);
-    response = mapThreadResponse(threadResponse, project, userId);
-    res.send(response);
-  } else {
-    throw new Error('Error posting thread');
-  }
+  res.send({ thread: response });
 };
 
 const createSnippetEntitiesFromThreadMessage = async (threadMessage: string, snippetblots: SnippetRequestDTO[]) => {
@@ -118,13 +113,8 @@ export const getThreads = async (
   }
 
   const project: Project | null = await ProjectRepository.findProjectById(projectId);
-
-  if (project) {
-    const response: ThreadResponseDTO[] = threads.map((thread) => mapThreadResponse(thread, project, userId));
-    res.send(response);
-  } else {
-    throw new Error('Could not find project while getting threads');
-  }
+  const response: ThreadResponseDTO[] = threads.map((thread) => mapThreadResponse(thread, project, userId));
+  res.send(response);
 };
 
 export const updateThread = async (
@@ -139,11 +129,7 @@ export const updateThread = async (
   const projectId: number = parseInt(req.params.projectId);
   const userId: number | undefined = req.userId;
 
-  const thread: Thread | null = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
-
-  if (!thread) {
-    throw new Error('Error posting thread');
-  }
+  const thread: Thread = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
 
   thread.snippets.forEach((snippet) => snippet.remove());
 
@@ -158,32 +144,19 @@ export const updateThread = async (
   thread.delta = delta;
   await thread.save();
 
-  const threadResponse = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
+  const threadResponse: Thread = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
+  ThreadRepository.updateSearchEmbeddingsForThread(threadResponse);
 
-  if (threadResponse) {
-    ThreadRepository.updateSearchEmbeddingsForThread(threadResponse);
-  } else {
-    throw new Error('Could not find thread while updating thread');
-  }
+  const project: Project = await ProjectRepository.findProjectById(projectId);
+  const response: ThreadResponseDTO = mapThreadResponse(threadResponse, project, userId);
 
-  const project: Project | null = await ProjectRepository.findProjectById(projectId);
-
-  if (project) {
-    const response: ThreadResponseDTO = mapThreadResponse(threadResponse, project, userId);
-    res.send(response);
-  } else {
-    throw new Error('Could not find project while updating thread');
-  }
+  res.send(response);
 };
 
-export const deleteThread = async (req: Request<ParamsDictionary, {}>, res: Response<ThreadDeleteResponseDTO>) => {
-  const threadId: number = parseInt(req.params.threadId);
-  const thread: Thread | null = await ThreadRepository.findThreadById(threadId);
+export const deleteThread = async (req: Request, res: Response) => {
+  const threadId: number = parseInt(req.params.threadId as string);
 
-  if (!thread) {
-    throw new Error('Thread not found while deleting.');
-  }
-
+  const thread: Thread = await ThreadRepository.findThreadById(threadId);
   await thread.remove();
 
   res.send({
@@ -199,14 +172,14 @@ export const searchThreads = async (
   const projectId: number = parseInt(req.params.projectId as string);
   const userId: number | undefined = req.userId;
 
-  await ThreadRepository.updateEmbeddingsOfAllThreadsWithNoEmbedding(projectId);
-  const searchResults: Thread[] = await ThreadRepository.searchThreads(searchText, projectId);
-  const project: Project | null = await ProjectRepository.findProjectById(projectId);
+  let searchResults: Array<Thread> = [];
 
-  if (project) {
-    const response: ThreadResponseDTO[] = searchResults.map((thread) => mapThreadResponse(thread, project, userId));
-    res.send(response);
-  } else {
-    throw new Error('Could not find project while searching threads');
+  if (searchText) {
+    searchResults = await ThreadRepository.searchThreads(searchText, projectId);
   }
+
+  const project: Project = await ProjectRepository.findProjectById(projectId);
+  const response: ThreadResponseDTO[] = searchResults.map((thread) => mapThreadResponse(thread, project, userId));
+
+  res.send(response);
 };
