@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { authenticate, logout, postUserEmail } from './providerHelpers/authenticationProviderHelper';
+import { authenticate, logout, registerEmail } from './providerHelpers/authenticationProviderHelper';
 import {
   postThread,
   deleteThread,
@@ -19,7 +19,7 @@ import {
 } from './providerHelpers/organizationProviderHelper';
 import { getExtensionState, reloadAndGetExtensionState } from './utils/extensionState';
 import { inviteUser, redeemInvitation } from './providerHelpers/invitationProviderHelper';
-import { WebviewMessageFunction } from './types';
+import { WebviewMessage, WebviewMessageFunction } from './types';
 import { onError, onInfo } from './utils/loggerProviderUtil';
 import { handleGetSidebarLoadingStatus } from './utils/waitForSidebarToShow';
 import { postCopilotPrompt } from './providerHelpers/copilotProvider';
@@ -45,7 +45,6 @@ export const RESPONSE_PROVIDERS: Record<string, WebviewMessageFunction> = {
   inviteUser: inviteUser,
   redeemInvitation: redeemInvitation,
   getCurrentOrganizationUsers: getCurrentOrganizationUsers,
-  postUserEmail: postUserEmail,
   postCopilotPrompt: postCopilotPrompt,
   searchThreads: searchThreads,
   logout: logout,
@@ -57,7 +56,7 @@ export const VOID_PROVIDERS: Record<string, WebviewMessageFunction> = {
   getSidebarLoadingStatus: handleGetSidebarLoadingStatus,
 };
 
-export const executeRemainingHandlers = (message: any, webview: vscode.Webview) => {
+export const executeRemainingHandlers = async (message: WebviewMessage, webview: vscode.Webview) => {
   switch (message.type) {
     case 'authenticate':
       authenticate(async () => {
@@ -67,5 +66,11 @@ export const executeRemainingHandlers = (message: any, webview: vscode.Webview) 
         });
       });
       break;
+
+    case 'registerEmail':
+      webview.postMessage({
+        type: 'getExtensionState',
+        value: await registerEmail(message.value),
+      });
   }
 };
