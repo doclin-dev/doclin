@@ -4,7 +4,7 @@ import { OrganizationRepository } from '../database/repositories/OrganizationRep
 import { Request, Response } from 'express';
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
-import { Organization } from 'src/database/entities/Organization';
+import { Organization } from '../database/entities/Organization';
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
@@ -45,12 +45,7 @@ export const postProject = async (req: Request, res: Response) => {
 export const getProject = async (req: Request, res: Response) => {
   const projectId: number = parseInt(req.params.projectId);
 
-  const project = await ProjectRepository.findProjectById(projectId);
-
-  if (!project) {
-    res.send({ project: null });
-    return;
-  }
+  const project: Project = await ProjectRepository.findProjectById(projectId);
 
   const responseProject = {
     id: project.id,

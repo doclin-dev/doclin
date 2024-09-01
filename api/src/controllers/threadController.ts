@@ -58,14 +58,10 @@ export const postThread = async (req: Request, res: Response) => {
     );
   }
 
-  let response;
-  const threadResponse: Thread | null = await ThreadRepository.findThreadWithPropertiesByThreadId(thread.id);
-  const project: Project | null = await ProjectRepository.findProjectById(projectId);
-
-  if (threadResponse && project) {
-    ThreadRepository.updateSearchEmbeddingsForThread(threadResponse);
-    response = mapThreadResponse(threadResponse, project, userId);
-  }
+  const threadResponse: Thread = await ThreadRepository.findThreadWithPropertiesByThreadId(thread.id);
+  const project: Project = await ProjectRepository.findProjectById(projectId);
+  ThreadRepository.updateSearchEmbeddingsForThread(threadResponse);
+  const response = mapThreadResponse(threadResponse, project, userId);
 
   res.send({ thread: response });
 };
@@ -102,12 +98,8 @@ export const getThreads = async (req: Request, res: Response) => {
     threads = await ThreadRepository.findAllThreadsByProjectId(projectId);
   }
 
-  const project: Project | null = await ProjectRepository.findProjectById(projectId);
-  let response;
-
-  if (project) {
-    response = threads.map((thread) => mapThreadResponse(thread, project, userId));
-  }
+  const project: Project = await ProjectRepository.findProjectById(projectId);
+  const response = threads.map((thread) => mapThreadResponse(thread, project, userId));
 
   res.send({ threads: response });
 };
@@ -121,12 +113,7 @@ export const updateThread = async (req: Request, res: Response) => {
   const projectId: number = parseInt(req.params.projectId as string);
   const userId: number | undefined = req.userId;
 
-  const thread: Thread | null = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
-
-  if (!thread) {
-    res.send({ thread: null });
-    return;
-  }
+  const thread: Thread = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
 
   thread.snippets.forEach((snippet) => snippet.remove());
 
@@ -141,31 +128,19 @@ export const updateThread = async (req: Request, res: Response) => {
   thread.delta = delta;
   await thread.save();
 
-  const threadResponse = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
+  const threadResponse: Thread = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
+  ThreadRepository.updateSearchEmbeddingsForThread(threadResponse);
 
-  if (threadResponse) {
-    ThreadRepository.updateSearchEmbeddingsForThread(threadResponse);
-  }
+  const project: Project = await ProjectRepository.findProjectById(projectId);
+  const response = mapThreadResponse(threadResponse, project, userId);
 
-  const project: Project | null = await ProjectRepository.findProjectById(projectId);
-  let response;
-
-  if (threadResponse && project) {
-    response = mapThreadResponse(threadResponse, project, userId);
-  }
   res.send({ thread: response });
 };
 
 export const deleteThread = async (req: Request, res: Response) => {
   const threadId: number = parseInt(req.params.threadId as string);
 
-  const thread = await ThreadRepository.findThreadById(threadId);
-
-  if (!thread) {
-    res.send({ thread: null });
-    return;
-  }
-
+  const thread: Thread = await ThreadRepository.findThreadById(threadId);
   await thread.remove();
 
   res.send({
@@ -186,12 +161,8 @@ export const searchThreads = async (req: Request, res: Response) => {
     searchResults = await ThreadRepository.searchThreads(searchText, projectId);
   }
 
-  const project: Project | null = await ProjectRepository.findProjectById(projectId);
-  let response;
-
-  if (project) {
-    response = searchResults.map((thread) => mapThreadResponse(thread, project, userId));
-  }
+  const project: Project = await ProjectRepository.findProjectById(projectId);
+  const response = searchResults.map((thread) => mapThreadResponse(thread, project, userId));
 
   res.send(response);
 };

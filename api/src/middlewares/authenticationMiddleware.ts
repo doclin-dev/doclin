@@ -1,16 +1,19 @@
 import { NextFunction, Request, Response } from 'express';
 import { UserRepository } from '../database/repositories/UserRepository';
 import { getUserIdFromAuthHeader } from '../controllers/userController';
+import { User } from '../database/entities/User';
+import logger from '../logger';
 
 export const setUserIdOnReq = async (req: Request, _res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
   const userId = getUserIdFromAuthHeader(authHeader);
 
   if (userId) {
-    const user = await UserRepository.findUserById(userId);
-
-    if (user) {
-      req.userId = userId;
+    try {
+      const user: User = await UserRepository.findUserById(userId);
+      req.userId = user.id;
+    } catch (error) {
+      logger.error('Invalid auth header. User not found.');
     }
   }
 

@@ -102,7 +102,7 @@ const getReplyReference = (reply: Reply, index: number, replies: Reply[]): strin
   return `Reply ${index + 1} of ${replies.length}: ${getThreadMessageWithSnippet(reply)}`;
 };
 
-const getResponseFromGPT = async (userPrompt: string, previousMessages: CopilotMessage[]): Promise<string | null> => {
+const getResponseFromGPT = async (userPrompt: string, previousMessages: CopilotMessage[]): Promise<string> => {
   try {
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-2024-08-06',
@@ -120,7 +120,7 @@ const getResponseFromGPT = async (userPrompt: string, previousMessages: CopilotM
       temperature: 0.7,
     });
 
-    return response.choices[0].message.content;
+    return response.choices[0].message.content ?? ERROR_MESSAGE;
   } catch (error) {
     logger.error(error);
     return ERROR_MESSAGE;

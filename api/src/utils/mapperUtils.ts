@@ -1,9 +1,9 @@
-import { Project } from 'src/database/entities/Project';
-import { Reply } from 'src/database/entities/Reply';
-import { ReplySnippet } from 'src/database/entities/ReplySnippet';
-import { Thread } from 'src/database/entities/Thread';
-import { ThreadSnippet } from 'src/database/entities/ThreadSnippet';
-import { User } from 'src/database/entities/User';
+import { Project } from '../database/entities/Project';
+import { Reply } from '../database/entities/Reply';
+import { ReplySnippet } from '../database/entities/ReplySnippet';
+import { Thread } from '../database/entities/Thread';
+import { ThreadSnippet } from '../database/entities/ThreadSnippet';
+import { User } from '../database/entities/User';
 
 const ANONYMOUS_USER: string = 'Anonymous User';
 
