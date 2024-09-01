@@ -6,6 +6,10 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
     return this.findOneByOrFail({ id: userId });
   },
 
+  findUsersByIds(userIds: number[]): Promise<User[]> {
+    return this.createQueryBuilder('user').whereInIds(userIds).getMany();
+  },
+
   findUsersByOrganizationId(organizationId: string): Promise<User[]> {
     return this.createQueryBuilder('user')
       .leftJoin('user.organizations', 'organization')
