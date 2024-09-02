@@ -3,15 +3,22 @@ import { Organization } from '../database/entities/Organization';
 import { UserRepository } from '../database/repositories/UserRepository';
 import { AppDataSource } from '../database/dataSource';
 import { Request, Response } from 'express';
-import { mapUser } from '../utils/mapperUtils';
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import { User } from '../database/entities/User';
+import { mapOrganizationToOrganizationDTO } from '../mappers/organizationToOrganizationDTOMapper';
+import { OrganizationDTO } from '../../../shared/types/OrganizationDTO';
+import { OrganizationCreateDTO } from '../../../shared/types/OrganizationCreateDTO';
+import { OrganizationGetQueryDTO } from '../../../shared/types/OrganizationGetQueryDTO';
+import { ParamsDictionary } from '../types/ParamsDictionary';
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
-export const getOrganizations = async (req: Request, res: Response) => {
+export const getOrganizations = async (
+  req: Request<ParamsDictionary, OrganizationDTO[], {}>,
+  res: Response<OrganizationDTO[]>
+) => {
   const userId = req.userId;
 
   if (!userId) {
@@ -19,19 +26,16 @@ export const getOrganizations = async (req: Request, res: Response) => {
   }
 
   const organizations = await OrganizationRepository.findOrganizationsByUserId(userId);
-
-  const responseOrganizations = organizations.map((organization) => ({
-    id: organization.id,
-    name: organization.name,
-  }));
-
-  return res.send({ organizations: responseOrganizations });
+  const response: OrganizationDTO[] = organizations.map(mapOrganizationToOrganizationDTO);
+  return res.send(response);
 };
 
-export const postOrganization = async (req: Request, res: Response) => {
+export const postOrganization = async (
+  req: Request<ParamsDictionary, OrganizationDTO, OrganizationCreateDTO>,
+  res: Response<OrganizationDTO>
+) => {
   const name = DOMPurify.sanitize(req.body.name);
   const organization = Organization.create({ name: name });
-
   const userId = req.userId;
 
   if (!userId) {
@@ -42,39 +46,25 @@ export const postOrganization = async (req: Request, res: Response) => {
   organization.users = [user];
   await AppDataSource.manager.save(organization);
 
-  const members = await UserRepository.findUsersByOrganizationId(organization.id);
-
-  const responseOrganization = {
-    id: organization.id,
-    name: organization.name,
-    members: members.map(mapUser),
-  };
-
-  return res.send({ organization: responseOrganization });
+  const response: OrganizationDTO = mapOrganizationToOrganizationDTO(organization);
+  return res.send(response);
 };
 
-export const getOrganization = async (req: Request, res: Response) => {
+export const getOrganization = async (
+  req: Request<ParamsDictionary, OrganizationDTO, {}, OrganizationGetQueryDTO>,
+  res: Response
+) => {
   const organizationId: string = req.params.organizationId;
-  const includeMembers: boolean = req.query.includeMembers === 'true';
+  const includeMembers: boolean = req.query.includeMembers === true;
 
-  const organization = await OrganizationRepository.findOrganizationById(organizationId);
-
-  if (!organization) {
-    res.send({ organization: null });
-    return;
-  }
-
-  let members;
+  let organization: Organization;
 
   if (includeMembers) {
-    members = await UserRepository.findUsersByOrganizationId(organizationId);
+    organization = await OrganizationRepository.findOrganizationAndMembersById(organizationId);
+  } else {
+    organization = await OrganizationRepository.findOrganizationById(organizationId);
   }
 
-  const responseOrganization = {
-    id: organization.id,
-    name: organization.name,
-    members: members?.map(mapUser),
-  };
-
-  res.send({ organization: responseOrganization });
+  const response: OrganizationDTO = mapOrganizationToOrganizationDTO(organization);
+  res.send(response);
 };

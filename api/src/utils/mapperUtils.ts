@@ -3,11 +3,9 @@ import { Reply } from '../database/entities/Reply';
 import { ReplySnippet } from '../database/entities/ReplySnippet';
 import { Thread } from '../database/entities/Thread';
 import { ThreadSnippet } from '../database/entities/ThreadSnippet';
-import { User } from '../database/entities/User';
 import { SnippetResponseDTO } from '../../../shared/types/SnippetResponseDTO';
 import { ReplyResponseDTO } from '../../../shared/types/ReplyResponseDTO';
 import { ThreadResponseDTO } from '../../../shared/types/ThreadResponseDTO';
-import { UserDTO } from '../../../shared/types/UserDTO';
 
 const ANONYMOUS_USER: string = 'Anonymous User';
 
@@ -48,13 +46,5 @@ export const mapSnippetResponse = (snippet: ThreadSnippet | ReplySnippet): Snipp
     filePath: snippet.filePath,
     lineStart: snippet.lineStart,
     gitBranch: snippet.gitBranch,
-  };
-};
-
-export const mapUser = (user: User): UserDTO => {
-  return {
-    id: user.id,
-    name: user.name,
-    email: user.email,
   };
 };

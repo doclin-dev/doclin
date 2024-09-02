@@ -18,7 +18,15 @@ export const vscodeGithubCallback = (req: any, res: any) => {
 };
 
 export const webappGithubCallback = (req: any, res: any) => {
-  res.redirect(`${WEBAPP_URL}/auth?token=${req.user.accessToken}`);
+  const token: string = req.user.accessToken;
+
+  res.cookie('authToken', token, {
+    httpOnly: true,
+    secure: PRODUCTION,
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  });
+
+  res.redirect(`${WEBAPP_URL}`);
 };
 
 export const githubLogin = async (_accessToken: any, _refreshToken: any, profile: any, cb: any) => {

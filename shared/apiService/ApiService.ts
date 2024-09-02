@@ -21,7 +21,7 @@ export class ApiService {
   public logger: LoggerApiService;
 
   constructor(options: ApiServiceOptions) {
-    this.axiosInstance = axios.create({ baseURL: options.baseURL });
+    this.axiosInstance = axios.create({ baseURL: options.baseURL, withCredentials: options.withCredentials });
     this.setToken(options.token);
 
     this.auth = new AuthApiService(this.axiosInstance);

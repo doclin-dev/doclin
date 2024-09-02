@@ -7,6 +7,13 @@ export const OrganizationRepository = AppDataSource.getRepository(Organization).
     return this.findOneByOrFail({ id: id });
   },
 
+  findOrganizationAndMembersById(organizationId: string): Promise<Organization> {
+    return this.createQueryBuilder('organization')
+      .leftJoinAndSelect('organization.users', 'user')
+      .where('organization.id = :id', { id: organizationId })
+      .getOneOrFail();
+  },
+
   findOrganizationsByUserId(userId: number) {
     return this.createQueryBuilder('organization')
       .leftJoin('organization.users', 'user')

@@ -8,6 +8,7 @@ import { router } from './routes/router';
 import session from 'express-session';
 import { initializeDatabase } from './database/createDatabase';
 import { vscodeGithubOAuthConfig, githubLogin, webappGithubOAuthConfig } from './controllers/githubAuthController';
+import cookieParser from 'cookie-parser';
 import fs from 'fs';
 import {
   PRODUCTION,
@@ -27,6 +28,7 @@ const main = async () => {
   initializeCors(app);
   initializeSession(app);
   initializePassportAuthentication(app);
+  initializeCookieParser(app);
   initializeJsonCommunication(app);
   initializeRouter(app);
 
@@ -72,6 +74,10 @@ const initializePassportAuthentication = (app: Application) => {
   app.use(passport.initialize());
   passport.use('github-vscode', new GitHubStrategy(vscodeGithubOAuthConfig, githubLogin));
   passport.use('github-webapp', new GitHubStrategy(webappGithubOAuthConfig, githubLogin));
+};
+
+const initializeCookieParser = (app: Application) => {
+  app.use(cookieParser());
 };
 
 const initializeJsonCommunication = (app: Application) => {

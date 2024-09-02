@@ -23,7 +23,7 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      - ./api:/api
+      - ./api:/apif
       - ./shared:/shared
     depends_on:
       - database
@@ -49,6 +49,7 @@ services:
     command: sh -c "npm i && npm run dev"
     environment:
       NODE_ENV: development
+      PUBLIC_API_URL: http://localhost:3000
     ports:
       - '3002:3002'
     volumes:

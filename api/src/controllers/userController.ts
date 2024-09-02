@@ -1,52 +1,32 @@
-import jwt from 'jsonwebtoken';
 import { Request, Response } from 'express';
 import { UserRepository } from '../database/repositories/UserRepository';
-import { ACCESS_TOKEN_SECRET } from '../envConstants';
+
 import logger from '../logger';
 import { User } from '../database/entities/User';
+import { mapUserToUserDTO } from '../mappers/userToUserDTOMapper';
+import { ParamsDictionary } from '../types/ParamsDictionary';
+import { UserDTO } from '../../../shared/types/UserDTO';
 
-export const getCurrentUser = async (req: Request, res: Response) => {
-  const authHeader = req.headers.authorization;
-  const userId = getUserIdFromAuthHeader(authHeader);
+export const getCurrentUser = async (req: Request<ParamsDictionary, UserDTO, {}>, res: Response<UserDTO>) => {
+  const userId: number | undefined = req.userId;
 
-  if (userId === null) {
-    res.send({ user: null });
-    return;
-  }
+  console.log('test');
 
-  const user: User = await UserRepository.findUserById(userId);
-
-  res.send({ user });
-};
-
-export const getUserIdFromAuthHeader = (authHeader: string | undefined): number | null => {
-  if (!authHeader) {
-    return null;
-  }
-
-  const token = authHeader.split(' ')[1];
-
-  if (!token) {
-    return null;
-  }
-
-  try {
-    const payload: any = jwt.verify(token, ACCESS_TOKEN_SECRET);
-
-    if (!payload.userId) {
-      return null;
+  if (userId) {
+    try {
+      const user: User = await UserRepository.findUserById(userId);
+      res.send(mapUserToUserDTO(user));
+    } catch (error) {
+      logger.error('User not found');
     }
-
-    return payload.userId;
-  } catch {
-    return null;
+  } else {
+    res.status(401).send();
   }
 };
 
 export const postUserEmail = async (req: Request, res: Response) => {
   try {
-    const authHeader = req.headers.authorization;
-    const userId = getUserIdFromAuthHeader(authHeader);
+    const userId = req.userId;
     const email = req.body.email;
 
     if (!userId) {
