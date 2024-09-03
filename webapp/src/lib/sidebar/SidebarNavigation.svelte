@@ -1,9 +1,10 @@
 <script lang="ts">
-  import type { SidebarItemType } from '../types/SidebarItemType';
+  import type { SidebarItemType } from '../../types/SidebarItemType';
   import Icon from '@iconify/svelte';
   import plusIcon from '@iconify/icons-mdi/plus';
   import chevronDownIcon from '@iconify/icons-mdi/chevron-down';
   import chevronUpIcon from '@iconify/icons-mdi/chevron-up';
+  import { goto } from '$app/navigation';
 
   export let sidebarItems: SidebarItemType[] = [];
   export let onItemToggle: (index: number) => void;
@@ -20,13 +21,18 @@
               class="flex items-center w-full py-2 rounded hover:bg-gray-700 text-sm text-left"
               on:click={() => onItemToggle(i)}
             >
-              <Icon icon={item.arrowIcon || chevronDownIcon} class="h-5 w-5" />
-              {item.label}
+              <Icon icon={item.arrowIcon || chevronDownIcon} class="h-4 w-4" />
+              <span>{item.label}</span>
 
-              {#if item.label === 'Projects'}
-                <a href="#" class="text-blue-400 hover:text-blue-300" on:click|preventDefault={onProjectCreate}>
-                  <Icon icon={plusIcon} class="h-5 w-5" />
-                </a>
+              {#if item.actions}
+                {#each item.actions as action}
+                  <button
+                    class="ml-auto text-blue-400 hover:text-blue-300"
+                    on:click|preventDefault|stopPropagation={() => goto(action.href)}
+                  >
+                    <Icon icon={action.icon} class="h-5 w-5" />
+                  </button>
+                {/each}
               {/if}
             </button>
           </div>
@@ -34,7 +40,7 @@
             <ul>
               {#each item.subItems as subItem}
                 <li>
-                  <a href={subItem.href} class="sub-item text-sm">
+                  <a href={subItem.href} class="block w-full py-2 px-2 rounded hover:bg-gray-700 text-sm">
                     {subItem.label}
                   </a>
                 </li>
@@ -42,7 +48,7 @@
             </ul>
           {/if}
         {:else}
-          <a href={item.href} class="sidebar-item text-sm">
+          <a href={item.href} class="block w-full py-2 px-4 rounded hover:bg-gray-700 text-sm">
             {item.label}
           </a>
         {/if}
@@ -50,29 +56,3 @@
     {/each}
   </ul>
 </nav>
-
-<style>
-  .sidebar-item {
-    display: block;
-    width: 100%;
-    padding: 0.5rem 1rem;
-    border-radius: 0.25rem;
-    transition: background-color 0.3s ease;
-  }
-
-  .sidebar-item:hover {
-    background-color: #4a5568;
-  }
-
-  .sub-item {
-    display: block;
-    width: 100%;
-    padding: 0.5rem 1rem;
-    border-radius: 0.25rem;
-    transition: background-color 0.3s ease;
-  }
-
-  .sub-item:hover {
-    background-color: #2d3748;
-  }
-</style>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Sidebar from '$lib/Sidebar.svelte';
+  import Sidebar from '$lib/sidebar/Sidebar.svelte';
   import type { SidebarItemType } from '../../../types/SidebarItemType';
 </script>
 

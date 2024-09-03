@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { OrganizationDTO } from '../../../shared/types/OrganizationDTO';
+  import type { OrganizationDTO } from '../../../../shared/types/OrganizationDTO';
   import Icon from '@iconify/svelte';
   import checkIcon from '@iconify/icons-mdi/check';
   import logoutIcon from '@iconify/icons-mdi/logout';
@@ -7,8 +7,8 @@
   import chevronUpIcon from '@iconify/icons-mdi/chevron-up';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
-  import { organization } from './stores/organization';
-  import { user } from './stores/user';
+  import { organization } from '../stores/organization';
+  import { user } from '../stores/user';
 
   let isDropdownOpen = false;
 
