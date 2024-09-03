@@ -45,7 +45,7 @@
     }));
   };
 
-  const handleItemToggle = (index: number) => {
+  const toggleCollpase = (index: number) => {
     sidebarItems = sidebarItems.map((item, i) => {
       if (i === index) {
         return {
@@ -61,5 +61,5 @@
 
 <div class="w-64 h-screen bg-gray-800 text-white flex flex-col">
   <TopDropdown />
-  <SidebarNavigation {sidebarItems} onItemToggle={handleItemToggle} />
+  <SidebarNavigation {sidebarItems} {toggleCollpase} />
 </div>
