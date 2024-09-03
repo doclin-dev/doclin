@@ -4,7 +4,7 @@ import { LogType } from './types/enums';
 
 const info = async (message: string, userId?: number): Promise<void> => {
   if (!PRODUCTION) {
-    console.log(message);
+    console.info(message);
   }
   await Log.create({
     type: LogType.INFO,
@@ -15,7 +15,7 @@ const info = async (message: string, userId?: number): Promise<void> => {
 
 const warning = async (message: string, userId?: number): Promise<void> => {
   if (!PRODUCTION) {
-    console.log(message);
+    console.warn(message);
   }
   await Log.create({
     type: LogType.WARNING,
@@ -26,7 +26,7 @@ const warning = async (message: string, userId?: number): Promise<void> => {
 
 const error = async (message: string, userId?: number): Promise<void> => {
   if (!PRODUCTION) {
-    console.log(message);
+    console.error(message);
   }
   await Log.create({
     type: LogType.ERROR,

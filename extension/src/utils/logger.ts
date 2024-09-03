@@ -5,7 +5,7 @@ import { LogType } from '../../../shared/enums/LogType';
 
 const info = async (message: string, displayToUser: boolean = false): Promise<void> => {
   if (!PRODUCTION) {
-    console.log(message);
+    console.info(message);
   }
 
   if (displayToUser) {

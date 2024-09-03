@@ -1,4 +1,5 @@
-export type SidebarItemType = {
+export interface SidebarItemType {
   label: string;
-  href: string;
-};
+  href?: string;
+  subItems?: SidebarItemType[]; // Add this for nested items
+}

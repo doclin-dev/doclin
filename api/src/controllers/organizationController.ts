@@ -55,15 +55,18 @@ export const getOrganization = async (
   res: Response
 ) => {
   const organizationId: string = req.params.organizationId;
-  const includeMembers: boolean = req.query.includeMembers === true;
+  const includeProperties: boolean = !!req.query.includeProperties;
 
   let organization: Organization;
 
-  if (includeMembers) {
-    organization = await OrganizationRepository.findOrganizationAndMembersById(organizationId);
+  if (includeProperties) {
+    organization = await OrganizationRepository.findOrganizationWithPropertiesById(organizationId);
   } else {
     organization = await OrganizationRepository.findOrganizationById(organizationId);
   }
+
+  console.log(typeof req.query.includeProperties);
+  console.log(organization);
 
   const response: OrganizationDTO = mapOrganizationToOrganizationDTO(organization);
   res.send(response);

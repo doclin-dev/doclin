@@ -25,9 +25,9 @@ const createDatabaseIfNotExists = async () => {
 
     if (result.rowCount === 0) {
       await client.query(`CREATE DATABASE ${DB_NAME}`);
-      console.log(`Database ${DB_NAME} created successfully.`);
+      console.info(`Database ${DB_NAME} created successfully.`);
     } else {
-      console.log(`Database ${DB_NAME} already exists.`);
+      console.info(`Database ${DB_NAME} already exists.`);
     }
   } catch (error) {
     throw new Error(`Error creating database: ${error}`);

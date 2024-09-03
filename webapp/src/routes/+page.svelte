@@ -1,10 +1,5 @@
 <script>
-  import { fetchUser, user } from '$lib/stores/user';
-  import { onMount } from 'svelte';
-
-  onMount(async () => {
-    await fetchUser();
-  });
+  import { user } from '$lib/stores/user';
 </script>
 
 <h1 class="text-3xl font-bold underline">Welcome to SvelteKit</h1>

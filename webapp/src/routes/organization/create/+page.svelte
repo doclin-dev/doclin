@@ -1,7 +1,24 @@
 <script lang="ts">
+  import { apiService } from '$lib/apiService';
+  import { fetchUser, user } from '$lib/stores/user';
+  import { onMount } from 'svelte';
+  import type { OrganizationDTO } from '../../../../../shared/types/OrganizationDTO';
+  import { goto } from '$app/navigation';
+
   let name: string = '';
 
-  const handleSubmit = async (event: Event): Promise<void> => {};
+  onMount(async () => {
+    await fetchUser();
+    if (!$user) {
+      goto('/login');
+    }
+  });
+
+  const handleSubmit = async (): Promise<void> => {
+    const response = await apiService.organization.postOrganization(name);
+    const organization: OrganizationDTO = response.data;
+    goto(`/organization/${organization.id}`);
+  };
 </script>
 
 <div class="flex items-center justify-center min-h-screen bg-gray-100">

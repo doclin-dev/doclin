@@ -22,8 +22,15 @@ export class OrganizationApiService extends AbstracApiService {
   }
 
   public async getOrganization(organizationId: string): Promise<AxiosResponse<OrganizationDTO>> {
+    const response: AxiosResponse<OrganizationDTO> = await this.axiosInstance.get(
+      `${this.BASE_ORGANIZATION_URL}/${organizationId}`
+    );
+    return response;
+  }
+
+  public async getOrganizationWithProperties(organizationId: string): Promise<AxiosResponse<OrganizationDTO>> {
     const params: OrganizationGetQueryDTO = {
-      includeMembers: true,
+      includeProperties: true,
     };
 
     const response: AxiosResponse<OrganizationDTO> = await this.axiosInstance.get(

@@ -10,8 +10,6 @@ import { UserDTO } from '../../../shared/types/UserDTO';
 export const getCurrentUser = async (req: Request<ParamsDictionary, UserDTO, {}>, res: Response<UserDTO>) => {
   const userId: number | undefined = req.userId;
 
-  console.log('test');
-
   if (userId) {
     try {
       const user: User = await UserRepository.findUserById(userId);

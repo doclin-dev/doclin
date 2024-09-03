@@ -10,15 +10,10 @@ export const setUserIdOnReq = async (req: Request, _res: Response, next: NextFun
   const cookies = req.cookies;
   let token: string;
 
-  console.log('test');
-  console.log('cookies', cookies);
-
   if (authorizationHeader) {
     token = authorizationHeader.split(' ')[1];
-    console.log(authorizationHeader);
   } else if (cookies && cookies.authToken) {
     token = cookies.authToken;
-    console.log(cookies);
   } else {
     next();
     return;
