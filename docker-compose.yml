@@ -23,7 +23,7 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      - ./api:/apif
+      - ./api:/api
       - ./shared:/shared
     depends_on:
       - database

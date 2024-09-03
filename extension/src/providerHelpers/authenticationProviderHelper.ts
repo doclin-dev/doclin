@@ -4,12 +4,12 @@ import * as polka from 'polka';
 import { SecretStorageManager } from '../SecretStorageManager';
 import { SecretStorageType } from '../enums';
 import logger from '../utils/logger';
-import { User } from '../types';
 import AuthenticatedUserCacheManager from '../utils/cache/AuthenticatedUserCacheManager';
 import { reloadAndGetExtensionState } from '../utils/extensionState';
 import AllThreadsCacheManager from '../utils/cache/AllThreadsCacheManager';
 import { apiService } from '../apiService';
 import { getExtensionState } from '../utils/extensionState';
+import { UserDTO } from '../../../shared/types/UserDTO';
 
 const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github/vscode`);
 
@@ -62,7 +62,7 @@ const openApiUrl = (err: Error) => {
   vscode.commands.executeCommand('vscode.open', AUTH_URL);
 };
 
-export const getAuthenticatedUser = async (): Promise<User | undefined> => {
+export const getAuthenticatedUser = async (): Promise<UserDTO | undefined> => {
   const autheticatedUserCacheManger = new AuthenticatedUserCacheManager();
   const authenticatedUserCache = await autheticatedUserCacheManger.getAuthenticatedUser();
 
@@ -71,8 +71,7 @@ export const getAuthenticatedUser = async (): Promise<User | undefined> => {
   }
 
   const response = await apiService.auth.getAuthenticatedUser();
-  const payload = response?.data;
-  const user: User = payload?.user;
+  const user: UserDTO = response?.data;
 
   await autheticatedUserCacheManger.setAuthenticatedUser(user);
 

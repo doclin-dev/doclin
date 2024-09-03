@@ -1,4 +1,4 @@
-import { CopilotRole } from './enums';
+import type { CopilotRole } from './enums';
 
 export type User = {
   id: number;

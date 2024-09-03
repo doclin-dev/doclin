@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { UserDTO } from '../../shared/types/UserDTO';
 
 export interface DoclinFile {
   organizationId: string | null;
@@ -97,15 +98,8 @@ export interface WebviewMessage {
   value: any;
 }
 
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  githubId: number;
-}
-
 export interface ExtensionState {
-  user?: User | undefined;
+  user?: UserDTO | undefined;
   organization?: any;
   project?: any;
   isFolderOrFileOpened?: boolean;

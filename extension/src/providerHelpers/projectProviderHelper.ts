@@ -37,8 +37,7 @@ const apiFetchProject = async (
 ): Promise<ProjectDTO | { unauthorized: boolean }> => {
   try {
     const response = await apiService.project.getProject(projectId, organizationId);
-    const payload = response?.data;
-    const project = payload?.project;
+    const project: ProjectDTO = response?.data;
 
     const projectCacheManager = new ProjectCacheMananger();
     await projectCacheManager.set(project.id, project);
@@ -57,8 +56,7 @@ export const getExistingProjects = async () => {
   }
 
   const response = await apiService.project.getProjects(organizationId);
-  const payload = response?.data;
-  const projects = payload?.projects;
+  const projects: ProjectDTO[] = response?.data;
 
   return projects;
 };
@@ -71,8 +69,7 @@ export const postProject = async ({ name, privateProject }: { name: string; priv
   }
 
   const response = await apiService.project.postProject(organizationId, name, privateProject);
-  const payload = response?.data;
-  const project = payload?.project;
+  const project: ProjectDTO = response?.data;
 
   const projectCacheManager = new ProjectCacheMananger();
   await projectCacheManager.set(project.id, project);
