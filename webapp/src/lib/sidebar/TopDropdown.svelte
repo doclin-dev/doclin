@@ -9,6 +9,7 @@
   import { goto } from '$app/navigation';
   import { organization } from '../stores/organization';
   import { user } from '../stores/user';
+  import plusIcon from '@iconify/icons-mdi/plus';
 
   let isDropdownOpen = false;
 
@@ -62,7 +63,7 @@
         <li class="text-xs px-4 pt-2 font-bold">Organizations:</li>
         {#each $user.organizations as org}
           <li class="flex items-center justify-between px-4 py-2 hover:bg-gray-600">
-            <button on:click={() => handleOrganizationChange(org)} class="text-left">
+            <button on:click={() => handleOrganizationChange(org)} class="text-left w-full">
               {org.name}
             </button>
             {#if $organization.id === org.id}
@@ -70,18 +71,21 @@
             {/if}
           </li>
         {/each}
-        <li class="border-t border-gray-600 my-2"></li>
+        <li class="border-t border-gray-600"></li>
         <li class="flex items-center justify-between px-4 py-2 hover:bg-gray-600">
-          <a href="/organization/create">Create another organization</a>
+          <button on:click={() => goto('/organization/create')} class="flex items-center w-full text-left">
+            <span class="">Create Organization</span>
+            <Icon icon={plusIcon} class="h-5 w-5 ml-2" />
+          </button>
         </li>
-        <li class="border-t border-gray-600 my-2"></li>
+        <li class="border-t border-gray-600"></li>
+        <li class="text-xs px-4 pt-2 font-bold">{$user.name}</li>
         <li class="flex items-center justify-between px-4 py-2 hover:bg-gray-600">
           <button
             on:click={handleLogout}
             class="flex items-center w-full text-left text-red-400 hover:text-red-300 hover:bg-gray-600"
           >
-            <Icon icon={logoutIcon} class="h-5 w-5" />
-            <span class="ml-2">Logout</span>
+            <span class="">Logout</span>
           </button>
         </li>
       </ul>

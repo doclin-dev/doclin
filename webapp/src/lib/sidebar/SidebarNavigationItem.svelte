@@ -19,11 +19,16 @@
   };
 </script>
 
-<li class="mb-2">
+<li>
   <div class="flex items-center">
-    <button class="flex items-center w-full py-2 rounded hover:bg-gray-700 text-sm text-left" on:click={onItemClick}>
+    <button
+      class="flex items-center w-full py-2 pr-2 rounded hover:bg-gray-700 text-sm text-left group {item.subItems
+        ? ''
+        : 'px-4'}"
+      on:click={onItemClick}
+    >
       {#if item.subItems}
-        <Icon icon={item.arrowIcon || chevronDownIcon} class="h-4 w-4" />
+        <Icon icon={item.arrowIcon || chevronDownIcon} class="h-4 w-4 opacity-0 group-hover:opacity-100" />
       {/if}
       <span>{item.label}</span>
 
@@ -40,11 +45,11 @@
     </button>
   </div>
   {#if item.isOpen}
-    <ul>
+    <ul class="pl-2">
       {#if item.subItems}
         {#each item.subItems as subItem}
           <li>
-            <a href={subItem.href} class="block w-full py-2 px-2 rounded hover:bg-gray-700 text-sm">
+            <a href={subItem.href} class="block w-full py-2 px-4 rounded hover:bg-gray-700 text-sm">
               {subItem.label}
             </a>
           </li>
