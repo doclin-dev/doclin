@@ -16,4 +16,11 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
       .where('organization.id = :organizationId', { organizationId })
       .getMany();
   },
+
+  findUserWithPropertiesById(userId: number): Promise<User> {
+    return this.createQueryBuilder('user')
+      .leftJoinAndSelect('user.organizations', 'organization')
+      .where('user.id = :userId', { userId })
+      .getOneOrFail();
+  },
 });

@@ -2,7 +2,7 @@ import { AxiosResponse } from 'axios';
 import { AbstracApiService } from './AbstractApiService';
 import { OrganizationDTO } from '../types/OrganizationDTO';
 import { OrganizationCreateDTO } from '../types/OrganizationCreateDTO';
-import { OrganizationGetQueryDTO } from '../types/OrganizationGetQueryDTO';
+import { IncludePropertiesQueryDTO } from '../types/IncludePropertiesQueryDTO';
 
 export class OrganizationApiService extends AbstracApiService {
   private BASE_ORGANIZATION_URL = `/organizations`;
@@ -29,7 +29,7 @@ export class OrganizationApiService extends AbstracApiService {
   }
 
   public async getOrganizationWithProperties(organizationId: string): Promise<AxiosResponse<OrganizationDTO>> {
-    const params: OrganizationGetQueryDTO = {
+    const params: IncludePropertiesQueryDTO = {
       includeProperties: true,
     };
 

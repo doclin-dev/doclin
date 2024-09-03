@@ -6,13 +6,24 @@ import { User } from '../database/entities/User';
 import { mapUserToUserDTO } from '../mappers/userToUserDTOMapper';
 import { ParamsDictionary } from '../types/ParamsDictionary';
 import { UserDTO } from '../../../shared/types/UserDTO';
+import { IncludePropertiesQueryDTO } from '../../../shared/types/IncludePropertiesQueryDTO';
 
-export const getCurrentUser = async (req: Request<ParamsDictionary, UserDTO, {}>, res: Response<UserDTO>) => {
+export const getCurrentUser = async (
+  req: Request<ParamsDictionary, UserDTO, {}, IncludePropertiesQueryDTO>,
+  res: Response<UserDTO>
+) => {
   const userId: number | undefined = req.userId;
+  const includeProperties: boolean = !!req.query.includeProperties;
 
   if (userId) {
     try {
-      const user: User = await UserRepository.findUserById(userId);
+      let user: User;
+      if (includeProperties) {
+        user = await UserRepository.findUserWithPropertiesById(userId);
+        console.log(user);
+      } else {
+        user = await UserRepository.findUserById(userId);
+      }
       res.send(mapUserToUserDTO(user));
     } catch (error) {
       logger.error('User not found');

@@ -9,7 +9,7 @@ import { User } from '../database/entities/User';
 import { mapOrganizationToOrganizationDTO } from '../mappers/organizationToOrganizationDTOMapper';
 import { OrganizationDTO } from '../../../shared/types/OrganizationDTO';
 import { OrganizationCreateDTO } from '../../../shared/types/OrganizationCreateDTO';
-import { OrganizationGetQueryDTO } from '../../../shared/types/OrganizationGetQueryDTO';
+import { IncludePropertiesQueryDTO } from '../../../shared/types/IncludePropertiesQueryDTO';
 import { ParamsDictionary } from '../types/ParamsDictionary';
 
 const window = new JSDOM('').window;
@@ -51,7 +51,7 @@ export const postOrganization = async (
 };
 
 export const getOrganization = async (
-  req: Request<ParamsDictionary, OrganizationDTO, {}, OrganizationGetQueryDTO>,
+  req: Request<ParamsDictionary, OrganizationDTO, {}, IncludePropertiesQueryDTO>,
   res: Response
 ) => {
   const organizationId: string = req.params.organizationId;
@@ -64,9 +64,6 @@ export const getOrganization = async (
   } else {
     organization = await OrganizationRepository.findOrganizationById(organizationId);
   }
-
-  console.log(typeof req.query.includeProperties);
-  console.log(organization);
 
   const response: OrganizationDTO = mapOrganizationToOrganizationDTO(organization);
   res.send(response);
