@@ -12,7 +12,7 @@ export interface ThreadResponseDTO {
   createdAt: Date;
   lastReplied?: Date;
   filePath: string;
-  gitBranch: string;
+  gitBranch?: string;
   replies: ReplyResponseDTO[];
   canEdit: boolean;
 }
