@@ -2,20 +2,22 @@
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { apiService } from '$lib/apiService';
-  import { organization } from '$lib/stores/organization';
   import type { ProjectDTO } from '../../../../../../../shared/types/ProjectDTO';
+  import type { PageData } from './$types';
+  import { fetchOrganization } from '$lib/stores/organization';
 
+  export let data: PageData;
   let name = '';
-  let privateProject = false; // Default to 'public'
+  let privateProject = false;
 
   const handleSubmit = async (event: Event) => {
     event.preventDefault();
 
-    if ($organization) {
-      const response = await apiService.project.postProject($organization.id, name, privateProject);
-      const project: ProjectDTO = response.data;
-      goto(`/organization/${$organization.id}/project/${project.id}`);
-    }
+    const response = await apiService.project.postProject(data.organizationId, name, privateProject);
+    const project: ProjectDTO = response.data;
+
+    goto(`/organization/${data.organizationId}/project/${project.id}`);
+    fetchOrganization(data.organizationId);
   };
 </script>
 
@@ -39,19 +41,12 @@
         <legend class="text-gray-700 text-sm font-medium mb-2">Visibility</legend>
         <div class="flex items-center space-x-4">
           <label class="flex items-center">
-            <input id="public" type="radio" value="false" bind:group={privateProject} class="form-radio" />
+            <input id="public" type="radio" value={false} bind:group={privateProject} class="form-radio" />
             <span class="ml-2 text-sm">Public</span>
           </label>
 
           <label class="flex items-center">
-            <input
-              id="private"
-              type="radio"
-              value="true"
-              bind:group={privateProject}
-              checked={privateProject}
-              class="form-radio"
-            />
+            <input id="private" type="radio" value={true} bind:group={privateProject} class="form-radio" />
             <span class="ml-2 text-sm">Private</span>
           </label>
         </div>

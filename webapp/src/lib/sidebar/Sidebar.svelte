@@ -3,15 +3,21 @@
   import SidebarNavigation from './SidebarNavigation.svelte';
   import type { SidebarItemType } from '../../types/SidebarItemType';
   import type { OrganizationDTO } from '../../../../shared/types/OrganizationDTO';
-  import { organization } from '../stores/organization';
-  import { user } from '../stores/user';
-  import { goto } from '$app/navigation';
   import chevronDownIcon from '@iconify/icons-mdi/chevron-down';
   import chevronUpIcon from '@iconify/icons-mdi/chevron-up';
   import plusIcon from '@iconify/icons-mdi/plus';
+  import { organization } from '$lib/stores/organization';
 
-  let sidebarItems: SidebarItemType[] = [];
   let organizationUrl: string;
+  let sidebarItems: SidebarItemType[];
+
+  const getProjects = (organization: OrganizationDTO) => {
+    return organization.projects.map((project) => ({
+      label: project.name,
+      href: `${organizationUrl}/project/${project.id}`,
+      private: project.privateProject,
+    }));
+  };
 
   $: {
     if ($organization) {
@@ -37,13 +43,6 @@
       ];
     }
   }
-
-  const getProjects = (organization: OrganizationDTO) => {
-    return organization.projects.map((project) => ({
-      label: project.name,
-      href: `${organizationUrl}/project/${project.id}`,
-    }));
-  };
 
   const toggleCollpase = (index: number) => {
     sidebarItems = sidebarItems.map((item, i) => {

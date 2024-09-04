@@ -5,5 +5,6 @@ export const mapProjectToProjectDTO = (project: Project): ProjectDTO => {
   return {
     id: project.id,
     name: project.name,
+    privateProject: project.privateProject,
   };
 };

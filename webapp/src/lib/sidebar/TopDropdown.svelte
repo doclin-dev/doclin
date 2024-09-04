@@ -7,9 +7,9 @@
   import chevronUpIcon from '@iconify/icons-mdi/chevron-up';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
-  import { organization } from '../stores/organization';
   import { user } from '../stores/user';
   import plusIcon from '@iconify/icons-mdi/plus';
+  import { fetchOrganization, organization } from '$lib/stores/organization';
 
   let isDropdownOpen = false;
 
@@ -19,11 +19,6 @@
 
   const closeDropdown = () => {
     isDropdownOpen = false;
-  };
-
-  const handleOrganizationChange = (org: OrganizationDTO) => {
-    goto(`/organization/${org.id}`);
-    closeDropdown();
   };
 
   const handleLogout = () => {
@@ -44,6 +39,12 @@
       document.removeEventListener('click', handleClickOutside);
     };
   });
+
+  const handleOrganizationChange = (org: OrganizationDTO) => {
+    goto(`/organization/${org.id}`);
+    fetchOrganization(org.id);
+    closeDropdown();
+  };
 </script>
 
 <div class="p-4 flex flex-col space-y-4 relative dropdown-container text-sm">
@@ -53,8 +54,8 @@
       on:click={toggleDropdown}
     >
       <div class="flex items-center">
-        <img src="/doclinLogo.svg" alt={$organization.name} class="h-5 w-5 mr-2" />
-        <span>{$organization.name}</span>
+        <img src="/doclinLogo.svg" alt={$organization?.name} class="h-5 w-5 mr-2" />
+        <span>{$organization?.name}</span>
       </div>
       <Icon icon={isDropdownOpen ? chevronUpIcon : chevronDownIcon} class="h-5 w-5" />
     </button>
@@ -66,7 +67,7 @@
             <button on:click={() => handleOrganizationChange(org)} class="text-left w-full">
               {org.name}
             </button>
-            {#if $organization.id === org.id}
+            {#if $organization?.id === org.id}
               <Icon icon={checkIcon} class="h-5 w-5 text-blue-500" />
             {/if}
           </li>
@@ -74,7 +75,7 @@
         <li class="border-t border-gray-600"></li>
         <li class="flex items-center justify-between px-4 py-2 hover:bg-gray-600">
           <button on:click={() => goto('/organization/create')} class="flex items-center w-full text-left">
-            <span class="">Create Organization</span>
+            <span>Create Organization</span>
             <Icon icon={plusIcon} class="h-5 w-5 ml-2" />
           </button>
         </li>
@@ -85,7 +86,7 @@
             on:click={handleLogout}
             class="flex items-center w-full text-left text-red-400 hover:text-red-300 hover:bg-gray-600"
           >
-            <span class="">Logout</span>
+            <span>Logout</span>
           </button>
         </li>
       </ul>

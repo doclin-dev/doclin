@@ -7,13 +7,6 @@
 
   let name: string = '';
 
-  onMount(async () => {
-    await fetchUser();
-    if (!$user) {
-      goto('/login');
-    }
-  });
-
   const handleSubmit = async (): Promise<void> => {
     const response = await apiService.organization.postOrganization(name);
     const organization: OrganizationDTO = response.data;

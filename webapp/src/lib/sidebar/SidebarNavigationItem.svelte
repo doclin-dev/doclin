@@ -1,10 +1,10 @@
 <script lang="ts">
   import Icon from '@iconify/svelte';
-  import plusIcon from '@iconify/icons-mdi/plus';
   import chevronDownIcon from '@iconify/icons-mdi/chevron-down';
-  import chevronUpIcon from '@iconify/icons-mdi/chevron-up';
   import { goto } from '$app/navigation';
   import type { SidebarItemType } from '../../types/SidebarItemType';
+  import lockIcon from '@iconify/icons-mdi/lock';
+  import { page } from '$app/stores';
 
   export let item: SidebarItemType;
   export let toggleCollpase;
@@ -24,7 +24,7 @@
     <button
       class="flex items-center w-full py-2 pr-2 rounded hover:bg-gray-700 text-sm text-left group {item.subItems
         ? ''
-        : 'px-4'}"
+        : 'px-4'} {$page.url.pathname === item.href ? 'bg-gray-700' : ''}"
       on:click={onItemClick}
     >
       {#if item.subItems}
@@ -45,12 +45,21 @@
     </button>
   </div>
   {#if item.isOpen}
-    <ul class="pl-2">
+    <ul>
       {#if item.subItems}
         {#each item.subItems as subItem}
           <li>
-            <a href={subItem.href} class="block w-full py-2 px-4 rounded hover:bg-gray-700 text-sm">
-              {subItem.label}
+            <a
+              href={subItem.href}
+              class="flex items-center w-full py-2 pl-6 pr-4 rounded hover:bg-gray-700 text-sm {$page.url.pathname ===
+              subItem.href
+                ? 'bg-gray-700'
+                : ''}"
+            >
+              <span>{subItem.label}</span>
+              {#if subItem.private}
+                <Icon icon={lockIcon} class="ml-2" />
+              {/if}
             </a>
           </li>
         {/each}

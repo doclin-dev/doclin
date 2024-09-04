@@ -8,4 +8,5 @@ export interface SidebarItemType {
   isOpen?: boolean;
   arrowIcon?: IconifyIcon;
   actions?: SidebarItemAction[];
+  private?: boolean;
 }

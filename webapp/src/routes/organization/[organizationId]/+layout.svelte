@@ -1,6 +1,14 @@
 <script lang="ts">
   import Sidebar from '$lib/sidebar/Sidebar.svelte';
-  import type { SidebarItemType } from '../../../types/SidebarItemType';
+  import { onMount } from 'svelte';
+  import type { LayoutData } from './$types';
+  import { organization } from '$lib/stores/organization';
+
+  export let data: LayoutData;
+
+  onMount(() => {
+    $organization = data.organization;
+  });
 </script>
 
 <div class="flex">
