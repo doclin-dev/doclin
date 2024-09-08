@@ -20,7 +20,7 @@ export interface Thread {
   displayCreationTime: string;
   lastReplied?: Date;
   filePath: string;
-  gitBranch: string;
+  gitBranch?: string;
   canEdit: boolean;
 }
 
