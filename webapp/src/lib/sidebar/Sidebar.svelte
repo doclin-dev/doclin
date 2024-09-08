@@ -58,7 +58,7 @@
   };
 </script>
 
-<div class="w-64 h-screen bg-gray-900 text-white flex flex-col">
+<div class="fixed w-64 h-screen bg-gray-900 text-white flex flex-col">
   <TopDropdown />
   <SidebarNavigation {sidebarItems} {toggleCollpase} />
 </div>

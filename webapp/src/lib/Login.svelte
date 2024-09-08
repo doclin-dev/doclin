@@ -10,11 +10,11 @@
   };
 </script>
 
-<div class="flex items-center justify-center min-h-screen bg-gray-100">
-  <div class="bg-white shadow-lg rounded-lg p-8 max-w-sm w-full">
-    <div class="text-center mb-6">
-      <h1 class="text-2xl font-bold text-gray-800">Login</h1>
-      <p class="text-gray-600">Sign in with your GitHub account</p>
+<div class="flex items-center justify-center min-h-screen">
+  <div class="rounded-lg p-8 max-w-sm w-full bg-gray-900">
+    <div class="text-center mb-8">
+      <h1 class="text-2xl font-bold text-gray-100">Login</h1>
+      <p class="text-gray-400">Sign in with your GitHub account</p>
     </div>
     <button
       on:click={handleLogin}

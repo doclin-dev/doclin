@@ -12,5 +12,9 @@ export const load: PageLoad = async ({ params }) => {
   const threadResponse = await apiService.thread.getAllThreads(organizationId, projectId);
   const threadDTOs: ThreadResponseDTO[] = threadResponse.data;
 
-  return { project: projectDTO, threads: threadDTOs };
+  return {
+    organizationId: organizationId,
+    project: projectDTO,
+    threads: threadDTOs,
+  };
 };

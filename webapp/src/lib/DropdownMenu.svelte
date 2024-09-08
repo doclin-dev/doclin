@@ -1,5 +1,7 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
+  import Icon from '@iconify/svelte';
+  import dotsHorizontal from '@iconify/icons-mdi/dots-horizontal';
 
   export let options: { label: string; action: () => void }[] = [];
   let isOpen = false;
@@ -25,10 +27,15 @@
 </script>
 
 <div class="relative" bind:this={dropdown}>
-  <button on:click|preventDefault={toggleDropdown} class="text-gray-500 hover:text-gray-700"> ⋮ </button>
+  <button
+    on:click|preventDefault={toggleDropdown}
+    class="flex items-center justify-center text-gray-100 hover:bg-gray-800 rounded w-7 h-7"
+  >
+    <Icon icon={dotsHorizontal} />
+  </button>
 
   {#if isOpen}
-    <ul class="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg">
+    <ul class="absolute right-0 mt-2 w-20 bg-gray-900 border border-gray-900 rounded-md shadow-lg">
       {#each options as { label, action }}
         <li>
           <button
@@ -36,7 +43,7 @@
               action();
               isOpen = false;
             }}
-            class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            class="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-800"
           >
             {label}
           </button>

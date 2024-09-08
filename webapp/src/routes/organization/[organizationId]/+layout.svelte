@@ -13,7 +13,7 @@
 
 <div class="flex">
   <Sidebar />
-  <div class="flex-1">
+  <div class="ml-64 flex-1">
     <slot />
   </div>
 </div>

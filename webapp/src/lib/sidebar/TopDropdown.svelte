@@ -60,7 +60,7 @@
       <Icon icon={isDropdownOpen ? chevronUpIcon : chevronDownIcon} class="h-5 w-5" />
     </button>
     {#if isDropdownOpen}
-      <ul class="absolute left-0 right-0 mt-2 bg-gray-700 text-white rounded shadow-lg z-10">
+      <ul class="absolute left-0 right-0 mt-2 bg-gray-700 text-white rounded z-10">
         <li class="text-xs px-4 pt-2 font-bold">Organizations:</li>
         {#each $user.organizations as org}
           <li class="flex items-center justify-between px-4 py-2 hover:bg-gray-600">

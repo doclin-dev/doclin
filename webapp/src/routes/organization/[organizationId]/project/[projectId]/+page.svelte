@@ -10,7 +10,7 @@
   export let data: PageData;
 </script>
 
-<div class="flex items-center justify-between px-4 py-2 shadow-2xl border-b border-gray-700">
+<div class="flex items-center justify-between px-4 py-2 border-b border-gray-700">
   <h1 class="text-lg font-bold text-white">{data.project.name}</h1>
 
   <div class="flex-1 mx-4 max-w-3xl">
@@ -22,14 +22,20 @@
   </div>
 
   <div class="space-x-2 flex items-center">
-    <button class="flex items-center bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600">
+    <a
+      href="/organization/{data.organizationId}/project/{data.project.id}/thread/askQuestion"
+      class="flex items-center bg-blue-400 text-white px-3 py-2 rounded-md hover:bg-blue-500"
+    >
       <Icon icon={plusIcon} />
       Ask Question
-    </button>
-    <button class="flex items-center bg-green-500 text-white px-3 py-2 rounded-md hover:bg-green-600">
+    </a>
+    <a
+      href="/organization/{data.organizationId}/project/{data.project.id}/thread/writeArticle"
+      class="flex items-center border border-blue-200 text-blue-200 px-3 py-2 rounded-md hover:bg-blue-200 hover:text-blue-900"
+    >
       <Icon icon={pencilIcon} />
       Write Article
-    </button>
+    </a>
   </div>
 </div>
 
@@ -39,7 +45,7 @@
 
     {#each data.threads as thread}
       <hr class="border-gray-700" />
-      <ThreadCard {thread} />
+      <ThreadCard organizationId={data.organizationId} projectId={data.project.id} {thread} />
     {/each}
   </div>
 </div>

@@ -3,7 +3,9 @@
   import type { ThreadResponseDTO } from '../../../shared/types/ThreadResponseDTO';
 
   export let thread: ThreadResponseDTO;
-  export let truncateLength: number = 500;
+  export let organizationId: string;
+  export let projectId: number;
+  const truncateLength: number = 500;
 
   function cleanAndTruncate(text: string, length: number): string {
     const cleanedText = text.replace(/<\/?[^>]+(>|$)/g, '').replace(/\r?\n|\r/g, ' ');
@@ -30,7 +32,10 @@
   ];
 </script>
 
-<a href={`/thread/${thread.id}`} class="block shadow-sm p-4 hover:bg-gray-700 transition">
+<a
+  href={`/organization/${organizationId}/project/${projectId}/thread/${thread.id}`}
+  class="block p-4 hover:bg-gray-700 transition"
+>
   <div class="flex justify-between items-center">
     <div class="text-xs text-gray-300">
       <span class="font-bold">{thread.username}</span> • {formatDate(thread.createdAt)}
@@ -43,7 +48,6 @@
         <span class="bg-gray-700 text-xs text-gray-100 px-2 py-1 rounded">{thread.filePath}</span>
       {/if}
 
-      <!-- Dropdown Menu for Edit/Delete -->
       <DropdownMenu options={dropdownOptions} />
     </div>
   </div>
