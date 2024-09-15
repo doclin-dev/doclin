@@ -56,7 +56,7 @@ export const getOrganization = async (organizationId: string): Promise<Organizat
 
 const apiFetchOrganization = async (organizationId: string) => {
   try {
-    const response = await apiService.organization.getOrganization(organizationId);
+    const response = await apiService.organization.getOrganizationWithProperties(organizationId);
     const organization: OrganizationDTO = response?.data;
 
     const organizationCacheManager = new OrganizationCacheManager();
