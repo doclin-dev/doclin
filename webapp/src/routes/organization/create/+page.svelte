@@ -1,7 +1,5 @@
 <script lang="ts">
   import { apiService } from '$lib/apiService';
-  import { fetchUser, user } from '$lib/stores/user';
-  import { onMount } from 'svelte';
   import type { OrganizationDTO } from '../../../../../shared/types/OrganizationDTO';
   import { goto } from '$app/navigation';
 

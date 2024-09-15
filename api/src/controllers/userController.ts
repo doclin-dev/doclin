@@ -20,7 +20,6 @@ export const getCurrentUser = async (
       let user: User;
       if (includeProperties) {
         user = await UserRepository.findUserWithPropertiesById(userId);
-        console.log(user);
       } else {
         user = await UserRepository.findUserById(userId);
       }

@@ -4,8 +4,9 @@ import { apiService } from '$lib/apiService';
 
 export const user = writable<UserDTO>();
 
-export const fetchUser = async (): Promise<void> => {
+export const fetchUser = async (): Promise<UserDTO> => {
   const response = await apiService.auth.getAuthenticatedUserWithProperties();
   const userDTO: UserDTO = response.data;
   user.set(userDTO);
+  return userDTO;
 };
