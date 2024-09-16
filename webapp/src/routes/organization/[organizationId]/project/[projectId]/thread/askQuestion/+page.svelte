@@ -20,8 +20,6 @@
 
   const projectUrl = `/organization/${organizationId}/project/${projectId}`;
 
-  console.log($organization?.members);
-
   onMount(() => {
     textEditor = new TextEditor('#textEditor', $organization?.members);
   });
