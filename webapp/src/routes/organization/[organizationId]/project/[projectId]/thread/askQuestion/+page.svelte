@@ -40,7 +40,6 @@
   };
 </script>
 
-?
 <div class="flex flex-col gap-y-4 items-center justify-center">
   <div class="flex flex-col gap-y-4 w-full max-w-4xl bg-gray-800 rounded-lg p-6">
     <div class="relative">
