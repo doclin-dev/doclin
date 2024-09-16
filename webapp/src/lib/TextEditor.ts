@@ -1,14 +1,6 @@
 import Quill from 'quill';
 import 'quill-mention';
-import { QuillSnippetBlot } from './QuillSnippetBlot';
 import type { UserDTO } from '../../../shared/types/UserDTO';
-import type { TextEditorInsertSnippet } from '../types/TextEditorInsertSnippet';
-
-Quill.register({
-  'formats/snippet': QuillSnippetBlot,
-});
-
-const Delta = Quill.import('delta');
 
 export class TextEditor {
   private quillInstance: Quill;
@@ -108,35 +100,6 @@ export class TextEditor {
 
   onTextChange(callback: () => void): void {
     this.quillInstance.on('text-change', callback);
-  }
-
-  insertCodeSnippet({
-    filePath,
-    lineStart,
-    displaySnippet,
-    originalSnippet,
-    gitBranch,
-  }: TextEditorInsertSnippet): void {
-    const editor = this.quillInstance;
-    const selection = editor.getSelection(true);
-    const cursorPosition: number = selection ? selection.index : editor.getLength();
-
-    editor.updateContents(
-      new Delta().retain(cursorPosition).insert(
-        {
-          snippetblot: {
-            displaySnippet,
-            filePath,
-            lineStart,
-            originalSnippet,
-            gitBranch,
-          },
-        },
-        {
-          'formats/snippet': true,
-        }
-      )
-    );
   }
 
   private parseJSON(data: any) {
