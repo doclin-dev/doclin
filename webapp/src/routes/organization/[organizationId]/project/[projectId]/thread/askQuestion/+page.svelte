@@ -10,8 +10,9 @@
   import { page } from '$app/stores';
   import { apiService } from '$lib/apiService';
   import type { ThreadCreateDTO } from '../../../../../../../../../shared/types/ThreadCreateDTO';
-  import { organization } from '$lib/stores/organization';
+  import type { PageData } from '../$types';
 
+  export let data: PageData;
   let organizationId: string = $page.params.organizationId;
   let projectId: number = parseInt($page.params.projectId);
   let title: string;
@@ -21,7 +22,7 @@
   const projectUrl = `/organization/${organizationId}/project/${projectId}`;
 
   onMount(() => {
-    textEditor = new TextEditor('#textEditor', $organization?.members);
+    textEditor = new TextEditor('#textEditor', data.organization?.members);
   });
 
   const submitThread = async () => {

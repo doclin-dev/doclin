@@ -2,13 +2,19 @@
   import { apiService } from '$lib/apiService';
   import type { OrganizationDTO } from '../../../../../shared/types/OrganizationDTO';
   import { goto } from '$app/navigation';
+  import { onMount } from 'svelte';
+  import { LAST_VISITED_ORGANIZATION_ID } from '$lib/localStorageKeys';
 
   let name: string = '';
+
+  onMount(() => {
+    localStorage.setItem(LAST_VISITED_ORGANIZATION_ID, '');
+  });
 
   const handleSubmit = async (): Promise<void> => {
     const response = await apiService.organization.postOrganization(name);
     const organization: OrganizationDTO = response.data;
-    goto(`/organization/${organization.id}`);
+    goto(`/organization/${organization.id}/project/create`);
   };
 </script>
 

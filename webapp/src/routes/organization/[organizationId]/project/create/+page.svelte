@@ -2,13 +2,16 @@
   import { goto } from '$app/navigation';
   import { apiService } from '$lib/apiService';
   import type { ProjectDTO } from '../../../../../../../shared/types/ProjectDTO';
-  import type { PageData } from './$types';
   import { fetchOrganization } from '$lib/stores/organization';
   import { page } from '$app/stores';
+  import { LAST_VISITED_ORGANIZATION_ID, LAST_VISITED_PROJECT_ID } from '$lib/localStorageKeys';
 
   const organizationId: string = $page.params.organizationId;
   let name = '';
   let privateProject = false;
+
+  localStorage.setItem(LAST_VISITED_ORGANIZATION_ID, organizationId);
+  localStorage.setItem(LAST_VISITED_PROJECT_ID, 'create');
 
   const handleSubmit = async (event: Event) => {
     event.preventDefault();

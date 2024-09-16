@@ -40,9 +40,14 @@
     };
   });
 
-  const handleOrganizationChange = (org: OrganizationDTO) => {
-    goto(`/organization/${org.id}`);
-    fetchOrganization(org.id);
+  const handleOrganizationChange = async (org: OrganizationDTO) => {
+    const organization: OrganizationDTO = await fetchOrganization(org.id);
+
+    if (organization.projects.length === 0) {
+      goto(`/organization/${org.id}/project/create`);
+    } else {
+      goto(`/organization/${org.id}/project/${organization.projects[0].id}`);
+    }
     closeDropdown();
   };
 </script>

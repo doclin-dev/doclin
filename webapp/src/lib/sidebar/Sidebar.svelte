@@ -25,10 +25,6 @@
 
       sidebarItems = [
         {
-          label: 'Home',
-          href: organizationUrl,
-        },
-        {
           label: 'Projects',
           href: `#`,
           actions: [
