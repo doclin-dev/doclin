@@ -1,23 +1,23 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { apiService } from '$lib/apiService';
   import type { ProjectDTO } from '../../../../../../../shared/types/ProjectDTO';
   import type { PageData } from './$types';
   import { fetchOrganization } from '$lib/stores/organization';
+  import { page } from '$app/stores';
 
-  export let data: PageData;
+  const organizationId: string = $page.params.organizationId;
   let name = '';
   let privateProject = false;
 
   const handleSubmit = async (event: Event) => {
     event.preventDefault();
 
-    const response = await apiService.project.postProject(data.organizationId, name, privateProject);
+    const response = await apiService.project.postProject(organizationId, name, privateProject);
     const project: ProjectDTO = response.data;
 
-    goto(`/organization/${data.organizationId}/project/${project.id}`);
-    fetchOrganization(data.organizationId);
+    goto(`/organization/${organizationId}/project/${project.id}`);
+    fetchOrganization(organizationId);
   };
 </script>
 

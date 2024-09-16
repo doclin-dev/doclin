@@ -29,13 +29,6 @@
       <Icon icon={plusIcon} />
       Ask Question
     </a>
-    <a
-      href="/organization/{data.organizationId}/project/{data.project.id}/thread/writeArticle"
-      class="flex items-center border border-blue-200 text-blue-200 px-3 py-2 rounded-md hover:bg-blue-200 hover:text-blue-900"
-    >
-      <Icon icon={pencilIcon} />
-      Write Article
-    </a>
   </div>
 </div>
 

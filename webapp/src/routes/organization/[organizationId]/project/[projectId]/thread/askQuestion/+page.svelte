@@ -1,21 +1,88 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
+  import '$lib/style/quill-1.3.6-snow.css';
+  import '$lib/style/customQuillEditor.css';
+  import { onMount } from 'svelte';
   import Icon from '@iconify/svelte';
   import closeIcon from '@iconify/icons-mdi/close';
+  import { TextEditor } from '$lib/TextEditor';
+  import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
+  import { apiService } from '$lib/apiService';
+  import type { ThreadCreateDTO } from '../../../../../../../../../shared/types/ThreadCreateDTO';
+
+  let organizationId: string = $page.params.organizationId;
+  let projectId: number = parseInt($page.params.projectId);
+  let title: string;
+  let textEditor: TextEditor;
+  let anonymous: boolean;
+
+  const projectUrl = `/organization/${organizationId}/project/${projectId}`;
+
+  onMount(() => {
+    textEditor = new TextEditor('#textEditor');
+  });
+
+  const submitThread = async () => {
+    const { delta, message: threadMessage, mentionedUserIds } = textEditor.getStructuredText();
+
+    const data: ThreadCreateDTO = {
+      title: title,
+      message: threadMessage,
+      mentionedUserIds: mentionedUserIds,
+      delta: delta,
+      snippets: [],
+      anonymous: anonymous,
+    };
+
+    await apiService.thread.postThread(organizationId, projectId, data);
+
+    goto(projectUrl);
+  };
 </script>
 
-<div class="flex flex-col items-center justify-center">
-  <!-- Header with close button -->
-  <div class="w-full max-w-4xl bg-gray-800 rounded-lg p-6 relative">
-    <button class="absolute top-4 right-4 text-gray-300 hover:text-gray-100 transition duration-200">
-      <Icon icon={closeIcon} class="w-6 h-6" />
-    </button>
+?
+<div class="flex flex-col gap-y-4 items-center justify-center">
+  <div class="flex flex-col gap-y-4 w-full max-w-4xl bg-gray-800 rounded-lg p-6">
+    <div class="relative">
+      <a
+        href={projectUrl}
+        class="absolute top-1 right-1 text-gray-300 hover:bg-gray-700 rounded p-1 transition duration-200"
+      >
+        <Icon icon={closeIcon} class="w-6 h-6" />
+      </a>
 
-    <!-- Form title -->
-    <h2 class="text-2xl font-bold text-gray-100 mb-6">Ask A Question</h2>
+      <h2 class="text-2xl font-bold text-gray-100">Ask A Question</h2>
+    </div>
 
-    <!-- Form inputs -->
+    <div>
+      <div class="block text-gray-400 mb-2">Title</div>
+      <input
+        type="text"
+        bind:value={title}
+        placeholder="Enter your thread title"
+        class="w-full p-3 bg-gray-700 text-gray-100 rounded-md border border-gray-600 focus:outline-none"
+        required
+      />
+    </div>
 
-    <div id="thread-editor" class="textEditor"></div>
+    <div>
+      <div class="block text-gray-400 mb-2">Description</div>
+      <div id="textEditor" class="textEditor"></div>
+    </div>
+
+    <div class="flex items-center">
+      <input type="checkbox" bind:checked={anonymous} id="anonymousCheckbox" class="mr-2" />
+      <label for="anonymousCheckbox" class="text-gray-400">Post as anonymous user</label>
+    </div>
+
+    <div class="flex justify-end">
+      <button
+        type="submit"
+        class="bg-blue-500 text-white px-6 py-2 rounded-md font-semibold hover:bg-blue-600 transition duration-200"
+        on:click={submitThread}
+      >
+        Ask Question
+      </button>
+    </div>
   </div>
 </div>
