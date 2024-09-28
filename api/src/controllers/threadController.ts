@@ -117,6 +117,21 @@ export const getThreads = async (
   res.send(response);
 };
 
+export const getThread = async (
+  req: Request<ParamsDictionary, ThreadResponseDTO, {}>,
+  res: Response<ThreadResponseDTO>
+) => {
+  const threadId: number = parseInt(req.params.threadId);
+  const projectId: number = parseInt(req.params.projectId);
+  const userId: number | undefined = req.userId;
+
+  const thread: Thread = await ThreadRepository.findThreadWithPropertiesByThreadId(threadId);
+  const project: Project = await ProjectRepository.findProjectById(projectId);
+  const threadDTO = mapThreadResponse(thread, project, userId);
+
+  res.send(threadDTO);
+};
+
 export const updateThread = async (
   req: Request<ParamsDictionary, ThreadResponseDTO, ThreadUpdateDTO>,
   res: Response<ThreadResponseDTO>

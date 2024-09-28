@@ -2,7 +2,6 @@
   import ThreadCard from '$lib/ThreadCard.svelte';
   import Icon from '@iconify/svelte';
   import plusIcon from '@iconify/icons-mdi/plus';
-  import pencilIcon from '@iconify/icons-mdi/pencil';
 
   import type { PageData } from './$types';
   import FilterMenu from '$lib/FilterMenu.svelte';

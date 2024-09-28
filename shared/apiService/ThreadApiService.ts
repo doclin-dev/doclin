@@ -30,6 +30,16 @@ export class ThreadApiService extends AbstracApiService {
     return response;
   }
 
+  public async getThread(
+    threadId: number,
+    projectId: number,
+    organizationId: string
+  ): Promise<AxiosResponse<ThreadResponseDTO>> {
+    const baseThreadUrl = this.getBaseThreadUrl(organizationId, projectId);
+    const response: AxiosResponse<ThreadResponseDTO> = await this.axiosInstance.get(`${baseThreadUrl}/${threadId}`);
+    return response;
+  }
+
   public async deleteThread(
     organizationId: string,
     projectId: number,
