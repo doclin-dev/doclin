@@ -2,10 +2,12 @@ import * as vscode from 'vscode';
 import { PostReply, Reply, UpdateReply } from '../types';
 import AllThreadsCacheManager from '../utils/cache/AllThreadsCacheManager';
 import FileThreadCacheManager from '../utils/cache/FileThreadsCacheManager';
-import { fillUpThreadOrReplyMessageWithSnippet } from '../utils/fillUpThreadOrReplymessage';
-import { compareSnippetsWithActiveEditor } from '../utils/snippetComparisonUtil';
 import { readDoclinFile } from './doclinFile/readDoclinFile';
 import { apiService } from '../apiService';
+import { ReplyResponseDTO } from '../../../shared/types/ReplyResponseDTO';
+import { ReplyCreateDTO } from '../../../shared/types/ReplyCreateDTO';
+import { mapReplyResponseDTOToReply } from '../mappers/replyResponseDTOtoReplyMapper';
+import { ThreadDeleteResponseDTO } from '../../../shared/types/ThreadDeleteResponseDTO';
 
 export const getRepliesByThreadId = async ({ threadId }: { threadId: number }): Promise<any> => {
   const doclinFile = await readDoclinFile();
@@ -17,14 +19,9 @@ export const getRepliesByThreadId = async ({ threadId }: { threadId: number }): 
   }
 
   const response = await apiService.reply.getReplies(organizationId, projectId, threadId);
-  const payload = response?.data;
-  const replies: Reply[] = payload?.replies;
-
-  for (const reply of replies) {
-    await compareSnippetsWithActiveEditor(reply.snippets);
-    fillUpThreadOrReplyMessageWithSnippet(reply);
-  }
-
+  const replyDTOs: ReplyResponseDTO[] = response?.data;
+  const repliesPromise: Promise<Reply>[] = replyDTOs.map(mapReplyResponseDTOToReply);
+  const replies = Promise.all(repliesPromise);
   return replies;
 };
 
@@ -44,24 +41,18 @@ export const postReply = async ({
     return;
   }
 
-  const response = await apiService.reply.postReply(
-    organizationId,
-    projectId,
-    replyMessage,
-    threadId,
+  const data: ReplyCreateDTO = {
+    message: replyMessage,
     anonymous,
     snippets,
     delta,
-    mentionedUserIds
-  );
+    mentionedUserIds,
+  };
 
-  const reply: Reply = response?.data?.reply;
-
-  await compareSnippetsWithActiveEditor(reply.snippets);
-  fillUpThreadOrReplyMessageWithSnippet(reply);
-
+  const response = await apiService.reply.postReply(organizationId, projectId, threadId, data);
+  const replyDTO: ReplyResponseDTO = response?.data;
+  const reply = await mapReplyResponseDTOToReply(replyDTO);
   clearThreadsCache(projectId);
-
   return reply;
 };
 
@@ -94,11 +85,9 @@ export const updateReply = async ({ replyMessage, replyId, snippets, delta }: Up
     snippets,
     delta
   );
-  const reply: Reply = response?.data?.reply;
 
-  await compareSnippetsWithActiveEditor(reply.snippets);
-  fillUpThreadOrReplyMessageWithSnippet(reply);
-
+  const replyDTO: ReplyResponseDTO = response?.data;
+  const reply: Reply = await mapReplyResponseDTOToReply(replyDTO);
   return reply;
 };
 
@@ -112,7 +101,6 @@ export const deleteReply = async ({ replyId }: { replyId: number }) => {
   }
 
   const response = await apiService.reply.deleteReply(organizationId, projectId, replyId);
-  const reply = response?.data?.reply;
-
+  const reply: ThreadDeleteResponseDTO = response?.data;
   return reply;
 };

@@ -1,7 +1,5 @@
-import { ThreadResponseDTO } from '../../../shared/types/ThreadResponseDTO';
 import { Snippet } from '../types';
 import { addLineNumbers, highlightCode } from '../utils/snippetFormatUtil';
-import { ReplyResponseDTO } from '../../../shared/types/ReplyResponseDTO';
 
 const PRE_TAG_START: string = `<pre class="ql-syntax" spellcheck="false" contenteditable="false">`;
 const PRE_TAG_END: string = `</pre>`;

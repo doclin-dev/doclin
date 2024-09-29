@@ -10,7 +10,7 @@
   import { page } from '$app/stores';
   import { apiService } from '$lib/apiService';
   import type { ThreadCreateDTO } from '../../../../../../../../../shared/types/ThreadCreateDTO';
-  import type { PageData } from '../$types';
+  import type { PageData } from './$types';
 
   export let data: PageData;
   let organizationId: string = $page.params.organizationId;
@@ -26,11 +26,11 @@
   });
 
   const submitThread = async () => {
-    const { delta, message: threadMessage, mentionedUserIds } = textEditor.getStructuredText();
+    const { delta, message, mentionedUserIds } = textEditor.getStructuredText();
 
     const data: ThreadCreateDTO = {
       title: title,
-      message: threadMessage,
+      message: message,
       mentionedUserIds: mentionedUserIds,
       delta: delta,
       snippets: [],
@@ -41,17 +41,21 @@
 
     goto(projectUrl);
   };
+
+  const goBack = () => {
+    window.history.back();
+  };
 </script>
 
 <div class="flex flex-col gap-y-4 items-center justify-center">
   <div class="flex flex-col gap-y-4 w-full max-w-4xl bg-gray-800 rounded-lg p-6">
     <div class="relative">
-      <a
-        href={projectUrl}
+      <button
+        on:click={goBack}
         class="absolute top-1 right-1 text-gray-300 hover:bg-gray-700 rounded p-1 transition duration-200"
       >
         <Icon icon={closeIcon} class="w-6 h-6" />
-      </a>
+      </button>
 
       <h2 class="text-2xl font-bold text-gray-100">Ask A Question</h2>
     </div>

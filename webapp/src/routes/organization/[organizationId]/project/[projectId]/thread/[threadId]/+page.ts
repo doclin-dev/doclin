@@ -17,5 +17,7 @@ export const load: PageLoad = async ({ params }) => {
 
   return {
     thread: threadDTO,
+    organizationId: organizationId,
+    projectId: projectId,
   };
 };
