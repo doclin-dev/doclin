@@ -5,10 +5,10 @@ import { getDoclinRelativeFilePath } from './doclinRelativeFilePath';
 import { readDoclinFile } from './doclinFile/readDoclinFile';
 import AllThreadsCacheManager from '../utils/cache/AllThreadsCacheManager';
 import FileThreadCacheManager from '../utils/cache/FileThreadsCacheManager';
-import { ThreadResponseDTO } from '../../../shared/types/ThreadResponseDTO';
+import { ThreadResponseDTO } from '$shared/types/ThreadResponseDTO';
 import { mapThreadResponseDTOToThread } from '../mappers/threadResponseDTOToThreadMapper';
-import { ThreadCreateDTO } from '../../../shared/types/ThreadCreateDTO';
-import { ThreadUpdateDTO } from '../../../shared/types/ThreadUpdateDTO';
+import { ThreadCreateDTO } from '$shared/types/ThreadCreateDTO';
+import { ThreadUpdateDTO } from '$shared/types/ThreadUpdateDTO';
 import { apiService } from '../apiService';
 
 export const getThreadsByActiveFilePath = async (): Promise<{

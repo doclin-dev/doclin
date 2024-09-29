@@ -9,7 +9,7 @@
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import { apiService } from '$lib/apiService';
-  import type { ThreadCreateDTO } from '../../../../../../../../../shared/types/ThreadCreateDTO';
+  import type { ThreadCreateDTO } from '$shared/types/ThreadCreateDTO';
   import type { PageData } from './$types';
 
   export let data: PageData;

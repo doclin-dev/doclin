@@ -8,7 +8,11 @@ const config = {
 	kit: {
 		adapter: adapter({
 			fallback: '200.html'
-		})
+		}),
+		alias: {
+			"$shared": "../shared",
+			"$shared/*": "../shared/*"
+		}
 	}
 };
 

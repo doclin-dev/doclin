@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import type { UserDTO } from '../../../../shared/types/UserDTO';
+import type { UserDTO } from '$shared/types/UserDTO';
 import { apiService } from '$lib/apiService';
 
 export const user = writable<UserDTO>();

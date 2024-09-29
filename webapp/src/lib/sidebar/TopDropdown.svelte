@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { OrganizationDTO } from '../../../../shared/types/OrganizationDTO';
+  import type { OrganizationDTO } from '$shared/types/OrganizationDTO';
   import Icon from '@iconify/svelte';
   import checkIcon from '@iconify/icons-mdi/check';
   import logoutIcon from '@iconify/icons-mdi/logout';

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { apiService } from '$lib/apiService';
-  import type { OrganizationDTO } from '../../../../../shared/types/OrganizationDTO';
+  import type { OrganizationDTO } from '$shared/types/OrganizationDTO';
   import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
   import { LAST_VISITED_ORGANIZATION_ID } from '$lib/localStorageKeys';

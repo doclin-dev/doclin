@@ -1,13 +1,13 @@
-import type { UserDTO } from '../../../shared/types/UserDTO';
+import type { UserDTO } from '$shared/types/UserDTO';
 import type { PageLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
 import { apiService } from '$lib/apiService';
 import { LAST_VISITED_ORGANIZATION_ID, LAST_VISITED_PROJECT_ID } from '$lib/localStorageKeys';
-import type { ProjectDTO } from '../../../shared/types/ProjectDTO';
+import type { ProjectDTO } from '$shared/types/ProjectDTO';
 
 export const load: PageLoad = async ({ parent }) => {
   const layoutData = await parent();
-  const userDTO: UserDTO = layoutData.user;
+  const userDTO: UserDTO | undefined = layoutData.user;
 
   if (userDTO) {
     const organizationId: string | null = getLastVisitedOrganizationId(userDTO);

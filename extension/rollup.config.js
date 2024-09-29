@@ -6,6 +6,7 @@ import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
 import path from 'path';
 import fs from 'fs';
+import alias from '@rollup/plugin-alias';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -20,6 +21,12 @@ export default fs.readdirSync(path.join(__dirname, 'webviews', 'pages')).map((in
       file: 'out/compiled/' + name + '.js',
     },
     plugins: [
+      alias({
+        entries: [
+          { find: '$shared', replacement: '../shared' },
+        ],
+      }),
+
       svelte({
         dev: !production,
         css: (css) => {

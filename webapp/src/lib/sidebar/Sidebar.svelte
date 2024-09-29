@@ -2,7 +2,7 @@
   import TopDropdown from './TopDropdown.svelte';
   import SidebarNavigation from './SidebarNavigation.svelte';
   import type { SidebarItemType } from '../../types/SidebarItemType';
-  import type { OrganizationDTO } from '../../../../shared/types/OrganizationDTO';
+  import type { OrganizationDTO } from '$shared/types/OrganizationDTO';
   import chevronDownIcon from '@iconify/icons-mdi/chevron-down';
   import chevronUpIcon from '@iconify/icons-mdi/chevron-up';
   import plusIcon from '@iconify/icons-mdi/plus';

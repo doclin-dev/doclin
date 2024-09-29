@@ -1,6 +1,6 @@
 <script lang="ts">
   import DropdownMenu from '$lib/DropdownMenu.svelte';
-  import type { ReplyResponseDTO } from '../../../shared/types/ReplyResponseDTO';
+  import type { ReplyResponseDTO } from '$shared/types/ReplyResponseDTO';
 
   export let reply: ReplyResponseDTO;
 

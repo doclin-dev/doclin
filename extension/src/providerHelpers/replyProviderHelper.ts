@@ -4,10 +4,10 @@ import AllThreadsCacheManager from '../utils/cache/AllThreadsCacheManager';
 import FileThreadCacheManager from '../utils/cache/FileThreadsCacheManager';
 import { readDoclinFile } from './doclinFile/readDoclinFile';
 import { apiService } from '../apiService';
-import { ReplyResponseDTO } from '../../../shared/types/ReplyResponseDTO';
-import { ReplyCreateDTO } from '../../../shared/types/ReplyCreateDTO';
+import { ReplyResponseDTO } from '$shared/types/ReplyResponseDTO';
+import { ReplyCreateDTO } from '$shared/types/ReplyCreateDTO';
 import { mapReplyResponseDTOToReply } from '../mappers/replyResponseDTOtoReplyMapper';
-import { ThreadDeleteResponseDTO } from '../../../shared/types/ThreadDeleteResponseDTO';
+import { ThreadDeleteResponseDTO } from '$shared/types/ThreadDeleteResponseDTO';
 
 export const getRepliesByThreadId = async ({ threadId }: { threadId: number }): Promise<any> => {
   const doclinFile = await readDoclinFile();

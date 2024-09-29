@@ -1,4 +1,4 @@
-import { UserDTO } from '../../../../shared/types/UserDTO';
+import { UserDTO } from '$shared/types/UserDTO';
 import { GlobalStateType } from '../../enums';
 import CacheManager from './CacheManager';
 

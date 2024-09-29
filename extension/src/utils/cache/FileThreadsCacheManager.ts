@@ -1,4 +1,4 @@
-import { ThreadResponseDTO } from '../../../../shared/types/ThreadResponseDTO';
+import { ThreadResponseDTO } from '$shared/types/ThreadResponseDTO';
 import { GlobalStateType } from '../../enums';
 import CacheManager from './CacheManager';
 

@@ -1,6 +1,6 @@
 <script lang="ts">
   import DropdownMenu from '$lib/DropdownMenu.svelte';
-  import type { ThreadResponseDTO } from '../../../shared/types/ThreadResponseDTO';
+  import type { ThreadResponseDTO } from '$shared/types/ThreadResponseDTO';
 
   export let thread: ThreadResponseDTO;
   export let organizationId: string;

@@ -4,7 +4,7 @@ import { writeDoclinFile } from './doclinFile/writeDoclinFile';
 import logger from '../utils/logger';
 import { DoclinFile } from '../types';
 import ProjectCacheMananger from '../utils/cache/ProjectCacheManager';
-import { ProjectDTO } from '../../../shared/types/ProjectDTO';
+import { ProjectDTO } from '$shared/types/ProjectDTO';
 import { apiService } from '../apiService';
 
 const UNAUTHORIZED = {

@@ -8,10 +8,9 @@
   import type { PageData } from './$types';
   import { TextEditor } from '$lib/TextEditor';
   import { onMount } from 'svelte';
-  import type { ReplyCreateDTO } from '../../../../../../../../../shared/types/ReplyCreateDTO';
+  import type { ReplyCreateDTO } from '$shared/types/ReplyCreateDTO';
   import { apiService } from '$lib/apiService';
-  import { invalidate } from '$app/navigation';
-  import type { ReplyResponseDTO } from '../../../../../../../../../shared/types/ReplyResponseDTO';
+  import type { ReplyResponseDTO } from '$shared/types/ReplyResponseDTO';
 
   export let data: PageData;
   const thread = data.thread;

@@ -1,5 +1,5 @@
 import { apiService } from '$lib/apiService';
-import type { OrganizationDTO } from '../../../../../shared/types/OrganizationDTO';
+import type { OrganizationDTO } from '$shared/types/OrganizationDTO';
 import type { LayoutLoad } from './$types';
 
 export const ssr = false;

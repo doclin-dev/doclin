@@ -1,5 +1,5 @@
 import { utc } from 'moment';
-import { ReplyResponseDTO } from '../../../shared/types/ReplyResponseDTO';
+import { ReplyResponseDTO } from '$shared/types/ReplyResponseDTO';
 import { Reply, Snippet } from '../types';
 import { mapSnippetResponseDTOToSnippet } from './snippetResponseDTOToSnippetMapper';
 import { getDisplayMessage } from './threadDisplayMessageMapper';

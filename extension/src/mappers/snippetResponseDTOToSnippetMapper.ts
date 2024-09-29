@@ -1,4 +1,4 @@
-import { SnippetResponseDTO } from '../../../shared/types/SnippetResponseDTO';
+import { SnippetResponseDTO } from '$shared/types/SnippetResponseDTO';
 import { Snippet } from '../types';
 import * as vscode from 'vscode';
 import logger from '../utils/logger';

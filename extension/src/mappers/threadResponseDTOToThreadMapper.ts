@@ -1,4 +1,4 @@
-import { ThreadResponseDTO } from '../../../shared/types/ThreadResponseDTO';
+import { ThreadResponseDTO } from '$shared/types/ThreadResponseDTO';
 import { Snippet, Thread } from '../types';
 import { mapSnippetResponseDTOToSnippet } from './snippetResponseDTOToSnippetMapper';
 import { getDisplayMessage } from './threadDisplayMessageMapper';

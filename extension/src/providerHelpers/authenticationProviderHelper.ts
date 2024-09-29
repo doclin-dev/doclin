@@ -9,7 +9,7 @@ import { reloadAndGetExtensionState } from '../utils/extensionState';
 import AllThreadsCacheManager from '../utils/cache/AllThreadsCacheManager';
 import { apiService } from '../apiService';
 import { getExtensionState } from '../utils/extensionState';
-import { UserDTO } from '../../../shared/types/UserDTO';
+import { UserDTO } from '$shared/types/UserDTO';
 
 const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github/vscode`);
 

@@ -107,6 +107,7 @@
   "devDependencies": {
     "@iconify/icons-mdi": "^1.2.47",
     "@iconify/svelte": "^3.1.4",
+    "@rollup/plugin-alias": "^3.1.0",
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.0.1",
     "@rollup/plugin-typescript": "^8.1.0",

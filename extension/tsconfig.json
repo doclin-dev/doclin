@@ -5,9 +5,12 @@
     "outDir": "out",
     "lib": ["es6"],
     "sourceMap": true,
-    // "rootDir": "src",
     "allowSyntheticDefaultImports": true,
-    "strict": true
+    "strict": true,
+    "paths": {
+      "$shared": ["../shared"],
+      "$shared/*": ["../shared/*"]
+    }
   },
   "include": ["src", "../shared"],
   "exclude": ["node_modules", ".vscode-test.js", "webviews"]

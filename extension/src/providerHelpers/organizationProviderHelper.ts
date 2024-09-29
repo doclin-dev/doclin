@@ -3,9 +3,9 @@ import { writeDoclinFile } from './doclinFile/writeDoclinFile';
 import logger from '../utils/logger';
 import { DoclinFile } from '../types';
 import OrganizationCacheManager from '../utils/cache/OrganizationCacheManager';
-import { OrganizationDTO } from '../../../shared/types/OrganizationDTO';
+import { OrganizationDTO } from '$shared/types/OrganizationDTO';
 import { apiService } from '../apiService';
-import { UserDTO } from '../../../shared/types/UserDTO';
+import { UserDTO } from '$shared/types/UserDTO';
 
 const UNAUTHORIZED = {
   unauthorized: true,
@@ -47,11 +47,7 @@ export const getOrganization = async (organizationId: string): Promise<Organizat
     return cachedOrganization;
   }
 
-  try {
-    return apiFetchOrganization(organizationId);
-  } catch {
-    return UNAUTHORIZED;
-  }
+  return apiFetchOrganization(organizationId);
 };
 
 const apiFetchOrganization = async (organizationId: string) => {

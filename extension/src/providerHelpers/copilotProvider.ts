@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import logger from '../utils/logger';
 import { readDoclinFile } from './doclinFile/readDoclinFile';
 import { apiService } from '../apiService';
-import { CopilotMessageDTO } from '../../../shared/types/CopilotMessageDTO';
+import { CopilotMessageDTO } from '$shared/types/CopilotMessageDTO';
 
 export const postCopilotPrompt = async (webviewMessage: {
   messages: CopilotMessageDTO[];

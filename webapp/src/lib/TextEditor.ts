@@ -1,6 +1,6 @@
 import Quill from 'quill';
 import 'quill-mention';
-import type { UserDTO } from '../../../shared/types/UserDTO';
+import type { UserDTO } from '$shared/types/UserDTO';
 
 export class TextEditor {
   private quillInstance: Quill;

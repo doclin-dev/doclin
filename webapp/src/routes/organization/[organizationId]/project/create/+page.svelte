@@ -1,7 +1,7 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
   import { apiService } from '$lib/apiService';
-  import type { ProjectDTO } from '../../../../../../../shared/types/ProjectDTO';
+  import type { ProjectDTO } from '$shared/types/ProjectDTO';
   import { fetchOrganization } from '$lib/stores/organization';
   import { page } from '$app/stores';
   import { LAST_VISITED_ORGANIZATION_ID, LAST_VISITED_PROJECT_ID } from '$lib/localStorageKeys';
