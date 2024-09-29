@@ -9,11 +9,11 @@
   }
 
   function editReply() {
-    console.log('Edit thread', reply.id);
+    // TODO: Complete this method
   }
 
   function deleteReply() {
-    console.log('Delete thread', reply.id);
+    // TODO: Complete this method
   }
 
   const dropdownOptions = [

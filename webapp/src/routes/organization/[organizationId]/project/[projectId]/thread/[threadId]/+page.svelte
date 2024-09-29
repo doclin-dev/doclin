@@ -42,7 +42,6 @@
   };
 
   const goBack = () => {
-    console.log(window.history);
     window.history.back();
   };
 

@@ -12,8 +12,7 @@
   }
 
   function handleFilterChange(filter: string) {
-    selectedFilter = filter;
-    // Add logic to filter threads based on `filter` value
+    // TODO: Complete filter
   }
 
   function handleClickOutside(event: MouseEvent) {
@@ -32,7 +31,6 @@
 </script>
 
 <div class="flex justify-between items-center space-x-2 pb-2" bind:this={dropdown}>
-  <!-- Filter Buttons -->
   <div class="flex space-x-2">
     <button
       class={`text-sm px-3 py-1 rounded-md ${selectedFilter === 'all' ? 'bg-blue-400 text-white' : 'bg-gray-600  hover:bg-gray-700 text-gray-300'}`}
@@ -54,7 +52,6 @@
     </button>
   </div>
 
-  <!-- Sort and Filter Dropdown -->
   <div class="relative">
     <button
       class="flex items-center text-sm bg-gray-600 text-gray-300 px-3 py-1 rounded-md hover:bg-gray-700"

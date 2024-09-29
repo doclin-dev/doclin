@@ -22,7 +22,7 @@
   };
 
   const handleLogout = () => {
-    // Add your logout logic here
+    // TODO: Add your logout logic here
   };
 
   onMount(() => {

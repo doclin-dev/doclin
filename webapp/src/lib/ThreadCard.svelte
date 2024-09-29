@@ -17,13 +17,11 @@
   }
 
   function editThread() {
-    // Handle edit action
-    console.log('Edit thread', thread.id);
+    // TODO: Handle edit action
   }
 
   function deleteThread() {
-    // Handle delete action
-    console.log('Delete thread', thread.id);
+    // TODO: Handle delete action
   }
 
   const dropdownOptions = [
