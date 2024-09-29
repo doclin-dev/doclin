@@ -54,7 +54,7 @@
   };
 </script>
 
-<div class="p-6 max-w-6xl m-auto">
+<div class="p-6 w-full max-w-6xl m-auto">
   <div class="bg-gray-800 rounded-lg relative">
     <h1 class="text-2xl font-bold mb-2">{thread.title}</h1>
     <button

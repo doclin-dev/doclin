@@ -19,7 +19,7 @@ export const getOrganizations = async (
   req: Request<ParamsDictionary, OrganizationDTO[], {}>,
   res: Response<OrganizationDTO[]>
 ) => {
-  const userId = req.userId;
+  const userId: number | undefined = req.userId;
 
   if (!userId) {
     throw Error('userId is not defined');
@@ -34,9 +34,9 @@ export const postOrganization = async (
   req: Request<ParamsDictionary, OrganizationDTO, OrganizationCreateDTO>,
   res: Response<OrganizationDTO>
 ) => {
-  const name = DOMPurify.sanitize(req.body.name);
-  const organization = Organization.create({ name: name });
-  const userId = req.userId;
+  const name: string = DOMPurify.sanitize(req.body.name);
+  const organization: Organization = Organization.create({ name: name });
+  const userId: number | undefined = req.userId;
 
   if (!userId) {
     throw Error('userId is not defined');
@@ -52,19 +52,23 @@ export const postOrganization = async (
 
 export const getOrganization = async (
   req: Request<ParamsDictionary, OrganizationDTO, {}, IncludePropertiesQueryDTO>,
-  res: Response
+  res: Response<OrganizationDTO>
 ) => {
   const organizationId: string = req.params.organizationId;
   const includeProperties: boolean = !!req.query.includeProperties;
-
   let organization: Organization;
 
-  if (includeProperties) {
-    organization = await OrganizationRepository.findOrganizationWithPropertiesById(organizationId);
-  } else {
-    organization = await OrganizationRepository.findOrganizationById(organizationId);
-  }
+  try {
+    if (includeProperties) {
+      organization = await OrganizationRepository.findOrganizationWithPropertiesById(organizationId);
+    } else {
+      organization = await OrganizationRepository.findOrganizationById(organizationId);
+    }
 
-  const response: OrganizationDTO = mapOrganizationToOrganizationDTO(organization);
-  res.send(response);
+    const response: OrganizationDTO = mapOrganizationToOrganizationDTO(organization);
+    res.send(response);
+    return;
+  } catch (error) {
+    res.status(500).send();
+  }
 };

@@ -38,7 +38,12 @@ export const postProject = async (
 
 export const getProject = async (req: Request<ParamsDictionary, ProjectDTO, {}>, res: Response<ProjectDTO>) => {
   const projectId: number = parseInt(req.params.projectId);
-  const project: Project = await ProjectRepository.findProjectById(projectId);
-  const response: ProjectDTO = mapProjectToProjectDTO(project);
-  res.send(response);
+  try {
+    const project: Project = await ProjectRepository.findProjectById(projectId);
+    const response: ProjectDTO = mapProjectToProjectDTO(project);
+    res.send(response);
+    return;
+  } catch (error) {
+    res.status(500).send();
+  }
 };

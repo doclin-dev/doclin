@@ -10,7 +10,7 @@
 </script>
 
 <div class="flex items-center justify-between px-4 py-2 border-b border-gray-700">
-  <h1 class="text-lg font-bold text-white">{data.project.name}</h1>
+  <h1 class="text-lg font-bold text-white w-48 truncate">{data.project.name}</h1>
 
   <div class="flex-1 mx-4 max-w-3xl">
     <input
@@ -32,7 +32,7 @@
 </div>
 
 <div class="px-4 pt-4 flex justify-center">
-  <div class="max-w-6xl">
+  <div class="w-full max-w-6xl">
     <FilterMenu />
 
     {#each data.threads as thread}
