@@ -22,7 +22,7 @@
 <li>
   <div class="flex items-center">
     <button
-      class="flex items-center w-full py-2 pr-2 rounded hover:bg-gray-700 text-sm text-left group {item.subItems
+      class="flex items-center w-full py-1.5 my-1 pr-2 rounded text-sm text-left group {item.subItems
         ? ''
         : 'px-4'} {$page.url.pathname === item.href ? 'bg-gray-700' : ''}"
       on:click={onItemClick}
@@ -35,7 +35,7 @@
       {#if item.actions}
         {#each item.actions as action}
           <button
-            class="ml-auto text-blue-400 hover:text-blue-300"
+            class="ml-auto text-blue-400 hover:text-blue-300 hover:bg-gray-700 p-0.5 rounded"
             on:click|preventDefault|stopPropagation={() => goto(action.href)}
           >
             <Icon icon={action.icon} class="h-5 w-5" />
@@ -51,8 +51,8 @@
           <li>
             <a
               href={subItem.href}
-              class="flex items-center w-full py-2 pl-6 pr-4 rounded hover:bg-gray-700 text-sm {$page.url.pathname ===
-              subItem.href
+              class="flex items-center w-full py-1.5 my-0.5 pl-6 pr-4 rounded hover:bg-gray-700 text-sm {$page.url
+                .pathname === subItem.href
                 ? 'bg-gray-700'
                 : ''}"
             >

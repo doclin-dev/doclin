@@ -1,23 +1,37 @@
 import { apiService } from '$lib/apiService';
 import { LAST_VISITED_ORGANIZATION_ID, LAST_VISITED_PROJECT_ID } from '$lib/localStorageKeys';
 import type { ThreadResponseDTO } from '$shared/types/ThreadResponseDTO';
+import { error } from '@sveltejs/kit';
 
 import type { PageLoad } from './$types';
+import type { ApiError } from '$shared/types/ApiError';
+import { goto } from '$app/navigation';
 
 export const load: PageLoad = async ({ params }) => {
   const organizationId = params.organizationId;
   const projectId = parseInt(params.projectId);
   const threadId = parseInt(params.threadId);
 
-  const threadResponse = await apiService.thread.getThread(threadId, projectId, organizationId);
-  const threadDTO: ThreadResponseDTO = threadResponse.data;
+  try {
+    const threadResponse = await apiService.thread.getThread(threadId, projectId, organizationId);
+    const threadDTO: ThreadResponseDTO = threadResponse.data;
 
-  localStorage.setItem(LAST_VISITED_ORGANIZATION_ID, organizationId);
-  localStorage.setItem(LAST_VISITED_PROJECT_ID, projectId.toString());
+    localStorage.setItem(LAST_VISITED_ORGANIZATION_ID, organizationId);
+    localStorage.setItem(LAST_VISITED_PROJECT_ID, projectId.toString());
 
-  return {
-    thread: threadDTO,
-    organizationId: organizationId,
-    projectId: projectId,
-  };
+    return {
+      thread: threadDTO,
+      organizationId: organizationId,
+      projectId: projectId,
+    };
+  } catch (err: unknown) {
+    const apiError = err as ApiError;
+    if (apiError.status === 401) {
+      goto('/login');
+    }
+    if (apiError.status === 403) {
+      error(403, 'You do not have the permission to access this project.');
+    }
+    throw err;
+  }
 };

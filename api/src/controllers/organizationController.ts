@@ -11,6 +11,7 @@ import { OrganizationDTO } from '../../../shared/types/OrganizationDTO';
 import { OrganizationCreateDTO } from '../../../shared/types/OrganizationCreateDTO';
 import { IncludePropertiesQueryDTO } from '../../../shared/types/IncludePropertiesQueryDTO';
 import { ParamsDictionary } from '../types/ParamsDictionary';
+import logger from '../logger';
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
@@ -70,6 +71,7 @@ export const getOrganization = async (
     res.send(response);
     return;
   } catch (error) {
+    logger.error(error);
     res.status(500).send();
   }
 };

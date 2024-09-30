@@ -10,9 +10,8 @@ export const OrganizationRepository = AppDataSource.getRepository(Organization).
   findOrganizationWithPublicProjectsById(organizationId: string): Promise<Organization> {
     return this.createQueryBuilder('organization')
       .leftJoinAndSelect('organization.users', 'user')
-      .leftJoinAndSelect('organization.projects', 'project')
+      .leftJoinAndSelect('organization.projects', 'project', 'project.privateProject = false')
       .where('organization.id = :id', { id: organizationId })
-      .andWhere('project.privateProject = false')
       .getOneOrFail();
   },
 
