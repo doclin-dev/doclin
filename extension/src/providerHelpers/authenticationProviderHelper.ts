@@ -10,6 +10,7 @@ import AllThreadsCacheManager from '../utils/cache/AllThreadsCacheManager';
 import { apiService } from '../apiService';
 import { getExtensionState } from '../utils/extensionState';
 import { UserDTO } from '$shared/types/UserDTO';
+import { ApiError } from '$shared/types/ApiError';
 
 const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github/vscode`);
 
@@ -70,12 +71,20 @@ export const getAuthenticatedUser = async (): Promise<UserDTO | undefined> => {
     return authenticatedUserCache;
   }
 
-  const response = await apiService.auth.getAuthenticatedUser();
-  const user: UserDTO = response?.data;
+  try {
+    const response = await apiService.auth.getAuthenticatedUser();
+    const user: UserDTO = response?.data;
+    await autheticatedUserCacheManger.setAuthenticatedUser(user);
+    return user;
+  } catch (error: unknown) {
+    const axiosError = error as ApiError;
 
-  await autheticatedUserCacheManger.setAuthenticatedUser(user);
+    if (axiosError.status === 401) {
+      return;
+    }
 
-  return user;
+    throw error;
+  }
 };
 
 const setTokenToStorage = async (token: string | null) => {

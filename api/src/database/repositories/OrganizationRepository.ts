@@ -7,7 +7,16 @@ export const OrganizationRepository = AppDataSource.getRepository(Organization).
     return this.findOneByOrFail({ id: id });
   },
 
-  findOrganizationWithPropertiesById(organizationId: string): Promise<Organization> {
+  findOrganizationWithPublicProjectsById(organizationId: string): Promise<Organization> {
+    return this.createQueryBuilder('organization')
+      .leftJoinAndSelect('organization.users', 'user')
+      .leftJoinAndSelect('organization.projects', 'project')
+      .where('organization.id = :id', { id: organizationId })
+      .andWhere('project.privateProject = false')
+      .getOneOrFail();
+  },
+
+  findOrganizationWithAllProjectsById(organizationId: string): Promise<Organization> {
     return this.createQueryBuilder('organization')
       .leftJoinAndSelect('organization.users', 'user')
       .leftJoinAndSelect('organization.projects', 'project')

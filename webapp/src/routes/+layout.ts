@@ -6,7 +6,7 @@ export const ssr = false;
 
 export const load: LayoutLoad = async () => {
   try {
-    const user: UserDTO = await fetchUser();
+    const user: UserDTO | undefined = await fetchUser();
 
     return {
       user: user,

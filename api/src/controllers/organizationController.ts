@@ -56,11 +56,12 @@ export const getOrganization = async (
 ) => {
   const organizationId: string = req.params.organizationId;
   const includeProperties: boolean = !!req.query.includeProperties;
+  const userId: number | undefined = req.userId;
   let organization: Organization;
 
   try {
     if (includeProperties) {
-      organization = await OrganizationRepository.findOrganizationWithPropertiesById(organizationId);
+      organization = await getOrganizationWithProperties(organizationId, userId);
     } else {
       organization = await OrganizationRepository.findOrganizationById(organizationId);
     }
@@ -70,5 +71,15 @@ export const getOrganization = async (
     return;
   } catch (error) {
     res.status(500).send();
+  }
+};
+
+const getOrganizationWithProperties = async (organizationId: string, userId: number | undefined) => {
+  const isUserMember = userId && (await OrganizationRepository.checkUserExistsInOrganization(organizationId, userId));
+
+  if (isUserMember) {
+    return OrganizationRepository.findOrganizationWithAllProjectsById(organizationId);
+  } else {
+    return OrganizationRepository.findOrganizationWithPublicProjectsById(organizationId);
   }
 };

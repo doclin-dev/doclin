@@ -2,7 +2,6 @@
   import type { OrganizationDTO } from '$shared/types/OrganizationDTO';
   import Icon from '@iconify/svelte';
   import checkIcon from '@iconify/icons-mdi/check';
-  import logoutIcon from '@iconify/icons-mdi/logout';
   import chevronDownIcon from '@iconify/icons-mdi/chevron-down';
   import chevronUpIcon from '@iconify/icons-mdi/chevron-up';
   import { onMount } from 'svelte';
@@ -66,17 +65,19 @@
     </button>
     {#if isDropdownOpen}
       <ul class="absolute left-0 right-0 mt-2 bg-gray-700 text-white rounded z-10">
-        <li class="text-xs px-4 pt-2 font-bold">Organizations:</li>
-        {#each $user.organizations as org}
-          <li class="flex items-center justify-between px-4 py-2 hover:bg-gray-600">
-            <button on:click={() => handleOrganizationChange(org)} class="text-left w-full">
-              {org.name}
-            </button>
-            {#if $organization?.id === org.id}
-              <Icon icon={checkIcon} class="h-5 w-5 text-blue-500" />
-            {/if}
-          </li>
-        {/each}
+        {#if $user}
+          <li class="text-xs px-4 pt-2 font-bold">Organizations:</li>
+          {#each $user.organizations as org}
+            <li class="flex items-center justify-between px-4 py-2 hover:bg-gray-600">
+              <button on:click={() => handleOrganizationChange(org)} class="text-left w-full">
+                {org.name}
+              </button>
+              {#if $organization?.id === org.id}
+                <Icon icon={checkIcon} class="h-5 w-5 text-blue-500" />
+              {/if}
+            </li>
+          {/each}
+        {/if}
         <li class="border-t border-gray-600"></li>
         <li class="flex items-center justify-between px-4 py-2 hover:bg-gray-600">
           <button on:click={() => goto('/organization/create')} class="flex items-center w-full text-left">
@@ -85,15 +86,26 @@
           </button>
         </li>
         <li class="border-t border-gray-600"></li>
-        <li class="text-xs px-4 pt-2 font-bold">{$user.name}</li>
-        <li class="flex items-center justify-between px-4 py-2 hover:bg-gray-600">
-          <button
-            on:click={handleLogout}
-            class="flex items-center w-full text-left text-red-400 hover:text-red-300 hover:bg-gray-600"
-          >
-            <span>Logout</span>
-          </button>
-        </li>
+        {#if $user}
+          <li class="text-xs px-4 pt-2 font-bold">{$user.name}</li>
+          <li class="flex items-center justify-between px-4 py-2 hover:bg-gray-600">
+            <button
+              on:click={handleLogout}
+              class="flex items-center w-full text-left text-red-400 hover:text-red-300 hover:bg-gray-600"
+            >
+              <span>Logout</span>
+            </button>
+          </li>
+        {:else}
+          <li class="flex items-center justify-between px-4 py-2 hover:bg-gray-600">
+            <a
+              href="/login"
+              class="flex items-center w-full text-left text-red-400 hover:text-red-300 hover:bg-gray-600"
+            >
+              <span>Login</span>
+            </a>
+          </li>
+        {/if}
       </ul>
     {/if}
   </div>
