@@ -1,0 +1,10 @@
+node_modules
+dist
+.env
+env/
+__pycache__/
+*.env
+*.env.*
+env.*
+.svelte-kit
+out

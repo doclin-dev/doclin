@@ -2,16 +2,17 @@ import * as vscode from 'vscode';
 import { API_BASE_URL, PRODUCTION } from '../envConstants';
 import * as polka from 'polka';
 import { SecretStorageManager } from '../SecretStorageManager';
-import authApi from '../api/authApi';
 import { SecretStorageType } from '../enums';
 import logger from '../utils/logger';
-import { User } from '../types';
 import AuthenticatedUserCacheManager from '../utils/cache/AuthenticatedUserCacheManager';
 import { reloadAndGetExtensionState } from '../utils/extensionState';
 import AllThreadsCacheManager from '../utils/cache/AllThreadsCacheManager';
+import { apiService } from '../apiService';
 import { getExtensionState } from '../utils/extensionState';
+import { UserDTO } from '$shared/types/UserDTO';
+import { ApiError } from '$shared/types/ApiError';
 
-const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github`);
+const AUTH_URL = vscode.Uri.parse(`${API_BASE_URL}/auth/github/vscode`);
 
 const app = polka();
 
@@ -62,7 +63,7 @@ const openApiUrl = (err: Error) => {
   vscode.commands.executeCommand('vscode.open', AUTH_URL);
 };
 
-export const getAuthenticatedUser = async (): Promise<User | undefined> => {
+export const getAuthenticatedUser = async (): Promise<UserDTO | undefined> => {
   const autheticatedUserCacheManger = new AuthenticatedUserCacheManager();
   const authenticatedUserCache = await autheticatedUserCacheManger.getAuthenticatedUser();
 
@@ -70,13 +71,20 @@ export const getAuthenticatedUser = async (): Promise<User | undefined> => {
     return authenticatedUserCache;
   }
 
-  const response = await authApi.getAuthenticatedUser();
-  const payload = response?.data;
-  const user: User = payload?.user;
+  try {
+    const response = await apiService.auth.getAuthenticatedUser();
+    const user: UserDTO = response?.data;
+    await autheticatedUserCacheManger.setAuthenticatedUser(user);
+    return user;
+  } catch (error: unknown) {
+    const axiosError = error as ApiError;
 
-  await autheticatedUserCacheManger.setAuthenticatedUser(user);
+    if (axiosError.status === 401) {
+      return;
+    }
 
-  return user;
+    throw error;
+  }
 };
 
 const setTokenToStorage = async (token: string | null) => {
@@ -94,7 +102,7 @@ export const logout = async () => {
 
 export const registerEmail = async (email: string) => {
   try {
-    await authApi.postUserEmail(email);
+    await apiService.auth.postUserEmail(email);
 
     const authenticatedUserCacheManager = new AuthenticatedUserCacheManager();
     await authenticatedUserCacheManager.clear();

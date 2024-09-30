@@ -1,0 +1,94 @@
+name: 'doclin'
+
+services:
+  api:
+    image: node:20.17.0-alpine
+    build:
+      context: .
+    working_dir: /api
+    command: sh -c "npm i && npm run dev"
+    environment:
+      NODE_ENV: development
+      DB_HOST: database
+      DB_USER: postgres
+      DB_PASS: postgres
+      DB_PORT: 5432
+      DB_NAME: doclin
+      ACCESS_TOKEN_SECRET: random-access-token
+      PYTHON_API_HOST: http://python-api:3001
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./api:/api
+      - ./shared:/shared
+    depends_on:
+      - database
+      - shared
+
+  vscode-extension:
+    image: node:20.17.0-alpine
+    build:
+      context: .
+    working_dir: /extension
+    command: sh -c "npm i && npm run watch"
+    volumes:
+      - ./extension:/extension
+      - ./shared:/shared
+    depends_on:
+      - shared
+
+  webapp:
+    image: node:20.17.0-alpine
+    build:
+      context: .
+    working_dir: /webapp
+    command: sh -c "npm i && npm run dev"
+    environment:
+      NODE_ENV: development
+      PUBLIC_API_URL: http://localhost:3000
+    ports:
+      - '3002:3002'
+    volumes:
+      - ./webapp:/webapp
+      - ./shared:/shared
+
+  database:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: doclin
+    ports:
+      - '5433:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  python-api:
+    build:
+      context: ./python-api
+    command: sh -c "uvicorn main:app --reload --port=3001 --host=0.0.0.0"
+    ports:
+      - '3001:3001'
+    volumes:
+      - ./python-api:/python-api
+
+  shared:
+    image: node:20.17.0-alpine
+    command: npm i
+    volumes:
+      - ./shared:/shared
+    working_dir: /shared
+
+  root:
+    image: node:20.17.0-alpine
+    command: npm i
+    volumes:
+      - ./:/doclin
+    working_dir: /doclin
+
+volumes:
+  postgres-data:

@@ -6,7 +6,7 @@ export const verifyOrganizationAccess = async (req: Request, res: Response, next
   const userId = req.userId;
 
   if (!userId) {
-    res.status(403).send('Unauthenticated');
+    res.status(401).send('Unauthenticated');
     return;
   }
 

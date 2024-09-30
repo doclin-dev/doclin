@@ -5,3 +5,5 @@ extension/out/
 testing-profile
 .env
 extension/.vscode-test/
+__pycache__
+python-api/env

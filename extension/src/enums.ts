@@ -15,12 +15,6 @@ export enum GlobalStateType {
   COPILOT_INDICATORS_MAP_CACHE = 'copilotIndicatorsMapCache',
 }
 
-export enum LogType {
-  INFO = 'info',
-  WARNING = 'warning',
-  ERROR = 'error',
-}
-
 export enum SidebarLoadingStatus {
   UNMOUNTED = 0,
   LOADING = 1,

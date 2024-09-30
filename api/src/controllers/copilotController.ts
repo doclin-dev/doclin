@@ -5,9 +5,12 @@ import OpenAI from 'openai';
 import { getThreadMessageWithSnippet } from '../utils/snippetUtils';
 import { OPENAI_API_KEY } from '../envConstants';
 import { Reply } from '../database/entities/Reply';
-import { CopilotMessage } from '../types/types';
-import { CopilotRole } from '../types/enums';
 import logger from '../logger';
+import { CopilotMessageDTO } from '../../../shared/types/CopilotMessageDTO';
+import { CopilotRole } from '../../../shared/enums/CopilotRole';
+import { ParamsDictionary } from 'src/types/ParamsDictionary';
+import { CopilotRequestDTO } from '../../../shared/types/CopilotRequestDTO';
+import { CopilotResponseDTO } from '../../../shared/types/CopilotResponseDTO';
 
 const SYSTEM_PROMPT = `
     You are an AI assistant helping understanding code using documentation and discussion.
@@ -21,8 +24,11 @@ const openai = new OpenAI({
   apiKey: OPENAI_API_KEY,
 });
 
-export const postPrompt = async (req: Request, res: Response) => {
-  const messages: CopilotMessage[] = req.body.messages;
+export const postPrompt = async (
+  req: Request<ParamsDictionary, CopilotResponseDTO, CopilotRequestDTO>,
+  res: Response
+) => {
+  const messages: CopilotMessageDTO[] = req.body.messages;
   const referToDoclinThreads: boolean = req.body.referToDoclinThreads;
   const referToCodeFile: boolean = req.body.referToCodeFile;
   const activeEditorText: string | undefined = req.body.activeEditorText;
@@ -102,7 +108,7 @@ const getReplyReference = (reply: Reply, index: number, replies: Reply[]): strin
   return `Reply ${index + 1} of ${replies.length}: ${getThreadMessageWithSnippet(reply)}`;
 };
 
-const getResponseFromGPT = async (userPrompt: string, previousMessages: CopilotMessage[]): Promise<string> => {
+const getResponseFromGPT = async (userPrompt: string, previousMessages: CopilotMessageDTO[]): Promise<string> => {
   try {
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-2024-08-06',

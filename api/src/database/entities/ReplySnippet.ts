@@ -20,10 +20,10 @@ export class ReplySnippet extends BaseEntity {
   reply: Reply;
 
   @Column({ type: 'varchar', nullable: true })
-  filePath: string | null;
+  filePath: string;
 
   @Column({ type: 'integer', nullable: true })
-  lineStart: number | null;
+  lineStart: number;
 
   replyId: number;
 
