@@ -13,19 +13,26 @@ import { sendMentionEmailNotification } from './emailNotificationController';
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import { Request, Response } from 'express';
-import { RequestSnippetBlot } from '../types/types';
 import { Thread } from '../database/entities/Thread';
 import { ProjectRepository } from '../database/repositories/ProjectRepository';
 import { Project } from '../database/entities/Project';
+import { SnippetRequestDTO } from '../../../shared/types/SnippetRequestDTO';
+import { ParamsDictionary } from 'src/types/ParamsDictionary';
+import { ReplyResponseDTO } from '../../../shared/types/ReplyResponseDTO';
+import { ReplyCreateDTO } from '../../../shared/types/ReplyCreateDTO';
+import { ThreadDeleteResponseDTO } from '../../../shared/types/ThreadDeleteResponseDTO';
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
-export const postReply = async (req: Request, res: Response) => {
+export const postReply = async (
+  req: Request<ParamsDictionary, ReplyResponseDTO, ReplyCreateDTO>,
+  res: Response<ReplyResponseDTO>
+) => {
   const threadId: number = parseInt(req.params.threadId);
-  const replyMessage: string = DOMPurify.sanitize(req.body.replyMessage);
+  const replyMessage: string = DOMPurify.sanitize(req.body.message);
   const anonymous: boolean = req.body.anonymous;
-  const snippets: RequestSnippetBlot[] = req.body.snippets;
+  const snippets: SnippetRequestDTO[] = req.body.snippets;
   const delta: any = req.body.delta;
   const mentionedUserIds: number[] = req.body.mentionedUserIds;
   const userId: number | undefined = req.userId;
@@ -34,8 +41,7 @@ export const postReply = async (req: Request, res: Response) => {
   const projectId: number = parseInt(req.params.projectId as string);
 
   if (!thread) {
-    res.send({ reply: null });
-    return;
+    throw new Error('Thread do not exist');
   }
 
   const reply = await Reply.create({
@@ -53,8 +59,8 @@ export const postReply = async (req: Request, res: Response) => {
   sendEmailNotification(thread, userId, mentionedUserIds, replyMessage, snippets);
   const replyResponse: Reply = await ReplyRepository.findReplyWithPropertiesById(reply.id);
   const project: Project = await ProjectRepository.findProjectById(projectId);
-  const response = mapReplyResponse(replyResponse, project, userId);
-  res.send({ reply: response });
+  const response: ReplyResponseDTO = mapReplyResponse(replyResponse, project, userId);
+  res.send(response);
 };
 
 const sendEmailNotification = async (
@@ -62,7 +68,7 @@ const sendEmailNotification = async (
   userId: number | undefined,
   mentionedUserIds: number[],
   replyMessage: string,
-  snippets: RequestSnippetBlot[]
+  snippets: SnippetRequestDTO[]
 ) => {
   if (!userId) {
     return;
@@ -84,7 +90,7 @@ const sendEmailNotification = async (
   }
 };
 
-const createSnippetEntitiesFromReplyMessage = async (replyMessage: string, snippetblots: RequestSnippetBlot[]) => {
+const createSnippetEntitiesFromReplyMessage = async (replyMessage: string, snippetblots: SnippetRequestDTO[]) => {
   let updatedReplyMessage: string = '';
   updatedReplyMessage = replyMessage.replace(MULTIPLE_LINE_BREAK_REGEX, SINGLE_LINE_BREAK);
   const snippetEntities = [];
@@ -104,22 +110,27 @@ const createSnippetEntitiesFromReplyMessage = async (replyMessage: string, snipp
   return { updatedReplyMessage, snippetEntities };
 };
 
-export const getReplies = async (req: Request, res: Response) => {
+export const getReplies = async (
+  req: Request<ParamsDictionary, ReplyResponseDTO[], {}>,
+  res: Response<ReplyResponseDTO[]>
+) => {
   const threadId: number = parseInt(req.params.threadId);
   const projectId: number = parseInt(req.params.projectId as string);
   const userId: number | undefined = req.userId;
 
   const replies: Reply[] = await ReplyRepository.findRepliesWithPropertiesByThreadId(threadId);
   const project: Project = await ProjectRepository.findProjectById(projectId);
-  const response = replies.map((reply) => mapReplyResponse(reply, project, userId));
-
-  res.send({ replies: response });
+  const response: ReplyResponseDTO[] = replies.map((reply) => mapReplyResponse(reply, project, userId));
+  res.send(response);
 };
 
-export const updateReplyMessage = async (req: Request, res: Response) => {
+export const updateReplyMessage = async (
+  req: Request<ParamsDictionary, ReplyResponseDTO, ReplyCreateDTO>,
+  res: Response<ReplyResponseDTO>
+) => {
   const replyId: number = parseInt(req.params.replyId as string);
   const replyMessage: string = DOMPurify.sanitize(req.body.message);
-  const snippets: RequestSnippetBlot[] = req.body.snippets;
+  const snippets: SnippetRequestDTO[] = req.body.snippets;
   const delta: any = req.body.delta;
   const projectId: number = parseInt(req.params.projectId as string);
   const userId: number | undefined = req.userId;
@@ -138,19 +149,16 @@ export const updateReplyMessage = async (req: Request, res: Response) => {
 
   const replyResponse: Reply = await ReplyRepository.findReplyWithPropertiesById(replyId);
   const project: Project = await ProjectRepository.findProjectById(projectId);
-  const response = mapReplyResponse(replyResponse, project, userId);
-
-  res.send({ reply: response });
+  const response: ReplyResponseDTO = mapReplyResponse(replyResponse, project, userId);
+  res.send(response);
 };
 
-export const deleteReply = async (req: Request, res: Response) => {
+export const deleteReply = async (req: Request<ParamsDictionary, {}>, res: Response<ThreadDeleteResponseDTO>) => {
   const replyId: number = parseInt(req.params.replyId as string);
   const reply: Reply = await ReplyRepository.findReplyWithPropertiesById(replyId);
   await reply.remove();
 
   res.send({
-    reply: {
-      id: replyId,
-    },
+    id: replyId,
   });
 };

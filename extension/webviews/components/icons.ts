@@ -11,8 +11,9 @@ import file from '@iconify/icons-mdi/file-document';
 import send from '@iconify/icons-mdi/send';
 import trash from '@iconify/icons-mdi/trash';
 import search from '@iconify/icons-mdi/search';
+import type { IconifyIcon } from '@iconify/svelte';
 
-export const iconsMap = {
+export const iconsMap: { [key: string]: IconifyIcon } = {
   reply: replyOutline,
   reload: reloadIcon,
   'context-menu': dotsHorizontal,

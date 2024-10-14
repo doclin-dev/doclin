@@ -41,31 +41,23 @@ Doclin is still in a very early stage. If you like the idea, please star the rep
 
 ### Run the server
 
-1. Setup Database
-   1. Install Postgres locally
-   2. Create a database named "doclin"
+1. Install docker version >= 27.1.1
 2. Fill up the credentials in .env file
-   1. DB_HOST and DB_PASS - These are credentials for your postgres server.
-   2. ACCESS_TOKEN_SECRET - This is used to sign the JWT tokens. Use a random string for this.
-   3. GITHUB_CLIENT_SECRET and GITHUB_CLIENT_ID - These are used for the github login. Get these by creating a Github app.
-   4. SENDGRID_API_KEY - Optional. This is used for email notifications when someone is tagged on a thread. Get your own api key from Sendgrid.
-   5. OPENAI_API_KEY - Optional. This is used for the copilot.
+   1. GITHUB_CLIENT_SECRET and GITHUB_CLIENT_ID - These are used for the github login. Get these by creating a Github app.
+   2. SENDGRID_API_KEY - This is used for email notifications when someone is tagged on a thread. Get your own api key from Sendgrid.
+   3. OPENAI_API_KEY - This is used for the copilot.
 
 ```
-cd api
-npm install
-npm run watch
-npm run dev
+docker compose up
 ```
 
 ### Run the extension
 
-```
-cd extension
-npm install
-```
-
 On Visual Studio Code, open the repository. Then on the top bar, select Run, then Start Debugging (F5).
+
+### Run the webapp
+
+Visit http://localhost:3002
 
 ## Contributing
 

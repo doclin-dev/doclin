@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
-import * as copilotApi from '../api/copilotApi';
 import logger from '../utils/logger';
 import { readDoclinFile } from './doclinFile/readDoclinFile';
-import { CopilotMessage } from '../types';
+import { apiService } from '../apiService';
+import { CopilotMessageDTO } from '$shared/types/CopilotMessageDTO';
 
 export const postCopilotPrompt = async (webviewMessage: {
-  messages: CopilotMessage[];
+  messages: CopilotMessageDTO[];
   referToDoclinThreads: boolean;
   referToCodeFile: boolean;
 }) => {
@@ -20,9 +20,7 @@ export const postCopilotPrompt = async (webviewMessage: {
 
   try {
     const activeEditorText = vscode.window.activeTextEditor?.document.getText();
-    const response = await copilotApi.postCopilotPrompt({
-      organizationId,
-      projectId,
+    const response = await apiService.copilot.postCopilotPrompt(organizationId, projectId, {
       activeEditorText,
       ...webviewMessage,
     });

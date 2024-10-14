@@ -1,8 +1,8 @@
 import { Thread } from '../entities/Thread';
 import { AppDataSource } from '../dataSource';
-import { createEmbedding } from '../../utils/embedding';
 import { Brackets, SelectQueryBuilder } from 'typeorm';
 import { getThreadMessageWithSnippet } from '../../utils/snippetUtils';
+import { createEmbedding } from '../../embedding';
 
 export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
   async findThreadByFilePathAndProjectId(filePath: string, projectId: number): Promise<Thread[]> {
@@ -43,11 +43,14 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
 
   async findThreadWithPropertiesByThreadId(threadId: number): Promise<Thread> {
     return await this.createQueryBuilder('thread')
-      .leftJoinAndSelect('thread.snippets', 'snippet')
-      .leftJoinAndSelect('thread.user', 'user')
+      .leftJoinAndSelect('thread.snippets', 'threadSnippet')
+      .leftJoinAndSelect('thread.user', 'threadUser')
       .leftJoinAndSelect('thread.replies', 'reply')
+      .leftJoinAndSelect('reply.snippets', 'replySnippet')
+      .leftJoinAndSelect('reply.user', 'replyUser')
       .andWhere('thread.id = :threadId', { threadId })
       .loadRelationCountAndMap('thread.replyCount', 'thread.replies')
+      .orderBy('reply.id', 'ASC')
       .getOneOrFail();
   },
 
@@ -116,15 +119,19 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
   },
 
   async updateSearchEmbeddingsForThread(thread: Thread) {
-    let searchText = thread.title ?? '';
-    searchText += getThreadMessageWithSnippet(thread) ?? '';
-    searchText += thread.user.name ?? '';
+    try {
+      let searchText = thread.title ?? '';
+      searchText += getThreadMessageWithSnippet(thread) ?? '';
+      searchText += thread.user.name ?? '';
 
-    thread.replies.forEach((reply) => {
-      searchText += getThreadMessageWithSnippet(reply) ?? '';
-    });
+      thread.replies.forEach((reply) => {
+        searchText += getThreadMessageWithSnippet(reply) ?? '';
+      });
 
-    thread.embedding = await createEmbedding(searchText);
-    thread.save();
+      thread.embedding = await createEmbedding(searchText);
+      thread.save();
+    } catch (e) {
+      console.error('Catched error in updateSearchEmbeddingsForThread');
+    }
   },
 });

@@ -1,10 +1,11 @@
-import projectApi from '../api/projectApi';
 import { getCurrentOrganizationId } from './organizationProviderHelper';
 import { readDoclinFile } from './doclinFile/readDoclinFile';
 import { writeDoclinFile } from './doclinFile/writeDoclinFile';
 import logger from '../utils/logger';
-import { DoclinFile, Project } from '../types';
+import { DoclinFile } from '../types';
 import ProjectCacheMananger from '../utils/cache/ProjectCacheManager';
+import { ProjectDTO } from '$shared/types/ProjectDTO';
+import { apiService } from '../apiService';
 
 const UNAUTHORIZED = {
   unauthorized: true,
@@ -19,7 +20,7 @@ export const getCurrentProjectId = async (): Promise<number | null> => {
 export const getProject = async (
   organizationId: string,
   projectId: number
-): Promise<Project | { unauthorized: boolean }> => {
+): Promise<ProjectDTO | { unauthorized: boolean }> => {
   const projectCacheManager = new ProjectCacheMananger();
   const cachedProject = await projectCacheManager.get(projectId);
 
@@ -33,11 +34,10 @@ export const getProject = async (
 const apiFetchProject = async (
   organizationId: string,
   projectId: number
-): Promise<Project | { unauthorized: boolean }> => {
+): Promise<ProjectDTO | { unauthorized: boolean }> => {
   try {
-    const response = await projectApi.getProject(projectId, organizationId);
-    const payload = response?.data;
-    const project = payload?.project;
+    const response = await apiService.project.getProject(projectId, organizationId);
+    const project: ProjectDTO = response?.data;
 
     const projectCacheManager = new ProjectCacheMananger();
     await projectCacheManager.set(project.id, project);
@@ -55,9 +55,8 @@ export const getExistingProjects = async () => {
     return { projects: null };
   }
 
-  const response = await projectApi.getProjects(organizationId);
-  const payload = response?.data;
-  const projects = payload?.projects;
+  const response = await apiService.project.getProjects(organizationId);
+  const projects: ProjectDTO[] = response?.data;
 
   return projects;
 };
@@ -69,9 +68,8 @@ export const postProject = async ({ name, privateProject }: { name: string; priv
     return { project: null };
   }
 
-  const response = await projectApi.postProject(organizationId, name, privateProject);
-  const payload = response?.data;
-  const project = payload?.project;
+  const response = await apiService.project.postProject(organizationId, name, privateProject);
+  const project: ProjectDTO = response?.data;
 
   const projectCacheManager = new ProjectCacheMananger();
   await projectCacheManager.set(project.id, project);

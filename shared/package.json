@@ -1,0 +1,13 @@
+{
+  "name": "doclin-shared",
+  "version": "0.0.1",
+  "description": "Shared files between webapp and vscode extension",
+  "dependencies": {
+    "axios": "^1.7.5",
+    "typescript": "^5.5.4"
+  },
+  "scripts": {
+    "watch": "tsc -w",
+    "build": "tsc"
+  }
+}

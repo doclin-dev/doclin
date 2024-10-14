@@ -1,18 +1,18 @@
-import loggerApi from '../api/loggerApi';
-import { LogType } from '../enums';
 import * as vscode from 'vscode';
 import { PRODUCTION } from '../envConstants';
+import { apiService } from '../apiService';
+import { LogType } from '../../../shared/enums/LogType';
 
 const info = async (message: string, displayToUser: boolean = false): Promise<void> => {
   if (!PRODUCTION) {
-    console.log(message);
+    console.info(message);
   }
 
   if (displayToUser) {
     vscode.window.showInformationMessage('Doclin: ' + message);
   }
 
-  await loggerApi.postLog(LogType.INFO, message);
+  await apiService.logger.postLog(LogType.INFO, message);
 };
 
 const warning = async (message: string, displayToUser: boolean = false): Promise<void> => {
@@ -24,7 +24,7 @@ const warning = async (message: string, displayToUser: boolean = false): Promise
     vscode.window.showWarningMessage('Doclin: ' + message);
   }
 
-  await loggerApi.postLog(LogType.WARNING, message);
+  await apiService.logger.postLog(LogType.WARNING, message);
 };
 
 const error = async (message: string, displayToUser: boolean = false): Promise<void> => {
@@ -36,7 +36,7 @@ const error = async (message: string, displayToUser: boolean = false): Promise<v
     vscode.window.showErrorMessage('Doclin: ' + message);
   }
 
-  await loggerApi.postLog(LogType.ERROR, message);
+  await apiService.logger.postLog(LogType.ERROR, message);
 };
 
 export default {

@@ -1,0 +1,8 @@
+@import './lib/style/quill-1.3.6-snow.css';
+@import './lib/style/customQuillEditor.css';
+@import './lib/style/quillMention.css';
+@import './lib/style/highlight-atom-one-dark.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

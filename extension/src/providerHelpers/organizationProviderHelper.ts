@@ -1,27 +1,26 @@
-import organizationApi from '../api/organizationApi';
 import { readDoclinFile } from './doclinFile/readDoclinFile';
 import { writeDoclinFile } from './doclinFile/writeDoclinFile';
 import logger from '../utils/logger';
-import { DoclinFile, Organization, User } from '../types';
+import { DoclinFile } from '../types';
 import OrganizationCacheManager from '../utils/cache/OrganizationCacheManager';
+import { OrganizationDTO } from '$shared/types/OrganizationDTO';
+import { apiService } from '../apiService';
+import { UserDTO } from '$shared/types/UserDTO';
 
 const UNAUTHORIZED = {
   unauthorized: true,
 };
 
 export const getExistingOrganizations = async () => {
-  const response = await organizationApi.getOrganizations();
-  const payload = response?.data;
-  const organizations = payload?.organizations;
-
+  const response = await apiService.organization.getOrganizations();
+  const organizations: OrganizationDTO[] = response?.data;
   return organizations;
 };
 
 export const postOrganization = async ({ name }: { name: string }) => {
   try {
-    const response = await organizationApi.postOrganization(name);
-    const payload = response?.data;
-    const organization: Organization = payload?.organization;
+    const response = await apiService.organization.postOrganization(name);
+    const organization: OrganizationDTO = response?.data;
 
     const organizationCacheManager = new OrganizationCacheManager();
     await organizationCacheManager.set(organization.id, organization);
@@ -40,7 +39,7 @@ export const getCurrentOrganizationId = async (): Promise<string | null> => {
   return fileJSON?.organizationId;
 };
 
-export const getOrganization = async (organizationId: string): Promise<Organization | { unauthorized: boolean }> => {
+export const getOrganization = async (organizationId: string): Promise<OrganizationDTO | { unauthorized: boolean }> => {
   const organizationCacheManager = new OrganizationCacheManager();
   const cachedOrganization = await organizationCacheManager.get(organizationId);
 
@@ -48,18 +47,13 @@ export const getOrganization = async (organizationId: string): Promise<Organizat
     return cachedOrganization;
   }
 
-  try {
-    return apiFetchOrganization(organizationId);
-  } catch {
-    return UNAUTHORIZED;
-  }
+  return apiFetchOrganization(organizationId);
 };
 
 const apiFetchOrganization = async (organizationId: string) => {
   try {
-    const response = await organizationApi.getOrganization(organizationId);
-    const payload = response?.data;
-    const organization: Organization = payload?.organization;
+    const response = await apiService.organization.getOrganizationWithProperties(organizationId);
+    const organization: OrganizationDTO = response?.data;
 
     const organizationCacheManager = new OrganizationCacheManager();
     await organizationCacheManager.set(organization.id, organization);
@@ -84,16 +78,16 @@ export const storeOrganizationId = async (organizationId: string) => {
   }
 };
 
-export const getCurrentOrganizationUsers = async (): Promise<User | undefined> => {
+export const getCurrentOrganizationUsers = async (): Promise<UserDTO[]> => {
   const organizationId = await getCurrentOrganizationId();
 
   if (!organizationId) {
-    return;
+    return [];
   }
 
-  const response = await organizationApi.getOrganizationUsers(organizationId);
-  const payload = response?.data;
-  const members = payload?.organization?.members;
+  const response = await apiService.organization.getOrganizationWithProperties(organizationId);
+  const organization: OrganizationDTO = response?.data;
+  const members: UserDTO[] = organization.members;
 
   return members;
 };
