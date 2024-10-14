@@ -9,6 +9,9 @@
   import { user } from '../stores/user';
   import plusIcon from '@iconify/icons-mdi/plus';
   import { fetchOrganization, organization } from '$lib/stores/organization';
+  import { API_URL } from '../../envConstants';
+  import { apiService } from '$lib/apiService';
+  import { error } from '@sveltejs/kit';
 
   let isDropdownOpen = false;
 
@@ -20,8 +23,13 @@
     isDropdownOpen = false;
   };
 
-  const handleLogout = () => {
-    // TODO: Add your logout logic here
+  const handleLogout = async () => {
+    const response = await apiService.auth.webLogout();
+    if (response.status === 200) {
+      window.location.reload();
+    } else {
+      error(500, 'Error during logout');
+    }
   };
 
   onMount(() => {

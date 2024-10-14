@@ -1,8 +1,5 @@
 <script lang="ts">
-  import '$lib/style/quill-1.3.6-snow.css';
-  import '$lib/style/customQuillEditor.css';
-  import '$lib/style/quillMention.css';
-  import ReplyCard from '$lib/ReplyCard.svelte';
+  import ReplyCard from './ReplyCard.svelte';
   import Icon from '@iconify/svelte';
   import closeIcon from '@iconify/icons-mdi/close';
   import type { PageData } from './$types';
@@ -11,16 +8,19 @@
   import type { ReplyCreateDTO } from '$shared/types/ReplyCreateDTO';
   import { apiService } from '$lib/apiService';
   import type { ReplyResponseDTO } from '$shared/types/ReplyResponseDTO';
+  import moment from 'moment';
 
   export let data: PageData;
   const thread = data.thread;
   let replies = thread.replies;
-
   let textEditor: TextEditor;
   let anonymous: boolean;
+  let threadCreationTime: string;
 
   onMount(() => {
     textEditor = new TextEditor('#textEditor', data.organization?.members);
+    updateDate();
+    setInterval(() => updateDate(), 60000);
   });
 
   const submitReply = async () => {
@@ -51,6 +51,10 @@
       return `${count} reply`;
     }
   };
+
+  const updateDate = () => {
+    threadCreationTime = moment.utc(thread.createdAt).fromNow();
+  };
 </script>
 
 <div class="p-6 w-full max-w-6xl m-auto">
@@ -63,7 +67,7 @@
       <Icon icon={closeIcon} class="w-6 h-6" />
     </button>
 
-    <p class="text-sm">{thread.username} {new Date(thread.createdAt).toLocaleDateString()}</p>
+    <p class="text-xs text-gray-300"><span class="font-bold">{thread.username}</span> {threadCreationTime}</p>
     <p class="mt-4">{@html thread.message}</p>
   </div>
 

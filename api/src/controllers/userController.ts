@@ -46,7 +46,7 @@ export const postUserEmail = async (req: Request, res: Response) => {
     await user.save();
 
     logger.info('User email has been successfully registered.');
-    res.send({ email });
+    res.send({ user });
   } catch (error) {
     logger.error(`User email wasn't resgitered. error: ${error}`);
   }

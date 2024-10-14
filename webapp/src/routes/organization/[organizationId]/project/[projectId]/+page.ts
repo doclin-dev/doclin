@@ -7,16 +7,14 @@ import type { PageLoad } from './$types';
 import type { ApiError } from '$shared/types/ApiError';
 import { goto } from '$app/navigation';
 
-export const load: PageLoad = async ({ params }) => {
-  const organizationId = params.organizationId;
-  const projectId = parseInt(params.projectId);
+export const load: PageLoad = async ({ params, url }) => {
+  const organizationId: string = params.organizationId;
+  const projectId: number = parseInt(params.projectId);
+  const searchQuery: string | null = url.searchParams.get('search');
 
   try {
     const projectResponse = await apiService.project.getProject(projectId, organizationId);
     const projectDTO: ProjectDTO = projectResponse.data;
-
-    const threadResponse = await apiService.thread.getAllThreads(organizationId, projectId);
-    const threadDTOs: ThreadResponseDTO[] = threadResponse.data;
 
     localStorage.setItem(LAST_VISITED_ORGANIZATION_ID, organizationId);
     localStorage.setItem(LAST_VISITED_PROJECT_ID, projectId.toString());
@@ -24,7 +22,7 @@ export const load: PageLoad = async ({ params }) => {
     return {
       organizationId: organizationId,
       project: projectDTO,
-      threads: threadDTOs,
+      threads: await fetchThreads(organizationId, projectId, searchQuery),
     };
   } catch (err: unknown) {
     const apiError = err as ApiError;
@@ -35,5 +33,19 @@ export const load: PageLoad = async ({ params }) => {
       error(403, 'You do not have the permission to access this project.');
     }
     throw err;
+  }
+};
+
+const fetchThreads = async (
+  organizationId: string,
+  projectId: number,
+  searchQuery: string | null
+): Promise<ThreadResponseDTO[]> => {
+  if (searchQuery) {
+    const threadResponse = await apiService.thread.searchThreads(searchQuery, projectId, organizationId);
+    return threadResponse.data;
+  } else {
+    const threadResponse = await apiService.thread.getAllThreads(organizationId, projectId);
+    return threadResponse.data;
   }
 };

@@ -43,9 +43,10 @@ export const ThreadRepository = AppDataSource.getRepository(Thread).extend({
 
   async findThreadWithPropertiesByThreadId(threadId: number): Promise<Thread> {
     return await this.createQueryBuilder('thread')
-      .leftJoinAndSelect('thread.snippets', 'snippet')
+      .leftJoinAndSelect('thread.snippets', 'threadSnippet')
       .leftJoinAndSelect('thread.user', 'threadUser')
       .leftJoinAndSelect('thread.replies', 'reply')
+      .leftJoinAndSelect('reply.snippets', 'replySnippet')
       .leftJoinAndSelect('reply.user', 'replyUser')
       .andWhere('thread.id = :threadId', { threadId })
       .loadRelationCountAndMap('thread.replyCount', 'thread.replies')

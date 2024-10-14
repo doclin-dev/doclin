@@ -180,12 +180,14 @@ export const deleteThread = async (req: Request<ParamsDictionary, {}>, res: Resp
 };
 
 export const searchThreads = async (
-  req: Request<ParamsDictionary, ThreadResponseDTO[], ThreadSearchDTO>,
+  req: Request<ParamsDictionary, ThreadResponseDTO[]>,
   res: Response<ThreadResponseDTO[]>
 ) => {
-  const searchText: string = DOMPurify.sanitize(req.body.searchText);
+  const searchText: string = DOMPurify.sanitize(req.query.searchText as string);
   const projectId: number = parseInt(req.params.projectId as string);
   const userId: number | undefined = req.userId;
+
+  console.log(req.query.searchText);
 
   let searchResults: Array<Thread> = [];
 

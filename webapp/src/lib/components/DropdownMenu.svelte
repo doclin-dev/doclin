@@ -39,7 +39,7 @@
       {#each options as { label, action }}
         <li>
           <button
-            on:click={() => {
+            on:click|preventDefault={() => {
               action();
               isOpen = false;
             }}

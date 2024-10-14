@@ -79,13 +79,13 @@ export class ThreadApiService extends AbstracApiService {
     projectId: number,
     organizationId: string
   ): Promise<AxiosResponse<ThreadResponseDTO[]>> {
-    const data = {
+    const params = {
       searchText: searchText,
     };
 
     const baseThreadUrl = this.getBaseThreadUrl(organizationId, projectId);
     const response: AxiosResponse<ThreadResponseDTO[]> = await this.axiosInstance.get(`${baseThreadUrl}/search`, {
-      data,
+      params,
     });
     return response;
   }

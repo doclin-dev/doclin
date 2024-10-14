@@ -43,8 +43,9 @@
     "@iconify/icons-mdi": "^1.2.48",
     "@iconify/svelte": "^4.0.2",
     "cookie": "^0.6.0",
+    "highlight.js": "^11.8.0",
+    "moment": "^2.30.1",
     "quill": "^1.3.7",
-    "quill-mention": "^4.1.0",
-    "highlight.js": "^11.8.0"
+    "quill-mention": "^4.1.0"
   }
 }

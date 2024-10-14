@@ -2,7 +2,7 @@ import express from 'express';
 import passport from 'passport';
 import { getCurrentUser, postUserEmail } from '../controllers/userController';
 import { setUserIdOnReq, verifyAuthentication } from '../middlewares/authenticationMiddleware';
-import { vscodeGithubCallback, webappGithubCallback } from '../controllers/githubAuthController';
+import { webLogout, vscodeGithubCallback, webappGithubCallback } from '../controllers/githubAuthController';
 import { organizationRouter } from './organizationRouter';
 import { redeemInvitation } from '../controllers/invitationController';
 import { log } from '../controllers/loggerController';
@@ -28,6 +28,7 @@ router.get(
 );
 router.get('/auth/user', getCurrentUser);
 router.post('/auth/user', verifyAuthentication, postUserEmail);
+router.post('/auth/user/webLogout', verifyAuthentication, webLogout);
 router.post('/redeemInvitation', verifyAuthentication, redeemInvitation);
 router.post('/log', log);
 

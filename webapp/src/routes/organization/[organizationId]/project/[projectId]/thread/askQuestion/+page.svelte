@@ -1,7 +1,4 @@
 <script lang="ts">
-  import '$lib/style/quill-1.3.6-snow.css';
-  import '$lib/style/customQuillEditor.css';
-  import '$lib/style/quillMention.css';
   import { onMount } from 'svelte';
   import Icon from '@iconify/svelte';
   import closeIcon from '@iconify/icons-mdi/close';
@@ -11,6 +8,7 @@
   import { apiService } from '$lib/apiService';
   import type { ThreadCreateDTO } from '$shared/types/ThreadCreateDTO';
   import type { PageData } from './$types';
+  import { user } from '$lib/stores/user';
 
   export let data: PageData;
   let organizationId: string = $page.params.organizationId;
@@ -22,6 +20,11 @@
   const projectUrl = `/organization/${organizationId}/project/${projectId}`;
 
   onMount(() => {
+    if (!$user) {
+      goto('/login');
+      return;
+    }
+
     textEditor = new TextEditor('#textEditor', data.organization?.members);
   });
 
@@ -48,7 +51,7 @@
 </script>
 
 <div class="flex flex-col gap-y-4 items-center justify-center">
-  <div class="flex flex-col gap-y-4 w-full max-w-4xl bg-gray-800 rounded-lg p-6">
+  <div class="flex flex-col gap-y-4 w-full max-w-6xl bg-gray-800 rounded-lg p-6">
     <div class="relative">
       <button
         on:click={goBack}
