@@ -3,11 +3,11 @@
   import type { ThreadResponseDTO } from '$shared/types/ThreadResponseDTO';
   import moment from 'moment';
   import { onMount } from 'svelte';
+  import { lastFocusedThread } from '$lib/stores/lastFocusedThread';
 
   export let thread: ThreadResponseDTO;
   export let organizationId: string;
   export let projectId: number;
-  export let deleteThread: (threadId: number) => void;
   let lastReplied: string;
   let threadCreationTime: string;
 
@@ -27,24 +27,21 @@
     return cleanedText.length > length ? cleanedText.slice(0, length) + '...' : cleanedText;
   };
 
-  const editThread = () => {
-    // TODO: Handle editing
-  };
-
-  const dropdownOptions = [
-    { label: 'Edit', action: editThread },
-    { label: 'Delete', action: () => deleteThread(thread.id) },
-  ];
-
   const updateDate = () => {
     lastReplied = moment.utc(thread.lastReplied).fromNow();
     threadCreationTime = moment.utc(thread.createdAt).fromNow();
+  };
+
+  const handleFocus = (id: number) => {
+    lastFocusedThread.set(id);
   };
 </script>
 
 <a
   href={`/organization/${organizationId}/project/${projectId}/thread/${thread.id}`}
-  class="block p-4 hover:bg-gray-700 transition"
+  class="block p-4 hover:bg-gray-700 focus:bg-gray-700 transition"
+  on:focus={() => handleFocus(thread.id)}
+  id={thread.id.toString()}
 >
   <div class="flex justify-between items-center">
     <div class="text-xs text-gray-300">
@@ -57,8 +54,6 @@
       {#if thread.filePath}
         <span class="bg-gray-700 text-xs text-gray-100 px-2 py-1 rounded">{thread.filePath}</span>
       {/if}
-
-      <DropdownMenu options={dropdownOptions} />
     </div>
   </div>
 

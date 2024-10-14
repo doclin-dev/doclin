@@ -70,7 +70,6 @@
         bind:value={title}
         placeholder="Enter your thread title"
         class="w-full p-3 bg-gray-700 text-gray-100 rounded-md border border-gray-600 focus:outline-none"
-        required
       />
     </div>
 

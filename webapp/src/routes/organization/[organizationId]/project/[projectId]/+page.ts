@@ -23,6 +23,7 @@ export const load: PageLoad = async ({ params, url }) => {
       organizationId: organizationId,
       project: projectDTO,
       threads: await fetchThreads(organizationId, projectId, searchQuery),
+      searchQuery: searchQuery,
     };
   } catch (err: unknown) {
     const apiError = err as ApiError;

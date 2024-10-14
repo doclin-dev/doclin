@@ -9,6 +9,9 @@
   import { apiService } from '$lib/apiService';
   import type { ReplyResponseDTO } from '$shared/types/ReplyResponseDTO';
   import moment from 'moment';
+  import { goto } from '$app/navigation';
+  import { error } from '@sveltejs/kit';
+  import DropdownMenu from '$lib/components/DropdownMenu.svelte';
 
   export let data: PageData;
   const thread = data.thread;
@@ -55,17 +58,39 @@
   const updateDate = () => {
     threadCreationTime = moment.utc(thread.createdAt).fromNow();
   };
+
+  const editThread = () => {
+    // TODO: Handle editing
+  };
+
+  const deleteThread = async (threadId: number) => {
+    const response = await apiService.thread.deleteThread(data.organizationId, data.projectId, threadId);
+    if (response.status === 200) {
+      goto(`/organization/${data.organizationId}/project/${data.projectId}`);
+    } else {
+      error(response.status, 'Could not delete thread');
+    }
+  };
+
+  const dropdownOptions = [
+    { label: 'Edit', action: editThread },
+    { label: 'Delete', action: () => deleteThread(thread.id) },
+  ];
 </script>
 
 <div class="p-6 w-full max-w-6xl m-auto">
   <div class="bg-gray-800 rounded-lg relative">
-    <h1 class="text-2xl font-bold mb-2">{thread.title}</h1>
-    <button
-      on:click={goBack}
-      class="absolute top-1 right-1 text-gray-300 hover:bg-gray-700 rounded p-1 transition duration-200"
-    >
-      <Icon icon={closeIcon} class="w-6 h-6" />
-    </button>
+    <div class="text-right"></div>
+
+    <div class="flex justify-between items-end mb-2 space-x-2">
+      <h1 class="text-2xl font-bold">{thread.title}</h1>
+      <div class="flex items-center">
+        <DropdownMenu options={dropdownOptions} />
+        <button on:click={goBack} class="text-gray-300 hover:bg-gray-700 rounded p-1 transition duration-200">
+          <Icon icon={closeIcon} class="w-6 h-6" />
+        </button>
+      </div>
+    </div>
 
     <p class="text-xs text-gray-300"><span class="font-bold">{thread.username}</span> {threadCreationTime}</p>
     <p class="mt-4">{@html thread.message}</p>

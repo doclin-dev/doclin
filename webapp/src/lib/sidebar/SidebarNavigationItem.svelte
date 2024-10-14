@@ -24,7 +24,7 @@
     <button
       class="flex items-center w-full py-1.5 my-1 pr-2 rounded text-sm text-left group {item.subItems
         ? ''
-        : 'px-4'} {$page.url.pathname === item.href ? 'bg-gray-700' : ''}"
+        : 'px-4'} {$page.url.pathname.startsWith(item.href || '') ? 'bg-gray-700' : ''}"
       on:click={onItemClick}
     >
       {#if item.subItems}
@@ -51,8 +51,9 @@
           <li>
             <a
               href={subItem.href}
-              class="flex items-center w-full py-1.5 my-0.5 pl-6 pr-4 rounded hover:bg-gray-700 text-sm {$page.url
-                .pathname === subItem.href
+              class="flex items-center w-full py-1.5 my-0.5 pl-6 pr-4 rounded hover:bg-gray-700 text-sm {$page.url.pathname.startsWith(
+                subItem.href || ''
+              )
                 ? 'bg-gray-700'
                 : ''}"
             >

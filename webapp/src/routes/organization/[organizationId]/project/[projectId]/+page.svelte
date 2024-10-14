@@ -6,8 +6,8 @@
   import ProjectHeader from './ProjectHeader.svelte';
   import { apiService } from '$lib/apiService';
   import type { ThreadResponseDTO } from '$shared/types/ThreadResponseDTO';
-  import { error } from '@sveltejs/kit';
-  import { pushState } from '$app/navigation';
+  import { lastFocusedThread } from '$lib/stores/lastFocusedThread';
+  import { onMount } from 'svelte';
 
   export let data: PageData;
   let threads: ThreadResponseDTO[];
@@ -15,29 +15,34 @@
 
   const PROJECT_URL = `/organization/${data.organizationId}/project/${data.project.id}`;
 
+  onMount(() => {
+    if ($lastFocusedThread) {
+      const element = document.getElementById($lastFocusedThread.toString());
+      if (element) {
+        element.focus();
+      }
+    }
+  });
+
   const searchThreads = async (searchQuery: string) => {
     if (searchQuery) {
       const response = await apiService.thread.searchThreads(searchQuery, data.project.id, data.organizationId);
       threads = response.data;
-      pushState(`${PROJECT_URL}?search=${searchQuery}`, '');
+      history.pushState(history.state, '', `${PROJECT_URL}?search=${searchQuery}`);
     } else {
       const response = await apiService.thread.getAllThreads(data.organizationId, data.project.id);
       threads = response.data;
-      pushState(PROJECT_URL, '');
-    }
-  };
-
-  const deleteThread = async (threadId: number) => {
-    const response = await apiService.thread.deleteThread(data.organizationId, data.project.id, threadId);
-    if (response.status === 200) {
-      threads = threads.filter((thread) => thread.id != response.data.id);
-    } else {
-      error(response.status, 'Could not delete thread');
+      history.pushState(history.state, '', PROJECT_URL);
     }
   };
 </script>
 
-<ProjectHeader project={data.project} organizationId={data.organizationId} {searchThreads} />
+<ProjectHeader
+  project={data.project}
+  organizationId={data.organizationId}
+  {searchThreads}
+  searchQuery={data.searchQuery}
+/>
 
 <div class="px-4 pt-4 flex justify-center">
   <div class="w-full max-w-6xl">
@@ -45,9 +50,9 @@
       <FilterMenu />
       {#each threads as thread}
         <hr class="border-gray-700" />
-        <ThreadCard organizationId={data.organizationId} projectId={data.project.id} {thread} {deleteThread} />
+        <ThreadCard organizationId={data.organizationId} projectId={data.project.id} {thread} />
       {/each}
-    {:else}
+    {:else if !data.searchQuery}
       <AskFirstQuestion organizationId={data.organizationId} projectId={data.project.id} />
     {/if}
   </div>

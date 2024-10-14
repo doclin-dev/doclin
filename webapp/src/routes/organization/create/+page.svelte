@@ -4,6 +4,7 @@
   import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
   import { LAST_VISITED_ORGANIZATION_ID } from '$lib/localStorageKeys';
+  import { fetchUser } from '$lib/stores/user';
 
   let name: string = '';
 
@@ -14,6 +15,7 @@
   const handleSubmit = async (): Promise<void> => {
     const response = await apiService.organization.postOrganization(name);
     const organization: OrganizationDTO = response.data;
+    await fetchUser();
     goto(`/organization/${organization.id}/project/create`);
   };
 </script>

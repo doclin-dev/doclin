@@ -7,15 +7,16 @@
   export let project: ProjectDTO;
   export let organizationId: string;
   export let searchThreads: (searchQuery: string) => void;
+  export let searchQuery: string;
 
-  let searchQuery: string = '';
+  let inputSearchQuery: string = searchQuery;
   let debounceTimeout: number;
 
   const handleInput = () => {
     clearTimeout(debounceTimeout);
 
     debounceTimeout = setTimeout(() => {
-      searchThreads(searchQuery);
+      searchThreads(inputSearchQuery);
     }, 300);
   };
 </script>
@@ -26,7 +27,7 @@
   <div class="flex-1 mx-4 max-w-3xl">
     <input
       type="text"
-      bind:value={searchQuery}
+      bind:value={inputSearchQuery}
       placeholder={`Search in ${project.name}...`}
       class="w-full px-4 py-2 rounded-md bg-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
       on:input={handleInput}

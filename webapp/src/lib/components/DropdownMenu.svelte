@@ -29,7 +29,7 @@
 <div class="relative" bind:this={dropdown}>
   <button
     on:click|preventDefault={toggleDropdown}
-    class="flex items-center justify-center text-gray-100 hover:bg-gray-800 rounded w-7 h-7"
+    class="flex items-center justify-center text-gray-100 hover:bg-gray-700 rounded w-8 h-8"
   >
     <Icon icon={dotsHorizontal} />
   </button>
