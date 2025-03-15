@@ -8,7 +8,9 @@ object DoclinProjectConfigController {
 
     private val json = Json { ignoreUnknownKeys = true } // Configure Json instance
 
-    fun configToJson(config: DoclinProjectConfig): String = json.encodeToString(DoclinProjectConfig.serializer(), config)
+    fun configToJson(config: DoclinProjectConfig): String {
+        return json.encodeToString(DoclinProjectConfig.serializer(), config)
+    }
 
     fun configFromJson(jsonString: String): DoclinProjectConfig? = try {
         json.decodeFromString(DoclinProjectConfig.serializer(), jsonString)
