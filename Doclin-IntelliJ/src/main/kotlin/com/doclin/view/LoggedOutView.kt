@@ -3,15 +3,14 @@ package com.doclin.view
 import java.awt.Component
 import javax.swing.*
 
-class LoggedOutView : JPanel() {
+class LoggedOutView(private val onLogin: () -> Unit) : JPanel() { // Add a callback
 
     init {
         layout = BoxLayout(this, BoxLayout.Y_AXIS)
 
         val loginButton = JButton("Login")
-        // Dummy login button - no action for now
         loginButton.addActionListener {
-            // Add login logic here later
+            onLogin() // Call the callback when the button is clicked
         }
 
         loginButton.alignmentX = Component.CENTER_ALIGNMENT
