@@ -8,7 +8,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 
 object ProjectUtils {
-
     private const val DOCLIN_FILENAME = ".doclin"
 
     fun getCurrentProjectName(): String? {
@@ -23,5 +22,4 @@ object ProjectUtils {
     fun findDoclinFile(project: Project): VirtualFile? {
         return project.projectFile?.parent?.findChild(DOCLIN_FILENAME)
     }
-
 }

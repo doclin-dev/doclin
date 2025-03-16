@@ -5,7 +5,6 @@ import java.awt.Dimension
 import javax.swing.*
 
 class LoggedInView : JPanel() {
-
     init {
         layout = BoxLayout(this, BoxLayout.Y_AXIS)
 

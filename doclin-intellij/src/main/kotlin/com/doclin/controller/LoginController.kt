@@ -1,17 +1,16 @@
 package com.doclin.controller
 
 object LoginController {
-
     private var isLoggedIn = false
 
     fun login(): Boolean {
-        // Dummy login logic - replace with actual authentication later
+        // TODO: replace with actual authentication
         isLoggedIn = true
         return true
     }
 
     fun logout(): Boolean {
-        // Dummy logout logic
+        // TODO: replace with actual logout logic
         isLoggedIn = false
         return true
     }

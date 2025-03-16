@@ -4,7 +4,6 @@ import java.awt.Component
 import javax.swing.*
 
 class LoggedOutView(private val onLogin: () -> Unit) : JPanel() { // Add a callback
-
     init {
         layout = BoxLayout(this, BoxLayout.Y_AXIS)
 

@@ -8,7 +8,6 @@ import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.content.ContentFactory
 
 class DoclinMain : ToolWindowFactory, DumbAware {
-
     init {
         // Plugin initialization logic that doesn't require project access goes here.
         println("DoclinMain initialized")

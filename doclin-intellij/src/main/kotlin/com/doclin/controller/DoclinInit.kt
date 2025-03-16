@@ -4,7 +4,6 @@ import com.doclin.utils.ProjectUtils.findDoclinFile
 import com.intellij.openapi.project.Project
 
 class DoclinInit(project: Project) {
-
     val doclinInitialized: Boolean
 
     init {

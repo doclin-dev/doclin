@@ -5,8 +5,7 @@ import kotlinx.serialization.json.Json
 import java.io.File
 
 object DoclinProjectConfigController {
-
-    private val json = Json { ignoreUnknownKeys = true } // Configure Json instance
+    private val json = Json { ignoreUnknownKeys = true }
 
     fun configToJson(config: DoclinProjectConfig): String {
         return json.encodeToString(DoclinProjectConfig.serializer(), config)
