@@ -5,4 +5,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "Doclin-IntelliJ"
+rootProject.name = "doclin-intellij"
