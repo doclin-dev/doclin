@@ -1,0 +1,45 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+  <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+  <id>com.doclin.doclin-intellij</id>
+
+  <!-- Public plugin name should be written in Title Case.
+       Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+  <name>Doclin</name>
+
+  <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+  <vendor email="support@doclin.dev" url="https://doclin.dev/">Doclin</vendor>
+
+  <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+       Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
+       Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+  <description><![CDATA[
+    <p><strong>Real-Time Commenting</strong><br>
+    Developers can comment on and discuss code in real-time. Comments are stored safely in the cloud, preventing clutter in the git repository.</p>
+
+    <p>🤖 <strong>Automatic Knowledge Base Creation</strong><br>
+    As developers discuss code in Doclin, it creates a knowledge base without any manual effort required for writing documentation.</p>
+
+    <p>📝 <strong>Better Documentation</strong><br>
+    Sometimes documentation cannot be avoided. Using Doclin's rich text editor, developers can leave detailed explanations in the code.</p>
+
+    <p>🏃 <strong>Always up-to-date</strong><br>
+    Doclin automatically keeps documentation up to date by flagging it when the code changes.</p>
+
+    <p>🔒 <strong>No Access To Git Required</strong><br>
+    We do not require access to your git repository, nor do we store any sensitive information about your git repository.</p>
+  ]]></description>
+
+  <!-- Product and plugin compatibility requirements.
+       Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+  <depends>com.intellij.modules.platform</depends>
+
+  <!-- Extension points defined by the plugin.
+       Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+  <extensions defaultExtensionNs="com.intellij">
+    <toolWindow id="Doclin"
+                factoryClass="com.doclin.DoclinMain"
+                anchor="right"
+                icon="/icons/logo.png"/>
+  </extensions>
+</idea-plugin>
