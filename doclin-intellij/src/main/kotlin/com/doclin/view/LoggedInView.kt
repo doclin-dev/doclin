@@ -1,22 +1,55 @@
 package com.doclin.view
 
-import java.awt.Component
-import java.awt.Dimension
+import java.awt.GridLayout
 import javax.swing.*
+import javax.swing.border.EmptyBorder
 
 class LoggedInView : JPanel() {
+
+    private val messageTextArea = JTextArea(5, 20)
+    private val anonymousCheckbox = JCheckBox("Post as an anonymous user")
+    private val submitButton = JButton("Submit")
+
     init {
-        layout = BoxLayout(this, BoxLayout.Y_AXIS)
+        layout = GridLayout(4, 1, 5, 5)
+        border = EmptyBorder(10, 10, 10, 10)
 
-        val textField = JTextField()
-        textField.maximumSize = Dimension(Short.MAX_VALUE.toInt(), textField.preferredSize.height)
-        add(textField)
+        val titlePanel = JPanel()
+        titlePanel.layout = BoxLayout(titlePanel, BoxLayout.LINE_AXIS)
+        val titleLabel = JLabel("Create new thread")
+        titleLabel.font = titleLabel.font.deriveFont(java.awt.Font.BOLD, 16f)
+        titlePanel.add(titleLabel)
+        titlePanel.add(Box.createHorizontalGlue())
+        add(titlePanel)
 
-        val submitButton = JButton("Submit")
-        submitButton.addActionListener {
-            JOptionPane.showMessageDialog(this, "Text: ${textField.text}")
+        val buttonsPanel = JPanel()
+        buttonsPanel.layout = GridLayout(1, 2, 5, 0)
+        val allThreadsButton = JButton("All Threads")
+        val fileThreadsButton = JButton("File Threads")
+        buttonsPanel.add(allThreadsButton)
+        buttonsPanel.add(fileThreadsButton)
+        add(buttonsPanel)
+
+        val messageScrollPane = JScrollPane(messageTextArea)
+        add(messageScrollPane)
+
+        val controlsPanel = JPanel()
+        controlsPanel.layout = BoxLayout(controlsPanel, BoxLayout.LINE_AXIS)
+        controlsPanel.add(anonymousCheckbox)
+        controlsPanel.add(Box.createHorizontalGlue())
+        controlsPanel.add(submitButton)
+        add(controlsPanel)
+
+        allThreadsButton.addActionListener {
+            println("All Threads button clicked")
         }
-        submitButton.alignmentX = Component.CENTER_ALIGNMENT
-        add(submitButton)
+        fileThreadsButton.addActionListener {
+            println("File Threads button clicked")
+        }
+        submitButton.addActionListener {
+            val message = messageTextArea.text
+            val isAnonymous = anonymousCheckbox.isSelected
+            JOptionPane.showMessageDialog(this, "Message: '$message', Anonymous: $isAnonymous")
+        }
     }
 }
