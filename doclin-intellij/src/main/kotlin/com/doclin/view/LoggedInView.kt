@@ -1,5 +1,6 @@
 package com.doclin.view
 
+import com.doclin.controller.ThreadsController
 import java.awt.GridLayout
 import javax.swing.*
 import javax.swing.border.EmptyBorder
@@ -9,9 +10,12 @@ class LoggedInView : JPanel() {
     private val messageTextArea = JTextArea(5, 20)
     private val anonymousCheckbox = JCheckBox("Post as an anonymous user")
     private val submitButton = JButton("Submit")
+    private val allThreadsButton = JButton("All Threads")
+    private val fileThreadsButton = JButton("File Threads")
+    private val threadListView = ThreadListView()
 
     init {
-        layout = GridLayout(4, 1, 5, 5)
+        layout = GridLayout(5, 1, 5, 5)
         border = EmptyBorder(10, 10, 10, 10)
 
         val titlePanel = JPanel()
@@ -24,8 +28,6 @@ class LoggedInView : JPanel() {
 
         val buttonsPanel = JPanel()
         buttonsPanel.layout = GridLayout(1, 2, 5, 0)
-        val allThreadsButton = JButton("All Threads")
-        val fileThreadsButton = JButton("File Threads")
         buttonsPanel.add(allThreadsButton)
         buttonsPanel.add(fileThreadsButton)
         add(buttonsPanel)
@@ -40,16 +42,20 @@ class LoggedInView : JPanel() {
         controlsPanel.add(submitButton)
         add(controlsPanel)
 
+        add(threadListView)
+
         allThreadsButton.addActionListener {
-            println("All Threads button clicked")
+            threadListView.updateThreads(ThreadsController.getAllThreads())
         }
         fileThreadsButton.addActionListener {
-            println("File Threads button clicked")
+            val filename = "example.txt"
+            threadListView.updateThreads(ThreadsController.getFileThreads(filename))
         }
         submitButton.addActionListener {
             val message = messageTextArea.text
-            val isAnonymous = anonymousCheckbox.isSelected
-            JOptionPane.showMessageDialog(this, "Message: '$message', Anonymous: $isAnonymous")
+            ThreadsController.postThread(message)
+            threadListView.updateThreads(ThreadsController.getAllThreads())
+            messageTextArea.text = ""
         }
     }
 }
