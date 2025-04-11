@@ -23,3 +23,14 @@ object ProjectUtils {
         return project.projectFile?.parent?.findChild(DOCLIN_FILENAME)
     }
 }
+
+object FileUtils {
+    fun getCurrentOpenedFileName(project: Project?): String? {
+        if (project == null || project.isDisposed) {
+            return null
+        }
+        val fileEditorManager = FileEditorManager.getInstance(project)
+        val currentFile: VirtualFile? = fileEditorManager.selectedFiles.firstOrNull()
+        return currentFile?.name
+    }
+}
