@@ -10,7 +10,7 @@ object ThreadsController {
 
     private fun fetchThreadsFromAPI() {
         //TODO: replace dummy data with real data from api
-        val dummyAllThreads = listOf("Thread from API 1", "Another thread from API")
+        val dummyAllThreads = emptyList<String>()
         val dummyFileThreads = emptyMap<String, List<String>>()
 
         allThreads.addAll(dummyAllThreads)
