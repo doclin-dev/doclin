@@ -1,22 +1,23 @@
 package com.doclin.view
 
-import com.doclin.controller.LoginController
 import java.awt.BorderLayout
+import java.awt.Component
 import javax.swing.*
+import com.doclin.controller.LoginController
 
 class DoclinStartView : JPanel() {
+
     private val contentPanel = JPanel()
     private val loggedInView = LoggedInView()
-    private val loggedOutView = LoggedOutView { // Pass the callback
+    private val loggedOutView = LoggedOutView {
         if (LoginController.login()) {
             updateView()
-        } else {
-            // Handle login failure (if needed)
         }
     }
 
     init {
         contentPanel.layout = BoxLayout(contentPanel, BoxLayout.Y_AXIS)
+        contentPanel.alignmentX = Component.LEFT_ALIGNMENT
         updateView()
 
         val scrollPane = JScrollPane(contentPanel)
@@ -29,11 +30,14 @@ class DoclinStartView : JPanel() {
 
     private fun updateView() {
         contentPanel.removeAll()
+
         if (LoginController.isLoggedIn()) {
             contentPanel.add(loggedInView)
         } else {
             contentPanel.add(loggedOutView)
         }
+
+        contentPanel.add(Box.createVerticalGlue())
         contentPanel.revalidate()
         contentPanel.repaint()
     }
